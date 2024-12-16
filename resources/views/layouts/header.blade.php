@@ -1,0 +1,100 @@
+<header id="page-topbar">
+    <div class="navbar-header">
+
+        <div class="d-flex align-items-left">
+            <button type="button" class="btn btn-sm mr-2 d-lg-none px-3 font-size-16 header-item waves-effect"
+                id="vertical-menu-btn">
+                <i class="fa fa-fw fa-bars"></i>
+            </button>
+
+            <div class="dropdown d-none d-sm-inline-block">
+
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center">
+
+            <div class="dropdown d-none d-sm-inline-block ml-2">
+
+            </div>
+
+            <div class="dropdown d-inline-block">
+
+            </div>
+
+            <div class="dropdown d-inline-block">
+
+            </div>
+            <span style="color: rgb(211, 88, 5);" id="tran_count">0</span>
+            <div class="dropdown d-inline-block">
+                <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img class="rounded-circle header-profile-user" src="{{ asset('images/users/avatar-1.jpg') }}"
+                        alt="Header Avatar">
+                    <span class="d-none d-sm-inline-block ml-1">{{ Auth::user()->name }}</span>
+                    <i class="mdi mdi-chevron-down d-none d-sm-inline-block"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item d-flex align-items-center justify-content-between"
+                    href="{{ route('profile.edit') }}">Profile</a>
+                    <a class="dropdown-item d-flex align-items-center justify-content-between"
+                    href="javascript:void(0)" onclick="$('#from-logout').submit()">
+                    <span>Log Out</span>
+                    <form action="{{ route('logout') }}" id="from-logout" method="post">@csrf</form>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.1/howler.js"></script>
+<script>
+
+    var count_event_lose = 0;
+    var count_event = 0;
+    if (sessionStorage.getItem("count_event") === null) {
+        sessionStorage.setItem("count_event", 0);
+    }else {
+        count_event_lose = sessionStorage.getItem("count_event");
+    }
+
+    setInterval(function() {
+        $.ajax({
+            type: 'get',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: '{{ route('report.count_last_tranfer') }}',
+            success: function (data) {
+            if(data){
+                $('#tran_count').text('รายการ ฝาก/ถอน รออนุมัติ : '+data);
+                // console.log(count_event_lose);
+                if(parseInt(data) != 0){
+                    if(parseInt(data) != count_event_lose && count_event < parseInt(data)){
+                        var alarm = new Howl({
+                            src: ["{{ asset('noti.mp3?002') }}"],
+                            autoplay: false,
+                            loop: false,
+                            // volume: 0.5,
+                        });
+                        alarm.play();
+                        count_event = count_event + 1;
+                    }
+                    count_event_lose = parseInt(data);
+                    sessionStorage.setItem("count_event", parseInt(data));
+                }else{
+                    sessionStorage.setItem("count_event", 0);
+                    count_event_lose = 0;
+                    count_event = 0;
+                }
+            }else{
+                console.log('error');
+            }
+            }
+        });
+
+    }, 2000);
+
+</script>

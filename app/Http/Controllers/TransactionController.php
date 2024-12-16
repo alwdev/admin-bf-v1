@@ -1,0 +1,262 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Transfer;
+use App\Models\Members;
+use App\Models\History;
+use App\Models\Payout;
+use App\Models\Promotion;
+use App\Models\Logs;
+use Illuminate\Support\Facades\Log;
+use Auth;
+use \Crypt;
+use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
+use NotificationChannels\Telegram\TelegramMessage;
+
+class TransactionController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $transfer = Transfer::join('members',function($join){
+            $join->on('members.id','=','transfer.member_id');
+        })
+        ->select(\DB::raw('transfer.*,members.bank_number,members.account_name,members.bank_name,members.username'))
+        ->where('transfer.type','!=','cashback')
+        ->orderby('transfer.created_at','desc')
+        ->get();
+
+        return view('transaction.list',compact('transfer'));
+    }
+
+    public function checkTurnOver($mid){
+        return "ผ่าน";
+        // $check_transfers = Transfer::where('member_id',$mid)->where('type','deposit')->latest('created_at')->first();
+        // if($check_transfers){
+        //     if($check_transfers->promotion_id != 0){
+        //         $check_balance = Members::where('id',$mid)->first();
+
+        //         $payout = History::where('username',$check_balance->username)->where('created_at','>=',$check_transfers->created_at)->get();
+        //         $turn_over = 0;
+        //         foreach($payout as $turn){
+        //             $turn_over += $turn->amount;
+        //         }
+        //         $current_balance = $check_balance->wallet_balance;
+        //         $last_transfers = $check_transfers->amount;
+
+        //         $promotion = Promotion::find($check_transfers->promotion_id);
+        //         if(!is_null($promotion)){
+
+        //             if($promotion->id == 1){
+        //                 if($turn_over >= 100){
+        //                     return "ผ่าน";
+        //                 }else{
+        //                     return $turn_over;
+        //                 }
+        //             }else{
+
+        //                 if($turn_over > ($last_transfers * (int) $promotion->turnover)){
+        //                     return "ผ่าน";
+        //                 }else{
+        //                     return $turn_over;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+    }
+
+    public function Checktransfer(){
+        $check_transfers = Transfer::where('type','withdraw')->where('status',1)->latest('created_at')->first();
+        if($check_transfers){
+            return response()->json([$check_transfers],200);
+        }else{
+            return response()->json([],204);
+        }
+    }
+
+    public function smsOTP(Request $request){
+        $log = new Logs;
+        $log->log = "SMS : ".$request->sms;
+        $log->save();
+
+        try{
+            $chectText1 = explode(' ',$request->sms);
+            if($chectText1[0] === 'คุณกำลังโอนเงินให้'){
+                $otp = $chectText1[12];
+                $refNo = explode(')',$chectText1[14])[0];
+
+
+                $trans = Transfer::where('refNo',$refNo)->first();
+                if($trans){
+                    $trans->otp = $otp;
+                    $trans->save();
+                }
+                return response()->json(["OTP"=>$otp,"refNo"=>$refNo],200);
+            }
+
+        } catch(\Exception $e){
+            Log::error("Error : ".$e->getMessage());
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT '.env('APP_NAME'))
+                ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
+                ->send();
+            return response()->json(['message' => 'พบข้อผิดพลาดในการตรวจสอบ SMS'], 400);
+        }
+    }
+
+    public function smsRequest(Request $request){
+        $log = new Logs;
+        $log->log = "SMS : ".$request->sms;
+        $log->save();
+
+
+        try{
+
+            $amount = explode(' ',$request->sms)[5];
+            $key = explode(' ',$request->sms)[4] ;
+
+
+        } catch(\Exception $e){
+            Log::error("Error : ".$e->getMessage());
+
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT '.env('APP_NAME'))
+                ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
+                ->send();
+
+            return response()->json(['message' => 'พบข้อผิดพลาดในการตรวจสอบ SMS'], 400);
+        }
+
+        if($key == 'เงินเข้า'){
+
+            $transfer = Transfer::where('amount',$amount)->where('type','deposit')->where('status',1)->whereTime('created_at', '>=', now()->subMinute(5))->first();
+            if($transfer){
+                // return response()->json(["text"=>$chectText1,"amount"=>$amount,"key"=>$key,"transfer"=>$transfer]);
+                $member = Members::find($transfer->member_id);
+
+                $old_balance = $member->wallet_balance;
+
+                $transfer->status = 2;
+                $transfer->status_code ="อนุมัติ";
+                $transfer->old_balance = $old_balance;
+
+                if($transfer->promotion_id != 0){
+                    $pro = Promotion::find($transfer->promotion_id);
+                    if($transfer->promotion_id == 1){
+                        $b =  (float) $member->wallet_balance + $transfer->amount + 100;
+                    }else{
+                        $b =  (float) $member->wallet_balance + (float) $transfer->amount + ((float) $transfer->amount * $pro->bonus / 100);
+                    }
+                    $member->wallet_balance = $b;
+                }else{
+                    $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
+                }
+                $member->save();
+                $transfer->new_balance = $member->wallet_balance;
+                $transfer->save();
+
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                // ->content('Choose an option:')
+                ->line('BOT '.env('APP_NAME'))
+                ->line('ทำรายการสำเร็จ โอนเครดิตเข้า '.$member->username)
+                ->line('จำนวน :'.$amount)
+                // ->button('View page', env('APP_URL'))
+                // ->button('View page',env('APP_URL'))
+                // ->keyboard('Button 1')
+                // ->keyboard('Button 2')
+                ->send();
+
+                return response()->json(['message' => 'SMS request sent successfully.','txt' => 'Amount :'.$amount], 200);
+            }else{
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                // ->content('Choose an option:')
+                ->line('BOT '.env('APP_NAME'))
+                ->line('ไม่พบรายการโอนเงินในช่วงเวลา')
+                ->line('จำนวน :'.$amount)
+                // ->button('View page', env('APP_URL'))
+                // ->button('View page',env('APP_URL'))
+                // ->keyboard('Button 1')
+                // ->keyboard('Button 2')
+                ->send();
+                return response()->json(['message' => 'ไม่พบรายการโอนเงินในช่วงเวลา','txt' => 'Amount :'.$amount], 404);
+            }
+
+
+        }else{
+            return response()->json(['message' => 'SMS Not valid.','txt' => 'Amount :'.$amount.', Text3 : '.$key], 200);
+        }
+    }
+
+    public function getOTP($id){
+        Log::info('getOTP id: '.$id);
+        $transfer = Transfer::where('id',$id)->first();
+        if($transfer){
+            Log::info('otp '.$transfer->otp);
+            return response()->json([$transfer->otp], 200);
+        }
+    }
+
+    public function getTranfer($id){
+        $transfer = Transfer::find($id);
+        if($transfer){
+            return response()->json([ $transfer], 200);
+        }
+    }
+
+    public function upDaterefNo(Request $request){
+        $transfer = Transfer::find($request->id);
+        $transfer->refNo = $request->refNo;
+        $transfer->save();
+        return response()->json(['message' => 'Ref No updated successfully'], 200);
+    }
+
+    // public function updateOTP(Request $request){
+    //     $transfer = Transfer::where('refNo',$request->refNo);
+    //     $transfer->otp = $request->otp;
+    //     $transfer->save();
+    //     return response()->json(['message' => 'OTP updated successfully'], 200);
+    // }
+
+    public function approvewithdraw(Request $request)
+    {
+        // error_log($request->getContent());
+        $member = Members::find($request->member_id);
+        $transfer = Transfer::find($request->id);
+        error_log($request->type.' approve '.$member->username.' Balance =  '.$member->wallet_balance.' transfer amount ='.$transfer->amount);
+
+        if($transfer->status == 2 || $transfer->status == 3){
+            return response()->json(['message' => 'Transfer approved !!!'], 401);
+        }
+
+
+
+
+        $image = str_replace('data:image/png;base64,', '', $request->file);
+        $image = str_replace(' ', '+', $image);
+        $imageName = $request->id.'.'.'png';
+        \File::put(public_path().'/slip/'. $imageName, base64_decode($image));
+        $path = '/slip/'.$imageName;
+
+        $transfer->old_balance = $member->wallet_balance;
+        $old_balance = $member->wallet_balance;
+
+        $transfer->ref_id = $request->ref;
+        $transfer->status = 2;
+        $transfer->status_code ="อนุมัติ";
+        $transfer->old_balance = $old_balance;
+        $transfer->new_balance = $member->wallet_balance;
+        $transfer->withdraw_slip = $path;
+        $transfer->save();
+
+
+        return response()->json([$transfer],200);;
+    }
+}
