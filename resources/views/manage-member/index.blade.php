@@ -52,7 +52,6 @@
                             @endif
                             <th data-field="fullname" data-filter-control="input" data-sortable="true">ชื่อ - นามสกุล</th>
                             <th data-sortable="true">ยอดเงิน</th>
-                            <th data-sortable="true">สกุลเงิน</th>
                             <th>บัญชี</th>
                             <th data-sortable="true">วันที่สมัคร</th>
                             <th></th>
@@ -75,12 +74,14 @@
                             <td><button type="button" class="btn btn-primary btn-sm waves-effect waves-light" onclick="changePass('{{ $member->id }}')"><i class="bx bx-edit-alt"></i>เปลียน</button></td>
                             @endif
                             <td>{{ $member->fullname }}</td>
-                            <td class="text-right">{{ $member->wallet_balance }} ฿
-                                @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
+                            @php
+                                $member_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
+                            @endphp
+                            <td class="text-right">{{ $member_balance }} ฿
+                                {{-- @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
                                 <button type="button" class="btn btn-primary btn-sm waves-effect waves-light" onclick="editBalance('{{ $member->id }}','{{ $member->username }}','{{ Auth::user()->id }}')"><i class="bx bx-edit-alt"></i></button>
-                                @endif
+                                @endif --}}
                             </td>
-                            <td>{{ $member->currency }}</td>
                             <td>
                                 <button href="่javascript:void(0);" data-toggle="modal" data-target="#exampleModal{{ $key }}" type="button" class="btn btn-secondary  btn-sm waves-effect waves-light">บัญชี</button>
                                 <!-- Modal -->
