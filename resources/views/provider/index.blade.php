@@ -47,7 +47,44 @@
                                 </td>
                                 <td>{{ $item->product_id }}</td>
                                 <td>{{ $item->product_name }}</td>
-                                <td>{{ $item->category }}</td>
+                                <td>{{ $item->category }}
+                                    @switch($item->category)
+                                        @case("1")
+                                        <span class="badge badge-pill badge-soft-success font-size-12">Sportsbook</span>
+                                            @break
+                                            @case("2")
+                                            <span class="badge badge-pill badge-soft-success font-size-12">Live Casino</span>
+                                            @break
+                                            @case("3")
+                                            <span class="badge badge-pill badge-soft-success font-size-12">Slot Game</span>
+                                            @break
+                                            @case("4")
+                                            <span class="badge badge-pill badge-soft-success font-size-12">Fishing Hunter</span>
+                                            @break
+                                            @case("5")
+                                            <span class="badge badge-pill badge-soft-success font-size-12">Game Card</span>
+                                            @break
+                                            @case("6")
+                                            <span class="badge badge-pill badge-soft-success font-size-12">Lotto</span>
+                                            @break
+                                            @case("7")
+                                            <span class="badge badge-pill badge-soft-success font-size-12">E-Sport</span>
+                                            @break
+                                            @case("8")
+                                            <span class="badge badge-pill badge-soft-success font-size-12">Poker Game</span>
+                                            @break
+                                            @case("9")
+                                            <span class="badge badge-pill badge-soft-success font-size-12">Keno</span>
+                                            @break
+                                            @case("10")
+                                            <span class="badge badge-pill badge-soft-success font-size-12">Crypto Tradding
+                                            </span>
+                                            @break
+
+                                        @default
+
+                                    @endswitch
+                                </td>
                                 <td>
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input"
@@ -74,9 +111,9 @@
     </div>
     <form action="#" method="POST" id="img-upload" enctype="multipart/form-data" >
         @csrf
-            <input type="file" id="imgupload" name="imgupload" class="imgupload" style="display:none" /> 
-            <input type="hidden" id="provider_id" name="provider_id" value="" style="display:none"/> 
-            <input type="hidden" id="provider" name="provider" value="" style="display:none"/> 
+            <input type="file" id="imgupload" name="imgupload" class="imgupload" style="display:none" />
+            <input type="hidden" id="provider_id" name="provider_id" value="" style="display:none"/>
+            <input type="hidden" id="provider" name="provider" value="" style="display:none"/>
     </form>
 
     <!-- end row-->
@@ -186,7 +223,7 @@
 
         }
 
-          
+
         function chooseImage(e,id,provider){
             $('#provider_id').val(id);
             $('#provider').val(provider);
