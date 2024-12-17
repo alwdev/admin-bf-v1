@@ -162,8 +162,8 @@ class TransactionController extends Controller
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                     $amount_betflix = (float) $transfer->amount;
                 }
-                $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit(auth()->user()->username,$amount_betflix);
-                Log::info('Deposit Betflix '.$bf_deposit.' '.$amount_betflix.' User =  '.auth()->user()->username);
+                $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
+                Log::info('Deposit Betflix '.$bf_deposit.' '.floor($amount_betflix).' User =  '.$member->username);
 
                 $member->save();
                 $transfer->new_balance = $member->wallet_balance;
@@ -243,8 +243,6 @@ class TransactionController extends Controller
         }
 
 
-
-
         $image = str_replace('data:image/png;base64,', '', $request->file);
         $image = str_replace(' ', '+', $image);
         $imageName = $request->id.'.'.'png';
@@ -255,7 +253,7 @@ class TransactionController extends Controller
         $old_balance = $member->wallet_balance;
 
         $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,floor($transfer->amount));
-        Log::info('Deposit Withdraw '.$bf_deposit.' '.floor($transfer->amount).' User =  '.$member->username);
+        Log::info('Betflix Withdraw '.$bf_deposit.' '.floor($transfer->amount).' User =  '.$member->username);
 
         $transfer->ref_id = $request->ref;
         $transfer->status = 2;
