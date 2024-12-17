@@ -47,7 +47,7 @@
                                 </td>
                                 <td>{{ $item->product_id }}</td>
                                 <td>{{ $item->product_name }}</td>
-                                <td>{{ $item->category }}
+                                <td>
                                     @switch($item->category)
                                         @case("1")
                                         <span class="badge badge-pill badge-soft-success font-size-12">Sportsbook</span>
