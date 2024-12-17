@@ -254,8 +254,8 @@ class TransactionController extends Controller
         $transfer->old_balance = $member->wallet_balance;
         $old_balance = $member->wallet_balance;
 
-        $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw(auth()->user()->username,$transfer->amount);
-        Log::info('Deposit Withdraw '.$bf_deposit.' '.$transfer->amount.' User =  '.auth()->user()->username);
+        $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,floor($transfer->amount));
+        Log::info('Deposit Withdraw '.$bf_deposit.' '.floor($transfer->amount).' User =  '.$member->username);
 
         $transfer->ref_id = $request->ref;
         $transfer->status = 2;
