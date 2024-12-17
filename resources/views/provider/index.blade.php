@@ -25,16 +25,16 @@
                 <p class="card-subtitle mb-4">
                 </p>
 
-                <table id="table" class="table m-10 table-bordered" data-filter-control="true" data-toggle="table"
+                <table id="basic-datatable" class="table m-10 table-bordered" data-filter-control="true" data-toggle="table"
                     data-search="true" data-show-export="false" data-click-to-select="false" data-pagination="true"
                     data-url="">
-                    <thead>
+                    <thead  class="table-light">
                         <tr>
                             <th></th>
-                            <th data-field="product_id" data-filter-control="input" data-sortable="true">รหัส</th>
-                            <th data-field="product_name" data-filter-control="input" data-sortable="true">ชื่อ</th>
-                            <th data-field="category" data-filter-control="select" data-sortable="true">หมวดหมู่</th>
-                            <th data-field="active" data-filter-control="select" data-sortable="true">สถานะ</th>
+                            <th data-field="product_id" data-sortable="true">รหัส</th>
+                            <th data-field="product_name"  data-sortable="true">ชื่อ</th>
+                            <th data-field="category" data-sortable="true">หมวดหมู่</th>
+                            <th data-field="active" data-sortable="true">สถานะ</th>
                             <th>GameList</th>
                             {{-- <th data-sortable="true">created_at</th> --}}
                         </tr>

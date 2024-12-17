@@ -36,6 +36,26 @@ File: App Css
   width: 100%;
 }
 
+.metismenu li.mm-active{
+  background-color: #ffa9a9a1 !important;
+
+}
+
+#sidebar_report.mm-active{
+  background-color: unset !important;
+  ul{
+    /* background: #812020; */
+    li a{
+      background-color: white !important;
+    };
+    li.mm-active a{
+      background-color: #ffa9a9a1 !important;
+    }
+    
+  };
+}
+
+
 .metismenu .mm-collapse {
   display: none;
 }
@@ -120,7 +140,8 @@ File: App Css
 }
 
 #sidebar-menu ul li a:hover {
-  color: #E3A941;
+      --tw-text-opacity: 1;
+  color: rgb(127 29 29/var(--tw-text-opacity));
   padding-left: 1.75rem;
 }
 
@@ -180,11 +201,13 @@ File: App Css
 }
 
 .mm-active .active {
-  color: #E3A941 !important;
+      --tw-text-opacity: 1;
+  color: rgb(127 29 29/var(--tw-text-opacity)) !important;
 }
 
 li.mm-active > a {
-  color: #E3A941 !important;
+      --tw-text-opacity: 1;
+  color: rgb(127 29 29/var(--tw-text-opacity)) !important;
 }
 
 @media (max-width: 992px) {
@@ -226,7 +249,8 @@ body.enable-vertical-menu .menu-overlay {
 }
 
 .vertical-menu-dark #sidebar-menu ul li a:hover {
-  color: #E3A941;
+      --tw-text-opacity: 1;
+  color: rgb(127 29 29/var(--tw-text-opacity));
 }
 
 .vertical-menu-dark .menu-title {

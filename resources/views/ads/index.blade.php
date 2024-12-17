@@ -1,5 +1,12 @@
 @extends('layouts.guest')
 @section('styles')
+<style>
+    .badge {
+
+        padding: 10px;
+        font-weight: 400;
+    }
+</style>
 @endsection
 @section('content')
    <!-- start page title -->
@@ -21,12 +28,12 @@
 <!-- end page title -->
 <div class="card-header" style="background: transparent;">
     {{-- @if( json_decode(auth()->user()->permissions)->manageuser > 2  ) --}}
-    <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('promotion_ads.create') }}">เพิ่ม</a>
+   
     {{-- @endif --}}
 </div>
 <div class="row">
     <div class="col-12 card">
-        <div class="card-body">
+        <div class="card-body"> <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('promotion_ads.create') }}">เพิ่ม</a>
             <h4 class="card-title"></h4>
             <p class="card-subtitle mb-4">
             </p>
@@ -39,10 +46,10 @@
                 data-click-to-select="false"
                 data-pagination="true"
                 data-url="">
-                <thead>
+                <thead  class="table-light">
                     <tr>
                         <th></th>
-                        <th data-field="title" data-filter-control="input" data-sortable="true">โปรโมชั่น</th>
+                        <th data-field="title"  data-sortable="true">โปรโมชั่น</th>
                         <th data-field="updated_at">อัพเดทล่าสุด</th>
                         <th>สถานะ</th>
                         {{-- @if( json_decode(auth()->user()->permissions)->transfer > 2  ) --}}
@@ -60,9 +67,9 @@
                             <td>{{ $item->updated_at->format('d/m/Y H:i:s') }}</td>
                             <td>
                                 @if($item->enable)
-                                <span class="badge badge-success">เผยแพร่</span>
+                                <span class="badge badge-pill badge-success">เผยแพร่</span>
                                 @else
-                                <span class="badge badge-secondary">ดราฟ</span>
+                                <span class="badge badge-pill badge-secondary">ดราฟ</span>
                                 @endif
                             </td>
                             <td class="text-right">

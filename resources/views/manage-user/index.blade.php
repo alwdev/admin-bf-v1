@@ -26,18 +26,19 @@
 
         <div class="row">
             <div class="card-header text-right" style="background: transparent;">
-                @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
-                <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('manageuser.addnewuser') }}">เพิ่มพนักงาน</a>
-                @endif
+              
             </div>
             <div class="col-12 card">
            
                     <div class="card-body">
+                        @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
+                        <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('manageuser.addnewuser') }}">เพิ่มพนักงาน</a>
+                        @endif
                         <h4 class="card-title"></h4>
                         <p class="card-subtitle mb-4">
                         </p>
         
-                        <table id="table" class="table m-10 table-bordered"
+                        <table id="basic-datatable" class="table m-10 table-bordered"
                         data-filter-control="true"
                         data-toggle="table"
                         data-search="true"
@@ -45,11 +46,11 @@
                         data-click-to-select="false"
                         data-pagination="true"
                         data-url="">
-                            <thead>
+                        <thead  class="table-light">
                                 <tr>
-                                    <th data-field="username"  data-filter-control="input" data-sortable="true">Username</th>
-                                    <th data-field="email"  data-filter-control="select" data-sortable="true">Email</th>
-                                    <th data-field="level"  data-filter-control="select" data-sortable="true">level</th>
+                                    <th data-field="username"  data-sortable="true">Username</th>
+                                    <th data-field="email"  data-sortable="true">Email</th>
+                                    <th data-field="level"  data-sortable="true">level</th>
                                     <th data-sortable="true">created_at</th>
                                 </tr>
                             </thead>  

@@ -1,4 +1,4 @@
-<div class="vertical-menu vertical-menu-dark">
+<div class="vertical-menu">
 
     <div data-simplebar class="h-100">
 
@@ -17,10 +17,10 @@
                 </li>
                 @if( json_decode(auth()->user()->permissions)->member > 1  )
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect"><i class="bx bx-user-circle"></i><span>จัดการสมาชิก</span></a>
-                    <ul class="" aria-expanded="false">
+                    <a href="{{ route('managemember.index') }}" class=" waves-effect"><i class="bx bx-user-circle"></i><span>จัดการสมาชิก</span></a>
+                    {{-- <ul class="" aria-expanded="false">
                         <li class=""><a href="{{ route('managemember.index') }}" class="active">สมาชิก</a></li>
-                    </ul>
+                    </ul> --}}
                 </li>
                 @endif
                 @if( json_decode(auth()->user()->permissions)->transfer > 1  )
