@@ -49,8 +49,6 @@ class BetflixController extends Controller
 		}else{
 			$status_response = json_decode($response);
 			if($status_response->status == 'success'){
-                $member = Members::where('username', '=', auth()->user()->username)->first();
-                $member->update(['wallet_balance' => $status_response->data->balance]);
 				return $status_response->data->balance;
 			}else{
 				return "0.00";
