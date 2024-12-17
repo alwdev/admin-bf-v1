@@ -369,8 +369,7 @@
         function approveDeposit(form){
             Swal.fire({
                     title: 'แจ้งเตือน',
-                    text: "ต้องการอัพเดตสถานะหรือไม่?",
-                    text: "***คำเตือนหากเป็นการ ถอนเงิน Admin ต้องทำรายการโอนเงินเองที่แอปธนาคาร***",
+                    text: "ต้องการอัพเดตสถานะหรือไม่?  ***คำเตือนหากเป็นการ ถอนเงิน Admin ต้องทำรายการโอนเงินเองที่แอปธนาคาร***",
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'ใช่',
