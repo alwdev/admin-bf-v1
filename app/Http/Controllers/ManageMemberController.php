@@ -80,6 +80,11 @@ class ManageMemberController extends Controller
               $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit(auth()->user()->username,$transfer->amount);
               Log::info('Deposit Betflix '.$bf_deposit.' '.$transfer->amount.' User =  '.auth()->user()->username);
 
+              TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+              ->line(env('APP_NAME'))
+              ->line('Admin ทำรายการ อนุมัติเครดิตเข้า '.$member->username)
+              ->line('จำนวน :'.$transfer->amount)
+              ->send();
             }else if($request->type=="withdraw"){
                 if($transfer->promotion_id != 0){
                     $pro = Promotion::find($transfer->promotion_id);
@@ -88,6 +93,16 @@ class ManageMemberController extends Controller
                     // $member->wallet_balance = (float) $member->wallet_balance -  (float) $transfer->amount;
                 }
 
+                $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw(auth()->user()->username,$transfer->amount);
+                Log::info('Deposit Withdraw '.$bf_deposit.' '.$transfer->amount.' User =  '.auth()->user()->username);
+
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line(env('APP_NAME'))
+                ->line('Admin ทำรายการ อนุมัติถอนเงิน '.$member->username)
+                ->line('จำนวน :'.$transfer->amount)
+                ->line('****คำเตือน Admin ต้องทำรายการโอนเงินเองที่แอปธนาคาร  ****')
+                ->send();
+
             }else{
                 $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
             }
@@ -95,11 +110,7 @@ class ManageMemberController extends Controller
             $transfer->new_balance = $member->wallet_balance;
             $transfer->save();
 
-            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                ->line(env('APP_NAME'))
-                ->line('Admin ทำรายการ อนุมัติเครดิตเข้า '.$member->username)
-                ->line('จำนวน :'.$transfer->amount)
-                ->send();
+
         }else{
 
             $transfer->status = 3;
