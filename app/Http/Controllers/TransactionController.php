@@ -152,13 +152,19 @@ class TransactionController extends Controller
                     $pro = Promotion::find($transfer->promotion_id);
                     if($transfer->promotion_id == 1){
                         $b =  (float) $member->wallet_balance + $transfer->amount + 100;
+                        $amount_betflix = $transfer->amount + 100;
                     }else{
                         $b =  (float) $member->wallet_balance + (float) $transfer->amount + ((float) $transfer->amount * $pro->bonus / 100);
+                        $amount_betflix = (float) $transfer->amount + ((float) $transfer->amount * $pro->bonus / 100);
                     }
                     $member->wallet_balance = $b;
                 }else{
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
+                    $amount_betflix = (float) $transfer->amount;
                 }
+                $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit(auth()->user()->username,$amount_betflix);
+                Log::info('Deposit Betflix '.$bf_deposit.' '.$amount_betflix.' User =  '.auth()->user()->username);
+
                 $member->save();
                 $transfer->new_balance = $member->wallet_balance;
                 $transfer->save();
@@ -247,6 +253,9 @@ class TransactionController extends Controller
 
         $transfer->old_balance = $member->wallet_balance;
         $old_balance = $member->wallet_balance;
+
+        $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw(auth()->user()->username,$transfer->amount);
+        Log::info('Deposit Withdraw '.$bf_deposit.' '.$transfer->amount.' User =  '.auth()->user()->username);
 
         $transfer->ref_id = $request->ref;
         $transfer->status = 2;

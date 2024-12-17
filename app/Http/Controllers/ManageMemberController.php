@@ -77,6 +77,8 @@ class ManageMemberController extends Controller
                 }else{
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                 }
+              $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit(auth()->user()->username,$transfer->amount);
+              Log::info('Deposit Betflix '.$bf_deposit.' '.$transfer->amount.' User =  '.auth()->user()->username);
 
             }else if($request->type=="withdraw"){
                 if($transfer->promotion_id != 0){
@@ -85,8 +87,8 @@ class ManageMemberController extends Controller
                 }else{
                     // $member->wallet_balance = (float) $member->wallet_balance -  (float) $transfer->amount;
                 }
-            }
-            else{
+
+            }else{
                 $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
             }
             $member->save();

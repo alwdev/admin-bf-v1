@@ -29,21 +29,16 @@
                 </li>
                 @endif
                 @if( json_decode(auth()->user()->permissions)->report > 1  )
-                <li>
+                {{-- <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect"><i class="bx bxs-report"></i><span>รายงาน</span></a>
                     <ul class="" aria-expanded="false">
-                        {{-- <li class=""><a href="{{ route('report.memberplay') }}" class="active">รายงานการเล่น</a></li> --}}
+                        <li class=""><a href="{{ route('report.memberplay') }}" class="active">รายงานการเล่น</a></li>
                         <li class=""><a href="{{ route('report.memberplay_v2') }}" class="active">รายงานการเล่น</a></li>
-                        {{-- <li class=""><a href="{{ '/list_memberplay/0/0' }}" class="active">รายงานการเล่น สมาชิก</a></li> --}}
-                        {{-- <li class=""><a href="{{ '/member_play_casino/0' }}" class="active">รายงานการเล่น คาสิโน</a></li> --}}
-                        {{-- <li class=""><a href="{{ '/member_play_sport/0' }}" class="active">รายงานการเล่น กีฬา</a></li> --}}
-                        {{-- <li class=""><a href="{{ '/member_play_egame/0' }}" class="active">รายงานการเล่น สล็อต</a></li> --}}
-                        {{-- <li class=""><a href="{{ route('report.memberplay_byprovider') }}" class="active">รายงานการเล่นแยกตามค่ายเกมส์</a></li> --}}
                         <li class=""><a href="{{ route('report.edit_balance') }}" class="active">รายงานการแก้ไขยอดเงิน</a></li>
                         <li class=""><a href="{{ '/sumtrans/0' }}" class="active">รายงานธุรกรรมโดยรวม</a></li>
 
                     </ul>
-                </li>
+                </li> --}}
                 @endif
                 <li class="menu-title">ตั้งค่า</li>
                 <li>
