@@ -77,8 +77,8 @@ class ManageMemberController extends Controller
                 }else{
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                 }
-              $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit(auth()->user()->username,$transfer->amount);
-              Log::info('Deposit Betflix '.$bf_deposit.' '.$transfer->amount.' User =  '.auth()->user()->username);
+              $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,$transfer->amount);
+              Log::info('Deposit Betflix '.$bf_deposit.' '.$transfer->amount.' User =  '.$member->username);
 
               TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
               ->line(env('APP_NAME'))
@@ -93,8 +93,8 @@ class ManageMemberController extends Controller
                     // $member->wallet_balance = (float) $member->wallet_balance -  (float) $transfer->amount;
                 }
 
-                $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw(auth()->user()->username,floor($transfer->amount));
-                Log::info('Betflix Withdraw '.$bf_deposit.' '.floor($transfer->amount).' User =  '.auth()->user()->username);
+                $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,floor($transfer->amount));
+                Log::info('Betflix Withdraw '.$bf_deposit.' '.floor($transfer->amount).' User =  '.$member->username);
 
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line(env('APP_NAME'))
