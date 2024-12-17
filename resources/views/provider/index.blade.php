@@ -50,35 +50,34 @@
                                 <td>
                                     @switch($item->category)
                                         @case("1")
-                                        <span class="badge badge-pill badge-soft-success font-size-12">Sportsbook</span>
+                                        Sportsbook
                                             @break
                                             @case("2")
-                                            <span class="badge badge-pill badge-soft-success font-size-12">Live Casino</span>
+                                            Live Casino
                                             @break
                                             @case("3")
-                                            <span class="badge badge-pill badge-soft-success font-size-12">Slot Game</span>
+                                            Slot Game
                                             @break
                                             @case("4")
-                                            <span class="badge badge-pill badge-soft-success font-size-12">Fishing Hunter</span>
+                                            Fishing Hunter
                                             @break
                                             @case("5")
-                                            <span class="badge badge-pill badge-soft-success font-size-12">Game Card</span>
+                                            Game Card
                                             @break
                                             @case("6")
-                                            <span class="badge badge-pill badge-soft-success font-size-12">Lotto</span>
+                                            Lotto
                                             @break
                                             @case("7")
-                                            <span class="badge badge-pill badge-soft-success font-size-12">E-Sport</span>
+                                            E-Sport
                                             @break
                                             @case("8")
-                                            <span class="badge badge-pill badge-soft-success font-size-12">Poker Game</span>
+                                            Poker Game
                                             @break
                                             @case("9")
-                                            <span class="badge badge-pill badge-soft-success font-size-12">Keno</span>
+                                            Keno
                                             @break
                                             @case("10")
-                                            <span class="badge badge-pill badge-soft-success font-size-12">Crypto Tradding
-                                            </span>
+                                            Crypto Tradding
                                             @break
 
                                         @default
