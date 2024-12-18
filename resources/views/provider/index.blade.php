@@ -36,6 +36,7 @@
                             <th data-field="category" data-filter-control="select" data-sortable="true">หมวดหมู่</th>
                             <th data-field="active" data-filter-control="select" data-sortable="true">สถานะ</th>
                             <th data-field="order_top"  data-sortable="true">ลำดับ</th>
+                            <th >แก้ไขลำดับ</th>
                             {{-- <th>GameList</th> --}}
                             {{-- <th data-sortable="true">created_at</th> --}}
                         </tr>
@@ -101,7 +102,10 @@
                                 </td>
                                 {{-- <td><a href="{{ route('gamelist.index',$item->product_id) }}" class="btn btn-primary">View</a></td> --}}
                                 <td>{{ $item->order_top }}
+                                </td>
+                                <td>
                                     <button type="button" class="btn btn-primary btn-sm waves-effect waves-light" onclick="editOrderTop('{{ $item->id }}')"><i class="bx bx-edit-alt"></i></button>
+
                                 </td>
                             </tr>
                         @endforeach
