@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Members;
+use Illuminate\Support\Carbon;
 
 class BetflixController extends Controller
 {
@@ -164,8 +165,11 @@ class BetflixController extends Controller
 	public function lastDay_TurnOver($username){
 
 		date_default_timezone_set("Asia/Bangkok");
-		$start_date=date('Y-m-d 00:00:00',strtotime('-1 day'));
-		$end_date=date('Y-m-d 23:59:59',strtotime('-1 day'));
+		// $start_date=date('Y-m-d 00:00:00',strtotime('-1 day'));
+		// $end_date=date('Y-m-d 23:59:59',strtotime('-1 day'));
+
+        $start_date = Carbon::yesterday()->isoFormat('YYYY-MM-DD').' 00:00:00';
+        $end_date = Carbon::yesterday()->isoFormat('YYYY-MM-DD').' 23:59:59';
 
 		$headers = array();
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
