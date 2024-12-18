@@ -29,6 +29,13 @@ class ProviderController extends Controller
         return true;
     }
 
+    public function order_top(Request $request){
+        $product = ProductList::find($request->id);
+        $product->order_top = $request->order_top;
+        $product->save();
+        return true;
+    }
+
     /**
      * Show the form for creating a new resource.
      */

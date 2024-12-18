@@ -35,6 +35,7 @@
                             <th data-field="product_name" data-filter-control="input" data-sortable="true">ชื่อ</th>
                             <th data-field="category" data-filter-control="select" data-sortable="true">หมวดหมู่</th>
                             <th data-field="active" data-filter-control="select" data-sortable="true">สถานะ</th>
+                            <th data-field="order_top"  data-sortable="true">ลำดับ</th>
                             {{-- <th>GameList</th> --}}
                             {{-- <th data-sortable="true">created_at</th> --}}
                         </tr>
@@ -99,6 +100,9 @@
                                     </div>
                                 </td>
                                 {{-- <td><a href="{{ route('gamelist.index',$item->product_id) }}" class="btn btn-primary">View</a></td> --}}
+                                <td>{{ $item->order_top }}
+                                    <button type="button" class="btn btn-primary btn-sm waves-effect waves-light" onclick="editOrderTop('{{ $item->id }}')"><i class="bx bx-edit-alt"></i></button>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -152,6 +156,49 @@
         src="https://unpkg.com/bootstrap-table@1.21.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js">
     </script>
     <script>
+        function editOrderTop(id) {
+        Swal.mixin({
+                input: 'text',
+                confirmButtonText: 'ยืนยัน &rarr;',
+                showCancelButton: true,
+                cancelButtonText: 'ยกเลิก',
+                progressSteps: ['1', '2']
+            }).queue([
+                {
+                title: 'แก้ไขลำดับการแสดงผล',
+                text: 'ลำดับ'
+                }
+            ]).then( function (result) {
+                if (result.value) {
+                        $.ajax({
+                            type: 'post',
+                            headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            url: '{{ route('provider.order_top') }}',
+                            data: { id:id,order_top:Number(result.value) },
+                            success: function (data) {
+                                if(data!=false){
+                                    Swal.fire(
+                                            {
+                                                title: 'success',
+                                                type: 'success',
+                                                confirmButtonText: 'ตกลง',
+                                                confirmButtonClass: 'btn btn-confirm mt-2'
+
+                                            }
+                                        ).then(function() {
+                                            location.reload();
+                                        });
+
+                                    }
+                                }
+                        });
+                }else if(result.dismiss == 'cancel'){
+                    console.log('cancel');
+                    }
+            })
+    }
         @if (session('status'))
 
             Swal.fire({

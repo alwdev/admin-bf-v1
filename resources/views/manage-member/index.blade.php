@@ -8,10 +8,6 @@
     .bank-logo{
         margin-bottom: 1rem;
     }
-    .badge {
-        padding: 10px;
-        font-weight: 400;
-    }
 </style>
 @endsection
 @section('content')
@@ -48,13 +44,13 @@
                 data-click-to-select="false"
                 data-pagination="true"
                 data-url="">
-                <thead  class="table-light">
+                    <thead>
                         <tr>
-                            <th data-field="username" data-sortable="true">ชื่อผู้ใช้</th>
+                            <th data-field="username" data-filter-control="input" data-sortable="true">ชื่อผู้ใช้</th>
                             @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
                             <th>รหัสผ่าน</th>
                             @endif
-                            <th data-field="fullname" data-sortable="true">ชื่อ - นามสกุล</th>
+                            <th data-field="fullname" data-filter-control="input" data-sortable="true">ชื่อ - นามสกุล</th>
                             <th data-sortable="true">ยอดเงิน</th>
                             <th>บัญชี</th>
                             <th data-sortable="true">วันที่สมัคร</th>

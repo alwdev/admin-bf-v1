@@ -113,6 +113,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/updategamestatus', [App\Http\Controllers\ProviderController::class, 'updategamestatus'])->name('gamelist.updategamestatus');
     Route::post('/updategameimage', [App\Http\Controllers\ProviderController::class, 'updategameimage'])->name('gamelist.updategameimage');
     Route::post('/updateproviderimage', [App\Http\Controllers\ProviderController::class, 'updateproviderimage'])->name('provider.updateproviderimage');
+    Route::post('/order_top', [App\Http\Controllers\ProviderController::class, 'order_top'])->name('provider.order_top');
 
     Route::get('/GetAllGame', [App\Http\Controllers\ProviderController::class, 'GetAllGame']);
 });
