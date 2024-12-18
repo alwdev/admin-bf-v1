@@ -29,16 +29,16 @@
                 </li>
                 @endif
                 @if( json_decode(auth()->user()->permissions)->report > 1  )
-                {{-- <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect"><i class="bx bxs-report"></i><span>รายงาน</span></a>
-                    <ul class="" aria-expanded="false">
+                <li>
+                    <a href="https://bo.psg777.com/bo/simpleReport" class="waves-effect"><i class="bx bxs-report"></i><span>รายงาน</span></a>
+                    {{-- <ul class="" aria-expanded="false">
                         <li class=""><a href="{{ route('report.memberplay') }}" class="active">รายงานการเล่น</a></li>
                         <li class=""><a href="{{ route('report.memberplay_v2') }}" class="active">รายงานการเล่น</a></li>
                         <li class=""><a href="{{ route('report.edit_balance') }}" class="active">รายงานการแก้ไขยอดเงิน</a></li>
                         <li class=""><a href="{{ '/sumtrans/0' }}" class="active">รายงานธุรกรรมโดยรวม</a></li>
 
-                    </ul>
-                </li> --}}
+                    </ul> --}}
+                </li>
                 @endif
                 <li class="menu-title">ตั้งค่า</li>
                 <li>
