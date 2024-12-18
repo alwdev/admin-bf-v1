@@ -288,13 +288,13 @@ class BetflixController extends Controller
         $response = curl_exec($curl);
 		curl_close($curl);
 		if(curl_errno($curl)){
-			return "error";
+			return "curl error";
 		}else{
 			$status_response = json_decode($response);
 			if($status_response->status == 'success'){
 				return $status_response->data;
 			}else{
-				return "error";
+				return $status_response;
 			}
 		}
 
