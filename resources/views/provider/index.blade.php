@@ -35,7 +35,7 @@
                             <th data-field="product_name" data-filter-control="input" data-sortable="true">ชื่อ</th>
                             <th data-field="category" data-filter-control="select" data-sortable="true">หมวดหมู่</th>
                             <th data-field="active" data-filter-control="select" data-sortable="true">สถานะ</th>
-                            <th>GameList</th>
+                            {{-- <th>GameList</th> --}}
                             {{-- <th data-sortable="true">created_at</th> --}}
                         </tr>
                     </thead>
@@ -98,7 +98,7 @@
 
                                     </div>
                                 </td>
-                                <td><a href="{{ route('gamelist.index',$item->product_id) }}" class="btn btn-primary">View</a></td>
+                                {{-- <td><a href="{{ route('gamelist.index',$item->product_id) }}" class="btn btn-primary">View</a></td> --}}
                             </tr>
                         @endforeach
                     </tbody>
