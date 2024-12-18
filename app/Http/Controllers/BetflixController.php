@@ -177,7 +177,7 @@ class BetflixController extends Controller
 		$headers[] = 'x-api-key: '.env('API_KEY');
 
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, 'https://api.bfx.fail/v4/report/summarer?start='.$start_date.'&end='.$end_date.'&username='.env('BF_AGENT').$username);
+        curl_setopt($curl, CURLOPT_URL, 'https://api.bfx.fail/v4/report/summarer?username=bhm5t30833333333&end=2024-12-17%2023%3A59%3A00&start=2024-12-17%2000%3A00%3A00');
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
@@ -192,7 +192,7 @@ class BetflixController extends Controller
 		}else{
 			$status_response = json_decode($response);
             return $status_response;
-            
+
 			if($status_response->status == 'success'){
 				return $status_response->data;
 			}else{
