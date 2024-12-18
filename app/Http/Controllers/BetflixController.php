@@ -265,7 +265,7 @@ class BetflixController extends Controller
 
 	}
 
-    public function Report_all_Provider($username,$start_day,$end_day){
+    public function Single_Member_Report_all_Provider($username,$start_day,$end_day){
 
 		date_default_timezone_set("Asia/Bangkok");
 		$start_date=date('Y-m-d',strtotime($start_day.' day'));
