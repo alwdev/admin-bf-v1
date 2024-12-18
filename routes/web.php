@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BetflixController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ManageMemberController;
 use App\Http\Controllers\ManageUserController;
@@ -77,6 +78,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/member_play_sport/{date_id}', [ReportController::class, 'member_play_sport'])->name('report.member_play_sport')->middleware('CheckPermissionUser:report,view');
     Route::get('/member_play_egame/{date_id}', [ReportController::class, 'member_play_egame'])->name('report.member_play_egame')->middleware('CheckPermissionUser:report,view');
 
+    Route::get('/Multiple_Member_Report', [BetflixController::class, 'Multiple_Member_Report'])->name('report.Multiple_Member_Report')->middleware('CheckPermissionUser:report,view');
 
     //bank account
     Route::get('/bankaccount', [App\Http\Controllers\BankAccountController::class, 'index'])->name('bankaccount.index');

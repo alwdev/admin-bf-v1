@@ -229,4 +229,39 @@ class BetflixController extends Controller
 		}
 
 	}
+
+
+    public function Multiple_Member_Report(){
+
+		date_default_timezone_set("Asia/Bangkok");
+		$start_date=date('Y-m-d',strtotime('1 day'));
+
+		$headers = array();
+		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
+        $headers[] = 'x-api-cat: '.env('API_CAT');
+		$headers[] = 'x-api-key: '.env('API_KEY');
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, 'https://api.bfx.fail/v4/report/summariez?date='.$start_date.'&page=1&upline='.env('BF_AGENT'));
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+
+        $response = curl_exec($curl);
+		curl_close($curl);
+		if(curl_errno($curl)){
+			return "error";
+		}else{
+			$status_response = json_decode($response);
+			if($status_response->status == 'success'){
+				return $status_response->data;
+			}else{
+				return "error";
+			}
+		}
+
+	}
 }
