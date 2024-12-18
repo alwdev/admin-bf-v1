@@ -243,7 +243,9 @@ class BetflixController extends Controller
     public function Multiple_Member_Report($day){
 
 		date_default_timezone_set("Asia/Bangkok");
-		$start_date=date('Y-m-d',strtotime($day.' day'));
+		$start_date=$day->isoFormat('YYYY-MM-DD');
+
+        error_log($start_date);
 
 		$headers = array();
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
@@ -312,10 +314,9 @@ class BetflixController extends Controller
     public function Single_ReportTimeProvider($username,$start_day,$end_day){
 
 		date_default_timezone_set("Asia/Bangkok");
-		$start_date=date('Y-m-d',strtotime($start_day.' day')).'%2000%3A00%3A00';
-        $end_date=date('Y-m-d',strtotime($end_day.' day')).'%2023%3A59%3A59';
-        error_log($start_date);
-        error_log($end_date);
+		$start_date=$start_day->isoFormat('YYYY-MM-DD').'%2000%3A00%3A00';
+        $end_date=$end_day->isoFormat('YYYY-MM-DD').'%2023%3A59%3A59';
+
 
 		$headers = array();
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
@@ -323,7 +324,7 @@ class BetflixController extends Controller
 		$headers[] = 'x-api-key: '.env('API_KEY');
 
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, 'https://api.bfx.fail/v4/report/summaroo?start='.$start_date.'&end='.$end_date.'&username='.env('BF_AGENT').$username);
+        curl_setopt($curl, CURLOPT_URL, 'https://api.bfx.fail/v4/report/summaroo?start='.$start_date.'&end='.$end_date.'&username='.$username);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);

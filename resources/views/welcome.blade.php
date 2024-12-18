@@ -87,12 +87,30 @@
             </div>
         </div>
     </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-animate">
+            <div class="card-body">
+                <div class="avatar-sm float-right">
+                    <span class="avatar-title bg-soft-primary rounded-circle">
+                        <i class="bx bx-user m-0 h3 text-primary"></i>
+                    </span>
+                </div>
+                <h6 class="text-muted text-uppercase mt-0">Online วันนี้</h6>
+                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $total_online,0) }}</h3>
+                {{-- <span class="badge badge-soft-primary mr-1"> +89% </span> <span class="text-muted">This Month</span> --}}
+            </div>
+        </div>
+    </div>
+
+  
+
 </div>
 <!-- end row -->
 
 <div class="row">
 
-    <div class="col-lg-8">
+    {{-- <div class="col-lg-8">
          <div class="card card-animate">
             <div class="card-body">
 
@@ -104,16 +122,12 @@
                         <h4>{{ $total_online }}</h4>
                         <p class="text-muted mb-0">Total Online today.</p>
                     </div>
-                    <div class="col-6">
-                        {{-- <h4>17</h4>
-                        <p class="text-muted mb-0">Open Compaign</p> --}}
-                    </div>
                 </div>
             </div>
         </div>
-    </div> <!-- end col -->
+    </div> <!-- end col --> --}}
 
-    <div class="col-lg-4">
+    {{-- <div class="col-lg-12">
          <div class="card card-animate">
             <div class="card-body">
 
@@ -121,18 +135,11 @@
                 <canvas id="donut-chart" class="morris-chart"  height="234"></canvas>
 
                 <div class="row text-center mt-4">
-                    {{-- <div class="col-6">
-                        <h4>5,459</h4>
-                        <p class="text-muted mb-0">Total Sales</p>
-                    </div>
-                    <div class="col-6">
-                        <h4>18</h4>
-                        <p class="text-muted mb-0">Open Compaign</p>
-                    </div> --}}
+
                 </div>
             </div>
         </div>
-    </div> <!-- end col -->
+    </div> --}}
 </div>
 <!-- end row-->
 
@@ -239,7 +246,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
-<script>
+{{-- <script>
         const backgroundColor = [
         'rgba(255, 99, 132, 1)',
         'rgba(54, 162, 235, 1)',
@@ -368,7 +375,7 @@
             }
         });
     });
-</script>
+</script> --}}
 <script src="{{asset('moment/moment.min.js')}}" type="text/javascript"></script>
 <script src="{{asset('daterangepicker/daterangepicker.js')}}" type="text/javascript"></script>
 <script type="text/javascript">

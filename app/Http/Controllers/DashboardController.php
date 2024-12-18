@@ -35,10 +35,17 @@ class DashboardController extends Controller
                 }
             }
         }
+        $topgame =[];
+            $players =app(\App\Http\Controllers\BetflixController::class)->Multiple_Member_Report(now());
+            $total_online = count($players);
+            foreach($players as $p){
+               $playersgame = app(\App\Http\Controllers\BetflixController::class)->Single_ReportTimeProvider($p->username,now(),now());
+              foreach($playersgame as $pp){
+                $topgame[] = ['provider'=>$pp->provider];
+              }
 
-            $players =[];
-
-            $topgame = [];
+            }
+            error_log(json_encode($topgame));
 
             $transfer = Transfer::join('members',function($join){
                 $join->on('members.id','=','transfer.member_id');
@@ -81,13 +88,16 @@ class DashboardController extends Controller
                 }
             }
         }
-            $players = [];
+            $players = app(\App\Http\Controllers\BetflixController::class)->Multiple_Member_Report($dateS);
+            $total_online = count($players);
+            foreach($players as $p){
+                $playersgame = app(\App\Http\Controllers\BetflixController::class)->Single_ReportTimeProvider($p->username,now(),now());
+               foreach($playersgame as $pp){
+                 $topgame[] = ['provider'=>$pp->provider];
+               }
 
-            foreach ($players as $hour) {
-                $total_online += count($hour);
-            }
-
-            $topgame = [];
+             }
+             error_log(json_encode($topgame));
 
             $transfer = Transfer::join('members',function($join){
                 $join->on('members.id','=','transfer.member_id');
