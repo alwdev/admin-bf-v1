@@ -194,7 +194,7 @@ class BetflixController extends Controller
 			$status_response = json_decode($response);
 
 			if($status_response->status == 'success'){
-				return $status_response->data->turnover;
+				return $status_response->data;
 			}else{
 				return $status_response;
 			}
