@@ -164,12 +164,13 @@ class BetflixController extends Controller
 
 	public function lastDay_TurnOver($username){
 
-		date_default_timezone_set("Asia/Bangkok");
-		// $start_date=date('Y-m-d 00:00:00',strtotime('-1 day'));
-		// $end_date=date('Y-m-d 23:59:59',strtotime('-1 day'));
+		date_default_timezone_set("Asia/Bangkok");;
 
-        $start_date = Carbon::yesterday()->isoFormat('YYYY-MM-DD').' 00:00:00';
-        $end_date = Carbon::yesterday()->isoFormat('YYYY-MM-DD').' 23:59:59';
+        $start_date = Carbon::yesterday()->isoFormat('YYYY-MM-DD').'%2000%3A00%3A00';
+        $end_date =Carbon::yesterday()->isoFormat('YYYY-MM-DD').'%2023%3A59%3A59';
+
+        error_log($start_date);
+        error_log($end_date);
 
 		$headers = array();
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
@@ -177,7 +178,7 @@ class BetflixController extends Controller
 		$headers[] = 'x-api-key: '.env('API_KEY');
 
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, 'https://api.bfx.fail/v4/report/summarer?username=bhm5t30833333333&end=2024-12-17%2023%3A59%3A00&start=2024-12-17%2000%3A00%3A00');
+        curl_setopt($curl, CURLOPT_URL, 'https://api.bfx.fail/v4/report/summarer?username='.env('BF_AGENT').$username.'&end='.$end_date.'&start='.$start_date);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
@@ -188,13 +189,12 @@ class BetflixController extends Controller
         $response = curl_exec($curl);
 		curl_close($curl);
 		if(curl_errno($curl)){
-			return "error";
+			return "curl error";
 		}else{
 			$status_response = json_decode($response);
-            return $status_response;
 
 			if($status_response->status == 'success'){
-				return $status_response->data;
+				return $status_response->data->turnover;
 			}else{
 				return $status_response;
 			}
@@ -204,8 +204,11 @@ class BetflixController extends Controller
 	public function last7Day_TurnOver($username){
 
 		date_default_timezone_set("Asia/Bangkok");
-		$start_date=date('Y-m-d',strtotime('-7 day'));
-		$end_date=date('Y-m-d',strtotime('-1 day'));
+		$start_date = Carbon::now()->subDays(7)->isoFormat('YYYY-MM-DD').'%2000%3A00%3A00';
+        $end_date =Carbon::yesterday()->isoFormat('YYYY-MM-DD').'%2023%3A59%3A59';
+
+        error_log($start_date);
+        error_log($end_date);
 
 		$headers = array();
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
@@ -213,7 +216,7 @@ class BetflixController extends Controller
 		$headers[] = 'x-api-key: '.env('API_KEY');
 
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, 'https://api.bfx.fail/v4/report/summarer?start='.$start_date.'&end='.$end_date.'&username='.env('BF_AGENT').$username);
+        curl_setopt($curl, CURLOPT_URL, 'https://api.bfx.fail/v4/report/summarer?username='.env('BF_AGENT').$username.'&end='.$end_date.'&start='.$start_date);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
