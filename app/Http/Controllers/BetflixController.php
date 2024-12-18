@@ -231,10 +231,10 @@ class BetflixController extends Controller
 	}
 
 
-    public function Multiple_Member_Report(){
+    public function Multiple_Member_Report($day){
 
 		date_default_timezone_set("Asia/Bangkok");
-		$start_date=date('Y-m-d',strtotime('1 day'));
+		$start_date=date('Y-m-d',strtotime($day.' day'));
 
 		$headers = array();
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
