@@ -191,6 +191,8 @@ class BetflixController extends Controller
 			return "error";
 		}else{
 			$status_response = json_decode($response);
+            return $status_response;
+            
 			if($status_response->status == 'success'){
 				return $status_response->data;
 			}else{
