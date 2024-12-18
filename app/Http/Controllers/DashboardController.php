@@ -81,23 +81,13 @@ class DashboardController extends Controller
                 }
             }
         }
-            $players = DB::table('gplay')
-            ->select(DB::raw('hour(created_at) as hour'),'playerUsername' )  //  \DB::raw('COUNT(username) as count')
-            ->groupBy('hour', 'playerUsername')
-            ->where('eventName','debit')
-            ->whereBetween('created_at', [$dateS->format('Y-m-d')." 00:00:00", $dateE->format('Y-m-d')." 23:59:59"])
-            ->get()->groupBy('hour');
+            $players = [];
 
             foreach ($players as $hour) {
                 $total_online += count($hour);
             }
 
-            $topgame = DB::table('gplay')
-            ->select(DB::raw('COUNT(gameName) as count'),'gameName' )  //
-            ->groupBy('gameName')
-            ->where('eventName','debit')
-            ->whereBetween('created_at', [$dateS->format('Y-m-d')." 00:00:00", $dateE->format('Y-m-d')." 23:59:59"])->limit(10)
-            ->get();
+            $topgame = [];
 
             $transfer = Transfer::join('members',function($join){
                 $join->on('members.id','=','transfer.member_id');

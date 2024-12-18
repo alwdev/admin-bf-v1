@@ -286,7 +286,44 @@ class BetflixController extends Controller
 		$headers[] = 'x-api-key: '.env('API_KEY');
 
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, 'https://api.bfx.fail/v4/report/summary2?start='.$start_date.'&end='.$end_date.'&username='.env('BF_AGENT').$username);
+        curl_setopt($curl, CURLOPT_URL, 'https://api.bfx.fail/v4/report/summaryNEW?start='.$start_date.'&end='.$end_date.'&username='.env('BF_AGENT').$username);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+
+        $response = curl_exec($curl);
+		curl_close($curl);
+		if(curl_errno($curl)){
+			return "curl error";
+		}else{
+			$status_response = json_decode($response);
+			if($status_response->status == 'success'){
+				return $status_response->data;
+			}else{
+				return $status_response;
+			}
+		}
+
+	}
+
+    public function Single_ReportTimeProvider($username,$start_day,$end_day){
+
+		date_default_timezone_set("Asia/Bangkok");
+		$start_date=date('Y-m-d',strtotime($start_day.' day')).'%2000%3A00%3A00';
+        $end_date=date('Y-m-d',strtotime($end_day.' day')).'%2023%3A59%3A59';
+        error_log($start_date);
+        error_log($end_date);
+
+		$headers = array();
+		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
+        $headers[] = 'x-api-cat: '.env('API_CAT');
+		$headers[] = 'x-api-key: '.env('API_KEY');
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, 'https://api.bfx.fail/v4/report/summaroo?start='.$start_date.'&end='.$end_date.'&username='.env('BF_AGENT').$username);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
