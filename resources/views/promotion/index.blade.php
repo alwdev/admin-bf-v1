@@ -1,5 +1,12 @@
 @extends('layouts.guest')
 @section('styles')
+<style>
+    .badge {
+
+        padding: 10px;
+        font-weight: 400;
+    }
+</style>
 @endsection
 @section('content')
    <!-- start page title -->
@@ -21,12 +28,12 @@
 <!-- end page title -->
 <div class="card-header" style="background: transparent;">
     {{-- @if( json_decode(auth()->user()->permissions)->manageuser > 2  ) --}}
-    <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('promotion.create') }}">เพิ่มโปรโมชั่น</a>
+   
     {{-- @endif --}}
 </div>
 <div class="row">
     <div class="col-12 card">
-        <div class="card-body">
+        <div class="card-body"> <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('promotion.create') }}">เพิ่มโปรโมชั่น</a>
             <h4 class="card-title"></h4>
             <p class="card-subtitle mb-4">
             </p>
@@ -39,11 +46,11 @@
                 data-click-to-select="false"
                 data-pagination="true"
                 data-url="">
-                <thead>
+                <thead  class="table-light">
                     <tr>
-                        <th data-field="name" data-filter-control="input" data-sortable="true">โปรโมชั่น</th>
-                        <th data-field="bonus" data-filter-control="input" data-sortable="true">โบนัส (%)</th>
-                        <th data-field="turnover" data-filter-control="select" data-sortable="true">เทิร์นโอเวอร์ (%)</th>
+                        <th data-field="name" data-sortable="true">โปรโมชั่น</th>
+                        <th data-field="bonus" data-sortable="true">โบนัส (%)</th>
+                        <th data-field="turnover" data-sortable="true">เทิร์นโอเวอร์ (%)</th>
                         <th data-sortable="true">วันที่สร้าง</th>
                         {{-- @if( json_decode(auth()->user()->permissions)->transfer > 2  ) --}}
                         <th data-sortable="true"></th>

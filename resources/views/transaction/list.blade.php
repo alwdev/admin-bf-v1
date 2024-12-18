@@ -1,5 +1,12 @@
 @extends('layouts.guest')
 @section('styles')
+<style>
+    .badge {
+
+        padding: 10px;
+        font-weight: 400;
+    }
+</style>
 @endsection
 @section('content')
    <!-- start page title -->
@@ -35,10 +42,10 @@
                 data-click-to-select="false"
                 data-pagination="true"
                 data-url="">
-                <thead>
+                <thead  class="table-light">
                     <tr>
-                        <th data-field="username" data-filter-control="input" data-sortable="true">สมาชิก</th>
-                        <th data-field="type" data-filter-control="select" data-sortable="true">type</th>
+                        <th data-field="username" data-sortable="true">สมาชิก</th>
+                        <th data-field="type" data-sortable="true">type</th>
                         <th data-field="amount" data-sortable="true">จำนวนเงิน</th>
                         <th data-sortable="true">วันที่ทำรายการ</th>
                         <th data-sortable="true">จาก</th>

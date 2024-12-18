@@ -25,10 +25,10 @@
                 <p class="card-subtitle mb-4">
                 </p>
 
-                <table id="table" class="table m-10 table-bordered" data-filter-control="true" data-toggle="table"
+                <table id="basic-datatable" class="table m-10 table-bordered" data-filter-control="true" data-toggle="table"
                     data-search="true" data-show-export="false" data-click-to-select="false" data-pagination="true"
                     data-url="">
-                    <thead>
+                    <thead  class="table-light">
                         <tr>
                             <th></th>
                             <th data-field="product_id" data-filter-control="input" data-sortable="true">รหัส</th>

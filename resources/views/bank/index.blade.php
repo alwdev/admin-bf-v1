@@ -4,6 +4,13 @@
 <link href="{{ asset('plugins/datatables/responsive.bootstrap4.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('plugins/datatables/buttons.bootstrap4.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('plugins/datatables/select.bootstrap4.css')}}" rel="stylesheet" type="text/css" /> --}}
+<style>
+    .badge {
+
+        padding: 10px;
+        font-weight: 400;
+    }
+</style>
 @endsection
 @section('content')
    <!-- start page title -->
@@ -24,14 +31,15 @@
 </div>
 <!-- end page title -->
 <div class="card-header" style="background: transparent;">
-    @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
-    <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('bankaccount.create') }}">เพิ่มสมุดบัญชี</a>
-    @endif
+
 </div>
 <div class="row card">
     <div class="col-12">
 
-        <div class="card-body">
+        <div class="card-body">    
+            @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
+    <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('bankaccount.create') }}">เพิ่มสมุดบัญชี</a>
+    @endif
             <h4 class="card-title"></h4>
             <p class="card-subtitle mb-4">
             </p>
@@ -44,12 +52,12 @@
                 data-click-to-select="false"
                 data-pagination="true"
                 data-url="">
-                    <thead>
+                <thead  class="table-light">
                         <tr>
                             <th></th>
-                            <th data-field="bank_name" data-filter-control="select" data-sortable="true">ธนาคาร</th>
-                            <th data-field="account_name" data-filter-control="input" data-sortable="true">ชื่อบัญชี</th>
-                            <th data-field="account_no" data-filter-control="input" data-sortable="true">หมายเลขบัญชี</th>
+                            <th data-field="bank_name"  data-sortable="true">ธนาคาร</th>
+                            <th data-field="account_name" data-sortable="true">ชื่อบัญชี</th>
+                            <th data-field="account_no" data-sortable="true">หมายเลขบัญชี</th>
                             <th class="text-center">สถานะ</th>
                             <th data-sortable="true">อัพเดทล่าสุด</th>
                             @if( json_decode(auth()->user()->permissions)->member > 2  )
