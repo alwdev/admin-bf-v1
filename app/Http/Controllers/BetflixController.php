@@ -155,7 +155,7 @@ class BetflixController extends Controller
 			if($status_response->status == 'success'){
 				return $status_response->data->total_credit;
 			}else{
-				return "error";
+				return $status_response;
 			}
 		}
 
@@ -190,7 +190,7 @@ class BetflixController extends Controller
 			if($status_response->status == 'success'){
 				return $status_response->data;
 			}else{
-				return "error";
+				return $status_response;
 			}
 		}
 
