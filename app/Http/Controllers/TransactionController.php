@@ -84,7 +84,7 @@ class TransactionController extends Controller
 
     public function smsOTP(Request $request){
         $log = new Logs;
-        $log->log = "SMS : ".$request->sms;
+        $log->log = "SMS otp : ".$request->sms;
         $log->save();
 
         try{
@@ -103,11 +103,11 @@ class TransactionController extends Controller
             }
 
         } catch(\Exception $e){
-            // Log::error("Error : ".$e->getMessage());
-            // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-            //     ->line('BOT '.env('APP_NAME'))
-            //     ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
-            //     ->send();
+            Log::error("Error : ".$e->getMessage());
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT '.env('APP_NAME'))
+                ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
+                ->send();
             return response()->json(['message' => 'พบข้อผิดพลาดในการตรวจสอบ SMS'], 400);
         }
     }
@@ -233,7 +233,7 @@ class TransactionController extends Controller
 
     public function approvewithdraw(Request $request)
     {
-        // error_log($request->getContent());
+        Log::info("approvewithdraw ".$request->getContent());
         $member = Members::find($request->member_id);
         $transfer = Transfer::find($request->id);
         error_log($request->type.' approve '.$member->username.' Balance =  '.$member->wallet_balance.' transfer amount ='.$transfer->amount);
