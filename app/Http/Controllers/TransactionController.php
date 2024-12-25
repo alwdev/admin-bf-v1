@@ -37,40 +37,39 @@ class TransactionController extends Controller
     }
 
     public function checkTurnOver($mid){
-        return "ผ่าน";
-        // $check_transfers = Transfer::where('member_id',$mid)->where('type','deposit')->latest('created_at')->first();
-        // if($check_transfers){
-        //     if($check_transfers->promotion_id != 0){
-        //         $check_balance = Members::where('id',$mid)->first();
+        $member = Members::where('id',$mid)->first();
+        $turn_over = app(\App\Http\Controllers\BetflixController::class)->lastDay_TurnOver($member->username);
 
-        //         $payout = History::where('username',$check_balance->username)->where('created_at','>=',$check_transfers->created_at)->get();
-        //         $turn_over = 0;
-        //         foreach($payout as $turn){
-        //             $turn_over += $turn->amount;
-        //         }
-        //         $current_balance = $check_balance->wallet_balance;
-        //         $last_transfers = $check_transfers->amount;
+        $check_transfers = Transfer::where('member_id',$mid)->where('type','deposit')->latest('created_at')->first();
+        if($check_transfers){
+            if($check_transfers->promotion_id != 0){
+                $check_balance = Members::where('id',$mid)->first();
 
-        //         $promotion = Promotion::find($check_transfers->promotion_id);
-        //         if(!is_null($promotion)){
+                $turn_over =app(\App\Http\Controllers\BetflixController::class)->lastDay_TurnOver($member->username);
 
-        //             if($promotion->id == 1){
-        //                 if($turn_over >= 100){
-        //                     return "ผ่าน";
-        //                 }else{
-        //                     return $turn_over;
-        //                 }
-        //             }else{
+                $current_balance = $check_balance->wallet_balance;
+                $last_transfers = $check_transfers->amount;
 
-        //                 if($turn_over > ($last_transfers * (int) $promotion->turnover)){
-        //                     return "ผ่าน";
-        //                 }else{
-        //                     return $turn_over;
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+                $promotion = Promotion::find($check_transfers->promotion_id);
+                if(!is_null($promotion)){
+
+                    if($promotion->id == 1){
+                        if($turn_over >= 100){
+                            return "ผ่าน";
+                        }else{
+                            return $turn_over;
+                        }
+                    }else{
+
+                        if($turn_over > ($last_transfers * (int) $promotion->turnover)){
+                            return "ผ่าน";
+                        }else{
+                            return $turn_over;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public function Checktransfer(){
