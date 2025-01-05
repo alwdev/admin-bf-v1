@@ -59,6 +59,9 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
+    Route::get('/affiliate', [SettingController::class, 'affiliate'])->name('setting.affiliate');
+    Route::post('/affiliate_deposit/update', [SettingController::class, 'affiliate_deposit_update'])->name('setting.affiliate_deposit_update');
+    Route::post('/affiliate_winlose/update', [SettingController::class, 'affiliate_winlose_update'])->name('setting.affiliate_winlose_update');
     Route::post('/maintenance', [SettingController::class, 'maintenance'])->name('setting.maintenance');
 
     //Report

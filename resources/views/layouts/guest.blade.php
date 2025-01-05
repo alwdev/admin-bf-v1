@@ -33,6 +33,17 @@
                 border-color: #af8433;
             }
         </style>
+        <style>
+            .menu-setting.mm-active,.li-setting{
+                background-color: white !important;
+                ul{
+                    background-color: white !important;
+                }
+            }
+            .menu-sub-setting{
+                    background-color: white !important;
+                };
+        </style>
         @yield('styles')
     </head>
     <body class="dark-mode">
