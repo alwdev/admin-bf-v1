@@ -59,6 +59,15 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
+    Route::get('/setting/popup', [SettingController::class, 'popup'])->name('setting.popup');
+    Route::post('/setting/popup_create', [SettingController::class, 'popup_create'])->name('setting.popup_create');
+    Route::get('/setting/level', [SettingController::class, 'level'])->name('setting.level');
+    Route::post('/setting/level_create', [SettingController::class, 'level_create'])->name('setting.level_create');
+    Route::post('/setting/level_update', [SettingController::class, 'level_update'])->name('setting.level_update');
+    Route::post('/setting/level_destroy', [SettingController::class, 'level_destroy'])->name('setting.level_destroy');
+    Route::post('/setting/deposit', [SettingController::class, 'deposit'])->name('setting.deposit');
+    Route::post('/setting/withdraw', [SettingController::class, 'withdraw'])->name('setting.withdraw');
+    Route::post('/setting/cashback', [SettingController::class, 'cashback'])->name('setting.cashback');
     Route::get('/affiliate', [SettingController::class, 'affiliate'])->name('setting.affiliate');
     Route::post('/affiliate_deposit/update', [SettingController::class, 'affiliate_deposit_update'])->name('setting.affiliate_deposit_update');
     Route::post('/affiliate_winlose/update', [SettingController::class, 'affiliate_winlose_update'])->name('setting.affiliate_winlose_update');

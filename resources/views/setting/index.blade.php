@@ -36,7 +36,7 @@
                         <input type="checkbox" class="custom-control-input" @if($setting->maintenance == 1) checked @endif id="ismaintence" name="ismaintence">
                         <label class="custom-control-label" for="ismaintence">Maintenance</label>
                     </div>
-                    <button type="button" onclick="formsubmit()" class="btn btn-primary waves-effect waves-light mt-4">บันทึก</button>
+                    <button type="button" onclick="formsubmit('#form-maintenance')" class="btn btn-primary waves-effect waves-light mt-4">บันทึก</button>
                 </form>
             </div>
             <!-- end card-body-->
@@ -44,18 +44,112 @@
         <!-- end card -->
     </div>
     <!-- end col -->
-
-    <div class="col-xl-6">
-
-
-    </div>
-    <!-- end col -->
 </div>
+    <!-- end col -->
+    <div class="row">
+        <div class="col-xl-4 d-flex">
+            <div class="card flex-fill">
+               <div class="card-body">
+                   <h4 class="card-title">ตั้งค่าฝากเงิน</h4>
+                   <form id="form-maintenance2" action="{{ route('setting.deposit') }}" method="post">
+                       @csrf
+                       <br>
+                       <div class="mb-2">
+                           <label class="" for="min_deposit">ฝากขั้นต่ำ</label>
+                           <input type="text" class="form-control" name="min_deposit" value="{{ $setting->min_deposit }}">
+                       </div>
+                       <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input"@if($setting->is_enable_min_deposit == 1) checked @endif id="is_enable_min_deposit" name="is_enable_min_deposit">
+                            <label class="custom-control-label" for="is_enable_min_deposit">สถานะ 
+                               @if($setting->is_enable_min_deposit == 1) 
+                               <span class="badge text-bg-success text-success">ใช้งาน</span>
+                               @else
+                               <span class="badge text-bg-danger text-danger">ปิดใช้งาน</span>
+                                @endif
+                            </label>
+                        </div>
+                       <button type="button" onclick="formsubmit('#form-maintenance2')" class="btn btn-primary waves-effect waves-light mt-4">บันทึก</button>
+                   </form>
+               </div>
+               <!-- end card-body-->
+           </div>
+           <!-- end card -->
+       </div>
+        <div class="col-xl-4 d-flex">
+            <div class="card flex-fill">
+               <div class="card-body">
+                   <h4 class="card-title">ตั้งค่าถอนเงิน</h4>
+                   <form id="form-maintenance3" action="{{ route('setting.withdraw') }}" method="post">
+                       @csrf
+                       <br>
+                       <div class="mb-2">
+                           <label class="" for="min_withdraw">ถอนขั้นต่ำ</label>
+                           <input type="text" class="form-control" name="min_withdraw" value="{{ $setting->min_withdraw }}">
+                       </div>
+                       <div class="mb-2">
+                           <label class="" for="auto_min_withdraw">ถอนออโต้เมื่อยอดน้อยกว่า หรือ เท่ากับ</label>
+                           <input type="text" class="form-control" name="auto_min_withdraw" value="{{ $setting->auto_min_withdraw }}">
+                       </div>
+                       <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" @if($setting->is_enable_auto_withdraw == 1) checked @endif id="is_enable_auto_withdraw" name="is_enable_auto_withdraw">
+                            <label class="custom-control-label" for="is_enable_auto_withdraw">การถอนออโต้ 
+                               @if($setting->is_enable_auto_withdraw == 1) 
+                               <span class="badge text-bg-success text-success">ใช้งาน</span>
+                               @else
+                               <span class="badge text-bg-danger text-danger">ปิดใช้งาน</span>
+                                @endif
+                            </label>
+                        </div>
+                       <button type="button" onclick="formsubmit('#form-maintenance3')" class="btn btn-primary waves-effect waves-light mt-4">บันทึก</button>
+                   </form>
+               </div>
+               <!-- end card-body-->
+           </div>
+           <!-- end card -->
+       </div>
+        <div class="col-xl-4 d-flex">
+            <div class="card flex-fill">
+               <div class="card-body">
+                   <h4 class="card-title">ตั้งค่า Comission (คืนยอดเสีย)</h4>
+                   <form id="form-maintenance4" action="{{ route('setting.cashback') }}" method="post">
+                       @csrf
+                       <br>
+                       <div class="mb-2">
+                           <label class="" for="cashback_percent">คืน(เปอร์เซ็นต์)</label>
+                           <input type="text" class="form-control" name="cashback_percent" value="{{ $setting->cashback_percent }}">
+                       </div>
+                       <div class="mb-2">
+                           <label class="" for="cashback_turnover">เทิร์นที่ต้องทำ(เท่า)</label>
+                           <input type="text" class="form-control" name="cashback_turnover" value="{{ $setting->cashback_turnover }}">
+                       </div>
+                       <div class="mb-2">
+                           <label class="" for="cashback_min_withdraw">ถอนยอดขั้นต่ำ(หน่วย)</label>
+                           <input type="text" class="form-control" name="cashback_min_withdraw" value="{{ $setting->cashback_min_withdraw }}">
+                       </div>
+                       <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" @if($setting->is_enable_cashback == 1) checked @endif id="is_enable_cashback" name="is_enable_cashback">
+                            <label class="custom-control-label" for="is_enable_cashback">สถานะ 
+                               @if($setting->is_enable_cashback == 1) 
+                               <span class="badge text-bg-success text-success">ใช้งาน</span>
+                               @else
+                               <span class="badge text-bg-danger text-danger">ปิดใช้งาน</span>
+                                @endif
+                            </label>
+                        </div>
+                       <button type="button" onclick="formsubmit('#form-maintenance4')" class="btn btn-primary waves-effect waves-light mt-4">บันทึก</button>
+                   </form>
+               </div>
+               <!-- end card-body-->
+           </div>
+           <!-- end card -->
+       </div>
+        <!-- end col -->
+    </div>
 <!-- end row-->
 @endsection
 @section('scripts')
     <script>
-        function formsubmit() {
+         function formsubmit(form) {
             Swal.fire({
             title: "ต้องการบันทึกข้อมูลหรือไม่?",
             // text: "You won't be able to revert this!",
@@ -67,7 +161,7 @@
             cancelButtonText: "ยกเลิก",
             }).then((result) => {
                 if (result.value) {
-                    $('#form-maintenance').submit();
+                    $(form).submit();
                 }
             });
         }

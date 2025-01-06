@@ -25,8 +25,8 @@
 <!-- end page title -->
 <!-- end row-->
  <div class="row">
-    <div class="col-xl-6">
-        <div class="card">
+    <div class="col-xl-6 d-flex">
+        <div class="card flex-fill">
            <div class="card-body">
                <h4 class="card-title">แนะนำเพื่อน | ยอดฝาก</h4>
                <form id="form-maintenance" action="{{ route('setting.affiliate_deposit_update') }}" method="post">
@@ -77,8 +77,8 @@
        </div>
        <!-- end card -->
    </div>
-    <div class="col-xl-6">
-        <div class="card">
+    <div class="col-xl-6 d-flex">
+        <div class="card flex-fill">
            <div class="card-body">
                <h4 class="card-title">แนะนำเพื่อน | ยอดเดิมพัน/ยอดเสีย</h4>
                <form id="form-maintenance2" action="{{ route('setting.affiliate_winlose_update') }}" method="post">
@@ -94,7 +94,12 @@
                    </div>
                    <div class="mb-2">
                        <label class="" for="af_receive_percent_winlose_1">ได้รับ % จากยอดเล่นของเพื่อน</label>
-                       <input type="text" class="form-control" name="af_receive_percent_winlose_1" value="{{ $affiliate->af_receive_percent_winlose_1 }}">
+                        {{-- <input type="text" class="form-control" name="af_receive_percent_winlose_1" value="{{ $affiliate->af_receive_percent_winlose_1 }}"> --}}
+                        <select type="text" class="form-control" name="af_receive_percent_winlose_1" required >
+                        <option></option>
+                        <option value="ยอดเสีย" @if($affiliate->af_receive_percent_winlose_1 == 'ยอดเสีย') @selected(true) @endif>ยอดเสีย</option>
+                        <option value="ยอดเดิมพัน" @if($affiliate->af_receive_percent_winlose_1 == 'ยอดเดิมพัน') @selected(true) @endif>ยอดเดิมพัน</option>
+                    </select>
                    </div>
                    <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input"@if($affiliate->is_enable_af_winlose == 1) checked @endif id="is_enable_af_winlose" name="is_enable_af_winlose">

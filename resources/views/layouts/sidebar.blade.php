@@ -64,10 +64,12 @@
                     </li>
                     <li class="li-setting">
                         <a href="#" class="waves-effect menu-setting"><i class='bx bx-cog'></i><span>ตั้งค่า</span></a>
-                           <ul class="" aria-expanded="false">
-                                <li class="menu-sub-setting"><a href="{{ route('setting.index') }}" class="active">ตั้งค่าเว็บ</a></li>
-                                <li class="menu-sub-setting"><a href="{{ route('setting.affiliate') }}" class="active">ตั้งการแนะนำ</a></li>
-                            </ul>
+                        <ul class="" aria-expanded="false">
+                            <li class="menu-sub-setting"><a href="{{ route('setting.index') }}" class="active">ตั้งค่าเว็บ</a></li>
+                            <li class="menu-sub-setting"><a href="{{ route('setting.affiliate') }}" class="active">ตั้งการแนะนำ</a></li>
+                            <li class="menu-sub-setting"><a href="{{ route('setting.popup') }}" class="active">ตั้งค่าป๊อบอัพ</a></li>
+                            <li class="menu-sub-setting"><a href="{{ route('setting.level') }}" class="active">ตั้งค่าระดับสมาชิก</a></li>
+                        </ul>
                     </li>
                     {{-- @endif --}}
                 @endif
