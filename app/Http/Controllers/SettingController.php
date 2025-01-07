@@ -7,6 +7,7 @@ use App\Models\Setting;
 use App\Models\Affiliate;
 use App\Models\Popup;
 use App\Models\Level;
+use App\Models\Ranking;
 
 class SettingController extends Controller
 {
@@ -36,6 +37,30 @@ class SettingController extends Controller
     {
         $list = Level::orderBy('rank', 'asc')->get();
         return view('setting.level',compact('list'));
+    }
+
+    public function mission()
+    {
+        $setting = Setting::first();
+        return view('setting.mission',compact('setting'));
+    }
+
+    public function ranking()
+    {
+        $list = Ranking::orderBy('rank', 'asc')->get();
+        return view('setting.ranking',compact('list'));
+    }
+
+    public function deposit_continuously()
+    {
+        $setting = Setting::first();
+        return view('setting.continuously',compact('setting'));
+    }
+
+    public function point()
+    {
+        $setting = Setting::first();
+        return view('setting.point',compact('setting'));
     }
 
     public function popup_create(Request $request)
@@ -110,6 +135,48 @@ class SettingController extends Controller
     }
 
 
+    public function ranking_create(Request $request)
+    {   
+
+        $ranking = new Ranking;
+        $ranking->credit = $request->credit;
+        $ranking->diamond = $request->diamond;
+        $ranking->exp = $request->exp;
+        $ranking->rank = $request->rank;
+        if($request->image){
+            $fileName = rand().'.'.$request->image->extension();
+            $request->image->move(public_path('images/ranking'), $fileName);
+            $ranking->image = "/images/ranking/".$fileName;
+        }
+        $ranking->save();
+        return redirect()->route('setting.ranking')->with('status','success');
+    }
+
+    public function ranking_update(Request $request)
+    {   
+
+        $ranking = Ranking::find($request->id);
+        $ranking->credit = $request->credit;
+        $ranking->diamond = $request->diamond;
+        $ranking->exp = $request->exp;
+        $ranking->rank = $request->rank;
+        if($request->image){
+            $fileName = rand().'.'.$request->image->extension();
+            $request->image->move(public_path('images/ranking'), $fileName);
+            $ranking->image = "/images/ranking/".$fileName;
+        }
+        $ranking->save();
+        return redirect()->route('setting.ranking')->with('status','success');
+    }
+
+    public function ranking_destroy(Request $request)
+    {   
+        $ranking = Ranking::find($request->id);
+        $ranking->delete();
+        return redirect()->route('setting.ranking')->with('status','success');
+    }
+
+
 
     public function affiliate_deposit_update(Request $request){
         // dd($request);
@@ -136,6 +203,60 @@ class SettingController extends Controller
         $affiliate->save();
 
         return redirect()->route('setting.affiliate')->with('status','success');
+    }
+
+    public function deposit_continuously_update(Request $request){
+        $setting = Setting::first();
+        $setting->continuously_receive = $request->continuously_receive;
+        $setting->continuously_login = $request->continuously_login;
+        $setting->continuously_min_deposit = $request->continuously_min_deposit;
+        $setting->is_enable_continuously = (isset($request->is_enable_continuously) ? 1 : 0);
+        $setting->save();
+
+        return redirect()->route('setting.deposit_continuously')->with('status','success');
+    }
+
+    public function point_update(Request $request){
+        $setting = Setting::first();
+        $setting->point = $request->point;
+        $setting->turnover_point = $request->turnover_point;
+        $setting->is_enable_point = (isset($request->is_enable_point) ? 1 : 0);
+        $setting->save();
+
+        return redirect()->route('setting.point')->with('status','success');
+    }
+
+    public function mission_deposit_update(Request $request){
+        $setting = Setting::first();
+        $setting->mission_deposit_goal = $request->mission_deposit_goal;
+        $setting->mission_deposit_point = $request->mission_deposit_point;
+        $setting->mission_deposit_credit = $request->mission_deposit_credit;
+        $setting->is_enable_mission_deposit = (isset($request->is_enable_mission_deposit) ? 1 : 0);
+        $setting->save();
+
+        return redirect()->route('setting.mission')->with('status','success');
+    }
+
+    public function mission_play_update(Request $request){
+        $setting = Setting::first();
+        $setting->mission_play_goal = $request->mission_play_goal;
+        $setting->mission_play_point = $request->mission_play_point;
+        $setting->mission_play_credit = $request->mission_play_credit;
+        $setting->is_enable_mission_play = (isset($request->is_enable_mission_play) ? 1 : 0);
+        $setting->save();
+
+        return redirect()->route('setting.mission')->with('status','success');
+    }
+
+    public function mission_win_update(Request $request){
+        $setting = Setting::first();
+        $setting->mission_win_goal = $request->mission_win_goal;
+        $setting->mission_win_point = $request->mission_win_point;
+        $setting->mission_win_credit = $request->mission_win_credit;
+        $setting->is_enable_mission_win = (isset($request->is_enable_mission_win) ? 1 : 0);
+        $setting->save();
+
+        return redirect()->route('setting.mission')->with('status','success');
     }
 
     public function deposit(Request $request){

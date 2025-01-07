@@ -59,12 +59,26 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
+    Route::get('/setting/deposit_continuously', [SettingController::class, 'deposit_continuously'])->name('setting.deposit_continuously');
+    Route::post('/setting/deposit_continuously/update', [SettingController::class, 'deposit_continuously_update'])->name('setting.deposit_continuously_update');
+    Route::get('/setting/point', [SettingController::class, 'point'])->name('setting.point');
+    Route::post('/setting/point/update', [SettingController::class, 'point_update'])->name('setting.point_update');
+
+    Route::get('/setting/mission', [SettingController::class, 'mission'])->name('setting.mission');
+    Route::post('/setting/mission_deposit/update', [SettingController::class, 'mission_deposit_update'])->name('setting.mission_deposit_update');
+    Route::post('/setting/mission_play/update', [SettingController::class, 'mission_play_update'])->name('setting.mission_play_update');
+    Route::post('/setting/mission_win/update', [SettingController::class, 'mission_win_update'])->name('setting.mission_win_update');
+
     Route::get('/setting/popup', [SettingController::class, 'popup'])->name('setting.popup');
     Route::post('/setting/popup_create', [SettingController::class, 'popup_create'])->name('setting.popup_create');
     Route::get('/setting/level', [SettingController::class, 'level'])->name('setting.level');
     Route::post('/setting/level_create', [SettingController::class, 'level_create'])->name('setting.level_create');
     Route::post('/setting/level_update', [SettingController::class, 'level_update'])->name('setting.level_update');
     Route::post('/setting/level_destroy', [SettingController::class, 'level_destroy'])->name('setting.level_destroy');
+    Route::get('/setting/ranking', [SettingController::class, 'ranking'])->name('setting.ranking');
+    Route::post('/setting/ranking_create', [SettingController::class, 'ranking_create'])->name('setting.ranking_create');
+    Route::post('/setting/ranking_update', [SettingController::class, 'ranking_update'])->name('setting.ranking_update');
+    Route::post('/setting/ranking_destroy', [SettingController::class, 'ranking_destroy'])->name('setting.ranking_destroy');
     Route::post('/setting/deposit', [SettingController::class, 'deposit'])->name('setting.deposit');
     Route::post('/setting/withdraw', [SettingController::class, 'withdraw'])->name('setting.withdraw');
     Route::post('/setting/cashback', [SettingController::class, 'cashback'])->name('setting.cashback');
