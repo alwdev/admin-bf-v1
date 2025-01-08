@@ -12,17 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Schema::create('bank_account', function (Blueprint $table) {
-            $table->id();
-            $table->string('bank_name');
-            $table->string('account_name');
-            $table->string('account_no');
-            $table->string('logo')->nullable();
-            $table->boolean('active')->default(1);
-            $table->boolean('enable')->default(1);
-            $table->foreignId('user_id');
-            $table->timestamps();
-        });
+        // Schema::create('bank_account', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('bank_name');
+        //     $table->string('account_name');
+        //     $table->string('account_no');
+        //     $table->string('logo')->nullable();
+        //     $table->boolean('active')->default(1);
+        //     $table->boolean('enable')->default(1);
+        //     $table->foreignId('user_id');
+        //     $table->timestamps();
+        // });
     }
 
     /**

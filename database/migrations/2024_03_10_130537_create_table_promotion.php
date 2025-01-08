@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('promotion', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->integer('bonus')->default(0);
-            $table->integer('turnover')->default(0);
-            $table->boolean('enable')->default(1);
-            $table->boolean('active')->default(1);
-            $table->timestamps();
-        });
+        // Schema::create('promotion', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('name');
+        //     $table->integer('bonus')->default(0);
+        //     $table->integer('turnover')->default(0);
+        //     $table->boolean('enable')->default(1);
+        //     $table->boolean('active')->default(1);
+        //     $table->timestamps();
+        // });
     }
 
     /**
