@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Members;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class BetflixController extends Controller
 {
@@ -210,6 +211,8 @@ class BetflixController extends Controller
         error_log($start_date);
         error_log($end_date);
 
+        Log::info("last7Day_TurnOver start_date= ".$start_date.", end_date=".$end_date.", username=".$username);
+
 		$headers = array();
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
         $headers[] = 'x-api-cat: '.env('API_CAT');
@@ -282,6 +285,8 @@ class BetflixController extends Controller
 		$start_date=date('Y-m-d',strtotime($start_day.' day'));
         $end_date=date('Y-m-d',strtotime($end_day.' day'));
 
+        Log::info("Single_Member_Report_all_Provider start_date= ".$start_date.", end_date=".$end_date.", username=".$username);
+
 		$headers = array();
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
         $headers[] = 'x-api-cat: '.env('API_CAT');
@@ -303,7 +308,7 @@ class BetflixController extends Controller
 		}else{
 			$status_response = json_decode($response);
 			if($status_response->status == 'success'){
-				return $status_response->data;
+				return $status_response->data->winloss;
 			}else{
 				return $status_response;
 			}
@@ -317,6 +322,7 @@ class BetflixController extends Controller
 		$start_date=$start_day->isoFormat('YYYY-MM-DD').'%2000%3A00%3A00';
         $end_date=$end_day->isoFormat('YYYY-MM-DD').'%2023%3A59%3A59';
 
+        Log::info("Single_ReportTimeProvider start_date= ".$start_date.", end_date=".$end_date.", username=".$username);
 
 		$headers = array();
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';

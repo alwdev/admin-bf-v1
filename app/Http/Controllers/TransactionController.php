@@ -149,14 +149,35 @@ class TransactionController extends Controller
 
                 if($transfer->promotion_id != 0){
                     $pro = Promotion::find($transfer->promotion_id);
-                    if($transfer->promotion_id == 1){
-                        $b =  (float) $member->wallet_balance + $transfer->amount + 100;
-                        $amount_betflix = $transfer->amount + 100;
+                    $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->get();  /// เช็คฝากครั้งแรก
+                    $user_transfer_count = $user_transfer->count();
+                    if($user_transfer_count == 0){
+
+                        if($transfer->amount == 20){  /// สมาชิกใหม่ ฝาก 20 รับ 100 บาท
+                            $bonus = 80;
+                            $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
+                            $amount_betflix = $transfer->amount + $bonus;
+                            $transfer->promotion ='สมาชิกใหม่ ฝาก 20 รับ 100 บาท';
+                        }else if($transfer->amount == 300){  /// สมาชิกใหม่ ฝาก 300 รับ 500 บาท
+                            $bonus = 200;
+                            $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
+                            $amount_betflix = $transfer->amount + $bonus;
+                            $transfer->promotion ='สมาชิกใหม่ ฝาก 300 รับ 500 บาท';
+                        }
                     }else{
-                        $b =  (float) $member->wallet_balance + (float) $transfer->amount + ((float) $transfer->amount * $pro->bonus / 100);
-                        $amount_betflix = (float) $transfer->amount + ((float) $transfer->amount * $pro->bonus / 100);
+                        $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+                        $amount_betflix = $transfer->amount;
                     }
-                    $member->wallet_balance = $b;
+
+                    // if($transfer->promotion_id == 1){
+                    //     $b =  (float) $member->wallet_balance + $transfer->amount + 100;
+                    //     $amount_betflix = $transfer->amount + 100;
+                    // }else{
+                    //     $b =  (float) $member->wallet_balance + (float) $transfer->amount + ((float) $transfer->amount * $pro->bonus / 100);
+                    //     $amount_betflix = (float) $transfer->amount + ((float) $transfer->amount * $pro->bonus / 100);
+                    // }
+
+
                 }else{
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                     $amount_betflix = (float) $transfer->amount;

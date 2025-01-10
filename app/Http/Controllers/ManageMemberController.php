@@ -68,17 +68,31 @@ class ManageMemberController extends Controller
             if($request->type=="deposit"){
                 if($transfer->promotion_id != 0){
                     $pro = Promotion::find($transfer->promotion_id);
-                    if($transfer->promotion_id == 1){
-                        $b =  (float) $member->wallet_balance + $transfer->amount + 100;
+                    $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->get();  /// เช็คฝากครั้งแรก
+                    $user_transfer_count = $user_transfer->count();
+                    if($user_transfer_count == 0){
+
+                        if($transfer->amount == 20){  /// สมาชิกใหม่ ฝาก 20 รับ 100 บาท
+                            $bonus = 80;
+                            $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
+                            $amount_betflix = $transfer->amount + $bonus;
+                            $transfer->promotion ='สมาชิกใหม่ ฝาก 20 รับ 100 บาท';
+                        }else if($transfer->amount == 300){  /// สมาชิกใหม่ ฝาก 300 รับ 500 บาท
+                            $bonus = 200;
+                            $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
+                            $amount_betflix = $transfer->amount + $bonus;
+                            $transfer->promotion ='สมาชิกใหม่ ฝาก 300 รับ 500 บาท';
+                        }
                     }else{
-                        $b =  (float) $member->wallet_balance + (float) $transfer->amount + ((float) $transfer->amount * $pro->bonus / 100);
+                        $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+                        $amount_betflix = $transfer->amount;
                     }
-                    $member->wallet_balance = $b;
                 }else{
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
+                    $amount_betflix = $transfer->amount;
                 }
-              $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($transfer->amount));
-              Log::info('Deposit Betflix '.$bf_deposit.' '.$transfer->amount.' User =  '.$member->username);
+              $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
+              Log::info('Deposit Betflix '.$bf_deposit.' '.$amount_betflix.' User =  '.$member->username);
 
               TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
               ->line(env('APP_NAME'))
@@ -202,38 +216,39 @@ class ManageMemberController extends Controller
         $members = Members::get();
 
         foreach ($members as $member) {
-            $last_play = History::where('username',$member->username)->whereDate('created_at', Carbon::yesterday())->orderby('created_at','desc')->get();
-            $last_deposit = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->whereDate('created_at', Carbon::yesterday())->orderby('created_at','desc')->get();
-            if($last_play && $last_deposit){
+            // $last_play = History::where('username',$member->username)->whereDate('created_at', Carbon::yesterday())->orderby('created_at','desc')->get();
+            $last_deposit = Transfer::where('member_id',$member->id)->where('status',2)->where('promotion_id',0)->where('type','deposit')->whereDate('created_at', Carbon::subDays(7))->get();
+            if($last_deposit){
                 $total_lose = 0;
                 $cash_back=0;
                 $amount=0;
-                $winlose=0;
+                $winlose= app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($member->username,1,7);
                 $deposit=0;
-                foreach($last_play as $t){
-                    $amount += $t->amount;
-                    $winlose += $t->winlose;
-                }
+
                 foreach($last_deposit as $a){
                     $deposit += $a->amount;
                 }
-                $total_lose =  $winlose;
-
+                if($winlose){
+                    $total_lose =  $winlose;
+                }else{
+                    $total_lose = 0;
+                }
+                
                 if($amount > $deposit) {
 
-                    // if(abs($total_lose) > 0){
-                    //     $cash_back = (float) (abs($total_lose) * 0.05);
-                    // }
-                    $cash_back = $deposit * 0.05;
+                    if(abs($total_lose) > 0){
+                        $cash_back = (float) (abs($total_lose) * 0.05);
+                    }
+                    // $cash_back = $deposit * 0.05;
 
-                    // Log::info($member->username.' play amount: ' . number_format($amount,2).', last_deposit: '.number_format($deposit,2).', total_lose:' . number_format($total_lose,2));
-                    // Log::info($member->username.'cash back: ' . number_format($cash_back,2));
-
+                    if($cash_back > 20000){
+                        $cash_back = 20000;
+                    }
                     $logs = new Logs;
                     $logs->username = $member->username;
                     $logs->log = 'last_deposit: '.number_format($deposit,2).', total_lose: ' . number_format($total_lose,2).' cash back: ' . number_format($cash_back,2);
                     $logs->save();
-                    if($cash_back > 0   )
+                    if($cash_back > 0   ){
                         Transfer::create([
                             'member_id' => $member->id,
                             'amount' => $cash_back,
@@ -247,6 +262,9 @@ class ManageMemberController extends Controller
                         ]);
                         $member->wallet_balance = (float) ($member->wallet_balance + $cash_back);
                         $member->save();
+
+                        $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($cash_back));
+                        Log::info('Betflix CashBack '.$bf_deposit.' '.floor($cash_back).' User =  '.$member->username);
                     }
                 }
 

@@ -16,6 +16,7 @@ class Transfer extends Model
         'status_code',
         'type',
         'promotion',
+        'promotion_id',
         'old_balance',
         'new_balance',
         'transfer_date'
