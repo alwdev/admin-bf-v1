@@ -154,7 +154,8 @@ class ManageMemberController extends Controller
         return substr(str_shuffle(str_repeat($str, 5)), 0, $length);
     }
 
-    public function memberlock(Request $request){
+    public function memberlock(Request $request)
+    {
         $status = 0;
         if($request->status == 1){
             $status =0;
@@ -168,7 +169,8 @@ class ManageMemberController extends Controller
         return redirect()->route('managemember.index');
     }
 
-    public function memberdelete(Request $request){
+    public function memberdelete(Request $request)
+    {
         $member = Members::find($request->member_id);
         $member->active = 0;
         $member->update_by = $request->user_id;
@@ -176,7 +178,8 @@ class ManageMemberController extends Controller
         return redirect()->route('managemember.index');
     }
 
-    public function memberEditBalance(Request $request){
+    public function memberEditBalance(Request $request)
+    {
 
         error_log($request->member_id);
         error_log($request->user_id);
@@ -222,7 +225,7 @@ class ManageMemberController extends Controller
                 $total_lose = 0;
                 $cash_back=0;
                 $amount=0;
-                $winlose= app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($member->username,1,7);
+                $winlose= app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($member->username,-7,-1);
                 $deposit=0;
 
                 foreach($last_deposit as $a){
@@ -233,7 +236,7 @@ class ManageMemberController extends Controller
                 }else{
                     $total_lose = 0;
                 }
-                
+
                 if($amount > $deposit) {
 
                     if(abs($total_lose) > 0){
@@ -272,6 +275,8 @@ class ManageMemberController extends Controller
 
         }
 
+
+    }
     function affiliate(){
 
         Log::info("Run affiliate");
@@ -361,7 +366,6 @@ class ManageMemberController extends Controller
         }
 
     }
-
     /**
      * Display the specified resource.
      */
