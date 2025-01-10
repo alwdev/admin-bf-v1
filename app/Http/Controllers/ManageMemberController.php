@@ -100,12 +100,13 @@ class ManageMemberController extends Controller
               ->line('จำนวน :'.floor($transfer->amount))
               ->send();
             }else if($request->type=="withdraw"){
-                if($transfer->promotion_id != 0){
-                    $pro = Promotion::find($transfer->promotion_id);
-                    // $member->wallet_balance = (float) $member->wallet_balance -  (float) $transfer->amount;
-                }else{
-                    // $member->wallet_balance = (float) $member->wallet_balance -  (float) $transfer->amount;
-                }
+                // if($transfer->promotion_id != 0){
+                //     $pro = Promotion::find($transfer->promotion_id);
+                //     $member->wallet_balance = (float) $member->wallet_balance -  (float) $transfer->amount;
+                // }else{
+                //     $member->wallet_balance = (float) $member->wallet_balance -  (float) $transfer->amount;
+                // }
+
 
                 $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,floor($transfer->amount));
                 Log::info('Betflix Withdraw '.$bf_deposit.' '.floor($transfer->amount).' User =  '.$member->username);
