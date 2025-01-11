@@ -134,16 +134,24 @@ class ProviderController extends Controller
         $validated = $request->validate([
             'imgupload' => 'required|mimes:png,jpg,jpeg|max:2048',
         ]);
-        $fileName = $provider.$provider_id.'.'.$request->imgupload->extension();
 
-        $request->imgupload->move(public_path('images/providers'), $fileName);
 
         $game = ProductList::find($provider_id);
+        if($request->size == "L"){
+            $fileName = $provider.$provider_id.'.'.$request->imgupload->extension();
+            $request->imgupload->move(public_path('images/providers'), $fileName);
+            $game->img = "/images/providers/".$fileName;
+            $pathtoimage = $game->img;
+        }else{
+            $fileName = $provider.$provider_id.'.'.$request->imgupload->extension();
+            $request->imgupload->move(public_path('images/mini'), $fileName);
+            $game->img_mini = "/images/mini/".$fileName;
+            $pathtoimage = $game->img_mini;
+        }
 
-        $game->img = "/images/providers/".$fileName;
         $game->save();
         //$pathtoimage = $game->image;
-        $pathtoimage = $game->img;
+        
 
         return response()->json($pathtoimage);
 

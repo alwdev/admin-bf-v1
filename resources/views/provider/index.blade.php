@@ -31,6 +31,7 @@
                     <thead  class="table-light">
                         <tr>
                             <th></th>
+                            <th>รูปเล็ก</th>
                             <th data-field="product_id" data-filter-control="input" data-sortable="true">รหัส</th>
                             <th data-field="product_name" data-filter-control="input" data-sortable="true">ชื่อ</th>
                             <th data-field="category" data-filter-control="select" data-sortable="true">หมวดหมู่</th>
@@ -45,7 +46,10 @@
                         @foreach ($products as $item)
                             <tr>
                                 <td>
-                                    <img src="{{ $item->img }}" id="gmaeImage{{ $item->id }}" onclick="chooseImage(this,{{ $item->id }},'{{ $item->product_id }}')"   class="image-upload" style="max-height: 250px;cursor: pointer;">
+                                    <img src="{{ $item->img }}" id="gmaeImage{{ $item->id }}" onclick="chooseImage(this,{{ $item->id }},'{{ $item->product_id }}','L')"   class="image-upload" style="max-height: 250px;cursor: pointer;">
+                                </td>
+                                <td>
+                                    <img src="{{ $item->img_mini }}" id="gmaeImage2{{ $item->id }}" onclick="chooseImage(this,{{ $item->id }},'{{ $item->product_id }}','S')"   class="image-upload" style="max-height: 80px;cursor: pointer;">
                                 </td>
                                 <td>{{ $item->product_id }}</td>
                                 <td>{{ $item->product_name }}</td>
@@ -121,6 +125,7 @@
             <input type="file" id="imgupload" name="imgupload" class="imgupload" style="display:none" />
             <input type="hidden" id="provider_id" name="provider_id" value="" style="display:none"/>
             <input type="hidden" id="provider" name="provider" value="" style="display:none"/>
+            <input type="hidden" id="size" name="size" value="" style="display:none"/>
     </form>
 
     <!-- end row-->
@@ -262,7 +267,7 @@
                         }
                     });
                 } else {
-                    alert(1);
+                    // alert(1);
                     if (c == false) {
                         e.checked = true;
                     } else {
@@ -274,9 +279,10 @@
         }
 
 
-        function chooseImage(e,id,provider){
+        function chooseImage(e,id,provider,size){
             $('#provider_id').val(id);
             $('#provider').val(provider);
+            $('#size').val(size);
             $('#imgupload').trigger('click');
         }
         $('#imgupload').change(function(e){
@@ -330,7 +336,11 @@
                     //console.log(response);
 
                     var  imgname= response+'?'+Math.random();
-                    $('#gmaeImage'+ $('#provider_id').val()).attr('src',imgname);
+                    if($('#size').val() == "L"){
+                        $('#gmaeImage'+ $('#provider_id').val()).attr('src',imgname);
+                    }else{
+                        $('#gmaeImage2'+ $('#provider_id').val()).attr('src',imgname);
+                    }
                     //ONLY UPDATE YOURSELF
                     // $('#sideuserimage').attr('src',imgname);
                     // $('.save-wrapper').removeClass('show');
