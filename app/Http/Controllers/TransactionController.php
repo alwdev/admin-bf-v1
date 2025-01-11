@@ -140,7 +140,7 @@ class TransactionController extends Controller
             if($transfer){
                 // return response()->json(["text"=>$chectText1,"amount"=>$amount,"key"=>$key,"transfer"=>$transfer]);
                 $member = Members::find($transfer->member_id);
-
+                $amount_betflix=0;
                 $old_balance = $member->wallet_balance;
 
                 $transfer->status = 2;
@@ -185,9 +185,11 @@ class TransactionController extends Controller
                 $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
                 Log::info('Deposit Betflix '.$bf_deposit.' '.floor($amount_betflix).' User =  '.$member->username);
 
-                $member->save();
-                $transfer->new_balance = $member->wallet_balance;
-                $transfer->save();
+                if($bf_deposit == "success"){
+                    $member->save();
+                    $transfer->new_balance = $member->wallet_balance;
+                    $transfer->save();
+                }
 
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 // ->content('Choose an option:')

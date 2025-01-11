@@ -50,8 +50,8 @@ class ManageMemberController extends Controller
         //
         $member = Members::find($request->member_id);
         $transfer = Transfer::find($request->transfer_id);
-        Log::info($request->type.'Admin approve '.$member->username.' Balance =  '.$member->wallet_balance.' transfer amount ='.$transfer->amount);
-
+        Log::info($request->type.' Admin approve '.$member->username.' Balance =  '.$member->wallet_balance.' transfer amount ='.$transfer->amount);
+        error_log($request->type.' Admin approve '.$member->username.' Balance =  '.$member->wallet_balance.' transfer amount ='.$transfer->amount);
 
         if($transfer->status == 2 || $transfer->status == 3){
             return redirect()->back();
@@ -66,10 +66,12 @@ class ManageMemberController extends Controller
             $transfer->old_balance = $old_balance;
 
             if($request->type=="deposit"){
+                $amount_betflix = 0;
                 if($transfer->promotion_id != 0){
                     $pro = Promotion::find($transfer->promotion_id);
                     $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->get();  /// เช็คฝากครั้งแรก
                     $user_transfer_count = $user_transfer->count();
+
                     if($user_transfer_count == 0){
 
                         if($transfer->amount == 20){  /// สมาชิกใหม่ ฝาก 20 รับ 100 บาท
@@ -83,22 +85,28 @@ class ManageMemberController extends Controller
                             $amount_betflix = $transfer->amount + $bonus;
                             $transfer->promotion ='สมาชิกใหม่ ฝาก 300 รับ 500 บาท';
                         }
+
+
                     }else{
                         $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
                         $amount_betflix = $transfer->amount;
+
                     }
                 }else{
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                     $amount_betflix = $transfer->amount;
-                }
-              $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
-              Log::info('Deposit Betflix '.$bf_deposit.' '.$amount_betflix.' User =  '.$member->username);
 
-              TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-              ->line(env('APP_NAME'))
-              ->line('Admin ทำรายการ อนุมัติเครดิตเข้า '.$member->username)
-              ->line('จำนวน :'.floor($transfer->amount))
-              ->send();
+
+                }
+                $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
+                Log::info('Deposit Betflix '.$bf_deposit.' '.$amount_betflix.' User =  '.$member->username);
+                error_log('Deposit Betflix '.$bf_deposit.' '.$amount_betflix.' User =  '.$member->username);
+
+            //   TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+            //   ->line(env('APP_NAME'))
+            //   ->line('Admin ทำรายการ อนุมัติเครดิตเข้า '.$member->username)
+            //   ->line('จำนวน :'.floor($transfer->amount))
+            //   ->send();
             }else if($request->type=="withdraw"){
                 // if($transfer->promotion_id != 0){
                 //     $pro = Promotion::find($transfer->promotion_id);
@@ -107,7 +115,7 @@ class ManageMemberController extends Controller
                 //     $member->wallet_balance = (float) $member->wallet_balance -  (float) $transfer->amount;
                 // }
 
-
+                $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                 $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,floor($transfer->amount));
                 Log::info('Betflix Withdraw '.$bf_deposit.' '.floor($transfer->amount).' User =  '.$member->username);
 
@@ -118,12 +126,15 @@ class ManageMemberController extends Controller
                 ->line('คำเตือน Admin ต้องทำรายการโอนเงินเองที่แอปธนาคาร')
                 ->send();
 
-            }else{
-                $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
             }
-            $member->save();
-            $transfer->new_balance = $member->wallet_balance;
-            $transfer->save();
+            if($bf_deposit == "success"){
+                $member->save();
+                $transfer->new_balance = $member->wallet_balance;
+                $transfer->save();
+            }else{
+                return redirect()->back()->with('error','error');
+            }
+
 
 
         }else{
@@ -221,12 +232,12 @@ class ManageMemberController extends Controller
 
         foreach ($members as $member) {
             // $last_play = History::where('username',$member->username)->whereDate('created_at', Carbon::yesterday())->orderby('created_at','desc')->get();
-            $last_deposit = Transfer::where('member_id',$member->id)->where('status',2)->where('promotion_id',0)->where('type','deposit')->whereDate('created_at', Carbon::subDays(7))->get();
+            $last_deposit = Transfer::where('member_id',$member->id)->where('status',2)->where('promotion_id',0)->where('type','deposit')->whereDate('created_at', Carbon::now()->subDays(7))->get();
             if($last_deposit){
                 $total_lose = 0;
                 $cash_back=0;
                 $amount=0;
-                $winlose= app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($member->username,-7,-1);
+                $winlose= app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($member->username,-7,-1)->winloss;
                 $deposit=0;
 
                 foreach($last_deposit as $a){
@@ -292,74 +303,41 @@ class ManageMemberController extends Controller
 
 
         $members = Members::get();
-        foreach ($members as $member) {
-            if(json_decode($member->ref_user)){
+        foreach ($members as $main_member) {
+            error_log("Member main : " . $main_member->username);
+            if(json_decode($main_member->ref_user)){
+                error_log(json_encode($main_member->ref_user));
+                foreach(json_decode($main_member->ref_user) as $_member){
 
-                $member_play = History::select('username')->whereIn('username',json_decode($member->ref_user))->whereBetween('created_at', [$firstDate." 00:00:00", $lastDate." 23:59:59"])->groupby('username')->get();
-                foreach ($member_play as $key => $his) {
+                    $under_member = Members::where('id',$_member)->first();
+                    error_log($under_member->username);
 
-                    $total_bet = 0;
-                    $winlose = 0;
-
-                    $nextId =1;
-
-                    $history = History::select('provider')->where('username',$his->username)->whereBetween('created_at', [$firstDate." 00:00:00", $lastDate." 23:59:59"])->groupby('provider')->get();
-
-                    foreach ($history as $key => $value) {
-                        $productId = $value->provider;
-                        if($value->provider == 'PGSOFT'){
-                            $productId = "PGSOFT2";
-                        }
-                        // $productId = "PRAGMATIC_SLOT";
-
-                        $client = new \GuzzleHttp\Client();
-                        $response = $client->request('GET', env('APP_ASK_API_URL'). "/betTransactionsV2", [
-                            "query" => [
-                                "productId" => $productId,
-                                "date"  => $date,
-                                "startTime" => $startTime,
-                                "endTime" => $endTime,
-                                "nextId" => $nextId,
-                            ],
-                            'headers' => [
-                                'Authorization' => 'Basic '. $this->auth_basic(),
-                                'Content-Type' => 'application/json'
-                            ]
-                        ]);
-                        $data = json_decode($response->getBody());
-
-                        if(isset($data->data)){
-
-                            foreach ($data->data->txns as $key => $item) {
-                                if($his->username== $item->username){
-                                    $total_bet += $item->stake;
-                                    if(strtolower($item->payoutStatus) == "lose"){
-                                        $winlose = $winlose - $item->stake + $item->payout;
-                                    }elseif(strtolower($item->payoutStatus) == "win"){
-                                        $winlose = $winlose + $item->payout - $item->stake;
-                                    }
-                                }
-                            }
-                        }
+                    try{
+                        $total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-7,-1)->valid_amount;
+                        $winlose = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-7,-1)->winloss;
+                    } catch (\Exception $e) {
+                        error_log('Betflix API Error : '.$e->getMessage());
+                        $total_bet =0;
+                        $winlose =0;
+                        continue;
                     }
-
-                    if($winlose < 1){
-                        $commission = abs($winlose) * 0.05;
+                    error_log("total bet : ".$total_bet." win loss : ".$winlose);
+                    if($total_bet > 1){
+                        $commission = abs($total_bet) * 0.01;
                         Transfer::create([
-                            'member_id' => $member->id,
+                            'member_id' => $main_member->id,
                             'amount' => $commission,
                             'status' => 2,
                             'status_code' => 'อนุมัติ',
                             'type' => 'commission',
                             'promotion' => 'commission',
-                            'old_balance' => $member->wallet_balance,
-                            'new_balance' => $member->wallet_balance + $commission,
+                            'old_balance' => $main_member->wallet_balance,
+                            'new_balance' => $main_member->wallet_balance + $commission,
                             'transfer_date' => strtotime(now()),
                         ]);
-                        $member->wallet_balance = (float) ($member->wallet_balance + $commission);
-                        $member->save();
+                        $main_member->wallet_balance = (float) ($main_member->wallet_balance + $commission);
+                        $main_member->save();
                     }
-
                 }
 
             }

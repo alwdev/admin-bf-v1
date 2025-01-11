@@ -117,6 +117,7 @@ class BetflixController extends Controller
 			),
 		));
 		$response = curl_exec($curl);
+        error_log(json_encode($response));
 		if(curl_errno($curl)){
 			$status = "error";
 		}else{
@@ -308,8 +309,9 @@ class BetflixController extends Controller
 		}else{
 			$status_response = json_decode($response);
 			if($status_response->status == 'success'){
-				return $status_response->data->winloss;
+				return $status_response->data;
 			}else{
+                error_log(json_encode($status_response));
 				return $status_response;
 			}
 		}
