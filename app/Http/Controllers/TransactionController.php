@@ -149,7 +149,7 @@ class TransactionController extends Controller
 
                 if($transfer->promotion_id != 0){
                     $pro = Promotion::find($transfer->promotion_id);
-                    $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->get();  /// เช็คฝากครั้งแรก
+                    $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->get();  /// เช็คฝากครั้งแรก
                     $user_transfer_count = $user_transfer->count();
                     if($user_transfer_count == 0){
 
