@@ -117,7 +117,7 @@ class BetflixController extends Controller
 			),
 		));
 		$response = curl_exec($curl);
-        error_log(json_encode($response));
+        Log::info(json_encode($response));
 		if(curl_errno($curl)){
 			$status = "error";
 		}else{
