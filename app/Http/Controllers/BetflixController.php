@@ -87,7 +87,7 @@ class BetflixController extends Controller
 			if($status_response->status == 'success'){
 				$status = "success";
 			}else{
-				$status = "error";
+				$status = "error ".$status_response->msg;
 			}
 		}
 		curl_close($curl);

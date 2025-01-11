@@ -132,7 +132,7 @@ class ManageMemberController extends Controller
                 $transfer->new_balance = $member->wallet_balance;
                 $transfer->save();
             }else{
-                return redirect()->back()->with('error','error');
+                return redirect()->back()->with('error',$bf_deposit);
             }
 
 
