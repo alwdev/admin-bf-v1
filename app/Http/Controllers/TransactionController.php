@@ -124,12 +124,12 @@ class TransactionController extends Controller
 
 
         } catch(\Exception $e){
-            // Log::error("Error : ".$e->getMessage());
+            Log::error("Error : ".$e->getMessage());
 
-            // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-            //     ->line('BOT '.env('APP_NAME'))
-            //     ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
-            //     ->send();
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT '.env('APP_NAME'))
+                ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
+                ->send();
 
             return response()->json(['message' => 'พบข้อผิดพลาดในการตรวจสอบ SMS'], 400);
         }
