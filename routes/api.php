@@ -18,6 +18,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::post('/smsRequest', [App\Http\Controllers\TransactionController::class, 'smsRequest']);
+Route::post('/smsSCB', [App\Http\Controllers\TransactionController::class, 'sms_scb']);
 Route::post('/smsOTP', [App\Http\Controllers\TransactionController::class, 'smsOTP']);
 
 Route::get('/Checktransfer', [App\Http\Controllers\TransactionController::class, 'Checktransfer']);
