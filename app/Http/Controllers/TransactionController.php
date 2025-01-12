@@ -119,10 +119,10 @@ class TransactionController extends Controller
 
         try{
 
-            $amount = explode(' ',$request->sms)[5];
+            $amount = explode(' ',$request->sms)[6];
             $key = explode(' ',$request->sms)[4] ;
 
-
+            // return response()->json(["amount"=>$amount,"key"=>$key],200);
         } catch(\Exception $e){
             Log::error("Error : ".$e->getMessage());
 
@@ -134,7 +134,7 @@ class TransactionController extends Controller
             return response()->json(['message' => 'พบข้อผิดพลาดในการตรวจสอบ SMS'], 400);
         }
 
-        if($key == 'เงินเข้า'){
+        if($key == 'รับโอนจาก'){
 
             $transfer = Transfer::where('amount',$amount)->where('type','deposit')->where('status',1)->whereTime('created_at', '>=', now()->subMinute(5))->first();
             if($transfer){
