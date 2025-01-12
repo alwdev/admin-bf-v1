@@ -74,12 +74,12 @@ class ManageMemberController extends Controller
 
                     if($user_transfer_count == 0){
 
-                        if($transfer->amount == 20){  /// สมาชิกใหม่ ฝาก 20 รับ 100 บาท
+                        if($transfer->amount >= 20 && $transfer->amount < 300){  /// สมาชิกใหม่ ฝาก 20 รับ 100 บาท
                             $bonus = 80;
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
                             $transfer->promotion ='สมาชิกใหม่ ฝาก 20 รับ 100 บาท';
-                        }else if($transfer->amount == 300){  /// สมาชิกใหม่ ฝาก 300 รับ 500 บาท
+                        }else if($transfer->amount >= 300){  /// สมาชิกใหม่ ฝาก 300 รับ 500 บาท
                             $bonus = 200;
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
