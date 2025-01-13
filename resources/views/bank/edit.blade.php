@@ -50,6 +50,8 @@
                             <option  @if($bank->bank_name == 'ธนาคารไทยเครดิต') selected @endif value="ธนาคารไทยเครดิต" data-img="tcrb.png" data-logo="{{ asset('images/bank/tcrb.png') }}"> ธนาคารไทยเครดิต</option>
                             <option  @if($bank->bank_name == 'ธนาคารออมสิน') selected @endif value="ธนาคารออมสิน" data-img="gsb.png" data-logo="{{ asset('images/bank/gsb.png') }}"> ธนาคารออมสิน</option>
                             <option  @if($bank->bank_name == 'ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร') selected @endif value="ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร" data-img="baac.png" data-logo="{{ asset('images/bank/baac.png') }}"> ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร</option>
+                            <option  @if($bank->bank_name == 'TrueMoney Wallet') selected @endif value="TrueMoney Wallet" data-img="truemoney.png" data-logo="{{ asset('images/bank/truemoney.png') }}"> TrueMoney Wallet</option>
+            
                         </select>
                     </div>
                     <div class="form-group">
