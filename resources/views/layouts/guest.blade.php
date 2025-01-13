@@ -109,6 +109,28 @@
 
         <!-- App js -->
         <script src="{{ asset('js/theme.js') }}"></script>
+        <script>
+            function makeid(length) {
+                let result = '';
+                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                const charactersLength = characters.length;
+                let counter = 0;
+                while (counter < length) {
+                    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+                    counter += 1;
+                }
+                return result;
+            }
+            function isNumberKey(evt)
+            {
+                var charCode = (evt.which) ? evt.which : evt.keyCode;
+                if (charCode != 46 && charCode > 31 
+                    && (charCode < 48 || charCode > 57))
+                    return false;
+
+                return true;
+            }
+        </script>
         @yield('scripts')
     </body>
 </html>

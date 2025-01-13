@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Bank;
+use App\Models\Bank_forward_balance;
 
 class BankAccountController extends Controller
 {
@@ -42,6 +43,7 @@ class BankAccountController extends Controller
         $bank->account_name = $request->account_name;
         $bank->account_no = $request->account_no;
         $bank->logo = $request->bank_logo;
+        // $bank->balance = $request->balance;
         if(isset($request->enable)){
             $bank->enable = $request->enable;
         }else{
@@ -90,6 +92,7 @@ class BankAccountController extends Controller
         $bank->account_name = $request->account_name;
         $bank->account_no = $request->account_no;
         $bank->logo = $request->bank_logo;
+        // $bank->balance = $request->balance;
         if(isset($request->enable)){
             $bank->enable = $request->enable;
         }else{
@@ -117,6 +120,36 @@ class BankAccountController extends Controller
         $b->active = 0;
         $b->user_id = auth()->user()->id;
         $b->save();
+        return redirect()->route('bankaccount.index')->with('banksave','200');
+    }
+
+    public function bank_forward_balance_create(Request $request){
+
+        $bank = Bank::find($request->bank_to);
+
+        $data = new Bank_forward_balance;
+        $data->bank_no = $bank->account_no;
+        $data->bank_name = $bank->bank_name;
+        $data->bank_account = $bank->account_name;
+        $data->type = $request->type;
+        $data->note = $request->note;
+        $data->amount = $request->amount;
+        $data->created_by = auth()->user()->id;
+        $data->save();
+
+       
+        if($request->type == 'เงินเข้า'){
+            $bank->balance = (float) $bank->balance + (float) $request->amount;
+        }else{
+            if((float) $request->amount > (float) $bank->balance){
+                $bank->balance = 0;
+            }else{
+                $bank->balance = (float) $bank->balance - (float) $request->amount;
+            }
+                
+        }
+        $bank->save();
+
         return redirect()->route('bankaccount.index')->with('banksave','200');
     }
 }

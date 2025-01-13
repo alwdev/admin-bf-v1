@@ -8,6 +8,8 @@ use App\Models\Affiliate;
 use App\Models\Popup;
 use App\Models\Level;
 use App\Models\Ranking;
+use App\Models\Members;
+use App\Models\Coupon;
 
 class SettingController extends Controller
 {
@@ -31,6 +33,12 @@ class SettingController extends Controller
     {
         $list = Popup::all();
         return view('setting.popup',compact('list'));
+    }
+
+    public function coupon()
+    {
+        $list = Coupon::all();
+        return view('setting.coupon',compact('list'));
     }
 
     public function level()
@@ -61,6 +69,55 @@ class SettingController extends Controller
     {
         $setting = Setting::first();
         return view('setting.point',compact('setting'));
+    }
+
+    public function coupon_create(Request $request)
+    {   
+        $request->validate([
+            'coupon' => ['required'],
+        ]);
+        $coupon = new Coupon;
+        $coupon->coupon = $request->coupon;
+        $coupon->max = $request->max;
+        $coupon->amount = $request->amount;
+        $coupon->date_start = $request->date_start.' '.$request->time_start;
+        $coupon->date_end = $request->date_end.' '.$request->time_end;
+        $coupon->user_id = auth()->user()->id;
+        $coupon->enable = (isset($request->enable) ? 1 : 0);
+        $coupon->active = 1;
+        $coupon->save();
+
+        return redirect()->route('setting.coupon')->with('status','success');
+    }
+
+    public function coupon_update(Request $request)
+    {   
+        $request->validate([
+            'coupon' => ['required'],
+        ]);
+        
+        $coupon = Coupon::find($request->id);
+        $coupon->coupon = $request->coupon;
+        $coupon->max = $request->max;
+        $coupon->amount = $request->amount;
+        $coupon->date_start = $request->date_start.' '.$request->time_start;
+        $coupon->date_end = $request->date_end.' '.$request->time_end;
+        $coupon->user_id = auth()->user()->id;
+        $coupon->enable = (isset($request->enable) ? 1 : 0);
+        $coupon->active = 1;
+        $coupon->save();
+
+        return redirect()->route('setting.coupon')->with('status','success');
+    }
+
+    public function coupon_update_status(Request $request)
+    {   
+
+        $coupon = Coupon::find($request->id);
+        $coupon->enable = $request->enable;
+        $coupon->save();
+
+        return 1;
     }
 
     public function popup_create(Request $request)
@@ -137,7 +194,6 @@ class SettingController extends Controller
 
     public function ranking_create(Request $request)
     {   
-
         $ranking = new Ranking;
         $ranking->credit = $request->credit;
         $ranking->diamond = $request->diamond;
@@ -350,5 +406,20 @@ class SettingController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function regenmember_idxxx()
+    {
+
+        $members = Members::all();
+        if($members){
+            foreach ($members as $member) {
+                $length = 6;
+                $randomletter = substr(str_shuffle("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
+                $member->member_id = env('BF_AGENT').$randomletter;
+                $member->save();
+            }
+        }
+        echo "Successfully";
     }
 }

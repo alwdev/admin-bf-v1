@@ -38,8 +38,67 @@
 
         <div class="card-body">    
             @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
-    <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('bankaccount.create') }}">เพิ่มสมุดบัญชี</a>
-    @endif
+                <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('bankaccount.create') }}">เพิ่มสมุดบัญชี</a>
+                <a type="button" class="btn btn-success waves-effect waves-light" href="javascript:void(0);"  data-toggle="modal" data-target="#staticBackdrop">จัดการยอดเงิน</a>
+            @endif
+
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">จัดการยอดคงเหลือ</h1>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">X</button>
+                    </div>
+                    <form id="form-add-transfer" action="{{ route('bank.bank_forward_balance_create') }}" method="post" enctype="multipart/form-data">
+                    <div class="modal-body">
+                            @csrf
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="amount">จำนวนเงิน</label>
+                                        <input type="number" class="form-control" id="amount" name="amount" autocomplete="off" required value="{{ old('amount') }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="amount">ประเภท</label>
+                                        <select name="type" class="form-control" id="type">
+                                             <option value="เงินเข้า">เงินเข้า</option>
+                                             <option value="เงินออก">เงินออก</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="bank_to">บัญชีธนาคารผู้รับ</label>
+                                        <select name="bank_to" class="form-control" id="bank_to">
+                                            <option></option>
+                                            @foreach ($banks as $item)
+                                            <option value="{{ $item->id }}">{{ $item->bank_name.' ( '.$item->account_name.' - '.$item->account_name.' )' }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="note">หมายเหตุ</label>
+                                        <textarea class="form-control" id="note" name="note" rows="3">{{ old('note') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                       
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
+                    <button type="submit" class="btn btn-primary" >บันทึก</button>
+                    </div>
+                </form>
+                </div>
+                </div>
+            </div>
+
             <h4 class="card-title"></h4>
             <p class="card-subtitle mb-4">
             </p>
@@ -58,6 +117,7 @@
                             <th data-field="bank_name"  data-sortable="true">ธนาคาร</th>
                             <th data-field="account_name" data-sortable="true">ชื่อบัญชี</th>
                             <th data-field="account_no" data-sortable="true">หมายเลขบัญชี</th>
+                            <th class="text-center">ยอดคงเหลือ</th>
                             <th class="text-center">สถานะ</th>
                             <th data-sortable="true">อัพเดทล่าสุด</th>
                             @if( json_decode(auth()->user()->permissions)->member > 2  )
@@ -74,6 +134,7 @@
                                 <td>{{ $item->bank_name }}</td>
                                 <td>{{ $item->account_name }}</td>
                                 <td>{{ $item->account_no }}</td>
+                                <td>{{ number_format($item->balance,2,'.',',') }}</td>
                                 <td class="text-center" style="font-size: 16px;">
                                     @if ( $item->enable == 1)
                                     <span class="badge badge-pill badge-success">แสดง</span>

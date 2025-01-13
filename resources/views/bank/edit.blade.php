@@ -62,6 +62,11 @@
                         <input class="form-control"  type="number" id="account_no" name="account_no" required onkeypress="return isNumberKey(event)"  value="{{ $bank->account_no }}">
                         <x-input-error :messages="$errors->get('account_no')" class="mt-2" />
                     </div>
+                    {{-- <div class="form-group">
+                        <label for="balance">ยอดคงเหลือในบัญชี</label>
+                        <input class="form-control"  type="text" id="balance" name="balance" required onkeypress="return isNumberKey(event)"  value="{{ $bank->balance }}">
+                        <x-input-error :messages="$errors->get('balance')" class="mt-2" />
+                    </div> --}}
                     <div class="form-group">
                         <label for="qr_code">QR CODE</label>
                         <input class="form-control" type="file" id="qr_code" name="qr_code"  accept="image/*"  value="{{ old('qr_code') }}">

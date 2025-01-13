@@ -12,7 +12,9 @@ use App\Models\CommonCallback;
 use App\Models\SexyCallback;
 use App\Models\ProductList;
 use App\Models\WmCallback;
+use App\Models\Bank;
 use App\Models\Gplay;
+use App\Models\Wrongdeposit;
 use Illuminate\Support\Facades\DB;
 use DateTime;
 
@@ -425,5 +427,12 @@ class ReportController extends Controller
         echo 'winlose : ' . $winlose;
         dd(1);
         return $data;
+    }
+
+    function wrongdeposit(){
+        $transfer = Wrongdeposit::get();
+        $members = Members::where('enable',1)->where('active',1)->get();
+        $banks = Bank::where('enable',1)->where('active',1)->get();
+        return view('report.report_wrong',compact('transfer','members','banks'));
     }
 }

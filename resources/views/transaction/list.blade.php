@@ -43,11 +43,11 @@
             <p class="card-subtitle mb-4">
             </p>
 
-            <table id="basic-datatable" class="table nowrap"
+            <table id="basic-datatable" class="table nowrap table-striped"
             data-filter-control="true"
                 data-toggle="table"
                 data-search="true"
-                data-show-export="false"
+                data-show-export="false"    
                 data-click-to-select="false"
                 data-pagination="true"
                 data-url="">

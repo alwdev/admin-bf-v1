@@ -36,7 +36,7 @@
             <p class="card-subtitle mb-4">
             </p>
 
-                <table id="basic-datatable" class="table nowrap"
+                <table id="basic-datatable" class="table nowrap table-striped"
                 data-filter-control="true"
                 data-toggle="table"
                 data-search="true"
@@ -46,6 +46,7 @@
                 data-url="">
                     <thead>
                         <tr>
+                            <th data-field="member_id" data-filter-control="input" data-sortable="true">รหัสผู้ใช้</th>
                             <th data-field="username" data-filter-control="input" data-sortable="true">ชื่อผู้ใช้</th>
                             @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
                             <th>รหัสผ่าน</th>
@@ -69,6 +70,7 @@
                             <tr style="color: rgb(5, 5, 5);">
                         @endif
 
+                            <td>{{ $member->member_id }}</td>
                             <td>{{ $member->username }}</td>
                             @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
                             <td><button type="button" class="btn btn-primary btn-sm waves-effect waves-light" onclick="changePass('{{ $member->id }}')"><i class="bx bx-edit-alt"></i>เปลียน</button></td>

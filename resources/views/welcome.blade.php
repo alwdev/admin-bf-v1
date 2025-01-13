@@ -103,6 +103,20 @@
         </div>
     </div>
 
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-animate">
+            <div class="card-body">
+                <div class="avatar-sm float-right">
+                    <span class="avatar-title bg-soft-primary rounded-circle">
+                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
+                    </span>
+                </div>
+                <h6 class="text-muted text-uppercase mt-0">ยอดเงินคงเหลือ  <span class="badge rounded-pill text-bg-primary" style="font-weight: 300;background: green;color: white;">จำนวน {{ $banks->count() }} บัญชี</span></h6>
+                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $banks->sum('balance'),2) }}</h3>
+            </div>
+        </div>
+    </div>
+
   
 
 </div>

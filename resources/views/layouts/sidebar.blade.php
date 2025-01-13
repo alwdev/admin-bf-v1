@@ -39,6 +39,9 @@
 
                     </ul> --}}
                 </li>
+                <li>
+                    <a href="{{ route('report.wrongdeposit') }}" class="waves-effect"><i class='bx bx-bitcoin'></i><span>รายการฝากผิดพลาด</span></a>
+                </li>
                 @endif
                 <li class="menu-title">ตั้งค่า</li>
                 <li>
@@ -73,6 +76,7 @@
                             <li class="menu-sub-setting"><a href="{{ route('setting.point') }}" class="active">ตั้งค่าการคำนวณแต้ม</a></li>
                             <li class="menu-sub-setting"><a href="{{ route('setting.ranking') }}" class="active">ตั้งค่าจัดอันดับ</a></li>
                             <li class="menu-sub-setting"><a href="{{ route('setting.mission') }}" class="active">ตั้งค่าเควสประจำวัน</a></li>
+                            <li class="menu-sub-setting"><a href="{{ route('setting.coupon') }}" class="active">ตั้งค่าคูปอง</a></li>
                         </ul>
                     </li>
                     {{-- @endif --}}

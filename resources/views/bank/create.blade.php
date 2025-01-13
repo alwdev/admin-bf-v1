@@ -63,6 +63,11 @@
                         <input class="form-control"  type="number" id="account_no" name="account_no" required onkeypress="return isNumberKey(event)"  value="{{ old('account_no') }}">
                         <x-input-error :messages="$errors->get('account_no')" class="mt-2" />
                     </div>
+                    {{-- <div class="form-group">
+                        <label for="balance">ยอดคงเหลือในบัญชี</label>
+                        <input class="form-control"  type="text" id="balance" name="balance" required onkeypress="return isNumberKey(event)"  value="{{ old('balance') }}">
+                        <x-input-error :messages="$errors->get('balance')" class="mt-2" />
+                    </div> --}}
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
                         <input type="checkbox" class="custom-control-input" id="enable" name="enable" checked value="1">
                         <label class="custom-control-label" for="enable">Enable (เผยแพร่)</label>

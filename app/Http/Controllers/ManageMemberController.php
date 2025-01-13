@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
 use App\Models\Promotion;
 use App\Models\Payout;
+use App\Models\Bank;
 use Illuminate\Support\Facades\Log;
 use App\Models\Logs;
 use NotificationChannels\Telegram\TelegramMessage;
@@ -67,6 +68,13 @@ class ManageMemberController extends Controller
 
             if($request->type=="deposit"){
                 $amount_betflix = 0;
+
+                $bank = Bank::where('account_no',$transfer->deposit_to_bank_no)->first();
+                if($bank){
+                    $bank->balance = (float) $bank->balance + (float) $transfer->amount;
+                    $bank->save();
+                }
+
                 if($transfer->promotion_id != 0){
                     $pro = Promotion::find($transfer->promotion_id);
                     $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->get();  /// เช็คฝากครั้งแรก
@@ -102,6 +110,9 @@ class ManageMemberController extends Controller
                 Log::info('Deposit Betflix '.$bf_deposit.' '.$amount_betflix.' User =  '.$member->username);
                 error_log('Deposit Betflix '.$bf_deposit.' '.$amount_betflix.' User =  '.$member->username);
 
+                
+
+
             //   TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
             //   ->line(env('APP_NAME'))
             //   ->line('Admin ทำรายการ อนุมัติเครดิตเข้า '.$member->username)
@@ -114,6 +125,12 @@ class ManageMemberController extends Controller
                 // }else{
                 //     $member->wallet_balance = (float) $member->wallet_balance -  (float) $transfer->amount;
                 // }
+
+                $bank = Bank::where('account_no',$transfer->deposit_to_bank_no)->first();
+                if($bank){
+                    $bank->balance = (float) $bank->balance - (float) $transfer->amount;
+                    $bank->save();
+                }
 
                 $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                 $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,floor($transfer->amount));

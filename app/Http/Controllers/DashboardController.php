@@ -7,7 +7,9 @@ use Illuminate\Support\Carbon;
 use App\Models\Transfer;
 use App\Models\Members;
 use App\Models\Payout;
+use App\Models\Bank;
 use Illuminate\Support\Facades\DB;
+
 class DashboardController extends Controller
 {
     public function index(){
@@ -53,8 +55,9 @@ class DashboardController extends Controller
             ->orderby('transfer.created_at','desc')->limit(5)
             ->get();
 
-
-        return view('welcome', compact('total_deposit', 'total_withdraw','new_member','total_member','players','total_online','topgame','transfer','member_new'));
+        
+        $banks = Bank::where('enable',1)->where('active',1)->get();
+        return view('welcome', compact('banks','total_deposit', 'total_withdraw','new_member','total_member','players','total_online','topgame','transfer','member_new'));
     }
 
     public function dashboard_date(Request $request){
