@@ -159,3 +159,5 @@ Route::get('/get_affiliate', [ManageMemberController::class, 'affiliate']);
 
 
 Route::get('/QueryBetRecordsV2', [ReportController::class, 'QueryBetRecordsV2']);
+
+Route::get('/tmn', [App\Http\Controllers\TMN_Controller::class, 'index']);
