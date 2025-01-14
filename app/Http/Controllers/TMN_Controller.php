@@ -40,4 +40,11 @@ class TMN_Controller extends Controller
         return $transfer;
     }
 
+    public function transfer_to_Mobile(Request $request){
+        $TMNOne = new TMNOne();
+        $TMNOne->setData($this->tmn_key_id, $this->mobile_number, $this->login_token, $this->tmn_id);
+        $TMNOne->loginWithPin6($this->pin);
+        $transfer = $TMNOne->transferP2P($request->mobile_number,$request->amount,"");
+        return $transfer;
+    }
 }

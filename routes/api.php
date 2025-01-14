@@ -35,3 +35,4 @@ Route::post('/tf', [App\Http\Controllers\CallbackController::class, 'tf']);
 Route::post('/sbo', [App\Http\Controllers\CallbackController::class, 'sbo']);
 
 Route::post('/transfer_to_Bank', [App\Http\Controllers\TMN_Controller::class, 'transfer_to_Bank']);
+Route::post('/transfer_to_Mobile', [App\Http\Controllers\TMN_Controller::class, 'transfer_to_Mobile']);
