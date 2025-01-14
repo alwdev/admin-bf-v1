@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use NotificationChannels\Telegram\TelegramMessage;
 
 class TMNOne extends Controller
 {
@@ -271,7 +272,13 @@ class TMNOne extends Controller
 				'{"receiverId":"' . $payee_wallet_id . '","amount":"' . $amount . '"}');
 			if(empty($wallet_response_body['code']) || substr($wallet_response_body['code'],-4) != '-200')
 			{
-				throw new \Exception($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT '.env('APP_NAME'))
+                ->line('การโอนเงินให้ '.$payee_wallet_id.' : '.$amount.' บาท')
+                ->line('พบข้อผิดพลาด  '.$wallet_response_body['message'])
+                ->send();
+                return response()->json(400);
+				// return ($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
 			}
 			$draft_transaction_id = $wallet_response_body['data']['draft_transaction_id'];
 			$reference_key = $wallet_response_body['data']['reference_key'];
@@ -282,7 +289,13 @@ class TMNOne extends Controller
 				'{"personal_message":"' . $personal_msg . '"}', 'PUT');
 			if(empty($wallet_response_body['code']) || substr($wallet_response_body['code'],-4) != '-200')
 			{
-				throw new \Exception($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT '.env('APP_NAME'))
+                ->line('การโอนเงินให้ '.$payee_wallet_id.' : '.$amount.' บาท')
+                ->line('พบข้อผิดพลาด  '.$wallet_response_body['message'])
+                ->send();
+                return response()->json(400);
+				// return ($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
 			}
 
 			$uri = 'transfer-composite/v2/p2p-transfer/transactions/' . $draft_transaction_id;
@@ -298,13 +311,25 @@ class TMNOne extends Controller
 
 			if(empty($wallet_response_body['code']) || substr($wallet_response_body['code'],-4) != '-200')
 			{
-				throw new \Exception($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT '.env('APP_NAME'))
+                ->line('การโอนเงินให้ '.$payee_wallet_id.' : '.$amount.' บาท')
+                ->line('พบข้อผิดพลาด '.$wallet_response_body['message'])
+                ->send();
+                return response()->json(400);
+				// return ($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
 			}
 		}
 		catch (\Exception $e)
 		{
-			echo 'Error: ' . $e->getMessage() . ' on line ' . $e->getLine() . ' of ' . $e->getFile() . PHP_EOL;
-			return array('error'=>$e->getMessage());
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT '.env('APP_NAME'))
+                ->line('การโอนเงินให้ '.$payee_wallet_id.' : '.$amount.' บาท')
+                ->line('Exception Transfer '.$e->getMessage())
+                ->send();
+                return response()->json(400);
+			// echo 'Error: ' . $e->getMessage() . ' on line ' . $e->getLine() . ' of ' . $e->getFile() . PHP_EOL;
+			// return array('error'=>$e->getMessage());
 		}
 		return isset($wallet_response_body['data']) ? $wallet_response_body['data'] : array();
 	}
@@ -322,7 +347,13 @@ class TMNOne extends Controller
 				'{"bank_name":"' . $bank_code . '","bank_account":"' . $bank_ac . '","amount":"' . $amount . '"}');
 			if(empty($wallet_response_body['code']) || substr($wallet_response_body['code'],-4) != '-200')
 			{
-				throw new \Exception($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT '.env('APP_NAME'))
+                ->line('การโอนเงินให้ '.$bank_ac.' : '.$amount.' บาท')
+                ->line('พบข้อผิดพลาด  '.$wallet_response_body['message'])
+                ->send();
+                return response()->json(400);
+				// throw new \Exception($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
 			}
 			$draft_transaction_id = $wallet_response_body['data']['draft_transaction_id'];
 
@@ -332,7 +363,12 @@ class TMNOne extends Controller
 				'{"draft_transaction_id":"' . $draft_transaction_id . '"}');
 			if(empty($wallet_response_body['code']) || substr($wallet_response_body['code'],-4) != '-428') //{"code":"MAS-428","data":{"csid":"a9d8989b-xxxx-xxxx-xxxx-b4a36a0bfa7d","method":"pin"}}
 			{
-				throw new \Exception($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT '.env('APP_NAME'))
+                ->line('การโอนเงินให้ '.$bank_ac.' : '.$amount.' บาท')
+                ->line('พบข้อผิดพลาด  '.$wallet_response_body['message'])
+                ->send();
+				// throw new \Exception($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
 			}
 			$csid = $wallet_response_body['data']['csid'];
 
@@ -349,13 +385,23 @@ class TMNOne extends Controller
 
 			if(empty($wallet_response_body['code']) || substr($wallet_response_body['code'],-4) != '-200') //{"code":"FNC-200","data":{"withdraw_status":"VERIFIED"}}
 			{
-				throw new \Exception($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT '.env('APP_NAME'))
+                ->line('การโอนเงินให้ '.$bank_ac.' : '.$amount.' บาท')
+                ->line('พบข้อผิดพลาด  '.$wallet_response_body['message'])
+                ->send();
+				// throw new \Exception($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
 			}
 		}
 		catch (\Exception $e)
 		{
-			echo 'Error: ' . $e->getMessage() . ' on line ' . $e->getLine() . ' of ' . $e->getFile() . PHP_EOL;
-			return array('error'=>$e->getMessage() . ' (line:' . $e->getLine() . ')');
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT '.env('APP_NAME'))
+                ->line('การโอนเงินให้ '.$bank_ac.' : '.$amount.' บาท')
+                ->line('พบข้อผิดพลาด  '.$wallet_response_body['message'])
+                ->send();
+			// echo 'Error: ' . $e->getMessage() . ' on line ' . $e->getLine() . ' of ' . $e->getFile() . PHP_EOL;
+			// return array('error'=>$e->getMessage() . ' (line:' . $e->getLine() . ')');
 		}
 		return isset($wallet_response_body['data']) ? $wallet_response_body['data'] : array();
 	}

@@ -47,7 +47,7 @@
             data-filter-control="true"
                 data-toggle="table"
                 data-search="true"
-                data-show-export="false"    
+                data-show-export="false"
                 data-click-to-select="false"
                 data-pagination="true"
                 data-url="">
@@ -296,7 +296,7 @@
 
 
                             <td>
-                                @if($item->status == 1)
+                                @if($item->status == 1 || $item->status == 4)
                                 <button type="button" class="btn btn-outline-success btn-sm  waves-effect waves-light" @if(isset($turnover)) @if($turnover != 'ผ่าน') disabled @endif @endif onclick="approveDeposit('#frmdeposit{{ $item->id }}')"><i class="bx bx-check"></i>Approve</button>
                                 <form action="{{ route('managemember.approveDeposit') }}" method="post" id="frmdeposit{{ $item->id }}" style="display: none;">
                                     @csrf

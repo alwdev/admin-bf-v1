@@ -170,4 +170,4 @@ Route::get('/QueryBetRecordsV2', [ReportController::class, 'QueryBetRecordsV2'])
 
 Route::get('/regenmember_idxxx', [App\Http\Controllers\SettingController::class, 'regenmember_idxxx']);
 
-Route::get('/tmn', [App\Http\Controllers\TMN_Controller::class, 'index']);
+Route::get('/tmn_balance', [App\Http\Controllers\TMN_Controller::class, 'index']);
