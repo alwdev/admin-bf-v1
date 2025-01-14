@@ -54,7 +54,7 @@ class TMN_Controller extends Controller
         $TMNOne->setData($this->tmn_key_id, $this->mobile_number, $this->login_token, $this->tmn_id);
         $TMNOne->loginWithPin6($this->pin);
         $history = $TMNOne->fetchTransactionHistory(date('Y-m-d',time()-86400), date('Y-m-d',time()+86400));
-        return $history;
+        return $history[0];
     }
 
     public function fetchTransactionInfo(Request $request){
