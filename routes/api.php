@@ -37,4 +37,4 @@ Route::post('/sbo', [App\Http\Controllers\CallbackController::class, 'sbo']);
 Route::post('/transfer_to_Bank', [App\Http\Controllers\TMN_Controller::class, 'transfer_to_Bank']);
 Route::post('/transfer_to_Mobile', [App\Http\Controllers\TMN_Controller::class, 'transfer_to_Mobile']);
 Route::get('/fetchTransactionHistory', [App\Http\Controllers\TMN_Controller::class, 'fetchTransactionHistory']);
-Route::post('/fetchTransactionInfo', [App\Http\Controllers\TMN_Controller::class, 'fetchTransactionInfo']);
+Route::get('/fetchTransactionInfo', [App\Http\Controllers\TMN_Controller::class, 'fetchTransactionInfo']);

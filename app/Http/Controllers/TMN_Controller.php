@@ -56,11 +56,11 @@ class TMN_Controller extends Controller
         return $history;
     }
 
-    public function fetchTransactionInfo($report_id){
+    public function fetchTransactionInfo(Request $request){
         $TMNOne = new TMNOne();
         $TMNOne->setData($this->tmn_key_id, $this->mobile_number, $this->login_token, $this->tmn_id);
         $TMNOne->loginWithPin6($this->pin);
-        $history = $TMNOne->fetchTransactionInfo($report_id);
+        $history = $TMNOne->fetchTransactionInfo($request->report_id);
         return $history;
     }
 }
