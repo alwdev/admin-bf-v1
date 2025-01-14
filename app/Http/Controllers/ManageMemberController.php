@@ -113,11 +113,11 @@ class ManageMemberController extends Controller
 
 
 
-            //   TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-            //   ->line(env('APP_NAME'))
-            //   ->line('Admin ทำรายการ อนุมัติเครดิตเข้า '.$member->username)
-            //   ->line('จำนวน :'.floor($transfer->amount))
-            //   ->send();
+              TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+              ->line(env('APP_NAME'))
+              ->line('Admin ทำรายการ อนุมัติเครดิตเข้า '.$member->username)
+              ->line('จำนวน :'.floor($transfer->amount))
+              ->send();
             }else if($request->type=="withdraw"){
                 // if($transfer->promotion_id != 0){
                 //     $pro = Promotion::find($transfer->promotion_id);
