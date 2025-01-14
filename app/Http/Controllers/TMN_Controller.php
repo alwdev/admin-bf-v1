@@ -43,12 +43,11 @@ class TMN_Controller extends Controller
         $transfer = $TMNOne->transferBankAC($request->bank_code,$request->bank_ac,$request->amount,$this->pin);
         $transactionHistory = $TMNOne->fetchTransactionHistory(date('Y-m-d',time()-86400), date('Y-m-d',time()+86400));
         // return response()->json([$transfer,$ransactionHistory[0]],200);
-        error_log($transfer);
+
         if ($transfer["transfer_status"] === 'PROCESSING'){
             Log::info("Transfer to Mobile report_id :".$transactionHistory[0]["report_id"]);
-            error_log("Transfer to Mobile report_id :".$transactionHistory[0]["report_id"]);
             $approve = $this->approvewithdraw($request->transfer_id,$transactionHistory[0]["report_id"]);
-            error_log($approve);
+
             // return response()->json([$transfer,$transactionHistory[0],$approve],200);
             return response()->json(0);
         }else{
@@ -62,7 +61,6 @@ class TMN_Controller extends Controller
 
     public function transfer_to_Mobile(Request $request){
         Log::info("Transfer to Mobile ".$request->getContent());
-        error_log("Transfer to Mobile ".$request->getContent());
 
         $transfer = Transfer::where('id',$request->transfer_id)->first();
         $transfer->status = 4;
@@ -74,7 +72,7 @@ class TMN_Controller extends Controller
         $TMNOne->loginWithPin6($this->pin);
         $transfer = $TMNOne->transferP2P($request->mobile_number,$request->amount,"");
         $transactionHistory = $TMNOne->fetchTransactionHistory(date('Y-m-d',time()-86400), date('Y-m-d',time()+86400));
-        error_log($transfer);
+
         if ($transfer["transfer_status"] === 'PROCESSING'){
             Log::info("Transfer to Mobile report_id :".$transactionHistory[0]["report_id"]);
             error_log("Transfer to Mobile report_id :".$transactionHistory[0]["report_id"]);
@@ -117,7 +115,7 @@ class TMN_Controller extends Controller
 
     public function approvewithdraw($transfer_id,$ref)
     {
-        error_log("transfer_id ".$transfer_id." ref ".$ref);
+        Log::info("TMN approvewithdraw id ".$transfer_id." ref ".$ref);
         try{
             $transfer = Transfer::where('id',$transfer_id)->first();
             $member = Members::where('id',$transfer->member_id)->first();
