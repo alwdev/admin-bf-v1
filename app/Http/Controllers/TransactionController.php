@@ -138,6 +138,122 @@ class TransactionController extends Controller
 
         if($key == 'รับโอนจาก'){
 
+            $transfer = Transfer::where('amount',$amount)->where('type','deposit')->where('status',1)->whereTime('created_at', '>=', now()->subMinute(1))->first();
+            if($transfer){
+                // return response()->json(["text"=>$chectText1,"amount"=>$amount,"key"=>$key,"transfer"=>$transfer]);
+                $member = Members::find($transfer->member_id);
+                $amount_betflix=0;
+                $old_balance = $member->wallet_balance;
+
+                $transfer->status = 2;
+                $transfer->status_code ="อนุมัติ";
+                $transfer->old_balance = $old_balance;
+
+                if($transfer->promotion_id != 0){
+                    $pro = Promotion::find($transfer->promotion_id);
+                    $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->get();  /// เช็คฝากครั้งแรก
+                    $user_transfer_count = $user_transfer->count();
+                    if($user_transfer_count == 0){
+
+                        if($transfer->amount >= 20 && $transfer->amount < 300){  /// สมาชิกใหม่ ฝาก 20 รับ 100 บาท
+                            $bonus = 80;
+                            $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
+                            $amount_betflix = $transfer->amount + $bonus;
+                            $transfer->promotion ='สมาชิกใหม่ ฝาก 20 รับ 100 บาท';
+                        }else if($transfer->amount >= 300){  /// สมาชิกใหม่ ฝาก 300 รับ 500 บาท
+                            $bonus = 200;
+                            $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
+                            $amount_betflix = $transfer->amount + $bonus;
+                            $transfer->promotion ='สมาชิกใหม่ ฝาก 300 รับ 500 บาท';
+                        }
+                    }else{
+                        $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+                        $amount_betflix = $transfer->amount;
+                    }
+
+                    // if($transfer->promotion_id == 1){
+                    //     $b =  (float) $member->wallet_balance + $transfer->amount + 100;
+                    //     $amount_betflix = $transfer->amount + 100;
+                    // }else{
+                    //     $b =  (float) $member->wallet_balance + (float) $transfer->amount + ((float) $transfer->amount * $pro->bonus / 100);
+                    //     $amount_betflix = (float) $transfer->amount + ((float) $transfer->amount * $pro->bonus / 100);
+                    // }
+
+
+                }else{
+                    $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
+                    $amount_betflix = (float) $transfer->amount;
+                }
+
+
+
+
+                $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
+                Log::info('Deposit Betflix '.$bf_deposit.' '.floor($amount_betflix).' User =  '.$member->username);
+
+                if($bf_deposit == "success"){
+                    $member->save();
+                    $transfer->new_balance = $member->wallet_balance;
+                    $transfer->save();
+                }
+
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                // ->content('Choose an option:')
+                ->line('BOT '.env('APP_NAME'))
+                ->line('ทำรายการสำเร็จ โอนเครดิตเข้า '.$member->username)
+                ->line('จำนวน :'.$amount)
+                // ->button('View page', env('APP_URL'))
+                // ->button('View page',env('APP_URL'))
+                // ->keyboard('Button 1')
+                // ->keyboard('Button 2')
+                ->send();
+
+                return response()->json(['message' => 'SMS request sent successfully.','txt' => 'Amount :'.$amount], 200);
+            }else{
+                // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                // // ->content('Choose an option:')
+                // ->line('BOT '.env('APP_NAME'))
+                // ->line('ไม่พบรายการโอนเงินในช่วงเวลา')
+                // ->line('จำนวน :'.$amount)
+                // // ->button('View page', env('APP_URL'))
+                // // ->button('View page',env('APP_URL'))
+                // // ->keyboard('Button 1')
+                // // ->keyboard('Button 2')
+                // ->send();
+                // return response()->json(['message' => 'ไม่พบรายการโอนเงินในช่วงเวลา','txt' => 'Amount :'.$amount], 404);
+                $this->sms_step2($request->sms);
+            }
+
+
+        }else{
+            return response()->json(['message' => 'SMS Not valid.','txt' => 'Amount :'.$amount.', Text3 : '.$key], 200);
+        }
+    }
+    public function sms_step2($sms){
+        $log = new Logs;
+        $log->log = "sms_step2 : ".$sms;
+        $log->save();
+
+
+        try{
+            $bank_number = explode(' ',$sms)[5];
+            $amount = explode(' ',$sms)[6];
+            $key = explode(' ',$sms)[4] ;
+
+            // return response()->json(["amount"=>$amount,"key"=>$key],200);
+        } catch(\Exception $e){
+            Log::error("Error : ".$e->getMessage());
+
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT '.env('APP_NAME'))
+                ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
+                ->send();
+
+            return response()->json(['message' => 'พบข้อผิดพลาดในการตรวจสอบ SMS'], 400);
+        }
+
+        if($key == 'รับโอนจาก'){
+
             $transfer = Transfer::where('amount',$amount)->where('type','deposit')->where('status',1)->whereTime('created_at', '>=', now()->subMinute(5))->first();
             if($transfer){
                 // return response()->json(["text"=>$chectText1,"amount"=>$amount,"key"=>$key,"transfer"=>$transfer]);
@@ -185,7 +301,7 @@ class TransactionController extends Controller
                     $amount_betflix = (float) $transfer->amount;
                 }
 
-                
+
 
 
                 $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
@@ -228,7 +344,6 @@ class TransactionController extends Controller
             return response()->json(['message' => 'SMS Not valid.','txt' => 'Amount :'.$amount.', Text3 : '.$key], 200);
         }
     }
-
     public function sms_scb(Request $request){
         $log = new Logs;
         $log->log = "SMS scb : ".$request->sms;
@@ -434,8 +549,8 @@ class TransactionController extends Controller
         $data->note = $request->note;
 
         $data->bank_from_number = $request->bank_from_number;
-        $data->bank_from_name = $request->bank_from_name;   
-        $data->bank_from_account_name = $request->bank_from_account_name;   
+        $data->bank_from_name = $request->bank_from_name;
+        $data->bank_from_account_name = $request->bank_from_account_name;
 
         $data->bank_to_number = $bank->account_no;
         $data->bank_to_name = $bank->bank_name;
@@ -480,8 +595,8 @@ class TransactionController extends Controller
         $data->note = $request->note;
 
         $data->bank_from_number = $request->bank_from_number;
-        $data->bank_from_name = $request->bank_from_name;   
-        $data->bank_from_account_name = $request->bank_from_account_name;   
+        $data->bank_from_name = $request->bank_from_name;
+        $data->bank_from_account_name = $request->bank_from_account_name;
 
         $data->bank_to_number = $bank->account_no;
         $data->bank_to_name = $bank->bank_name;
