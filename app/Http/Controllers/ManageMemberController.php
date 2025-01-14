@@ -110,7 +110,7 @@ class ManageMemberController extends Controller
                 Log::info('Deposit Betflix '.$bf_deposit.' '.$amount_betflix.' User =  '.$member->username);
                 error_log('Deposit Betflix '.$bf_deposit.' '.$amount_betflix.' User =  '.$member->username);
 
-                
+
 
 
             //   TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
@@ -153,6 +153,11 @@ class ManageMemberController extends Controller
             }
 
 
+
+        }else if($request->status == 'pending'){
+            $transfer->status = 1;
+            $transfer->status_code ="รอดำเนินการ";
+            $transfer->save();
 
         }else{
 
