@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TMN_Controller extends Controller
 {
@@ -31,6 +32,7 @@ class TMN_Controller extends Controller
     }
 
     public function transfer_to_Bank(Request $request){
+        Log::info("Transfer to Bank ".$request->getContent());
         $TMNOne = new TMNOne();
         $TMNOne->setData($this->tmn_key_id, $this->mobile_number, $this->login_token, $this->tmn_id);
         $TMNOne->loginWithPin6($this->pin);
@@ -41,12 +43,19 @@ class TMN_Controller extends Controller
     }
 
     public function transfer_to_Mobile(Request $request){
+        Log::info("Transfer to Mobile ".$request->getContent());
         $TMNOne = new TMNOne();
         $TMNOne->setData($this->tmn_key_id, $this->mobile_number, $this->login_token, $this->tmn_id);
         $TMNOne->loginWithPin6($this->pin);
         $transfer = $TMNOne->transferP2P($request->mobile_number,$request->amount,"");
         $ransactionHistory = $TMNOne->fetchTransactionHistory(date('Y-m-d',time()-86400), date('Y-m-d',time()+86400));
-        return response()->json([$transfer,$ransactionHistory[0]],200);
+        if ($transfer == 'PROCESSING'){
+            Log::info("Transfer to Mobile report_id :".$transfer->report_id);
+            return response()->json([$transfer,$ransactionHistory[0]],200);
+        }else{
+            return response()->json($transfer,400);
+        }
+
     }
 
     public function lastTransactionHistory(){
