@@ -55,4 +55,12 @@ class TMN_Controller extends Controller
         $history = $TMNOne->fetchTransactionHistory(date('Y-m-d',time()-86400), date('Y-m-d',time()+86400));
         return $history;
     }
+
+    public function fetchTransactionInfo($report_id){
+        $TMNOne = new TMNOne();
+        $TMNOne->setData($this->tmn_key_id, $this->mobile_number, $this->login_token, $this->tmn_id);
+        $TMNOne->loginWithPin6($this->pin);
+        $history = $TMNOne->fetchTransactionInfo($report_id);
+        return $history;
+    }
 }
