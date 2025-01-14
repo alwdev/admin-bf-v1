@@ -49,7 +49,7 @@ class TMN_Controller extends Controller
         $TMNOne->loginWithPin6($this->pin);
         $transfer = $TMNOne->transferP2P($request->mobile_number,$request->amount,"");
         $ransactionHistory = $TMNOne->fetchTransactionHistory(date('Y-m-d',time()-86400), date('Y-m-d',time()+86400));
-        if ($transfer == 'PROCESSING'){
+        if ($transfer->transfer_status == 'PROCESSING'){
             Log::info("Transfer to Mobile report_id :".$transfer->report_id);
             return response()->json([$transfer,$ransactionHistory[0]],200);
         }else{
