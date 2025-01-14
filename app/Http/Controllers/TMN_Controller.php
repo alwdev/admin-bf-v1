@@ -27,7 +27,17 @@ class TMN_Controller extends Controller
         // var_dump($TMNOne->fetchTransactionInfo('umk1678000000')); //ดึงข้อมูล transaction จาก report_id
 
 
-        dd($balance);
+        return $balance;
+    }
+
+    public function transfer_to_Bank(Request $request){
+        $TMNOne = new TMNOne();
+        $TMNOne->setData($this->tmn_key_id, $this->mobile_number, $this->login_token, $this->tmn_id);
+        $TMNOne->loginWithPin6($this->pin);
+
+        $transfer = $TMNOne->transferBankAC($request->bank_code,$request->bank_ac,$request->amount,$this->pin);
+
+        return $transfer;
     }
 
 }
