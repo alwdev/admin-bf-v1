@@ -159,7 +159,7 @@ class ManageMemberController extends Controller
             $transfer->status_code ="รอดำเนินการ";
             $transfer->save();
 
-        }else{
+        }else if($request->status == 'reject'){
 
             $transfer->status = 3;
             $transfer->status_code ="ปฏิเสธ";
