@@ -275,7 +275,7 @@ class TMNOne extends Controller
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT '.env('APP_NAME'))
                 ->line('การโอนเงินให้ '.$payee_wallet_id.' : '.$amount.' บาท')
-                ->line('พบข้อผิดพลาด  1')
+                ->line('พบข้อผิดพลาด  '. $wallet_response_body['message'])
                 ->send();
                 return response()->json(400);
 				// return ($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
@@ -292,7 +292,7 @@ class TMNOne extends Controller
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT '.env('APP_NAME'))
                 ->line('การโอนเงินให้ '.$payee_wallet_id.' : '.$amount.' บาท')
-                ->line('พบข้อผิดพลาด  2')
+                ->line('พบข้อผิดพลาด  '. $wallet_response_body['message'])
                 ->send();
                 return response()->json(400);
 				// return ($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
@@ -314,7 +314,7 @@ class TMNOne extends Controller
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT '.env('APP_NAME'))
                 ->line('การโอนเงินให้ '.$payee_wallet_id.' : '.$amount.' บาท')
-                ->line('พบข้อผิดพลาด 3')
+                ->line('พบข้อผิดพลาด '. $wallet_response_body['message'])
                 ->send();
                 return response()->json(400);
 				// return ($wallet_response_body['code'] . ' - ' . $wallet_response_body['message']);
