@@ -45,7 +45,8 @@ class TMN_Controller extends Controller
         $TMNOne->setData($this->tmn_key_id, $this->mobile_number, $this->login_token, $this->tmn_id);
         $TMNOne->loginWithPin6($this->pin);
         $transfer = $TMNOne->transferP2P($request->mobile_number,$request->amount,"");
-        return $transfer;
+        $ransactionHistory = $TMNOne->fetchTransactionHistory(date('Y-m-d',time()-86400), date('Y-m-d',time()+86400));
+        return response()->json([$transfer,$ransactionHistory],200);
     }
 
     public function fetchTransactionHistory(){
