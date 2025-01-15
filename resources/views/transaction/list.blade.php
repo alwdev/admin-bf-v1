@@ -299,48 +299,48 @@
 
                             <td>
                                 @if($item->status == 1)
-                                <button type="button" class="btn btn-outline-success btn-sm  waves-effect waves-light" @if(isset($turnover)) @if($turnover != 'ผ่าน') disabled @endif @endif onclick="approveDeposit('#frmdeposit{{ $item->id }}')"><i class="bx bx-check"></i>Approve</button>
-                                <form action="{{ route('managemember.approveDeposit') }}" method="post" id="frmdeposit{{ $item->id }}" style="display: none;">
-                                    @csrf
-                                    <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
-                                    <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
-                                    <input type="hidden" name="status" value="approve" />
-                                    <input type="hidden" name="type" value="{{ $item->type }}" />
-                                </form>
+                                    <button type="button" class="btn btn-outline-success btn-sm  waves-effect waves-light" @if(isset($turnover)) @if($turnover != 'ผ่าน') disabled @endif @endif onclick="approveDeposit('#frmdeposit{{ $item->id }}')"><i class="bx bx-check"></i>Approve</button>
+                                    <form action="{{ route('managemember.approveDeposit') }}" method="post" id="frmdeposit{{ $item->id }}" style="display: none;">
+                                        @csrf
+                                        <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
+                                        <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
+                                        <input type="hidden" name="status" value="approve" />
+                                        <input type="hidden" name="type" value="{{ $item->type }}" />
+                                    </form>
 
-                                <button type="button" class="btn btn-outline-danger btn-sm  waves-effect waves-light" onclick="approveDeposit('#frmrejectdeposit{{ $item->id }}')"><i class="bx bx-check"></i>Reject</button>
-                                <form action="{{ route('managemember.approveDeposit') }}" method="post" id="frmrejectdeposit{{ $item->id }}" style="display: none;">
-                                    @csrf
-                                    <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
-                                    <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
-                                    <input type="hidden" name="status" value="reject" />
-                                    <input type="hidden" name="type" value="{{ $item->type }}" />
-                                </form>
+                                    <button type="button" class="btn btn-outline-danger btn-sm  waves-effect waves-light" onclick="approveDeposit('#frmrejectdeposit{{ $item->id }}')"><i class="bx bx-check"></i>Reject</button>
+                                    <form action="{{ route('managemember.approveDeposit') }}" method="post" id="frmrejectdeposit{{ $item->id }}" style="display: none;">
+                                        @csrf
+                                        <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
+                                        <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
+                                        <input type="hidden" name="status" value="reject" />
+                                        <input type="hidden" name="type" value="{{ $item->type }}" />
+                                    </form>
                                 @elseif($item->status == 4)
-                                <button type="button" class="btn btn-outline-success btn-sm  waves-effect waves-light" @if(isset($turnover)) @if($turnover != 'ผ่าน') disabled @endif @endif onclick="approveDeposit('#frmdeposit{{ $item->id }}')"><i class="bx bx-check"></i>Approve</button>
-                                <form action="{{ route('managemember.approveDeposit') }}" method="post" id="frmdeposit{{ $item->id }}" style="display: none;">
-                                    @csrf
-                                    <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
-                                    <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
-                                    <input type="hidden" name="status" value="approve" />
-                                    <input type="hidden" name="type" value="{{ $item->type }}" />
-                                </form>
-                                <button type="button" class="btn btn-outline-warning btn-sm  waves-effect waves-light" onclick="approveDeposit('#frmrejectdeposit{{ $item->id }}')"><i class="bx bx-check"></i>Pending</button>
-                                <form action="{{ route('managemember.approveDeposit') }}" method="post" id="frmrejectdeposit{{ $item->id }}" style="display: none;">
-                                    @csrf
-                                    <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
-                                    <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
-                                    <input type="hidden" name="status" value="pending" />
-                                    <input type="hidden" name="type" value="{{ $item->type }}" />
-                                </form>
-                                <button type="button" class="btn btn-outline-danger btn-sm  waves-effect waves-light" onclick="approveDeposit('#frmrejectdeposit{{ $item->id }}')"><i class="bx bx-check"></i>Reject</button>
-                                <form action="{{ route('managemember.approveDeposit') }}" method="post" id="frmrejectdeposit{{ $item->id }}" style="display: none;">
-                                    @csrf
-                                    <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
-                                    <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
-                                    <input type="hidden" name="status" value="reject" />
-                                    <input type="hidden" name="type" value="{{ $item->type }}" />
-                                </form>
+                                    <button type="button" class="btn btn-outline-success btn-sm  waves-effect waves-light" @if(isset($turnover)) @if($turnover != 'ผ่าน') disabled @endif @endif onclick="approveDeposit('#frmdeposit{{ $item->id }}')"><i class="bx bx-check"></i>Approve</button>
+                                    <form action="{{ route('managemember.approveDeposit') }}" method="post" id="frmdeposit{{ $item->id }}" style="display: none;">
+                                        @csrf
+                                        <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
+                                        <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
+                                        <input type="hidden" name="status" value="approve" />
+                                        <input type="hidden" name="type" value="{{ $item->type }}" />
+                                    </form>
+                                    <button type="button" class="btn btn-outline-warning btn-sm  waves-effect waves-light" onclick="approveDeposit('#frmrependingdeposit{{ $item->id }}')"><i class="bx bx-check"></i>Pending</button>
+                                    <form action="{{ route('managemember.approveDeposit') }}" method="post" id="frmrependingdeposit{{ $item->id }}" style="display: none;">
+                                        @csrf
+                                        <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
+                                        <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
+                                        <input type="hidden" name="status" value="pending" />
+                                        <input type="hidden" name="type" value="{{ $item->type }}" />
+                                    </form>
+                                    <button type="button" class="btn btn-outline-danger btn-sm  waves-effect waves-light" onclick="approveDeposit('#frmrejectdeposit{{ $item->id }}')"><i class="bx bx-check"></i>Reject</button>
+                                    <form action="{{ route('managemember.approveDeposit') }}" method="post" id="frmrejectdeposit{{ $item->id }}" style="display: none;">
+                                        @csrf
+                                        <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
+                                        <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
+                                        <input type="hidden" name="status" value="reject" />
+                                        <input type="hidden" name="type" value="{{ $item->type }}" />
+                                    </form>
 
                                 @elseif($item->status == 2)
 
