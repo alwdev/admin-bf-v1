@@ -146,7 +146,7 @@ class TransactionController extends Controller
                 $old_balance = $member->wallet_balance;
 
                 $transfer->status = 2;
-                $transfer->status_code ="อนุมัติ";
+                $transfer->status_code ="BOT.อนุมัติ";
                 $transfer->old_balance = $old_balance;
 
                 if($transfer->promotion_id != 0){
@@ -262,7 +262,7 @@ class TransactionController extends Controller
                 $old_balance = $member->wallet_balance;
 
                 $transfer->status = 2;
-                $transfer->status_code ="อนุมัติ";
+                $transfer->status_code ="BOT.อนุมัติ";
                 $transfer->old_balance = $old_balance;
 
                 if($transfer->promotion_id != 0){
