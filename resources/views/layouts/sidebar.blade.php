@@ -73,9 +73,9 @@
                             <li class="menu-sub-setting"><a href="{{ route('setting.popup') }}" class="active">ตั้งค่าป๊อบอัพ</a></li>
                             <li class="menu-sub-setting"><a href="{{ route('setting.level') }}" class="active">ตั้งค่าระดับสมาชิก</a></li>
                             <li class="menu-sub-setting"><a href="{{ route('setting.deposit_continuously') }}" class="active">ตั้งค่าการฝากต่อเนื่อง</a></li>
-                            <li class="menu-sub-setting"><a href="{{ route('setting.point') }}" class="active">ตั้งค่าการคำนวณแต้ม</a></li>
-                            <li class="menu-sub-setting"><a href="{{ route('setting.ranking') }}" class="active">ตั้งค่าจัดอันดับ</a></li>
-                            <li class="menu-sub-setting"><a href="{{ route('setting.mission') }}" class="active">ตั้งค่าเควสประจำวัน</a></li>
+                            {{-- <li class="menu-sub-setting"><a href="{{ route('setting.point') }}" class="active">ตั้งค่าการคำนวณแต้ม</a></li> --}}
+                            {{-- <li class="menu-sub-setting"><a href="{{ route('setting.ranking') }}" class="active">ตั้งค่าจัดอันดับ</a></li> --}}
+                            {{-- <li class="menu-sub-setting"><a href="{{ route('setting.mission') }}" class="active">ตั้งค่าเควสประจำวัน</a></li> --}}
                             <li class="menu-sub-setting"><a href="{{ route('setting.coupon') }}" class="active">ตั้งค่าคูปอง</a></li>
                         </ul>
                     </li>
