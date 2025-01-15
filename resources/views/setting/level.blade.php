@@ -57,7 +57,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>ชื่อ Level</th>
-                                    <th>แต้มที่ใช้ตั้งแต่</th>
+                                    <th>ยอดฝากตั้งแต่</th>
                                     <th>ถึง</th>
                                     <th>รูป</th>
                                     <th>จัดการ</th>
@@ -68,8 +68,8 @@
                                 <tr>
                                     <td>{{ $item->rank }}</td>
                                     <td>{{ $item->level_name }}</td>
-                                    <td>{{ $item->level_min_point }}</td>
-                                    <td>{{ $item->level_max_point }}</td>
+                                    <td>{{ number_format($item->level_min_point) }}</td>
+                                    <td>{{ number_format($item->level_max_point) }}</td>
                                     <td>
                                         @if($item->image)
                                         <img src="{{ asset($item->image) }}" class="img-responsive img-thumbnail" width="64" alt="User Image">
@@ -88,7 +88,7 @@
                                                 </button>
                                               </div>
                                               <div class="modal-body">
-                                                  <form class="form-horizontal" id="form-add-level" action="{{ route('setting.level_update') }}" method="post" enctype="multipart/form-data">
+                                                  <form class="form-horizontal" id="form-add-level{{ $key }}" action="{{ route('setting.level_update') }}" method="post" enctype="multipart/form-data">
                                                       @csrf
                                                       <input type="hidden" name="id" value="{{ $item->id }}">
                                                       <div class="mb-2">
@@ -108,7 +108,7 @@
                                                           <input type="text" class="form-control" name="level_name" value="{{ $item->level_name }}" @required(true)>
                                                       </div>
                                                       <div class="mb-2">
-                                                          <label class="" for="level_min_point">แต้มที่ใช้ตั้งแต่</label>
+                                                          <label class="" for="level_min_point">ยอดฝากตั้งแต่</label>
                                                           <input type="text" class="form-control" name="level_min_point"  value="{{ $item->level_min_point }}" @required(true)>
                                                       </div>
                                                       <div class="mb-2">
@@ -119,7 +119,7 @@
                                               </div>
                                               <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-                                                <button type="button" onclick="submit_('#form-add-level')" class="btn btn-primary">บันทึก</button>
+                                                <button type="button" onclick="submit_('#form-add-level{{ $key }}')" class="btn btn-primary">บันทึก</button>
                                               </div>
                                             </div>
                                           </div>
@@ -162,7 +162,7 @@
                     <input type="text" class="form-control" name="level_name" @required(true)>
                 </div>
                 <div class="mb-2">
-                    <label class="" for="level_min_point">แต้มที่ใช้ตั้งแต่</label>
+                    <label class="" for="level_min_point">ยอดฝากตั้งแต่</label>
                     <input type="text" class="form-control" name="level_min_point" @required(true)>
                 </div>
                 <div class="mb-2">
