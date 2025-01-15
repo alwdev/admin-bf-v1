@@ -80,9 +80,9 @@
                                 $member_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
                             @endphp
                             <td class="text-right">{{ $member_balance }} ฿
-                                {{-- @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
+                                @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
                                 <button type="button" class="btn btn-primary btn-sm waves-effect waves-light" onclick="editBalance('{{ $member->id }}','{{ $member->username }}','{{ Auth::user()->id }}')"><i class="bx bx-edit-alt"></i></button>
-                                @endif --}}
+                                @endif
                             </td>
                             <td>
                                 <button href="่javascript:void(0);" data-toggle="modal" data-target="#exampleModal{{ $key }}" type="button" class="btn btn-secondary  btn-sm waves-effect waves-light">บัญชี</button>
