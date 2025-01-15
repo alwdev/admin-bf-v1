@@ -13,7 +13,11 @@ class BankAccountController extends Controller
      */
     public function index()
     {
-        //
+        //update True wallet
+        $truewallet = Bank::where('active',1)->where('bank_name','TrueMoney Wallet')->first();
+        $truewallet->balance = app(\App\Http\Controllers\TMN_Controller::class)->index();
+        $truewallet->save();
+
         $banks = Bank::where('active',1)->get();
         return view('bank.index',compact('banks'));
     }
@@ -59,7 +63,7 @@ class BankAccountController extends Controller
         $bank->active = 1;
         $bank->user_id = auth()->user()->id;
         $bank->save();
-        
+
         return redirect()->route('bankaccount.index')->with('banksave','200');
     }
 
@@ -106,7 +110,7 @@ class BankAccountController extends Controller
         $bank->active = 1;
         $bank->user_id = auth()->user()->id;
         $bank->save();
-        
+
         return redirect()->route('bankaccount.index')->with('banksave','200');
     }
 
@@ -137,7 +141,7 @@ class BankAccountController extends Controller
         $data->created_by = auth()->user()->id;
         $data->save();
 
-       
+
         if($request->type == 'เงินเข้า'){
             $bank->balance = (float) $bank->balance + (float) $request->amount;
         }else{
@@ -146,7 +150,7 @@ class BankAccountController extends Controller
             }else{
                 $bank->balance = (float) $bank->balance - (float) $request->amount;
             }
-                
+
         }
         $bank->save();
 

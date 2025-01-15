@@ -32,60 +32,77 @@ class TMN_Controller extends Controller
     public function transfer_to_Bank(Request $request){
         Log::info("Transfer to Bank ".$request->getContent());
 
-        $transfer = Transfer::where('id',$request->transfer_id)->first();
-        $transfer->status = 4;
-        $transfer->status_code ="กำลังดำเนินการ";
-        $transfer->save();
+        try{
+            $transfer = Transfer::where('id',$request->transfer_id)->first();
+            $transfer->status = 4;
+            $transfer->status_code ="กำลังดำเนินการ";
+            $transfer->save();
 
-        $TMNOne = new TMNOne();
-        $TMNOne->setData($this->tmn_key_id, $this->mobile_number, $this->login_token, $this->tmn_id);
-        $TMNOne->loginWithPin6($this->pin);
-        $transfer = $TMNOne->transferBankAC($request->bank_code,$request->bank_ac,$request->amount,$this->pin);
-        $transactionHistory = $TMNOne->fetchTransactionHistory(date('Y-m-d',time()-86400), date('Y-m-d',time()+86400));
-        // return response()->json([$transfer,$ransactionHistory[0]],200);
+            $TMNOne = new TMNOne();
+            $TMNOne->setData($this->tmn_key_id, $this->mobile_number, $this->login_token, $this->tmn_id);
+            $TMNOne->loginWithPin6($this->pin);
+            $transfer = $TMNOne->transferBankAC($request->bank_code,$request->bank_ac,$request->amount,$this->pin);
+            $transactionHistory = $TMNOne->fetchTransactionHistory(date('Y-m-d',time()-86400), date('Y-m-d',time()+86400));
+            // return response()->json([$transfer,$ransactionHistory[0]],200);
 
-        if ($transfer["transfer_status"] === 'PROCESSING'){
-            Log::info("Transfer to Mobile report_id :".$transactionHistory[0]["report_id"]);
-            $approve = $this->approvewithdraw($request->transfer_id,$transactionHistory[0]["report_id"]);
-
-            // return response()->json([$transfer,$transactionHistory[0],$approve],200);
-            return response()->json(0);
-        }else{
-            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                ->line('BOT '.env('APP_NAME'))
-                ->line('พบข้อผิดพลาดในการ Transfer '.$transfer)
-                ->send();
-            return response()->json(400);
+            if ($transfer["transfer_status"] === 'PROCESSING'){
+                Log::info("Transfer to Mobile report_id :".$transactionHistory[0]["report_id"]);
+                $approve=$this->approvewithdraw($request->transfer_id,$transactionHistory[0]["report_id"]);
+                error_log($approve);
+                // return response()->json([$transfer,$transactionHistory[0],$approve],200);
+                return response()->json(0);
+            }else{
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                    ->line('BOT '.env('APP_NAME'))
+                    ->line('พบข้อผิดพลาดในการ Transfer '.$transfer)
+                    ->send();
+                return response()->json(400);
+            }
+        } catch (\Exception $e) {
+                Log::info("Transfer to Bank error ".$e->getMessage());
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                    ->line('BOT '.env('APP_NAME'))
+                    ->line('พบข้อผิดพลาดในการ Transfer '.$e->getMessage())
+                    ->send();
+                return response()->json(400);
         }
     }
 
     public function transfer_to_Mobile(Request $request){
         Log::info("Transfer to Mobile ".$request->getContent());
+        try{
+            $transfer = Transfer::where('id',$request->transfer_id)->first();
+            $transfer->status = 4;
+            $transfer->status_code ="กำลังดำเนินการ";
+            $transfer->save();
 
-        $transfer = Transfer::where('id',$request->transfer_id)->first();
-        $transfer->status = 4;
-        $transfer->status_code ="กำลังดำเนินการ";
-        $transfer->save();
+            $TMNOne = new TMNOne();
+            $TMNOne->setData($this->tmn_key_id, $this->mobile_number, $this->login_token, $this->tmn_id);
+            $TMNOne->loginWithPin6($this->pin);
+            $transfer = $TMNOne->transferP2P($request->mobile_number,$request->amount,"");
+            $transactionHistory = $TMNOne->fetchTransactionHistory(date('Y-m-d',time()-86400), date('Y-m-d',time()+86400));
 
-        $TMNOne = new TMNOne();
-        $TMNOne->setData($this->tmn_key_id, $this->mobile_number, $this->login_token, $this->tmn_id);
-        $TMNOne->loginWithPin6($this->pin);
-        $transfer = $TMNOne->transferP2P($request->mobile_number,$request->amount,"");
-        $transactionHistory = $TMNOne->fetchTransactionHistory(date('Y-m-d',time()-86400), date('Y-m-d',time()+86400));
-
-        if ($transfer["transfer_status"] === 'PROCESSING'){
-            Log::info("Transfer to Mobile report_id :".$transactionHistory[0]["report_id"]);
-            error_log("Transfer to Mobile report_id :".$transactionHistory[0]["report_id"]);
-            $approve = $this->approvewithdraw($request->transfer_id,$transactionHistory[0]["report_id"]);
-            error_log($approve);
-            // return response()->json([$transfer,$transactionHistory[0],$approve],200);
-            return response()->json(0);
-        }else{
-            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                ->line('BOT '.env('APP_NAME'))
-                ->line('พบข้อผิดพลาดในการ Transfer '.$transfer)
-                ->send();
-            return response()->json(400);
+            if ($transfer["transfer_status"] === 'PROCESSING'){
+                Log::info("Transfer to Mobile report_id :".$transactionHistory[0]["report_id"]);
+                error_log("Transfer to Mobile report_id :".$transactionHistory[0]["report_id"]);
+                $approve = $this->approvewithdraw($request->transfer_id,$transactionHistory[0]["report_id"]);
+                error_log($approve);
+                // return response()->json([$transfer,$transactionHistory[0],$approve],200);
+                return response()->json(0);
+            }else{
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                    ->line('BOT '.env('APP_NAME'))
+                    ->line('พบข้อผิดพลาดในการ Transfer '.$transfer)
+                    ->send();
+                return response()->json(400);
+            }
+        } catch (\Exception $e) {
+                Log::info("Transfer to Mobile error ".$e->getMessage());
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                    ->line('BOT '.env('APP_NAME'))
+                    ->line('พบข้อผิดพลาดในการ Transfer '.$e->getMessage())
+                    ->send();
+                return response()->json(400);
         }
 
     }
