@@ -26,24 +26,24 @@
                     <li class="breadcrumb-item active">ตั้งค่าคูปอง</li>
                 </ol>
             </div>
-            
+
         </div>
     </div>
-</div>     
+</div>
 <!-- end page title -->
 
         <div class="row">
             <div class="card-header text-right" style="background: transparent;">
-              
+
             </div>
             <div class="col-12 card">
-           
+
                     <div class="card-body">
                         <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="#" data-toggle="modal" data-target="#staticBackdrop">เพิ่มคูปอง</a>
                         <h4 class="card-title"></h4>
                         <p class="card-subtitle mb-4">
                         </p>
-        
+
                         <table id="basic-datatable" class="table m-10 table-bordered"
                         data-filter-control="true"
                         data-toggle="table"
@@ -57,26 +57,28 @@
                                     <th>คูปอง</th>
                                     <th>มูลค่า</th>
                                     <th>จำนวนจำกัด</th>
+                                    <th>ใช้ไปแล้ว</th>
                                     <th>วันที่ใช้งาน</th>
                                     <th>สถานะใช้งาน</th>
                                     <th></th>
                                 </tr>
-                            </thead>  
+                            </thead>
                             <tbody>
-                                @foreach ($list as $key => $item)                            
+                                @foreach ($list as $key => $item)
                                 <tr>
                                     <td>
                                         {{ $item->coupon }}
                                     </td>
                                     <td>{{ number_format($item->amount,2,'.',',') }}</td>
                                     <td>{{ $item->max }}</td>
+                                    <td>{{ $item->used }}</td>
                                     <td>{{ $item->date_start.'-'.$item->date_end }}</td>
                                     <td>
                                        @if($item->enable == 1)
                                        <button class="btn btn-sm btn-success" onclick="update_status('{{ $item->id }}','0')">ใช้งาน</button>
                                        @else
                                        <button class="btn btn-sm btn-danger"  onclick="update_status('{{ $item->id }}','1')">ปิดใช้งาน</button>
-                                       @endif 
+                                       @endif
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalEdit{{ $key }}">Edit</button>
@@ -142,7 +144,7 @@
                                                           </div>
                                                     </form>
                                                 </div>
-                                   
+
                                               </div>
                                             </div>
                                           </div>
@@ -151,7 +153,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-        
+
                     </div> <!-- end card body-->
 
             </div><!-- end col-->
@@ -211,7 +213,7 @@
                 </div>
                 {{-- <div class="custom-control custom-checkbox">
                     <input type="checkbox" class="custom-control-input" id="enable" name="enable" checked>
-                    <label class="custom-control-label" for="enable">สถานะ 
+                    <label class="custom-control-label" for="enable">สถานะ
                     </label>
                 </div> --}}
                 <div class="modal-footer">
@@ -337,10 +339,10 @@
 				}
 			});
 
-  
+
             }
         }
-      }) 
+      })
     }
     function changePass(userid) {
         Swal.mixin({
@@ -420,7 +422,7 @@
 
                 }
             }
-      }) 
+      })
     }
 
     function deluser(userid) {
@@ -458,11 +460,11 @@
                     }
 				}
 			});
-                
-                      
+
+
             }
         }
-      }) 
+      })
     }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js" integrity="sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ==" crossorigin="anonymous"></script>
