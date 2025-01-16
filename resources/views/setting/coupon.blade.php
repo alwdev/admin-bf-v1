@@ -105,32 +105,32 @@
                                                         <div class="row">
                                                             <div class="col-6 mb-2">
                                                                 <label class="" for="amount">มูลค่า</label>
-                                                                <input type="text" class="form-control" value="{{ $item->amount }}" name="amount" onkeypress="return isNumberKey(event)">
+                                                                <input type="text" class="form-control" value="{{ $item->amount }}" name="amount" onkeypress="return isNumberKey(event)" required>
                                                             </div>
                                                             <div class="col-6 mb-2">
                                                                 <label class="" for="max">จำนวนใช้ได้สูงสุด</label>
-                                                                <input type="text" class="form-control " name="max" value="{{ $item->max }}" onkeypress="return isNumberKey(event)">
+                                                                <input type="text" class="form-control " name="max" value="{{ $item->max }}" onkeypress="return isNumberKey(event)" required>
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-6 mb-2">
                                                                 <label class="" for="date_start">วันที่เริ่มต้น</label>
-                                                                <input type="date" class="form-control picker" id="date_start{{ $key }}" value="{{ explode(' ',$item->date_start)[0] }}" name="date_start" placeholder="YYYY-MM-DD"
+                                                                <input type="date" class="form-control picker" id="date_start{{ $key }}" value="{{ explode(' ',$item->date_start)[0] }}" name="date_start" placeholder="YYYY-MM-DD" required
                                                             >
                                                             </div>
                                                             <div class="col-6 mb-2">
                                                                 <label class="" for="time_start">เวลาเริ่มต้น</label>
-                                                                <input type="time" class="form-control picker" id="time_start{{ $key }}"  value="{{ explode(' ',$item->date_start)[1] }}" name="time_start" placeholder=""
+                                                                <input type="time" class="form-control picker" id="time_start{{ $key }}"  value="{{ explode(' ',$item->date_start)[1] }}" name="time_start" placeholder="" required
                                                             >
                                                             </div>
                                                             <div class="col-6 mb-2">
                                                                 <label class="" for="date_end">วันที่เริ่มต้น</label>
-                                                                <input type="date" class="form-control picker" id="date_end{{ $key }}" value="{{ explode(' ',$item->date_end)[0] }}" name="date_end" placeholder="YYYY-MM-DD"
+                                                                <input type="date" class="form-control picker" id="date_end{{ $key }}" value="{{ explode(' ',$item->date_end)[0] }}" name="date_end" placeholder="YYYY-MM-DD" required
                                                             >
                                                             </div>
                                                             <div class="col-6 mb-2">
                                                                 <label class="" for="time_end">เวลาสิ้นสุด</label>
-                                                                <input type="time" class="form-control picker" id="time_end{{ $key }}" name="time_end" value="{{ explode(' ',$item->date_start)[1] }}" placeholder=""
+                                                                <input type="time" class="form-control picker" id="time_end{{ $key }}" name="time_end" value="{{ explode(' ',$item->date_start)[1] }}" placeholder="" required
                                                             >
                                                             </div>
                                                         </div>
@@ -182,32 +182,32 @@
                 <div class="row">
                     <div class="col-6 mb-2">
                         <label class="" for="amount">มูลค่า</label>
-                        <input type="text" class="form-control " name="amount" onkeypress="return isNumberKey(event)">
+                        <input type="text" class="form-control " name="amount" onkeypress="return isNumberKey(event)" required>
                     </div>
                     <div class="col-6 mb-2">
                         <label class="" for="max">จำนวนใช้ได้สูงสุด</label>
-                        <input type="text" class="form-control " name="max" onkeypress="return isNumberKey(event)">
+                        <input type="text" class="form-control " name="max" onkeypress="return isNumberKey(event)" required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-6 mb-2">
                         <label class="" for="date_start">วันที่เริ่มต้น</label>
-                        <input type="date" class="form-control picker" id="date_start" name="date_start" placeholder="YYYY-MM-DD"
+                        <input type="date" class="form-control picker" id="date_start" name="date_start" placeholder="YYYY-MM-DD" required
                     >
                     </div>
                     <div class="col-6 mb-2">
                         <label class="" for="time_start">เวลาเริ่มต้น</label>
-                        <input type="time" class="form-control picker" id="time_start" name="time_start" placeholder=""
+                        <input type="time" class="form-control picker" id="time_start" name="time_start" placeholder="" required
                     >
                     </div>
                     <div class="col-6 mb-2">
                         <label class="" for="date_end">วันที่เริ่มต้น</label>
-                        <input type="date" class="form-control picker" id="date_end" name="date_end" placeholder="YYYY-MM-DD"
+                        <input type="date" class="form-control picker" id="date_end" name="date_end" placeholder="YYYY-MM-DD" required
                     >
                     </div>
                     <div class="col-6 mb-2">
                         <label class="" for="time_end">เวลาสิ้นสุด</label>
-                        <input type="time" class="form-control picker" id="time_end" name="time_end" placeholder=""
+                        <input type="time" class="form-control picker" id="time_end" name="time_end" placeholder="" required
                     >
                     </div>
                 </div>
