@@ -88,7 +88,7 @@
                                                 </button>
                                               </div>
                                               <div class="modal-body">
-                                                  <form class="form-horizontal" id="form-add-level" action="{{ route('setting.ranking_update') }}" method="post" enctype="multipart/form-data">
+                                                  <form class="form-horizontal" id="form-add-level{{ $key }}" action="{{ route('setting.ranking_update') }}" method="post" enctype="multipart/form-data">
                                                       @csrf
                                                       <input type="hidden" name="id" value="{{ $item->id }}">
                                                       <div class="mb-2">
