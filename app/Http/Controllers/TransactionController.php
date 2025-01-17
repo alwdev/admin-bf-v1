@@ -138,7 +138,7 @@ class TransactionController extends Controller
 
         if($key == 'รับโอนจาก'){
 
-            $transfer = Transfer::where('amount',$amount)->where('type','deposit')->where('status',1)->whereTime('created_at', '>=', now()->subMinute(1))->first();
+            $transfer = Transfer::where('amount',$amount)->where('type','deposit')->where('status',1)->whereTime('created_at', '>=', now()->subMinute(5))->first();
             if($transfer){
                 // return response()->json(["text"=>$chectText1,"amount"=>$amount,"key"=>$key,"transfer"=>$transfer]);
                 $member = Members::find($transfer->member_id);
