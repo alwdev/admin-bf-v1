@@ -201,7 +201,7 @@
                     >
                     </div>
                     <div class="col-6 mb-2">
-                        <label class="" for="date_end">วันที่เริ่มต้น</label>
+                        <label class="" for="date_end">วันที่เริ่มสิ้นสุด</label>
                         <input type="date" class="form-control picker" id="date_end" name="date_end" placeholder="YYYY-MM-DD" required
                     >
                     </div>
