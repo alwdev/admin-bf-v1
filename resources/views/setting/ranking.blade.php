@@ -119,7 +119,7 @@
                                               </div>
                                               <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-                                                <button type="button" onclick="submit_('#form-add-level')" class="btn btn-primary">บันทึก</button>
+                                                <button type="button" onclick="submit_('#form-add-level{{ $key }}')" class="btn btn-primary">บันทึก</button>
                                               </div>
                                             </div>
                                           </div>
