@@ -190,17 +190,57 @@ class ManageMemberController extends Controller
         return redirect()->route('managemember.index');
     }
 
+    // public function memberEditBalance(Request $request)
+    // {
+
+    //     error_log($request->member_id);
+    //     error_log($request->user_id);
+    //     error_log($request->balance);
+
+    //     $member = Members::find($request->member_id);
+    //     if($member){
+    //         $currentBalance = $member->wallet_balance;
+    //         $member->wallet_balance = $request->balance;
+    //         $member->update_by = $request->user_id;
+    //         $member->save();
+
+    //         MemberEditBalance::create([
+    //             'user_id' => $request->user_id,
+    //             'member_id' => $request->member_id,
+    //             'balance' => $currentBalance,
+    //             'edit_balance' => $request->balance,
+    //         ]);
+    //     }
+    //     // return $member->wallet_balance;
+    //     return redirect()->route('managemember.index');
+    // }
     public function memberEditBalance(Request $request)
     {
 
-        error_log($request->member_id);
-        error_log($request->user_id);
-        error_log($request->balance);
+        error_log("request->balance =".$request->balance);
 
+        $update_balance = 0;
         $member = Members::find($request->member_id);
         if($member){
+        $old_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
+        if ($old_balance < $request->balance) {
+            $update_balance = $request->balance - $old_balance;
+            Log::info(" + Deposit update_balance =".$update_balance);
+            $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,$update_balance);
+            Log::info("Betflix Deposit ".$bf.' '.$update_balance.' User =  '.$member->username);
+        }else if ($old_balance > $request->balance) {
+            $update_balance = $old_balance - $request->balance;
+
+            Log::info(" - Withdraw update_balance =".$update_balance);
+            $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,$update_balance);
+            Log::info("Betflix Withdraw ".$bf.' '.$update_balance.' User =  '.$member->username);
+        }
+
+        $new_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
+
+
             $currentBalance = $member->wallet_balance;
-            $member->wallet_balance = $request->balance;
+            $member->wallet_balance = $new_balance;
             $member->update_by = $request->user_id;
             $member->save();
 
@@ -208,10 +248,10 @@ class ManageMemberController extends Controller
                 'user_id' => $request->user_id,
                 'member_id' => $request->member_id,
                 'balance' => $currentBalance,
-                'edit_balance' => $request->balance,
+                'edit_balance' => $new_balance,
             ]);
         }
-        // return $member->wallet_balance;
+
         return redirect()->route('managemember.index');
     }
 

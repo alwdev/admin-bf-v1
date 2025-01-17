@@ -9,7 +9,9 @@ use App\Models\Transfer;
 use App\Models\Members;
 use App\Models\History;
 use App\Models\Payout;
+use App\Models\Bank;
 use App\Models\Promotion;
+use App\Models\Wrongdeposit;
 use App\Models\Logs;
 use Illuminate\Support\Facades\Log;
 use Auth;
@@ -399,5 +401,97 @@ class TransactionController extends Controller
 
 
         return response()->json([$transfer],200);;
+    }
+
+    public function wrongdeposit_insert(Request $request){
+        $request->validate([
+            'amount' => ['required'],
+            'member_id' => ['required'],
+            'bank_from_number' => ['required'],
+            'bank_from_name' => ['required'],
+            'bank_to' => ['required'],
+            'image' => ['required'],
+        ]);
+
+        $member = Members::where('username', '=',$request->member_id)->first();
+        if(!$member){
+            $error = \Illuminate\Validation\ValidationException::withMessages([
+                'member_id' => ['Member not found.'],
+             ]);
+             throw $error;
+        }
+
+        $bank = Bank::find($request->bank_to);
+
+        $data = new Wrongdeposit;
+        $data->member_id = $member->id;
+        $data->username = $member->username;
+        $data->amount = $request->amount;
+        $data->note = $request->note;
+
+        $data->bank_from_number = $request->bank_from_number;
+        $data->bank_from_name = $request->bank_from_name;
+        $data->bank_from_account_name = $request->bank_from_account_name;
+
+        $data->bank_to_number = $bank->account_no;
+        $data->bank_to_name = $bank->bank_name;
+        $data->bank_to_account_name = $bank->account_name;
+
+        if($request->image){
+            $fileName = rand().'.'.$request->image->extension();
+            $request->image->move(public_path('images/tranfer'), $fileName);
+            $data->image = "/images/tranfer/".$fileName;
+        }
+
+        $data->user_id = auth()->user()->id;
+        $data->save();
+
+        return redirect()->route('report.wrongdeposit')->with('status','success');
+    }
+
+    public function wrongdeposit_update(Request $request){
+        $request->validate([
+            'amount' => ['required'],
+            'member_id' => ['required'],
+            'bank_from_number' => ['required'],
+            'bank_from_name' => ['required'],
+            'bank_to' => ['required'],
+            'image' => ['required'],
+        ]);
+
+        $member = Members::where('username', '=',$request->member_id)->first();
+        if(!$member){
+            $error = \Illuminate\Validation\ValidationException::withMessages([
+                'member_id' => ['Member not found.'],
+             ]);
+             throw $error;
+        }
+
+        $bank = Bank::find($request->bank_to);
+
+        $data = Wrongdeposit::find($request->id);
+        $data->member_id = $member->id;
+        $data->username = $member->username;
+        $data->amount = $request->amount;
+        $data->note = $request->note;
+
+        $data->bank_from_number = $request->bank_from_number;
+        $data->bank_from_name = $request->bank_from_name;
+        $data->bank_from_account_name = $request->bank_from_account_name;
+
+        $data->bank_to_number = $bank->account_no;
+        $data->bank_to_name = $bank->bank_name;
+        $data->bank_to_account_name = $bank->account_name;
+
+        if($request->image){
+            $fileName = rand().'.'.$request->image->extension();
+            $request->image->move(public_path('images/tranfer'), $fileName);
+            $data->image = "/images/tranfer/".$fileName;
+        }
+
+        $data->user_id = auth()->user()->id;
+        $data->save();
+
+        return redirect()->route('report.wrongdeposit')->with('status','success');
     }
 }

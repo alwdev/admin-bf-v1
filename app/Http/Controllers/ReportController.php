@@ -15,6 +15,8 @@ use App\Models\WmCallback;
 use App\Models\Gplay;
 use Illuminate\Support\Facades\DB;
 use DateTime;
+use App\Models\Wrongdeposit;
+use App\Models\Bank;
 
 class ReportController extends Controller
 {
@@ -423,7 +425,14 @@ class ReportController extends Controller
 
         echo 'total bet : ' . $total_bet;
         echo 'winlose : ' . $winlose;
-        dd(1);
+        // dd(1);
         return $data;
+    }
+
+    function wrongdeposit(){
+        $transfer = Wrongdeposit::get();
+        $members = Members::where('enable',1)->where('active',1)->get();
+        $banks = Bank::where('enable',1)->where('active',1)->get();
+        return view('report.report_wrong',compact('transfer','members','banks'));
     }
 }

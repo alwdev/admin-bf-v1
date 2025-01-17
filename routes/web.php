@@ -70,6 +70,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/setting/mission_win/update', [SettingController::class, 'mission_win_update'])->name('setting.mission_win_update');
 
     Route::get('/setting/popup', [SettingController::class, 'popup'])->name('setting.popup');
+    Route::get('/setting/coupon', [SettingController::class, 'coupon'])->name('setting.coupon');
+    Route::post('/setting/coupon_create', [SettingController::class, 'coupon_create'])->name('setting.coupon_create');
+    Route::post('/setting/coupon_update', [SettingController::class, 'coupon_update'])->name('setting.coupon_update');
+    Route::post('/setting/coupon_update_status', [SettingController::class, 'coupon_update_status'])->name('setting.coupon_update_status');
     Route::post('/setting/popup_create', [SettingController::class, 'popup_create'])->name('setting.popup_create');
     Route::get('/setting/level', [SettingController::class, 'level'])->name('setting.level');
     Route::post('/setting/level_create', [SettingController::class, 'level_create'])->name('setting.level_create');
@@ -88,6 +92,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/maintenance', [SettingController::class, 'maintenance'])->name('setting.maintenance');
 
     //Report
+    Route::get('/wrongdeposit', [ReportController::class, 'wrongdeposit'])->name('report.wrongdeposit')->middleware('CheckPermissionUser:report,view');
+    Route::post('/wrongdeposit/insert', [App\Http\Controllers\TransactionController::class, 'wrongdeposit_insert'])->name('transfer.wrongdeposit_insert')->middleware('CheckPermissionUser:report,view');
+    Route::post('/wrongdeposit/update', [App\Http\Controllers\TransactionController::class, 'wrongdeposit_update'])->name('transfer.wrongdeposit_update')->middleware('CheckPermissionUser:report,view');
     Route::get('/memberplay', [ReportController::class, 'member_play'])->name('report.memberplay')->middleware('CheckPermissionUser:report,view');
     Route::get('/memberplay_v2', [ReportController::class, 'member_play_v2'])->name('report.memberplay_v2')->middleware('CheckPermissionUser:report,view');
     Route::get('/memberplay_byprovider', [ReportController::class, 'member_play_callback'])->name('report.memberplay_byprovider')->middleware('CheckPermissionUser:report,view');
