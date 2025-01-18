@@ -99,7 +99,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/memberplay_v2', [ReportController::class, 'member_play_v2'])->name('report.memberplay_v2')->middleware('CheckPermissionUser:report,view');
     Route::get('/memberplay_byprovider', [ReportController::class, 'member_play_callback'])->name('report.memberplay_byprovider')->middleware('CheckPermissionUser:report,view');
     Route::get('/edit_balance', [ReportController::class, 'edit_balance'])->name('report.edit_balance')->middleware('CheckPermissionUser:report,view');
-    Route::get('/trancount', [ReportController::class, 'count_last_tranfer'])->name('report.count_last_tranfer')->middleware('CheckPermissionUser:report,view');
+    Route::get('/trancount', [ReportController::class, 'count_last_tranfer'])->name('report.count_last_tranfer');
     Route::get('/get_round_by_date/{date}/{page}/{limit}', [App\Http\Controllers\ReportController::class, 'get_round_by_date'])->name('report.getRoundByDate');
     Route::get('/replay/{username}/{productId}/{betId}', [HistoryController::class, 'QueryReplay'])->name('report.QueryReplay')->middleware('CheckPermissionUser:report,view');
 
