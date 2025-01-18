@@ -57,6 +57,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/updateuser', [ProfileController::class, 'updateuser'])->name('manageuser.updateuser');
     Route::post('/deluser', [ManageUserController::class, 'deluser'])->name('manageuser.deluser');
 
+    Route::get('/set_user_status/{username}/{status}', [BetflixController::class,'set_user_status']);
+
 
     Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
     Route::get('/setting/deposit_continuously', [SettingController::class, 'deposit_continuously'])->name('setting.deposit_continuously');

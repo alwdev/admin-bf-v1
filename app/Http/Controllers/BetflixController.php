@@ -354,4 +354,41 @@ class BetflixController extends Controller
 		}
 
 	}
+
+    public function set_user_status($username,$status){
+
+		$curl = curl_init();
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => 'https://api.bfx.fail/v4/user/statusSetting',
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => '',
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_SSL_VERIFYHOST => false,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => 'POST',
+			CURLOPT_POSTFIELDS => 'username='.env('BF_AGENT').$username.'&status='.$status,
+			CURLOPT_HTTPHEADER => array(
+				'x-api-cat: '.env('API_CAT'),
+				'x-api-key: '.env('API_KEY'),
+				'Content-Type: application/x-www-form-urlencoded'
+			),
+		));
+		$response = curl_exec($curl);
+        Log::info(json_encode($response));
+		if(curl_errno($curl)){
+			$status = "curl error";
+		}else{
+			$status_response = json_decode($response);
+			if($status_response->status == 'success'){
+				$status = "success";
+			}else{
+				$status = "error ".$status_response->msg;
+			}
+		}
+		curl_close($curl);
+		return $status;
+
+	}
 }
