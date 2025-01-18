@@ -8,6 +8,7 @@ use App\Models\Transfer;
 use App\Models\Members;
 use App\Models\Payout;
 use App\Models\Bank;
+use App\Models\PromotionUsed;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -21,6 +22,7 @@ class DashboardController extends Controller
         $total_member = 0;
         $total_online = 0;
         $new_member = 0;
+        $total_bonus = 0;
         if($member_new){
             foreach ($member_new as $key => $value) {
                     $new_member++;
@@ -55,9 +57,11 @@ class DashboardController extends Controller
             ->orderby('transfer.created_at','desc')->limit(5)
             ->get();
 
-        
+            $total_bonus = PromotionUsed::whereDate('created_at', Carbon::today())->sum('amount');
+
+
         $banks = Bank::where('enable',1)->where('active',1)->get();
-        return view('welcome', compact('banks','total_deposit', 'total_withdraw','new_member','total_member','players','total_online','topgame','transfer','member_new'));
+        return view('welcome', compact('banks','total_deposit', 'total_withdraw','new_member','total_member','players','total_online','topgame','transfer','member_new','total_bonus'));
     }
 
     public function dashboard_date(Request $request){
