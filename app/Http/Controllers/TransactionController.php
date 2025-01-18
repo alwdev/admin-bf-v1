@@ -190,12 +190,14 @@ class TransactionController extends Controller
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->save();
 
-                    PromotionUsed::create([
-                        'member_id' => $member->id,
-                        'promotion_id' => $transfer->promotion_id,
-                        'promotion_name' => $pro->name,
-                        'amount' => $bonus
-                    ]);
+                    if($transfer->promotion_id != 0){
+                        PromotionUsed::create([
+                            'member_id' => $member->id,
+                            'promotion_id' => $transfer->promotion_id,
+                            'promotion_name' => $pro->name,
+                            'amount' => $bonus
+                        ]);
+                    }
                 }
 
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
@@ -306,12 +308,14 @@ class TransactionController extends Controller
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->save();
 
-                    PromotionUsed::create([
-                        'member_id' => $member->id,
-                        'promotion_id' => $transfer->promotion_id,
-                        'promotion_name' => $pro->name,
-                        'amount' => $bonus
-                    ]);
+                    if($transfer->promotion_id != 0){
+                        PromotionUsed::create([
+                            'member_id' => $member->id,
+                            'promotion_id' => $transfer->promotion_id,
+                            'promotion_name' => $pro->name,
+                            'amount' => $bonus
+                        ]);
+                    }
                 }
 
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
@@ -425,12 +429,14 @@ class TransactionController extends Controller
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->save();
 
-                    PromotionUsed::create([
-                        'member_id' => $member->id,
-                        'promotion_id' => $transfer->promotion_id,
-                        'promotion_name' => $pro->name,
-                        'amount' => $bonus
-                    ]);
+                    if($transfer->promotion_id != 0){
+                        PromotionUsed::create([
+                            'member_id' => $member->id,
+                            'promotion_id' => $transfer->promotion_id,
+                            'promotion_name' => $pro->name,
+                            'amount' => $bonus
+                        ]);
+                    }
                 }
 
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))

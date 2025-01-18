@@ -122,12 +122,14 @@ class ManageMemberController extends Controller
                     $transfer->old_balance = $old_balance;
                     $transfer->save();
 
-                    PromotionUsed::create([
-                        'member_id' => $member->id,
-                        'promotion_id' => $transfer->promotion_id,
-                        'promotion_name' => $pro->name,
-                        'amount' => $bonus
-                    ]);
+                    if($transfer->promotion_id != 0){
+                        PromotionUsed::create([
+                            'member_id' => $member->id,
+                            'promotion_id' => $transfer->promotion_id,
+                            'promotion_name' => $pro->name,
+                            'amount' => $bonus
+                        ]);
+                    }
 
                 }else{
                     return redirect()->back()->with('error',$bf_deposit);
