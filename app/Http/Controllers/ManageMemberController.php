@@ -15,6 +15,7 @@ use App\Models\Payout;
 use App\Models\Bank;
 use Illuminate\Support\Facades\Log;
 use App\Models\Logs;
+use App\Models\PromotionUsed;
 use NotificationChannels\Telegram\TelegramMessage;
 
 class ManageMemberController extends Controller
@@ -61,10 +62,7 @@ class ManageMemberController extends Controller
         $transfer->old_balance = $member->wallet_balance;
         if($request->status == 'approve'){
             $old_balance = $member->wallet_balance;
-
-            $transfer->status = 2;
-            $transfer->status_code ="อนุมัติ";
-            $transfer->old_balance = $old_balance;
+            $bonus =0;
 
             if($request->type=="deposit"){
                 $amount_betflix = 0;
@@ -87,11 +85,15 @@ class ManageMemberController extends Controller
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
                             $transfer->promotion ='สมาชิกใหม่ ฝาก 20 รับ 100 บาท';
+                            Log::info('สมาชิกใหม่ ฝาก 20 รับ 100 บาท');
+
                         }else if($transfer->amount >= 300){  /// สมาชิกใหม่ ฝาก 300 รับ 500 บาท
                             $bonus = 200;
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
                             $transfer->promotion ='สมาชิกใหม่ ฝาก 300 รับ 500 บาท';
+                            Log::info('สมาชิกใหม่ ฝาก 300 รับ 500 บาท');
+
                         }
 
 
@@ -106,18 +108,39 @@ class ManageMemberController extends Controller
 
 
                 }
+
+
                 $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
                 Log::info('Deposit Betflix '.$bf_deposit.' '.$amount_betflix.' User =  '.$member->username);
                 error_log('Deposit Betflix '.$bf_deposit.' '.$amount_betflix.' User =  '.$member->username);
 
+                if($bf_deposit == "success"){
+                    $member->save();
+                    $transfer->new_balance = $member->wallet_balance;
+                    $transfer->status = 2;
+                    $transfer->status_code ="อนุมัติ";
+                    $transfer->old_balance = $old_balance;
+                    $transfer->save();
 
+                    PromotionUsed::create([
+                        'member_id' => $member->id,
+                        'promotion_id' => $transfer->promotion_id,
+                        'promotion_name' => $pro->name,
+                        'amount' => $bonus
+                    ]);
 
+                }else{
+                    return redirect()->back()->with('error',$bf_deposit);
+                }
 
               TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
               ->line(env('APP_NAME'))
               ->line('Admin ทำรายการ อนุมัติเครดิตเข้า '.$member->username)
               ->line('จำนวน :'.floor($transfer->amount))
+              ->line('Bonus :'.$bonus)
               ->send();
+
+
             }else if($request->type=="withdraw"){
                 // if($transfer->promotion_id != 0){
                 //     $pro = Promotion::find($transfer->promotion_id);
@@ -136,6 +159,19 @@ class ManageMemberController extends Controller
                 $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,floor($transfer->amount));
                 Log::info('Betflix Withdraw '.$bf_deposit.' '.floor($transfer->amount).' User =  '.$member->username);
 
+                if($bf_deposit == "success"){
+                    $member->save();
+                    $transfer->new_balance = $member->wallet_balance;
+                    $transfer->status = 2;
+                    $transfer->status_code ="อนุมัติ";
+                    $transfer->old_balance = $old_balance;
+                    $transfer->save();
+
+
+                }else{
+                    return redirect()->back()->with('error',$bf_deposit);
+                }
+
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line(env('APP_NAME'))
                 ->line('Admin ทำรายการ อนุมัติถอนเงิน '.$member->username)
@@ -144,13 +180,8 @@ class ManageMemberController extends Controller
                 ->send();
 
             }
-            if($bf_deposit == "success"){
-                $member->save();
-                $transfer->new_balance = $member->wallet_balance;
-                $transfer->save();
-            }else{
-                return redirect()->back()->with('error',$bf_deposit);
-            }
+
+
 
 
 

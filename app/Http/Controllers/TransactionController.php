@@ -19,6 +19,7 @@ use \Crypt;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
 use NotificationChannels\Telegram\TelegramMessage;
+use App\Models\PromotionUsed;
 
 class TransactionController extends Controller
 {
@@ -137,7 +138,7 @@ class TransactionController extends Controller
         }
 
         if($key == 'รับโอนจาก'){
-
+            $bonus =0;
             $transfer = Transfer::where('amount',$amount)->where('type','deposit')->where('status',1)->whereTime('created_at', '>=', now()->subMinute(5))->first();
             if($transfer){
                 // return response()->json(["text"=>$chectText1,"amount"=>$amount,"key"=>$key,"transfer"=>$transfer]);
@@ -160,32 +161,25 @@ class TransactionController extends Controller
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
                             $transfer->promotion ='สมาชิกใหม่ ฝาก 20 รับ 100 บาท';
+                            Log::info("สมาชิกใหม่ ฝาก 20 รับ 100 บาท");
+
                         }else if($transfer->amount >= 300){  /// สมาชิกใหม่ ฝาก 300 รับ 500 บาท
                             $bonus = 200;
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
                             $transfer->promotion ='สมาชิกใหม่ ฝาก 300 รับ 500 บาท';
+                            Log::info("สมาชิกใหม่ ฝาก 300 รับ 500 บาท");
+
                         }
                     }else{
                         $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
                         $amount_betflix = $transfer->amount;
                     }
 
-                    // if($transfer->promotion_id == 1){
-                    //     $b =  (float) $member->wallet_balance + $transfer->amount + 100;
-                    //     $amount_betflix = $transfer->amount + 100;
-                    // }else{
-                    //     $b =  (float) $member->wallet_balance + (float) $transfer->amount + ((float) $transfer->amount * $pro->bonus / 100);
-                    //     $amount_betflix = (float) $transfer->amount + ((float) $transfer->amount * $pro->bonus / 100);
-                    // }
-
-
                 }else{
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                     $amount_betflix = (float) $transfer->amount;
                 }
-
-
 
 
                 $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
@@ -195,6 +189,13 @@ class TransactionController extends Controller
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->save();
+
+                    PromotionUsed::create([
+                        'member_id' => $member->id,
+                        'promotion_id' => $transfer->promotion_id,
+                        'promotion_name' => $pro->name,
+                        'amount' => $bonus
+                    ]);
                 }
 
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
@@ -202,6 +203,7 @@ class TransactionController extends Controller
                 ->line('BOT '.env('APP_NAME'))
                 ->line('ทำรายการสำเร็จ โอนเครดิตเข้า '.$member->username)
                 ->line('จำนวน :'.$amount)
+                ->line('Bonus :'.$bonus)
                 // ->button('View page', env('APP_URL'))
                 // ->button('View page',env('APP_URL'))
                 // ->keyboard('Button 1')
@@ -253,7 +255,7 @@ class TransactionController extends Controller
         }
 
         if($key == 'รับโอนจาก'){
-
+            $bonus =0;
             $transfer = Transfer::where('amount',$amount)->where('type','deposit')->where('status',1)->whereTime('created_at', '>=', now()->subMinute(5))->first();
             if($transfer){
                 // return response()->json(["text"=>$chectText1,"amount"=>$amount,"key"=>$key,"transfer"=>$transfer]);
@@ -287,14 +289,6 @@ class TransactionController extends Controller
                         $amount_betflix = $transfer->amount;
                     }
 
-                    // if($transfer->promotion_id == 1){
-                    //     $b =  (float) $member->wallet_balance + $transfer->amount + 100;
-                    //     $amount_betflix = $transfer->amount + 100;
-                    // }else{
-                    //     $b =  (float) $member->wallet_balance + (float) $transfer->amount + ((float) $transfer->amount * $pro->bonus / 100);
-                    //     $amount_betflix = (float) $transfer->amount + ((float) $transfer->amount * $pro->bonus / 100);
-                    // }
-
 
                 }else{
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
@@ -311,6 +305,13 @@ class TransactionController extends Controller
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->save();
+
+                    PromotionUsed::create([
+                        'member_id' => $member->id,
+                        'promotion_id' => $transfer->promotion_id,
+                        'promotion_name' => $pro->name,
+                        'amount' => $bonus
+                    ]);
                 }
 
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
@@ -318,6 +319,7 @@ class TransactionController extends Controller
                 ->line('BOT '.env('APP_NAME'))
                 ->line('ทำรายการสำเร็จ โอนเครดิตเข้า '.$member->username)
                 ->line('จำนวน :'.$amount)
+                ->line('Bonus :'.$bonus)
                 // ->button('View page', env('APP_URL'))
                 // ->button('View page',env('APP_URL'))
                 // ->keyboard('Button 1')
@@ -368,7 +370,7 @@ class TransactionController extends Controller
         }
 
         if($key == 'รับโอนจาก'){
-
+            $bonus =0;
             $transfer = Transfer::where('amount',$amount)->where('type','deposit')->where('status',1)->whereTime('created_at', '>=', now()->subMinute(5))->first();
             if($transfer){
                 // return response()->json(["text"=>$chectText1,"amount"=>$amount,"key"=>$key,"transfer"=>$transfer]);
@@ -422,6 +424,13 @@ class TransactionController extends Controller
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->save();
+
+                    PromotionUsed::create([
+                        'member_id' => $member->id,
+                        'promotion_id' => $transfer->promotion_id,
+                        'promotion_name' => $pro->name,
+                        'amount' => $bonus
+                    ]);
                 }
 
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
@@ -429,6 +438,7 @@ class TransactionController extends Controller
                 ->line('BOT '.env('APP_NAME'))
                 ->line('ทำรายการสำเร็จ โอนเครดิตเข้า '.$member->username)
                 ->line('จำนวน :'.$amount)
+                ->line('Bonus :'.$bonus)
                 // ->button('View page', env('APP_URL'))
                 // ->button('View page',env('APP_URL'))
                 // ->keyboard('Button 1')
