@@ -14,9 +14,9 @@ class BankAccountController extends Controller
     public function index()
     {
         //update True wallet
-        $truewallet = Bank::where('active',1)->where('bank_name','TrueMoney Wallet')->first();
-        $truewallet->balance = app(\App\Http\Controllers\TMN_Controller::class)->index();
-        $truewallet->save();
+        // $truewallet = Bank::where('active',1)->where('bank_name','TrueMoney Wallet')->first();
+        // $truewallet->balance = app(\App\Http\Controllers\TMN_Controller::class)->index();
+        // $truewallet->save();
 
         $banks = Bank::where('active',1)->get();
         return view('bank.index',compact('banks'));
