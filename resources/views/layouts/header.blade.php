@@ -60,41 +60,41 @@
         count_event_lose = sessionStorage.getItem("count_event");
     }
 
-    setInterval(function() {
-        $.ajax({
-            type: 'get',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            url: '{{ route('report.count_last_tranfer') }}',
-            success: function (data) {
-            if(data){
-                $('#tran_count').text('รายการ ฝาก/ถอน รออนุมัติ : '+data);
-                // console.log(count_event_lose);
-                if(parseInt(data) != 0){
-                    if(parseInt(data) != count_event_lose && count_event < parseInt(data)){
-                        var alarm = new Howl({
-                            src: ["{{ asset('noti.mp3?002') }}"],
-                            autoplay: false,
-                            loop: false,
-                            // volume: 0.5,
-                        });
-                        alarm.play();
-                        count_event = count_event + 1;
-                    }
-                    count_event_lose = parseInt(data);
-                    sessionStorage.setItem("count_event", parseInt(data));
-                }else{
-                    sessionStorage.setItem("count_event", 0);
-                    count_event_lose = 0;
-                    count_event = 0;
-                }
-            }else{
-                console.log('error');
-            }
-            }
-        });
+    // setInterval(function() {
+    //     $.ajax({
+    //         type: 'get',
+    //         headers: {
+    //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    //         },
+    //         url: '{{ route('report.count_last_tranfer') }}',
+    //         success: function (data) {
+    //         if(data){
+    //             $('#tran_count').text('รายการ ฝาก/ถอน รออนุมัติ : '+data);
+    //             // console.log(count_event_lose);
+    //             if(parseInt(data) != 0){
+    //                 if(parseInt(data) != count_event_lose && count_event < parseInt(data)){
+    //                     var alarm = new Howl({
+    //                         src: ["{{ asset('noti.mp3?002') }}"],
+    //                         autoplay: false,
+    //                         loop: false,
+    //                         // volume: 0.5,
+    //                     });
+    //                     alarm.play();
+    //                     count_event = count_event + 1;
+    //                 }
+    //                 count_event_lose = parseInt(data);
+    //                 sessionStorage.setItem("count_event", parseInt(data));
+    //             }else{
+    //                 sessionStorage.setItem("count_event", 0);
+    //                 count_event_lose = 0;
+    //                 count_event = 0;
+    //             }
+    //         }else{
+    //             console.log('error');
+    //         }
+    //         }
+    //     });
 
-    }, 2000);
+    // }, 2000);
 
 </script>
