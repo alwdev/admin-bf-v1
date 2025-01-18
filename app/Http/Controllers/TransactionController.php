@@ -118,7 +118,7 @@ class TransactionController extends Controller
         $log = new Logs;
         $log->log = "SMS : ".$request->sms;
         $log->save();
-
+        date_default_timezone_set("Asia/Bangkok");
 
         try{
 
@@ -131,8 +131,8 @@ class TransactionController extends Controller
             }
 
 
-
-            // return response()->json(["amount"=>$amount,"key"=>$key],200);
+            return now()->subMinute(5);
+            return response()->json(["amount"=>$amount,"key"=>$key],200);
         } catch(\Exception $e){
             Log::error("Error : ".$e->getMessage());
 
@@ -346,8 +346,9 @@ class TransactionController extends Controller
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 // ->content('Choose an option:')
                 ->line('BOT '.env('APP_NAME'))
-                ->line('ไม่พบรายการโอนเงินในช่วงเวลา')
+                ->line('ไม่พบรายการโอนเงินในช่วงเวลา ')
                 ->line('จำนวน :'.$amount)
+                ->line('subMinute(5)'.now()->subMinute(5))
                 // ->button('View page', env('APP_URL'))
                 // ->button('View page',env('APP_URL'))
                 // ->keyboard('Button 1')
