@@ -401,9 +401,11 @@ class SettingController extends Controller
         if($request->image){
             $fileName = rand().'.'.$request->image->extension();
             $request->image->move(public_path('images/wheel'), $fileName);
-            $data->image = "/images/data/".$fileName;
+            $data->image = "/images/wheel/".$fileName;
         }
         $data->save();
+
+        return redirect()->route('setting.wheel')->with('status','success');
     }
 
     /**

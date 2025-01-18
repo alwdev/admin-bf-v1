@@ -27,7 +27,7 @@
  <div class="row">
     <div class="col-xl-6 d-flex">
         <div class="card flex-fill">
-            <form id="form-maintenance" action="{{ route('setting.wheel_update') }}" method="post">
+            <form id="form-maintenance" action="{{ route('setting.wheel_update') }}" method="post" enctype="multipart/form-data">
                 @csrf
            <div class="card-body">
                <h4 class="card-title">ตั้งค่าเกมกงล้อ</h4>
@@ -65,15 +65,16 @@
                     </div>
                     <div class="mb-2 mt-2">
                         <label class="" for="image">ภาพแสดงกงล้อหน้าลูกค้า</label>
+                        <br>
                         @if($setting->image)
-                        <img src="{{ $setting->image }}">
+                        <img src="{{ $setting->image }}"  style="width:200px;">
                         @endif
                         <input required type="file" class="form-control" name="image">
                         {{-- <span class="text-danger">** ข้อควรระวัง และ พบเจอบ่อยเป็นประจำ.... **</span>
                         - ขนาดภาพ <span class="text-danger">จำเป็นต้อง 500x500 เท่านั้น</span> - สังเกตตัวเลขในช่อง ที่แสดงนี้เพื่อเทียบกับการตั้งค่า - ระยะความกว้างของช่องนั้นต้องเท่ากับต้นแบบเท่านั้นมิฉะนั้น "ผลลัพธ์จะไม่ตรงตามการตั้งค่า" --}}
                     </div>
                    {{-- <button type="button" onclick="formsubmit()" class="btn btn-primary waves-effect waves-light mt-4">บันทึก</button> --}}
-               </form>
+               
            </div>
            <!-- end card-body-->
        </div>
