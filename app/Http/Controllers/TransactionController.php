@@ -121,9 +121,16 @@ class TransactionController extends Controller
 
 
         try{
-            $bank_number = explode(' ',$request->sms)[5];
-            $amount = explode(' ',$request->sms)[6];
+
             $key = explode(' ',$request->sms)[4] ;
+            if($key == 'รับโอนจาก'){
+                $amount = explode(' ',$request->sms)[6];
+            }elseif($key == 'เงินเข้า'){
+                $key = 'รับโอนจาก';
+                $amount = explode(' คงเหลือ',explode('เงินเข้า ',$request->sms)[1])[0] ;
+            }
+
+
 
             // return response()->json(["amount"=>$amount,"key"=>$key],200);
         } catch(\Exception $e){
@@ -240,9 +247,13 @@ class TransactionController extends Controller
 
 
         try{
-            $bank_number = explode(' ',$sms)[5];
-            $amount = explode(' ',$sms)[6];
             $key = explode(' ',$sms)[4] ;
+            if($key == 'รับโอนจาก'){
+                $amount = explode(' ',$sms)[6];
+            }elseif($key == 'เงินเข้า'){
+                $key = 'รับโอนจาก';
+                $amount = explode(' คงเหลือ',explode('เงินเข้า ',$sms)[1])[0] ;
+            }
 
             // return response()->json(["amount"=>$amount,"key"=>$key],200);
         } catch(\Exception $e){
