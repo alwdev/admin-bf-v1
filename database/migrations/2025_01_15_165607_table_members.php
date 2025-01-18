@@ -13,7 +13,7 @@ return new class extends Migration
     {
         //
         Schema::table('members', function (Blueprint $table) {
-            $table->string('ranking')->default('1');
+            $table->string('ranking')->default('Bronze');
         });
     }
 
