@@ -78,6 +78,7 @@ class DashboardController extends Controller
         $total_member = 0;
         $total_online = 0;
         $new_member = 0;
+        $total_bonus = 0;
         if($member_new){
             foreach ($member_new as $key => $value) {
                     $new_member++;
@@ -114,7 +115,9 @@ class DashboardController extends Controller
             ->orderby('transfer.created_at','desc')->limit(5)
             ->get();
 
+            $total_bonus = PromotionUsed::whereBetween('created_at', [$dateS->format('Y-m-d')." 00:00:00", $dateE->format('Y-m-d')." 23:59:59"])->sum('amount');
 
-        return view('welcome', compact('total_deposit', 'total_withdraw','new_member','total_member','players','total_online','topgame','transfer','member_new'));
+            $banks = Bank::where('enable',1)->where('active',1)->get();
+        return view('welcome', compact('total_bonus','banks','total_deposit', 'total_withdraw','new_member','total_member','players','total_online','topgame','transfer','member_new'));
     }
 }
