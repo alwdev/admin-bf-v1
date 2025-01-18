@@ -526,6 +526,12 @@ class TransactionController extends Controller
         $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,floor($transfer->amount));
         Log::info('Betflix Withdraw '.$bf_deposit.' '.floor($transfer->amount).' User =  '.$member->username);
 
+        $bank = Bank::where('account_no',$transfer->deposit_to_bank_no)->first();
+            if($bank){
+                $bank->balance = (float) $bank->balance - (float) $transfer->amount;
+                $bank->save();
+            }
+
         $transfer->ref_id = $request->ref;
         $transfer->status = 2;
         $transfer->status_code ="อนุมัติ";
