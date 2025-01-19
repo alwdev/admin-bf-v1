@@ -42,32 +42,37 @@ class TransactionController extends Controller
     public function checkTurnOver($mid){
         $member = Members::where('id',$mid)->first();
         $turn_over = app(\App\Http\Controllers\BetflixController::class)->lastDay_TurnOver($member->username);
-
         $check_transfers = Transfer::where('member_id',$mid)->where('type','deposit')->latest('created_at')->first();
+
         if($check_transfers){
-            if($check_transfers->promotion_id != 0){
-                $check_balance = Members::where('id',$mid)->first();
+            if($check_transfers->turnover_on == 1){
+                if($check_transfers->promotion_id != 0){
+                    $check_balance = Members::where('id',$mid)->first();
 
-                $turn_over =app(\App\Http\Controllers\BetflixController::class)->lastDay_TurnOver($member->username);
+                    // $turn_over = app(\App\Http\Controllers\BetflixController::class)->lastDay_TurnOver($member->username);
+                    try {
+                        $turn_over = app(\App\Http\Controllers\BetflixController::class)->lastDay_TurnOver($member->username);
+                    } catch (\Throwable $th) {
+                        $turnover =0;
+                    }
+                    $current_balance = $check_balance->wallet_balance;
+                    $last_transfers = $check_transfers->amount;
 
-                $current_balance = $check_balance->wallet_balance;
-                $last_transfers = $check_transfers->amount;
-
-                $promotion = Promotion::find($check_transfers->promotion_id);
-                if(!is_null($promotion)){
-
-                    if($promotion->id == 1){
-                        if($turn_over >= 100){
-                            return "ผ่าน";
+                    $promotion = Promotion::find($check_transfers->promotion_id);
+                    if(!is_null($promotion)){
+                        if($promotion->id == 1){
+                            if($turn_over >= 100){
+                                return "ผ่าน";
+                            }else{
+                                return $turn_over;
+                            }
                         }else{
-                            return $turn_over;
-                        }
-                    }else{
 
-                        if($turn_over > ($last_transfers * (int) $promotion->turnover)){
-                            return "ผ่าน";
-                        }else{
-                            return $turn_over;
+                            if($turn_over > ($last_transfers * (int) $promotion->turnover)){
+                                return "ผ่าน";
+                            }else{
+                                return $turn_over;
+                            }
                         }
                     }
                 }
@@ -646,5 +651,12 @@ class TransactionController extends Controller
         $data->save();
 
         return redirect()->route('report.wrongdeposit')->with('status','success');
+    }
+
+    public function turnover_on(Request $request){
+        $data = Transfer::find($request->id);
+        $data->turnover_on = 0;
+        $data->save();
+        return redirect()->route('managemember.transaction')->with('status','success');
     }
 }

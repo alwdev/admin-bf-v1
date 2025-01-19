@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
 
     //Transaction
     Route::get('/transaction', [TransactionController::class, 'index'])->name('managemember.transaction')->middleware('CheckPermissionUser:transfer,view');
+    Route::post('/turnover_on', [TransactionController::class, 'turnover_on'])->name('managemember.turnover_on')->middleware('CheckPermissionUser:transfer,view');
 
      //Manage user
     Route::get('/manageuser', [ManageUserController::class, 'index'])->name('manageuser.index')->middleware('CheckPermissionUser:manageuser,view');
