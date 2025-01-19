@@ -68,7 +68,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($transfer as $item)
+                    @foreach ($transfer as $key_ => $item)
                         <tr>
                             <td>{{ $item->username }}</td>
                             <td>{{ $item->type }}</td>
@@ -265,13 +265,24 @@
                                     @else
                                         {!! $item->promotion !!}
                                         @if($item->type == 'withdraw')
-                                        @php
+                                            @if($item->turnover_on == 1)
+                                            @php
 
-                                            $turnover = app('App\Http\Controllers\TransactionController')->checkTurnOver($item->member_id);
-                                        @endphp
-                                        <br>
-                                        ยอดเทิร์นที่ทำได้ : {{ $turnover }}
+                                                $turnover = app('App\Http\Controllers\TransactionController')->checkTurnOver($item->member_id);
+                                            @endphp
+                                            <br>
+                                            ยอดเทิร์นที่ทำได้ : {{ $turnover }}
+                                            @endif
                                         @endif
+                                        
+                                        @if($item->turnover_on == 1 && $item->type == 'deposit')
+                                            <button type="button" onclick="confirm_turonver_on('#form_turnover_on{{ $key_ }}')" class="btn btn-sm btn-info">รีเซ็ตเทิร์นโอเวอร์</button>
+                                            <form id="form_turnover_on{{ $key_ }}" action="{{ route('managemember.turnover_on') }}" method="post">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{ $item->id }}">
+                                            </form>
+                                        @endif
+
                                     @endif
                                 @else
                                     cashback
@@ -415,6 +426,24 @@
             Swal.fire({
                     title: 'ต้องการอัพเดตสถานะหรือไม่?',
                     text: "***คำเตือนหากเป็นการ ถอนเงิน Admin ต้องทำรายการโอนเงินเองที่แอปธนาคาร",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'ใช่',
+                    cancelButtonText: 'ไม่, ยกเลิก!',
+                    confirmButtonClass: 'btn btn-success mt-2',
+                    cancelButtonClass: 'btn btn-danger ml-2 mt-2',
+                    buttonsStyling: false
+                }).then(function (result) {
+                    if (result.value) {
+                       $(form).submit();
+                    }
+                });
+        }
+
+        function confirm_turonver_on(form){
+            Swal.fire({
+                    title: 'ต้องการอัพเดตสถานะหรือไม่?',
+                    text: "",
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'ใช่',
