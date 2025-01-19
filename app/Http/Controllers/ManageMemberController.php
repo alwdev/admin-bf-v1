@@ -211,8 +211,13 @@ class ManageMemberController extends Controller
             $transfer->save();
 
             if($request->type=="withdraw"){
-                $new_balance = (float) $member->wallet_balance + $transfer->amount;
-                $member->update(['wallet_balance' => strval($new_balance)]);
+                $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($transfer->amount));
+                Log::info('rollBack Deposit Betflix '.$bf_deposit.' '.$transfer->amount.' User =  '.$member->username);
+                if($bf_deposit == "success"){
+                    $new_balance = (float) $member->wallet_balance + $transfer->amount;
+                    $member->update(['wallet_balance' => strval($new_balance)]);
+            
+                }
             }
 
         }
