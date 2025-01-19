@@ -38,7 +38,12 @@
                         <x-input-error :messages="$errors->get('name')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="bonus">โบนัส(%)</label>
+                        <label for="deposit">ฝาก(บาท)</label>
+                        <input class="form-control"  type="number" id="deposit" name="deposit" required onkeypress="return isNumberKey(event)"  value="{{ old('deposit') }}">
+                        <x-input-error :messages="$errors->get('deposit')" class="mt-2" />
+                    </div>
+                    <div class="form-group">
+                        <label for="bonus">โบนัส(บาท)</label>
                         <input class="form-control"  type="number" id="bonus" name="bonus" required onkeypress="return isNumberKey(event)"  value="{{ old('bonus') }}">
                         <x-input-error :messages="$errors->get('bonus')" class="mt-2" />
                     </div>
@@ -48,9 +53,13 @@
                         <x-input-error :messages="$errors->get('turnover')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="withdraw_percent">ถอนได้กี่(%) ของยอดเทิร์น</label>
-                        <input class="form-control"  type="number" id="withdraw_percent" name="withdraw_percent" required onkeypress="return isNumberKey(event)"  value="{{ old('withdraw_percent') }}">
-                        <x-input-error :messages="$errors->get('withdraw_percent')" class="mt-2" />
+                        <label for="withdraw_limit">ถอนได้กี่(บาท) ของยอดเทิร์น</label>
+                        <input class="form-control"  type="number" id="withdraw_limit" name="withdraw_limit" required onkeypress="return isNumberKey(event)"  value="{{ old('withdraw_limit') }}">
+                        <x-input-error :messages="$errors->get('withdraw_limit')" class="mt-2" />
+                    </div>
+                    <div class="custom-control custom-checkbox custom-control-inline mb-3">
+                        <input type="checkbox" class="custom-control-input" id="is_newuser" name="is_newuser"  value="1">
+                        <label class="custom-control-label" for="is_newuser">เฉพาะผู้เล่นใหม่</label>
                     </div>
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
                         <input type="checkbox" class="custom-control-input" id="enable" name="enable" checked value="1">

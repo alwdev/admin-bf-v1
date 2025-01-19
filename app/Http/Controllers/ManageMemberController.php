@@ -74,33 +74,44 @@ class ManageMemberController extends Controller
                 }
 
                 if($transfer->promotion_id != 0){
-                    $pro = Promotion::find($transfer->promotion_id);
-                    $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->get();  /// เช็คฝากครั้งแรก
-                    $user_transfer_count = $user_transfer->count();
+                    if($transfer->turnover_on == 1){
+                        $pro = Promotion::find($transfer->promotion_id);
+                        $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->get();  /// เช็คฝากครั้งแรก
+                        $user_transfer_count = $user_transfer->count();
 
-                    if($user_transfer_count == 0){
+                        if($user_transfer_count == 0){
 
-                        if($transfer->amount >= 20 && $transfer->amount < 300){  /// สมาชิกใหม่ ฝาก 20 รับ 100 บาท
-                            $bonus = 80;
+                            $bonus = $pro->bonus;
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
-                            $transfer->promotion ='สมาชิกใหม่ ฝาก 20 รับ 100 บาท';
-                            Log::info('สมาชิกใหม่ ฝาก 20 รับ 100 บาท');
+                            $transfer->promotion = $pro->name;
+                            Log::info($pro->name);
 
-                        }else if($transfer->amount >= 300){  /// สมาชิกใหม่ ฝาก 300 รับ 500 บาท
-                            $bonus = 200;
-                            $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
-                            $amount_betflix = $transfer->amount + $bonus;
-                            $transfer->promotion ='สมาชิกใหม่ ฝาก 300 รับ 500 บาท';
-                            Log::info('สมาชิกใหม่ ฝาก 300 รับ 500 บาท');
+                            // if($transfer->amount >= 20 && $transfer->amount < 300){  /// สมาชิกใหม่ ฝาก 20 รับ 100 บาท
+                            //     $bonus = 80;
+                            //     $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
+                            //     $amount_betflix = $transfer->amount + $bonus;
+                            //     $transfer->promotion ='สมาชิกใหม่ ฝาก 20 รับ 100 บาท';
+                            //     Log::info('สมาชิกใหม่ ฝาก 20 รับ 100 บาท');
+
+                            // }else if($transfer->amount >= 300){  /// สมาชิกใหม่ ฝาก 300 รับ 500 บาท
+                            //     $bonus = 200;
+                            //     $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
+                            //     $amount_betflix = $transfer->amount + $bonus;
+                            //     $transfer->promotion ='สมาชิกใหม่ ฝาก 300 รับ 500 บาท';
+                            //     Log::info('สมาชิกใหม่ ฝาก 300 รับ 500 บาท');
+
+                            // }
+
+
+                        }else{
+                            $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+                            $amount_betflix = $transfer->amount;
 
                         }
-
-
                     }else{
-                        $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+                        $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                         $amount_betflix = $transfer->amount;
-
                     }
                 }else{
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;

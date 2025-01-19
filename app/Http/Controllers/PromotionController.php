@@ -35,13 +35,19 @@ class PromotionController extends Controller
         $pro = new Promotion;
         $pro->name = $request->name;
         $pro->turnover = $request->turnover;
+        $pro->deposit = $request->deposit;
         $pro->bonus = $request->bonus;
         if(isset($request->enable)){
             $pro->enable = $request->enable;
         }else{
             $pro->enable = 0;
         }
-        $pro->withdraw_percent = $request->withdraw_percent;
+        if(isset($request->is_newuser)){
+            $pro->is_newuser = $request->is_newuser;
+        }else{
+            $pro->is_newuser = 0;
+        }
+        $pro->withdraw_limit = $request->withdraw_limit;
         $pro->active = 1;
         $pro->save();
         return redirect()->route('promotion.index')->with('status','200');
@@ -74,13 +80,19 @@ class PromotionController extends Controller
         $pro = Promotion::find($id);
         $pro->name = $request->name;
         $pro->turnover = $request->turnover;
+        $pro->deposit = $request->deposit;
         $pro->bonus = $request->bonus;
         if(isset($request->enable)){
             $pro->enable = $request->enable;
         }else{
             $pro->enable = 0;
         }
-        $pro->withdraw_percent = $request->withdraw_percent;
+        if(isset($request->is_newuser)){
+            $pro->is_newuser = $request->is_newuser;
+        }else{
+            $pro->is_newuser = 0;
+        }
+        $pro->withdraw_limit = $request->withdraw_limit;
         $pro->active = 1;
         $pro->save();
         return redirect()->route('promotion.index')->with('status','200');

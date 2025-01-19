@@ -38,8 +38,13 @@
                         <x-input-error :messages="$errors->get('name')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="bonus">โบนัส(%)</label>
-                        <input class="form-control"  type="number" id="bonus" name="bonus" min="0" max="100" required onkeypress="return isNumberKey(event)"  value="{{ $promotion->bonus }}">
+                        <label for="deposit">ฝาก(บาท)</label>
+                        <input class="form-control"  type="number" id="deposit" name="deposit" required onkeypress="return isNumberKey(event)"   value="{{ $promotion->deposit }}">
+                        <x-input-error :messages="$errors->get('deposit')" class="mt-2" />
+                    </div>
+                    <div class="form-group">
+                        <label for="bonus">โบนัส(บาท)</label>
+                        <input class="form-control"  type="number" id="bonus" name="bonus" min="0" required onkeypress="return isNumberKey(event)"  value="{{ $promotion->bonus }}">
                         <x-input-error :messages="$errors->get('bonus')" class="mt-2" />
                     </div>
                     <div class="form-group">
@@ -48,9 +53,13 @@
                         <x-input-error :messages="$errors->get('turnover')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="withdraw_percent">ถอนได้กี่(%) ของยอดเทิร์น</label>
-                        <input class="form-control"  type="number" id="withdraw_percent" name="withdraw_percent" min="0" max="100" required onkeypress="return isNumberKey(event)"  value="{{ $promotion->withdraw_percent }}">
-                        <x-input-error :messages="$errors->get('withdraw_percent')" class="mt-2" />
+                        <label for="withdraw_limit">ถอนได้กี่(บาท) ของยอดเทิร์น</label>
+                        <input class="form-control"  type="number" id="withdraw_limit" name="withdraw_limit" min="0" required onkeypress="return isNumberKey(event)"  value="{{ $promotion->withdraw_limit }}">
+                        <x-input-error :messages="$errors->get('withdraw_limit')" class="mt-2" />
+                    </div>
+                    <div class="custom-control custom-checkbox custom-control-inline mb-3">
+                        <input type="checkbox" class="custom-control-input" id="is_newuser" name="is_newuser" @if($promotion->is_newuser==1) checked @endif value="1">
+                        <label class="custom-control-label" for="is_newuser">เฉพาะผู้เล่นใหม่</label>
                     </div>
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
                         <input type="checkbox" class="custom-control-input" id="enable" name="enable" @if($promotion->enable==1) checked @endif  value="1">

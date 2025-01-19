@@ -49,8 +49,10 @@
                 <thead  class="table-light">
                     <tr>
                         <th data-field="name" data-sortable="true">โปรโมชั่น</th>
-                        <th data-field="bonus" data-sortable="true">โบนัส (%)</th>
-                        <th data-field="turnover" data-sortable="true">เทิร์นโอเวอร์ (%)</th>
+                        <th data-field="deposit" data-sortable="true">ฝาก (บาท)</th>
+                        <th data-field="bonus" data-sortable="true">โบนัส (บาท)</th>
+                        <th data-field="turnover" data-sortable="true">เทิร์นโอเวอร์ (เท่า)</th>
+                        <th data-field="is_newuser" data-sortable="true">เฉพาะผู้เล่นใหม่</th>
                         <th data-sortable="true">วันที่สร้าง</th>
                         {{-- @if( json_decode(auth()->user()->permissions)->transfer > 2  ) --}}
                         <th data-sortable="true"></th>
@@ -61,8 +63,16 @@
                     @foreach ($promotions as $item)
                         <tr>
                             <td>{{ $item->name }}</td>
+                            <td>{{ $item->deposit }}</td>
                             <td>{{ $item->bonus }}</td>
                             <td>{{ $item->turnover }}</td>  
+                            <td>
+                                @if($item->is_newuser == 1)
+                                    <span class="badge badge-success">ใช่</span>
+                                @else
+                                    <span class="badge badge-danger">ไม่ใช่</span>
+                                @endif 
+                            </td>  
                             <td>{{ $item->created_at->format('d/m/Y H:i:s') }}</td>
                             {{-- @if( json_decode(auth()->user()->permissions)->transfer > 2  ) --}}
                             <td class="text-right">
