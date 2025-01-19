@@ -207,6 +207,7 @@ class ManageMemberController extends Controller
 
             $transfer->status = 3;
             $transfer->status_code ="ปฏิเสธ";
+            $transfer->turnover_on = 0;
             $transfer->save();
 
             if($request->type=="withdraw"){
