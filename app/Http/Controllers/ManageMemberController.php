@@ -300,6 +300,10 @@ class ManageMemberController extends Controller
 
     public function cash_back(){
         Log::info("Run cash_back");
+        TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+        ->line(env('APP_NAME'))
+        ->line('BOT เริ่มทำการ Cashback ')
+        ->send();
 
         $members = Members::get();
 
@@ -347,8 +351,9 @@ class ManageMemberController extends Controller
                 }
                 $logs = new Logs;
                 $logs->username = $member->username;
-                $logs->log = ', total_lose: ' . number_format($total_lose,2).' cash back: ' . number_format($cash_back,2);
+                $logs->log = 'total_lose: ' . number_format($total_lose,2).' cash back: ' . number_format($cash_back,2);
                 $logs->save();
+                Log::info('Username : '.$member->username.' total_lose: ' . number_format($total_lose,2).' cash back: ' . number_format($cash_back,2));
                 if($cash_back > 0 ){
                     Transfer::create([
                         'member_id' => $member->id,
