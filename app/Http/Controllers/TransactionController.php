@@ -131,8 +131,8 @@ class TransactionController extends Controller
             }
 
 
-            return now()->subMinute(5);
-            return response()->json(["amount"=>$amount,"key"=>$key],200);
+            // return now()->subMinute(5);
+            // return response()->json(["amount"=>$amount,"key"=>$key],200);
         } catch(\Exception $e){
             Log::error("Error : ".$e->getMessage());
 
