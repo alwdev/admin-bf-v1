@@ -304,59 +304,70 @@ class ManageMemberController extends Controller
         $members = Members::get();
 
         foreach ($members as $member) {
-            // $last_play = History::where('username',$member->username)->whereDate('created_at', Carbon::yesterday())->orderby('created_at','desc')->get();
-            $last_deposit = Transfer::where('member_id',$member->id)->where('status',2)->where('promotion_id',0)->where('type','deposit')->whereDate('created_at', Carbon::now()->subDays(7))->get();
+            $last_deposit = Transfer::where('member_id',$member->id)
+            ->where('status',2)->where('promotion_id','>',0)
+            ->where('type','deposit')
+            ->whereDate('created_at', Carbon::now()->subDays(7))->get();
+
             if($last_deposit){
-                $total_lose = 0;
-                $cash_back=0;
-                $amount=0;
-                $winlose= app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($member->username,-7,-1)->winloss;
-                $deposit=0;
-
-                foreach($last_deposit as $a){
-                    $deposit += $a->amount;
-                }
-                if($winlose){
-                    $total_lose =  $winlose;
-                }else{
-                    $total_lose = 0;
-                }
-
-                if($amount > $deposit) {
-
-                    if(abs($total_lose) > 0){
-                        $cash_back = (float) (abs($total_lose) * 0.05);
-                    }
-                    // $cash_back = $deposit * 0.05;
-
-                    if($cash_back > 20000){
-                        $cash_back = 20000;
-                    }
-                    $logs = new Logs;
-                    $logs->username = $member->username;
-                    $logs->log = 'last_deposit: '.number_format($deposit,2).', total_lose: ' . number_format($total_lose,2).' cash back: ' . number_format($cash_back,2);
-                    $logs->save();
-                    if($cash_back > 0   ){
-                        Transfer::create([
-                            'member_id' => $member->id,
-                            'amount' => $cash_back,
-                            'status' => 2,
-                            'status_code' => 'อนุมัติ',
-                            'type' => 'cashback',
-                            'promotion' => 'cashback',
-                            'old_balance' => $member->wallet_balance,
-                            'new_balance' => $member->wallet_balance + $cash_back,
-                            'transfer_date' => strtotime(now()),
-                        ]);
-                        $member->wallet_balance = (float) ($member->wallet_balance + $cash_back);
-                        $member->save();
-
-                        $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($cash_back));
-                        Log::info('Betflix CashBack '.$bf_deposit.' '.floor($cash_back).' User =  '.$member->username);
-                    }
-                }
-
+                continue;
             }
+
+            $last_withdraw = Transfer::where('member_id',$member->id)
+            ->where('status',2)
+            ->where('type','withdraw')
+            ->whereDate('created_at', Carbon::now()->subDays(7))->get();
+            if($last_withdraw){
+                continue;
+            }
+
+            if($member->wallet_balance >= 1){
+                continue;
+            }
+
+            $total_lose = 0;
+            $cash_back=0;
+            $winlose= app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($member->username,-7,-1)->winloss;
+
+            if($winlose){
+                $total_lose =  $winlose;
+            }else{
+                $total_lose = 0;
+            }
+
+
+
+                if(abs($total_lose) > 0){
+                    $cash_back = (float) (abs($total_lose) * 0.05);
+                }
+
+
+                if($cash_back > 20000){
+                    $cash_back = 20000;
+                }
+                $logs = new Logs;
+                $logs->username = $member->username;
+                $logs->log = ', total_lose: ' . number_format($total_lose,2).' cash back: ' . number_format($cash_back,2);
+                $logs->save();
+                if($cash_back > 0 ){
+                    Transfer::create([
+                        'member_id' => $member->id,
+                        'amount' => $cash_back,
+                        'status' => 1,
+                        'status_code' => 'รออนุมัติ',
+                        'type' => 'cashback',
+                        'promotion' => 'cashback',
+                        'old_balance' => $member->wallet_balance,
+                        'new_balance' => $member->wallet_balance + $cash_back,
+                        'transfer_date' => strtotime(now()),
+                    ]);
+                    // $member->wallet_balance = (float) ($member->wallet_balance + $cash_back);
+                    // $member->save();
+
+                    // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($cash_back));
+                    // Log::info('Betflix CashBack '.$bf_deposit.' '.floor($cash_back).' User =  '.$member->username);
+                }
+
 
         }
 
