@@ -53,7 +53,7 @@
                         <x-input-error :messages="$errors->get('turnover')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="withdraw_limit">ถอนได้กี่(บาท) ของยอดเทิร์น</label>
+                        <label for="withdraw_limit">ถอนได้สูงสุด (บาท)</label>
                         <input class="form-control"  type="number" id="withdraw_limit" name="withdraw_limit" min="0" required onkeypress="return isNumberKey(event)"  value="{{ $promotion->withdraw_limit }}">
                         <x-input-error :messages="$errors->get('withdraw_limit')" class="mt-2" />
                     </div>
