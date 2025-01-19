@@ -155,12 +155,7 @@ class ManageMemberController extends Controller
 
 
             }else if($request->type=="withdraw"){
-                // if($transfer->promotion_id != 0){
-                //     $pro = Promotion::find($transfer->promotion_id);
-                //     $member->wallet_balance = (float) $member->wallet_balance -  (float) $transfer->amount;
-                // }else{
-                //     $member->wallet_balance = (float) $member->wallet_balance -  (float) $transfer->amount;
-                // }
+
 
                 $bank = Bank::where('account_no',$transfer->deposit_to_bank_no)->first();
                 if($bank){
@@ -168,22 +163,12 @@ class ManageMemberController extends Controller
                     $bank->save();
                 }
 
-                $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
-                $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,floor($transfer->amount));
-                Log::info('Betflix Withdraw '.$bf_deposit.' '.floor($transfer->amount).' User =  '.$member->username);
-
-                if($bf_deposit == "success"){
-                    $member->save();
-                    $transfer->new_balance = $member->wallet_balance;
-                    $transfer->status = 2;
-                    $transfer->status_code ="อนุมัติ";
-                    $transfer->old_balance = $old_balance;
-                    $transfer->save();
-
-
-                }else{
-                    return redirect()->back()->with('error',$bf_deposit);
-                }
+                $member->save();
+                $transfer->new_balance = $member->wallet_balance;
+                $transfer->status = 2;
+                $transfer->status_code ="อนุมัติ";
+                $transfer->old_balance = $old_balance;
+                $transfer->save();
 
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line(env('APP_NAME'))
@@ -216,7 +201,7 @@ class ManageMemberController extends Controller
                 if($bf_deposit == "success"){
                     $new_balance = (float) $member->wallet_balance + $transfer->amount;
                     $member->update(['wallet_balance' => strval($new_balance)]);
-            
+
                 }
             }
 
