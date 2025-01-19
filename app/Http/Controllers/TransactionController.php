@@ -687,7 +687,7 @@ class TransactionController extends Controller
 
         if($key == 'รับโอนจาก'){
 
-            $transfer = Transfer::where('amount',$amount)->where('type','deposit')->where('status',1)->whereTime('created_at', '>=', now()->subMinute(5))->get();
+            $transfer = Transfer::where('amount',$amount)->where('type','deposit')->whereTime('created_at', '>=', now()->subMinute(5))->get();
             return response()->json(['transfer' => $transfer], 200);
 
         }else{
