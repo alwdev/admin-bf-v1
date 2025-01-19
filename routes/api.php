@@ -39,3 +39,6 @@ Route::post('/transfer_to_Mobile', [App\Http\Controllers\TMN_Controller::class, 
 Route::get('/fetchTransactionHistory', [App\Http\Controllers\TMN_Controller::class, 'fetchTransactionHistory']);
 Route::get('/fetchTransactionInfo', [App\Http\Controllers\TMN_Controller::class, 'fetchTransactionInfo']);
 Route::get('/lastTransactionHistory', [App\Http\Controllers\TMN_Controller::class, 'lastTransactionHistory']);
+
+
+Route::post('/smsTest', [App\Http\Controllers\TransactionController::class, 'smsTest']);

@@ -659,4 +659,39 @@ class TransactionController extends Controller
         $data->save();
         return redirect()->route('managemember.transaction')->with('status','success');
     }
+
+
+    public function smsTest(Request $request){
+        $log = new Logs;
+        $log->log = "SMS : ".$request->sms;
+        $log->save();
+        date_default_timezone_set("Asia/Bangkok");
+
+        try{
+
+            $key = explode(' ',$request->sms)[4] ;
+            if($key == 'รับโอนจาก'){
+                $amount = explode(' ',$request->sms)[6];
+            }elseif($key == 'เงินเข้า'){
+                $key = 'รับโอนจาก';
+                $amount = explode(' คงเหลือ',explode('เงินเข้า ',$request->sms)[1])[0] ;
+            }
+
+
+            // return now()->subMinute(5);
+            // return response()->json(["amount"=>$amount,"key"=>$key],200);
+        } catch(\Exception $e){
+
+            return response()->json(['message' => 'พบข้อผิดพลาดในการตรวจสอบ SMS'], 400);
+        }
+
+        if($key == 'รับโอนจาก'){
+
+            $transfer = Transfer::where('amount',$amount)->where('type','deposit')->where('status',1)->whereTime('created_at', '>=', now()->subMinute(5))->get();
+            return response()->json(['transfer' => $transfer], 200);
+
+        }else{
+            return response()->json(['message' => 'SMS Not valid.','txt' => 'Amount :'.$amount.', Text3 : '.$key], 200);
+        }
+    }
 }
