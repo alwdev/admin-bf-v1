@@ -511,12 +511,12 @@ class ManageMemberController extends Controller
         $members = Members::where('ref_user','!=',null)->get();
         Log::info("Total Members affiliate : ".count($members));
         foreach ($members as $main_member) {
-            sleep(2);
+            sleep(1);
             Log::info("Member main : " . $main_member->username.'uder member count = '.count(json_decode($main_member->ref_user)));
             if(json_decode($main_member->ref_user)){
                 set_time_limit(3000000000);
                 foreach(json_decode($main_member->ref_user) as $_member){
-                    sleep(3);
+                    sleep(2);
 
                     $under_member = Members::where('id',$_member)->first();
                     Log::info("Under of ".$main_member->username." member : " .$under_member->username);
@@ -552,6 +552,9 @@ class ManageMemberController extends Controller
                     }
 
                     Log::info("total_bet : ".$total_bet);
+                    if($total_bet = 0){
+                        continue;
+                    }
 
                     $affiliate = Affiliate::first();
                     if($affiliate->is_enable_af_winlose == 1){
