@@ -21,7 +21,7 @@ class PgHardController extends Controller
         $curl = curl_init();
         $payload = [
             "skip" => 0,
-            "take" => 10,
+            "take" => 1000,
             "startDate" => $startDate,
             "endDate" => $endDate,
             "username" => $username,
@@ -42,6 +42,6 @@ class PgHardController extends Controller
         $response = curl_exec($curl);
         $data = json_decode($response, true);
         curl_close($curl);
-        return $data;
+        return $data['data'][0]['totalAmount'];
     }
 }
