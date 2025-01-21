@@ -403,7 +403,7 @@ class ManageMemberController extends Controller
                         $total_bet = $bf_total_bet->valid_amount;
                         $winlose = $bf_total_bet->winloss;
                     } catch (\Exception $e) {
-                        Log::info('Betflix API Error : '.$e->getMessage().',bf_total_bet:'.$bf_total_bet);
+                        Log::info('Betflix API Error : '.$e->getMessage());
                         $total_bet =0;
                         $winlose =0;
                         continue;
@@ -411,7 +411,7 @@ class ManageMemberController extends Controller
 
                     try{
                         $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username,-1,-1);
-                        Log::info("pg_total_bet : ".$pg_total_bet);
+                        
                         if($pg_total_bet){
                             $total_bet = $total_bet + $pg_total_bet['data'][0]['totalAmount'];
                         }
@@ -419,7 +419,7 @@ class ManageMemberController extends Controller
                         Log::info('PgHard API Error : '.$e->getMessage());
                         $pg_total_bet =0;
                     }
-                    
+
                     Log::info("total_bet : ".$total_bet);
 
                     $affiliate = Affiliate::first();
