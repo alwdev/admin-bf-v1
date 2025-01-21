@@ -175,4 +175,4 @@ Route::get('/regenmember_idxxx', [App\Http\Controllers\SettingController::class,
 
 Route::get('/tmn_balance', [App\Http\Controllers\TMN_Controller::class, 'index']);
 
-Route::get('/pg_get_spin_summaryby_user', [App\Http\Controllers\PgHardController::class, 'pg_get_spin_summaryby_user']);
+Route::get('/pg_get_spin_summaryby_user/{username}/{start_day}/{end_day}', [App\Http\Controllers\PgHardController::class, 'pg_get_spin_summaryby_user']);
