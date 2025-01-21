@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Logs;
 use App\Models\PromotionUsed;
 use App\Models\Affiliate;
+use App\Models\Setting;
 use NotificationChannels\Telegram\TelegramMessage;
 
 class ManageMemberController extends Controller
@@ -316,6 +317,7 @@ class ManageMemberController extends Controller
             ->whereDate('created_at', Carbon::now()->subDays(7))->get();
 
             if($last_deposit){
+                Log::info("Cashback !! member  = ".$member->id." มียอดฝากก่อนหน้ารับโปร");
                 continue;
             }
 
@@ -350,7 +352,12 @@ class ManageMemberController extends Controller
 
 
                 if(abs($total_lose) > 0){
-                    $cash_back = (float) (abs($total_lose) * 0.05);
+                    $setting = Setting::get();
+                    if($setting){
+                        $cash_back = (float) (abs($total_lose) * ($setting->cashback_percent/100));
+                    } else {
+                        $cash_back = 0;
+                    }
                 }
 
 
@@ -382,12 +389,14 @@ class ManageMemberController extends Controller
                     // Log::info('Betflix CashBack '.$bf_deposit.' '.floor($cash_back).' User =  '.$member->username);
                 }
 
-                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                ->line(env('APP_NAME'))
-                ->line('BOT สิ้นสุดการ Cashback ')
-                ->send();
         }
 
+        TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+        ->line(env('APP_NAME'))
+        ->line('BOT สิ้นสุดการ Cashback ')
+        ->send();
+        Log::info("End Cashback");
+        return 'success';
 
     }
     function affiliate(){
