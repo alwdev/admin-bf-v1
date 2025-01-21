@@ -393,29 +393,30 @@ class ManageMemberController extends Controller
             if(json_decode($main_member->ref_user)){
                 error_log(json_encode($main_member->ref_user));
                 foreach(json_decode($main_member->ref_user) as $_member){
-                    sleep(2);
+                    sleep(3);
 
                     $under_member = Members::where('id',$_member)->first();
                     Log::info("under_member : " .$under_member->username);
 
                     try{
-                        $total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1)['valid_amount'];
-                        $winlose = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1)['winloss'];
+                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1);
+                        $total_bet = $bf_total_bet->valid_amount;
+                        $winlose = $bf_total_bet->winloss;
                     } catch (\Exception $e) {
-                        Log::info('Betflix API Error : '.$e->getMessage());
+                        Log::info('Betflix API Error : '.$e->getMessage().',bf_total_bet:'.$bf_total_bet);
                         $total_bet =0;
                         $winlose =0;
                         continue;
                     }
 
                     try{
-                        $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username,-1,-1)['data'][0]['totalAmount'];
+                        $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username,-1,-1);
                         Log::info("pg_total_bet : ".$pg_total_bet);
                     } catch (\Exception $e) {
                         Log::info('PgHard API Error : '.$e->getMessage());
                         $pg_total_bet =0;
                     }
-                    $total_bet = $total_bet + $pg_total_bet;
+                    $total_bet = $total_bet + $pg_total_bet['data'][0]['totalAmount'];
                     Log::info("total_bet : ".$total_bet);
 
                     $affiliate = Affiliate::first();
