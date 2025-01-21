@@ -412,11 +412,14 @@ class ManageMemberController extends Controller
                     try{
                         $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username,-1,-1);
                         Log::info("pg_total_bet : ".$pg_total_bet);
+                        if($pg_total_bet){
+                            $total_bet = $total_bet + $pg_total_bet['data'][0]['totalAmount'];
+                        }
                     } catch (\Exception $e) {
                         Log::info('PgHard API Error : '.$e->getMessage());
                         $pg_total_bet =0;
                     }
-                    $total_bet = $total_bet + $pg_total_bet['data'][0]['totalAmount'];
+                    
                     Log::info("total_bet : ".$total_bet);
 
                     $affiliate = Affiliate::first();
