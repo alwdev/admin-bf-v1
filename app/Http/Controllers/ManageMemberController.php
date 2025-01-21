@@ -380,7 +380,7 @@ class ManageMemberController extends Controller
 
     }
     function affiliate(){
-
+        set_time_limit(300000);
         Log::info("Run affiliate");
         // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
         // ->line(env('APP_NAME'))
@@ -388,6 +388,7 @@ class ManageMemberController extends Controller
         // ->send();
 
         $members = Members::where('ref_user','!=',null)->get();
+        Log::info("Total Members affiliate : ".count($members));
         foreach ($members as $main_member) {
             sleep(2);
             Log::info("Member main : " . $main_member->username);
@@ -397,7 +398,7 @@ class ManageMemberController extends Controller
                     sleep(3);
 
                     $under_member = Members::where('id',$_member)->first();
-                    Log::info("under_member : " .$under_member->username);
+                    Log::info("Under of ".$main_member->username." member : " .$under_member->username);
 
                     try{
                         $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1);
@@ -433,7 +434,7 @@ class ManageMemberController extends Controller
 
                     $affiliate = Affiliate::first();
                     if($affiliate->is_enable_af_winlose == 1){
-                        Log::info("is_enable_af_winlose = ".$affiliate->is_enable_af_winlose);
+                        // Log::info("is_enable_af_winlose = ".$affiliate->is_enable_af_winlose);
                         if($total_bet > 1){
 
                             if($affiliate->af_receive_percent_winlose_1 == "ยอดเดิมพัน"){
