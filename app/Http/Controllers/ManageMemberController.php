@@ -582,7 +582,7 @@ class ManageMemberController extends Controller
                             // Log::info('Deposit commission to Betflix  '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
                             $main_member->wallet_balance = (float) ($main_member->wallet_balance + $commission);
                             $main_member->save();
-                        }else{ continue; }
+                        }
                     }
                 }
 
