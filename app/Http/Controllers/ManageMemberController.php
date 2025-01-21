@@ -412,6 +412,7 @@ class ManageMemberController extends Controller
         Log::info("Total Members affiliate : ".count($members));
         foreach ($members as $main_member) {
             sleep(2);
+            $total_commission = 0;
             Log::info("Member main : " . $main_member->username.'uder member count = '.count(json_decode($main_member->ref_user)));
             if(json_decode($main_member->ref_user)){
                 set_time_limit(3000000000);
@@ -460,32 +461,34 @@ class ManageMemberController extends Controller
 
                             if($affiliate->af_receive_percent_winlose_1 == "ยอดเดิมพัน"){
                                 $commission = $total_bet * ($affiliate->af_receive_percent_winlose_2 / 100);
+                                $total_commission += $commission;
                                 Log::info("commission ยอดเดิมพัน total_bet : ".$total_bet." commission : ".$commission);
                             }else if($affiliate->af_receive_percent_winlose_1 == "ยอดเสีย" && $winlose < 0){
                                 $commission = abs($winlose) * ($affiliate->af_receive_percent_winlose_2 / 100);
+                                $total_commission += $commission;
                                 Log::info("commission ยอด winlose : ".$winlose." commission : ".$commission);
                             }
 
-                            Transfer::create([
-                                'member_id' => $main_member->id,
-                                'amount' => $commission,
-                                'status' => 1,
-                                'status_code' => 'รออนุมัติ',
-                                'type' => 'commission',
-                                'promotion' => 'commission',
-                                'old_balance' => $main_member->wallet_balance,
-                                'new_balance' => $main_member->wallet_balance + $commission,
-                                'transfer_date' => strtotime(now()),
-                            ]);
 
-                            // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($main_member->username,floor($commission));
-                            // Log::info('Deposit commission to Betflix  '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
-                            $main_member->wallet_balance = (float) ($main_member->wallet_balance + $commission);
-                            $main_member->save();
                         }
                     }
                 }
+                Transfer::create([
+                    'member_id' => $main_member->id,
+                    'amount' => $total_commission,
+                    'status' => 1,
+                    'status_code' => 'รออนุมัติ',
+                    'type' => 'commission',
+                    'promotion' => 'commission',
+                    'old_balance' => $main_member->wallet_balance,
+                    'new_balance' => $main_member->wallet_balance + $total_commission,
+                    'transfer_date' => strtotime(now()),
+                ]);
 
+                // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($main_member->username,floor($commission));
+                // Log::info('Deposit commission to Betflix  '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
+                // $main_member->wallet_balance = (float) ($main_member->wallet_balance + $commission);
+                // $main_member->save();
             }
 
         }
@@ -505,13 +508,14 @@ class ManageMemberController extends Controller
         Log::info("Run affiliate ย้อนหลัง จากวันที่ : ".$startDate." ถึง ".$endDate);
         TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
         ->line(env('APP_NAME'))
-        ->line('BOT เริ่มทำการ affiliate fixdate : '.$startDate.' - '.$endDate)
+        ->line('BOT เริ่มทำการ affiliate ย้อนหลัง จากวันที่ : '.$startDate.' - '.$endDate)
         ->send();
 
         $members = Members::where('ref_user','!=',null)->get();
         Log::info("Total Members affiliate : ".count($members));
         foreach ($members as $main_member) {
             sleep(1);
+            $total_commission = 0;
             Log::info("Member main : " . $main_member->username.'uder member count = '.count(json_decode($main_member->ref_user)));
             if(json_decode($main_member->ref_user)){
                 set_time_limit(3000000000);
@@ -560,32 +564,34 @@ class ManageMemberController extends Controller
 
                             if($affiliate->af_receive_percent_winlose_1 == "ยอดเดิมพัน"){
                                 $commission = $total_bet * ($affiliate->af_receive_percent_winlose_2 / 100);
+                                $total_commission += $commission;
                                 Log::info("commission ยอดเดิมพัน total_bet : ".$total_bet." commission : ".$commission);
                             }else if($affiliate->af_receive_percent_winlose_1 == "ยอดเสีย" && $winlose < 0){
                                 $commission = abs($winlose) * ($affiliate->af_receive_percent_winlose_2 / 100);
+                                $total_commission += $commission;
                                 Log::info("commission ยอด winlose : ".$winlose." commission : ".$commission);
                             }
 
-                            Transfer::create([
-                                'member_id' => $main_member->id,
-                                'amount' => $commission,
-                                'status' => 1,
-                                'status_code' => 'รออนุมัติ',
-                                'type' => 'commission',
-                                'promotion' => 'commission',
-                                'old_balance' => $main_member->wallet_balance,
-                                'new_balance' => $main_member->wallet_balance + $commission,
-                                'transfer_date' => strtotime(now()),
-                            ]);
-
-                            // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($main_member->username,floor($commission));
-                            // Log::info('Deposit commission to Betflix  '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
-                            $main_member->wallet_balance = (float) ($main_member->wallet_balance + $commission);
-                            $main_member->save();
                         }
                     }
                 }
 
+                Transfer::create([
+                    'member_id' => $main_member->id,
+                    'amount' => $total_commission,
+                    'status' => 1,
+                    'status_code' => 'รออนุมัติ',
+                    'type' => 'commission',
+                    'promotion' => 'commission',
+                    'old_balance' => $main_member->wallet_balance,
+                    'new_balance' => $main_member->wallet_balance + $total_commission,
+                    'transfer_date' => strtotime(now()),
+                ]);
+
+                // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($main_member->username,floor($commission));
+                // Log::info('Deposit commission to Betflix  '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
+                // $main_member->wallet_balance = (float) ($main_member->wallet_balance + $to);
+                // $main_member->save();
             }
 
         }
