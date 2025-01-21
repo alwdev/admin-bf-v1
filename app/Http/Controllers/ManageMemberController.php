@@ -16,6 +16,7 @@ use App\Models\Bank;
 use Illuminate\Support\Facades\Log;
 use App\Models\Logs;
 use App\Models\PromotionUsed;
+use App\Models\Affiliate;
 use NotificationChannels\Telegram\TelegramMessage;
 
 class ManageMemberController extends Controller
@@ -394,7 +395,7 @@ class ManageMemberController extends Controller
                 foreach(json_decode($main_member->ref_user) as $_member){
 
                     $under_member = Members::where('id',$_member)->first();
-                    Log::info($under_member->username);
+                    Log::info("under_member : " .$under_member->username);
 
                     try{
                         $total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1)->valid_amount;
@@ -405,25 +406,37 @@ class ManageMemberController extends Controller
                         $winlose =0;
                         continue;
                     }
-                    Log::info("total bet : ".$total_bet." win loss : ".$winlose);
-                    if($total_bet > 1){
-                        $commission = abs($total_bet) * 0.01;
-                        Transfer::create([
-                            'member_id' => $main_member->id,
-                            'amount' => $commission,
-                            'status' => 2,
-                            'status_code' => 'อนุมัติ',
-                            'type' => 'commission',
-                            'promotion' => 'commission',
-                            'old_balance' => $main_member->wallet_balance,
-                            'new_balance' => $main_member->wallet_balance + $commission,
-                            'transfer_date' => strtotime(now()),
-                        ]);
 
-                        $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($main_member->username,floor($commission));
-                        Log::info('Betflix commission '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
-                        $main_member->wallet_balance = (float) ($main_member->wallet_balance + $commission);
-                        $main_member->save();
+                    $affiliate = Affiliate::first();
+                    if($affiliate->is_enable_af_winlose == 1){
+                        Log::info("is_enable_af_winlose = ".$affiliate->is_enable_af_winlose);
+                        if($total_bet > 1){
+
+                            if($affiliate->af_receive_percent_winlose_1 == "ยอดเดิมพัน"){
+                                $commission = $total_bet * ($affiliate->af_receive_percent_winlose_2 / 100);
+                                Log::info("commission ยอดเดิมพัน total_bet : ".$total_bet." commission : ".$commission);
+                            }else if($affiliate->af_receive_percent_winlose_1 == "ยอดเสีย" && $winlose < 0){
+                                $commission = abs($winlose) * ($affiliate->af_receive_percent_winlose_2 / 100);
+                                Log::info("commission ยอด winlose : ".$winlose." commission : ".$commission);
+                            }
+
+                            Transfer::create([
+                                'member_id' => $main_member->id,
+                                'amount' => $commission,
+                                'status' => 2,
+                                'status_code' => 'อนุมัติ',
+                                'type' => 'commission',
+                                'promotion' => 'commission',
+                                'old_balance' => $main_member->wallet_balance,
+                                'new_balance' => $main_member->wallet_balance + $commission,
+                                'transfer_date' => strtotime(now()),
+                            ]);
+
+                            $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($main_member->username,floor($commission));
+                            Log::info('Deposit commission to Betflix  '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
+                            $main_member->wallet_balance = (float) ($main_member->wallet_balance + $commission);
+                            $main_member->save();
+                        }
                     }
                 }
 
