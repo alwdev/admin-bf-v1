@@ -473,17 +473,19 @@ class ManageMemberController extends Controller
                         }
                     }
                 }
-                Transfer::create([
-                    'member_id' => $main_member->id,
-                    'amount' => $total_commission,
-                    'status' => 1,
-                    'status_code' => 'รออนุมัติ',
-                    'type' => 'commission',
-                    'promotion' => 'commission',
-                    'old_balance' => $main_member->wallet_balance,
-                    'new_balance' => $main_member->wallet_balance + $total_commission,
-                    'transfer_date' => strtotime(now()),
-                ]);
+                if($total_commission > 0){
+                    Transfer::create([
+                        'member_id' => $main_member->id,
+                        'amount' => $total_commission,
+                        'status' => 1,
+                        'status_code' => 'รออนุมัติ',
+                        'type' => 'commission',
+                        'promotion' => 'commission',
+                        'old_balance' => $main_member->wallet_balance,
+                        'new_balance' => $main_member->wallet_balance + $total_commission,
+                        'transfer_date' => strtotime(now()),
+                    ]);
+                }
 
                 // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($main_member->username,floor($commission));
                 // Log::info('Deposit commission to Betflix  '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
@@ -575,18 +577,19 @@ class ManageMemberController extends Controller
                         }
                     }
                 }
-
-                Transfer::create([
-                    'member_id' => $main_member->id,
-                    'amount' => $total_commission,
-                    'status' => 1,
-                    'status_code' => 'รออนุมัติ',
-                    'type' => 'commission',
-                    'promotion' => 'commission',
-                    'old_balance' => $main_member->wallet_balance,
-                    'new_balance' => $main_member->wallet_balance + $total_commission,
-                    'transfer_date' => strtotime(now()),
-                ]);
+                if($total_commission > 0){
+                    Transfer::create([
+                        'member_id' => $main_member->id,
+                        'amount' => $total_commission,
+                        'status' => 1,
+                        'status_code' => 'รออนุมัติ',
+                        'type' => 'commission',
+                        'promotion' => 'commission',
+                        'old_balance' => $main_member->wallet_balance,
+                        'new_balance' => $main_member->wallet_balance + $total_commission,
+                        'transfer_date' => strtotime(now()),
+                    ]);
+                }
 
                 // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($main_member->username,floor($commission));
                 // Log::info('Deposit commission to Betflix  '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
