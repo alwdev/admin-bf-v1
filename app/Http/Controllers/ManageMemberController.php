@@ -381,36 +381,31 @@ class ManageMemberController extends Controller
     function affiliate(){
 
         Log::info("Run affiliate");
-
-        $date =  Carbon::today()->format('Y-m-d');
-        $date_end =  Carbon::today()->format('Y-m-d');
-
-        $startTime = $date."T00:00:00Z";
-        $endTime = $date_end."T23:59:00Z";
-        $firstDate = $date;
-        $lastDate = $date_end;
-
+        // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+        // ->line(env('APP_NAME'))
+        // ->line('BOT เริ่มทำการ affiliate')
+        // ->send();
 
         $members = Members::get();
         foreach ($members as $main_member) {
-            error_log("Member main : " . $main_member->username);
+            Log::info("Member main : " . $main_member->username);
             if(json_decode($main_member->ref_user)){
                 error_log(json_encode($main_member->ref_user));
                 foreach(json_decode($main_member->ref_user) as $_member){
 
                     $under_member = Members::where('id',$_member)->first();
-                    error_log($under_member->username);
+                    Log::info($under_member->username);
 
                     try{
-                        $total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-7,-1)->valid_amount;
-                        $winlose = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-7,-1)->winloss;
+                        $total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1)->valid_amount;
+                        $winlose = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1)->winloss;
                     } catch (\Exception $e) {
-                        error_log('Betflix API Error : '.$e->getMessage());
+                        Log::info('Betflix API Error : '.$e->getMessage());
                         $total_bet =0;
                         $winlose =0;
                         continue;
                     }
-                    error_log("total bet : ".$total_bet." win loss : ".$winlose);
+                    Log::info("total bet : ".$total_bet." win loss : ".$winlose);
                     if($total_bet > 1){
                         $commission = abs($total_bet) * 0.01;
                         Transfer::create([
@@ -424,6 +419,9 @@ class ManageMemberController extends Controller
                             'new_balance' => $main_member->wallet_balance + $commission,
                             'transfer_date' => strtotime(now()),
                         ]);
+
+                        $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($main_member->username,floor($commission));
+                        Log::info('Betflix commission '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
                         $main_member->wallet_balance = (float) ($main_member->wallet_balance + $commission);
                         $main_member->save();
                     }
