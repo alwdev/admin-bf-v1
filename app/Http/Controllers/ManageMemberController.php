@@ -433,8 +433,8 @@ class ManageMemberController extends Controller
                             Transfer::create([
                                 'member_id' => $main_member->id,
                                 'amount' => $commission,
-                                'status' => 2,
-                                'status_code' => 'อนุมัติ',
+                                'status' => 1,
+                                'status_code' => 'รออนุมัติ',
                                 'type' => 'commission',
                                 'promotion' => 'commission',
                                 'old_balance' => $main_member->wallet_balance,
@@ -442,8 +442,8 @@ class ManageMemberController extends Controller
                                 'transfer_date' => strtotime(now()),
                             ]);
 
-                            $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($main_member->username,floor($commission));
-                            Log::info('Deposit commission to Betflix  '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
+                            // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($main_member->username,floor($commission));
+                            // Log::info('Deposit commission to Betflix  '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
                             $main_member->wallet_balance = (float) ($main_member->wallet_balance + $commission);
                             $main_member->save();
                         }
