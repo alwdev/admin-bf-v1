@@ -387,7 +387,7 @@ class ManageMemberController extends Controller
         // ->line('BOT เริ่มทำการ affiliate')
         // ->send();
 
-        $members = Members::get();
+        $members = Members::where('ref_user','!=',null)->get();
         foreach ($members as $main_member) {
             sleep(2);
             Log::info("Member main : " . $main_member->username);
