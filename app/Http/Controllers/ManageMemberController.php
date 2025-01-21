@@ -393,14 +393,14 @@ class ManageMemberController extends Controller
             if(json_decode($main_member->ref_user)){
                 error_log(json_encode($main_member->ref_user));
                 foreach(json_decode($main_member->ref_user) as $_member){
-                    sleep(3);
+                    sleep(2);
 
                     $under_member = Members::where('id',$_member)->first();
                     Log::info("under_member : " .$under_member->username);
 
                     try{
-                        $total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1)->valid_amount;
-                        $winlose = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1)->winloss;
+                        $total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1)['valid_amount'];
+                        $winlose = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1)['winloss'];
                     } catch (\Exception $e) {
                         Log::info('Betflix API Error : '.$e->getMessage());
                         $total_bet =0;
