@@ -393,6 +393,7 @@ class ManageMemberController extends Controller
             if(json_decode($main_member->ref_user)){
                 error_log(json_encode($main_member->ref_user));
                 foreach(json_decode($main_member->ref_user) as $_member){
+                    sleep(3);
 
                     $under_member = Members::where('id',$_member)->first();
                     Log::info("under_member : " .$under_member->username);
