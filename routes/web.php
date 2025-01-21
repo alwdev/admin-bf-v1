@@ -166,7 +166,7 @@ Route::get('/get_WMhistory', [App\Http\Controllers\HistoryController::class, 'ge
 
 Route::get('/get_cashback', [ManageMemberController::class, 'cash_back']);
 Route::get('/get_affiliate', [ManageMemberController::class, 'affiliate']);
-Route::get('/affiliate_fixdate/{date_start},{date_end}', [ManageMemberController::class, 'affiliate_fixdate']);
+Route::get('/affiliate_fixdate/{date_start}/{date_end}', [ManageMemberController::class, 'affiliate_fixdate']);
 
 
 Route::get('/QueryBetRecordsV2', [ReportController::class, 'QueryBetRecordsV2']);
