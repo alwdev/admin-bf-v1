@@ -311,13 +311,14 @@ class ManageMemberController extends Controller
         $members = Members::get();
 
         foreach ($members as $member) {
+            sleep(1);
             $last_deposit = Transfer::where('member_id',$member->id)
             ->where('status',2)->where('promotion_id','>',0)
             ->where('type','deposit')
             ->whereDate('created_at', Carbon::now()->subDays(7))->get();
 
             if($last_deposit){
-                Log::info("Cashback !! member  = ".$member->id." มียอดฝากก่อนหน้ารับโปร");
+                Log::info("Cashback !! member  = ".$member->username." มียอดฝากก่อนหน้ารับโปร");
                 continue;
             }
 
@@ -326,12 +327,12 @@ class ManageMemberController extends Controller
             ->where('type','withdraw')
             ->whereDate('created_at', Carbon::now()->subDays(7))->get();
             if($last_withdraw){
-                Log::info("Cashback !! member  = ".$member->id." มียอดถอนก่อนหน้า");
+                Log::info("Cashback !! member  = ".$member->username." มียอดถอนก่อนหน้า");
                 continue;
             }
 
             if($member->wallet_balance >= 1){
-                Log::info("Cashback !! member  = ".$member->id." มียอดคงเหลือมากกว่า 1");
+                Log::info("Cashback !! member  = ".$member->username." มียอดคงเหลือมากกว่า 1");
                 continue;
             }
 
@@ -492,6 +493,106 @@ class ManageMemberController extends Controller
         TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
             ->line(env('APP_NAME'))
             ->line('BOT สิ้นสุดการ Run affiliate ')
+            ->send();
+        return 'success';
+    }
+
+    function affiliate_fixdate($date_start,$date_end){
+        $startDate=date('Y-m-d',strtotime($date_start.' day')).'T00:00:00Z';
+        $endDate=date('Y-m-d',strtotime($date_end.' day')).'T23:59:59Z';
+
+        set_time_limit(3000000000);
+        Log::info("Run affiliate ย้อนหลัง จากวันที่ : ".$startDate." ถึง ".$endDate);
+        TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+        ->line(env('APP_NAME'))
+        ->line('BOT เริ่มทำการ affiliate fixdate : '.$startDate.' - '.$endDate)
+        ->send();
+
+        $members = Members::where('ref_user','!=',null)->get();
+        Log::info("Total Members affiliate : ".count($members));
+        foreach ($members as $main_member) {
+            sleep(2);
+            Log::info("Member main : " . $main_member->username.'uder member count = '.count(json_decode($main_member->ref_user)));
+            if(json_decode($main_member->ref_user)){
+                set_time_limit(3000000000);
+                foreach(json_decode($main_member->ref_user) as $_member){
+                    sleep(3);
+
+                    $under_member = Members::where('id',$_member)->first();
+                    Log::info("Under of ".$main_member->username." member : " .$under_member->username);
+
+                    try{
+                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,$date_start,$date_end);
+                        if($bf_total_bet){
+                            $total_bet = $bf_total_bet->valid_amount;
+                            $winlose = $bf_total_bet->winloss;
+                            Log::info("bf_total_bet : " . $bf_total_bet->valid_amount);
+                        }else{
+                            Log::info("bf_total_bet : " . $bf_total_bet->msg);
+                        }
+                    } catch (\Exception $e) {
+                        Log::info('Betflix API Error : '.$e->getMessage());
+                        $total_bet =0;
+                        $winlose =0;
+                        continue;
+                    }
+
+                    try{
+                        $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username,$date_start,$date_end);
+
+                        if(count($pg_total_bet['data']) > 0){
+                            Log::info("pg_total_bet : " . $pg_total_bet['data'][0]['totalAmount']);
+                            $total_bet = $total_bet + $pg_total_bet['data'][0]['totalAmount'];
+                        }else{
+                            Log::info('PgHard API No have User Data '.$under_member->username);
+                        }
+                    } catch (\Exception $e) {
+                        Log::info('PgHard API Error : '.$e->getMessage());
+                        $pg_total_bet =0;
+                    }
+
+                    Log::info("total_bet : ".$total_bet);
+
+                    $affiliate = Affiliate::first();
+                    if($affiliate->is_enable_af_winlose == 1){
+                        // Log::info("is_enable_af_winlose = ".$affiliate->is_enable_af_winlose);
+                        if($total_bet > 1){
+
+                            if($affiliate->af_receive_percent_winlose_1 == "ยอดเดิมพัน"){
+                                $commission = $total_bet * ($affiliate->af_receive_percent_winlose_2 / 100);
+                                Log::info("commission ยอดเดิมพัน total_bet : ".$total_bet." commission : ".$commission);
+                            }else if($affiliate->af_receive_percent_winlose_1 == "ยอดเสีย" && $winlose < 0){
+                                $commission = abs($winlose) * ($affiliate->af_receive_percent_winlose_2 / 100);
+                                Log::info("commission ยอด winlose : ".$winlose." commission : ".$commission);
+                            }
+
+                            Transfer::create([
+                                'member_id' => $main_member->id,
+                                'amount' => $commission,
+                                'status' => 1,
+                                'status_code' => 'รออนุมัติ',
+                                'type' => 'commission',
+                                'promotion' => 'commission',
+                                'old_balance' => $main_member->wallet_balance,
+                                'new_balance' => $main_member->wallet_balance + $commission,
+                                'transfer_date' => strtotime(now()),
+                            ]);
+
+                            // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($main_member->username,floor($commission));
+                            // Log::info('Deposit commission to Betflix  '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
+                            $main_member->wallet_balance = (float) ($main_member->wallet_balance + $commission);
+                            $main_member->save();
+                        }
+                    }
+                }
+
+            }
+
+        }
+        Log::info('success Run affiliate Fixdete');
+        TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+            ->line(env('APP_NAME'))
+            ->line('BOT สิ้นสุดการ Run affiliate ย้อนหลัง')
             ->send();
         return 'success';
     }
