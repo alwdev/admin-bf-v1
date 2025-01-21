@@ -467,7 +467,8 @@ class ManageMemberController extends Controller
             }
 
         }
-
+        Log::info('success Run affiliate');
+        return 'success';
     }
     /**
      * Display the specified resource.
