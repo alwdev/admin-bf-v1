@@ -401,7 +401,7 @@ class ManageMemberController extends Controller
 
                     try{
                         $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1);
-                        if($bf_total_bet->status != "error"){
+                        if(!$bf_total_bet->status){
                             $total_bet = $bf_total_bet->valid_amount;
                             $winlose = $bf_total_bet->winloss;
                             Log::info("bf_total_bet : " . $bf_total_bet->valid_amount);
