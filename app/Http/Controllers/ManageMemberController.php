@@ -380,7 +380,7 @@ class ManageMemberController extends Controller
 
     }
     function affiliate(){
-        set_time_limit(300000);
+        set_time_limit(3000000000);
         Log::info("Run affiliate");
         // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
         // ->line(env('APP_NAME'))
@@ -391,9 +391,9 @@ class ManageMemberController extends Controller
         Log::info("Total Members affiliate : ".count($members));
         foreach ($members as $main_member) {
             sleep(2);
-            Log::info("Member main : " . $main_member->username);
+            Log::info("Member main : " . $main_member->username.'uder member count = '.count(json_decode($main_member->ref_user)));
             if(json_decode($main_member->ref_user)){
-                error_log(json_encode($main_member->ref_user));
+                set_time_limit(3000000000);
                 foreach(json_decode($main_member->ref_user) as $_member){
                     sleep(3);
 
