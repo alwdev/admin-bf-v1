@@ -552,13 +552,10 @@ class ManageMemberController extends Controller
                     }
 
                     Log::info("total_bet : ".$total_bet);
-                    if($total_bet = 0){
-                        continue;
-                    }
 
                     $affiliate = Affiliate::first();
                     if($affiliate->is_enable_af_winlose == 1){
-                        // Log::info("is_enable_af_winlose = ".$affiliate->is_enable_af_winlose);
+                        Log::info("is_enable_af_winlose = ".$affiliate->is_enable_af_winlose);
                         if($total_bet > 1){
 
                             if($affiliate->af_receive_percent_winlose_1 == "ยอดเดิมพัน"){
@@ -585,7 +582,7 @@ class ManageMemberController extends Controller
                             // Log::info('Deposit commission to Betflix  '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
                             $main_member->wallet_balance = (float) ($main_member->wallet_balance + $commission);
                             $main_member->save();
-                        }
+                        }else{ continue; }
                     }
                 }
 
