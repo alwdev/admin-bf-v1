@@ -115,7 +115,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/member_play_egame/{date_id}', [ReportController::class, 'member_play_egame'])->name('report.member_play_egame')->middleware('CheckPermissionUser:report,view');
 
     Route::get('/Multiple_Member_Report/{day}', [BetflixController::class, 'Multiple_Member_Report'])->name('report.Multiple_Member_Report')->middleware('CheckPermissionUser:report,view');
-    Route::get('/Single_Member_Report_all_Provider/{username}/{start_day}/{end_day}', [BetflixController::class, 'Single_Member_Report_all_Provider'])->name('report.Single_Member_Report_all_Provider')->middleware('CheckPermissionUser:report,view');
     Route::get('/Single_ReportTimeProvider/{username}/{start_day}/{end_day}', [BetflixController::class, 'Single_ReportTimeProvider'])->name('report.Single_ReportTimeProvider')->middleware('CheckPermissionUser:report,view');
     Route::get('/lastDay_TurnOver/{username}', [BetflixController::class, 'lastDay_TurnOver'])->name('report.lastDay_TurnOver')->middleware('CheckPermissionUser:report,view');
     Route::get('/last7Day_TurnOver/{username}', [BetflixController::class, 'last7Day_TurnOver'])->name('report.last7Day_TurnOver')->middleware('CheckPermissionUser:report,view');
@@ -176,3 +175,4 @@ Route::get('/regenmember_idxxx', [App\Http\Controllers\SettingController::class,
 Route::get('/tmn_balance', [App\Http\Controllers\TMN_Controller::class, 'index']);
 
 Route::get('/pg_get_spin_summaryby_user/{username}/{start_day}/{end_day}', [App\Http\Controllers\PgHardController::class, 'pg_get_spin_summaryby_user']);
+Route::get('/Single_Member_Report_all_Provider/{username}/{start_day}/{end_day}', [BetflixController::class, 'Single_Member_Report_all_Provider']);

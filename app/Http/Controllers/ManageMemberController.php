@@ -389,6 +389,7 @@ class ManageMemberController extends Controller
 
         $members = Members::get();
         foreach ($members as $main_member) {
+            sleep(2);
             Log::info("Member main : " . $main_member->username);
             if(json_decode($main_member->ref_user)){
                 error_log(json_encode($main_member->ref_user));
@@ -400,8 +401,13 @@ class ManageMemberController extends Controller
 
                     try{
                         $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1);
-                        $total_bet = $bf_total_bet->valid_amount;
-                        $winlose = $bf_total_bet->winloss;
+                        if($bf_total_bet->status != "error"){
+                            $total_bet = $bf_total_bet->valid_amount;
+                            $winlose = $bf_total_bet->winloss;
+                            Log::info("bf_total_bet : " . $bf_total_bet->valid_amount);
+                        }else{
+                            Log::info("bf_total_bet : " . $bf_total_bet->msg);
+                        }
                     } catch (\Exception $e) {
                         Log::info('Betflix API Error : '.$e->getMessage());
                         $total_bet =0;
@@ -411,9 +417,12 @@ class ManageMemberController extends Controller
 
                     try{
                         $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username,-1,-1);
-                        
-                        if($pg_total_bet){
+
+                        if(count($pg_total_bet['data']) > 0){
+                            Log::info("pg_total_bet : " . $pg_total_bet['data'][0]['totalAmount']);
                             $total_bet = $total_bet + $pg_total_bet['data'][0]['totalAmount'];
+                        }else{
+                            Log::info('PgHard API No have User Data '.$under_member->username);
                         }
                     } catch (\Exception $e) {
                         Log::info('PgHard API Error : '.$e->getMessage());

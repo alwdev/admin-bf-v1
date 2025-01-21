@@ -42,6 +42,6 @@ class PgHardController extends Controller
         $response = curl_exec($curl);
         $data = json_decode($response, true);
         curl_close($curl);
-        return $data['data'][0]['totalAmount'];
+        return $data;
     }
 }
