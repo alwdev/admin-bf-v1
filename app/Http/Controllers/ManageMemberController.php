@@ -300,6 +300,7 @@ class ManageMemberController extends Controller
     }
 
     public function cash_back(){
+        set_time_limit(300000000);
         Log::info("Run cash_back");
         TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
         ->line(env('APP_NAME'))
@@ -323,23 +324,29 @@ class ManageMemberController extends Controller
             ->where('type','withdraw')
             ->whereDate('created_at', Carbon::now()->subDays(7))->get();
             if($last_withdraw){
+                Log::info("Cashback !! member  = ".$member->id." มียอดถอนก่อนหน้า");
                 continue;
             }
 
             if($member->wallet_balance >= 1){
+                Log::info("Cashback !! member  = ".$member->id." มียอดคงเหลือมากกว่า 1");
                 continue;
             }
 
             $total_lose = 0;
             $cash_back=0;
-            $winlose= app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($member->username,-7,-1)->winloss;
+            try{
+                $winlose= app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($member->username,-7,-1)->winloss;
 
-            if($winlose){
-                $total_lose =  $winlose;
-            }else{
-                $total_lose = 0;
+                if($winlose){
+                    $total_lose =  $winlose;
+                }else{
+                    $total_lose = 0;
+                }
+            } catch (\Exception $e) {
+                Log::error('Error Betflix API : '.$e->getMessage());
+                $winlose = 0;
             }
-
 
 
                 if(abs($total_lose) > 0){
@@ -354,8 +361,9 @@ class ManageMemberController extends Controller
                 $logs->username = $member->username;
                 $logs->log = 'total_lose: ' . number_format($total_lose,2).' cash back: ' . number_format($cash_back,2);
                 $logs->save();
-                Log::info('Username : '.$member->username.' total_lose: ' . number_format($total_lose,2).' cash back: ' . number_format($cash_back,2));
+
                 if($cash_back > 0 ){
+                    Log::info('Cashback ++ Username : '.$member->username.' total_lose: ' . number_format($total_lose,2).' cash back: ' . number_format($cash_back,2));
                     Transfer::create([
                         'member_id' => $member->id,
                         'amount' => $cash_back,
@@ -374,7 +382,10 @@ class ManageMemberController extends Controller
                     // Log::info('Betflix CashBack '.$bf_deposit.' '.floor($cash_back).' User =  '.$member->username);
                 }
 
-
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line(env('APP_NAME'))
+                ->line('BOT สิ้นสุดการ Cashback ')
+                ->send();
         }
 
 
@@ -382,10 +393,10 @@ class ManageMemberController extends Controller
     function affiliate(){
         set_time_limit(3000000000);
         Log::info("Run affiliate");
-        // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-        // ->line(env('APP_NAME'))
-        // ->line('BOT เริ่มทำการ affiliate')
-        // ->send();
+        TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+        ->line(env('APP_NAME'))
+        ->line('BOT เริ่มทำการ affiliate')
+        ->send();
 
         $members = Members::where('ref_user','!=',null)->get();
         Log::info("Total Members affiliate : ".count($members));
@@ -469,6 +480,10 @@ class ManageMemberController extends Controller
 
         }
         Log::info('success Run affiliate');
+        TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+            ->line(env('APP_NAME'))
+            ->line('BOT สิ้นสุดการ Run affiliate ')
+            ->send();
         return 'success';
     }
     /**
