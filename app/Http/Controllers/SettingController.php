@@ -354,7 +354,7 @@ class SettingController extends Controller
     }
 
     public function wheel_update(Request $request){
-        // dd($request);
+        // dd($request->win_1_reward);
         $data = WheelSpin::first();
         $data->ticket_condition = $request->ticket_condition;
         $data->limit_per_day = $request->limit_per_day;
