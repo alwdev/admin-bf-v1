@@ -357,11 +357,11 @@ class SettingController extends Controller
         // dd($request->win_1_reward);
         $data = WheelSpin::first();
         $data->ticket_condition = $request->ticket_condition;
-        $data->limit_per_day = (isset($request->limit_per_day) ? 0 : 0);
-        $data->limit_person = (isset($request->limit_person) ? 0 : 0);
+        $data->limit_per_day = (isset($request->limit_per_day) ? $request->limit_per_da : 0);
+        $data->limit_person = (isset($request->limit_person) ? $request->limit_person : 0);
         $data->enable = (isset($request->is_enable_cashback) ? 1 : 0);
         $data->limit_withdraw = $request->limit_withdraw;
-        $data->trunover = $request->trunover;
+        $data->trunover = (isset($request->trunover) ? $request->trunover : 0);
         $data->win_1_reward = $request->win_1_reward;
         $data->win_1 = $request->win_1;
         $data->win_1_rate = $request->win_1_rate;
