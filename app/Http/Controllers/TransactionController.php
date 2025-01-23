@@ -19,6 +19,7 @@ use \Crypt;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
 use NotificationChannels\Telegram\TelegramMessage;
+use App\Models\WheelSpin;
 use App\Models\PromotionUsed;
 
 class TransactionController extends Controller
@@ -206,8 +207,8 @@ class TransactionController extends Controller
 
                 if($bf_deposit == "success"){
 
-                    
-                    $total_spin = floor((float) $transfer->amount / 1000);
+                    $wheel_setting = WheelSpin::first();
+                    $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
                     $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
 
                     $member->save();
@@ -337,7 +338,8 @@ class TransactionController extends Controller
 
                 if($bf_deposit == "success"){
 
-                    $total_spin = floor((float) $transfer->amount / 1000);
+                    $wheel_setting = WheelSpin::first();
+                    $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
                     $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
 
                     $member->save();
@@ -467,10 +469,11 @@ class TransactionController extends Controller
 
                 if($bf_deposit == "success"){
 
-                    $total_spin = floor((float) $transfer->amount / 1000);
+                    $wheel_setting = WheelSpin::first();
+                    $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
                     $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
 
-                    
+
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->save();
