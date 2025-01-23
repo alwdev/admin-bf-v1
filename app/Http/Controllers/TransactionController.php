@@ -208,8 +208,10 @@ class TransactionController extends Controller
                 if($bf_deposit == "success"){
 
                     $wheel_setting = WheelSpin::first();
-                    $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
-                    $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+                    if((float) $transfer->amount >= (float) $wheel_setting->ticket_condition){
+                        $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
+                        $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+                    }
 
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
@@ -339,8 +341,10 @@ class TransactionController extends Controller
                 if($bf_deposit == "success"){
 
                     $wheel_setting = WheelSpin::first();
-                    $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
-                    $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+                    if((float) $transfer->amount >= (float) $wheel_setting->ticket_condition){
+                        $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
+                        $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+                    }
 
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
@@ -470,9 +474,10 @@ class TransactionController extends Controller
                 if($bf_deposit == "success"){
 
                     $wheel_setting = WheelSpin::first();
-                    $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
-                    $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
-
+                    if((float) $transfer->amount >= (float) $wheel_setting->ticket_condition){
+                        $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
+                        $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+                    }
 
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
