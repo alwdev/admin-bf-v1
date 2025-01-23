@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Logs;
 use App\Models\PromotionUsed;
 use App\Models\Affiliate;
+use App\Models\WheelSpin;
 use App\Models\Setting;
 use NotificationChannels\Telegram\TelegramMessage;
 
@@ -128,6 +129,13 @@ class ManageMemberController extends Controller
                 error_log('Deposit Betflix '.$bf_deposit.' '.$amount_betflix.' User =  '.$member->username);
 
                 if($bf_deposit == "success"){
+
+                    $wheel_setting = WheelSpin::first();
+                    if((float) $transfer->amount >= (float) $wheel_setting->ticket_condition){
+                        $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
+                        $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+                    }
+
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->status = 2;
