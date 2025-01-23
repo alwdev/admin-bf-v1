@@ -200,10 +200,16 @@ class TransactionController extends Controller
                 }
 
 
+
                 $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
                 Log::info('Deposit Betflix '.$bf_deposit.' '.floor($amount_betflix).' User =  '.$member->username);
 
                 if($bf_deposit == "success"){
+
+                    
+                    $total_spin = floor((float) $transfer->amount / 1000);
+                    $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->save();
@@ -330,6 +336,10 @@ class TransactionController extends Controller
                 Log::info('Deposit Betflix '.$bf_deposit.' '.floor($amount_betflix).' User =  '.$member->username);
 
                 if($bf_deposit == "success"){
+
+                    $total_spin = floor((float) $transfer->amount / 1000);
+                    $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->save();
@@ -456,6 +466,11 @@ class TransactionController extends Controller
                 Log::info('Deposit Betflix '.$bf_deposit.' '.floor($amount_betflix).' User =  '.$member->username);
 
                 if($bf_deposit == "success"){
+
+                    $total_spin = floor((float) $transfer->amount / 1000);
+                    $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+
+                    
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->save();
