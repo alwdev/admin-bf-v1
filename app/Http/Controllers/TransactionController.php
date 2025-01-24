@@ -699,12 +699,10 @@ class TransactionController extends Controller
 
 
     public function smsTest(Request $request){
-        Log::info('SMS : '.$request->getContent());
-        $log = new Logs;
-        $log->log = "SMS : ".$request->sms;
-        $log->save();
-        date_default_timezone_set("Asia/Bangkok");
 
+        $text = json_decode($request->getContent());
+        Log::info('SMS : '.$text);
+        return response()->json(['message' => 'text : '.$text], 200);
         try{
 
             $key = explode(' ',$request->sms)[4] ;
@@ -720,7 +718,7 @@ class TransactionController extends Controller
             // return response()->json(["amount"=>$amount,"key"=>$key],200);
         } catch(\Exception $e){
 
-            return response()->json(['message' => 'พบข้อผิดพลาดในการตรวจสอบ SMS'], 400);
+            return response()->json(['message' => 'error'.$text], 400);
         }
 
         if($key == 'รับโอนจาก'){
