@@ -702,7 +702,6 @@ class TransactionController extends Controller
 
         $text = $text =  $_POST["text"];
         Log::info('SMS : '.$text);
-        return response()->json(['message' => 'text : '.$text], 200);
         try{
 
             $key = explode(' ',$request->sms)[4] ;
@@ -717,8 +716,11 @@ class TransactionController extends Controller
             // return now()->subMinute(5);
             // return response()->json(["amount"=>$amount,"key"=>$key],200);
         } catch(\Exception $e){
-
-            return response()->json(['message' => 'error'.$text], 400);
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+            ->line('BOT '.env('APP_NAME'))
+            ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
+            ->send();
+            return response()->json(['message' => 'error'], 400);
         }
 
         if($key == 'รับโอนจาก'){
@@ -727,6 +729,10 @@ class TransactionController extends Controller
             return response()->json(['transfer' => $transfer], 200);
 
         }else{
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT '.env('APP_NAME'))
+                ->line('พบข้อผิดพลาดในการตรวจสอบ SMS Transfer')
+                ->send();
             return response()->json(['message' => 'SMS Not valid.','txt' => 'Amount :'.$amount.', Text3 : '.$key], 200);
         }
     }
