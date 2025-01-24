@@ -700,7 +700,7 @@ class TransactionController extends Controller
 
     public function smsTest(Request $request){
 
-        $text = json_decode($request->getContent());
+        $text = $text =  $_POST["text"];
         Log::info('SMS : '.$text);
         return response()->json(['message' => 'text : '.$text], 200);
         try{
