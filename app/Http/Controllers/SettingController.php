@@ -10,6 +10,7 @@ use App\Models\Level;
 use App\Models\Ranking;
 use App\Models\Members;
 use App\Models\Coupon;
+use App\Models\WheelSpin;
 
 class SettingController extends Controller
 {
@@ -343,6 +344,69 @@ class SettingController extends Controller
         $setting->save();
 
         return redirect()->route('setting.index')->with('status','success');
+    }
+
+    
+    public function wheel()
+    {
+        $setting = WheelSpin::first();
+        return view('setting.wheel',compact('setting'));
+    }
+
+    public function wheel_update(Request $request){
+        // dd($request->win_1_reward);
+        $data = WheelSpin::first();
+        $data->ticket_condition = $request->ticket_condition;
+        $data->limit_per_day = (isset($request->limit_per_day) ? $request->limit_per_da : 0);
+        $data->limit_person = (isset($request->limit_person) ? $request->limit_person : 0);
+        $data->enable = (isset($request->enable) ? 1 : 0);
+        $data->limit_withdraw = $request->limit_withdraw;
+        $data->trunover = (isset($request->trunover) ? $request->trunover : 0);
+        $data->win_1_reward = $request->win_1_reward;
+        $data->win_1 = $request->win_1;
+        $data->win_1_rate = $request->win_1_rate;
+        $data->win_2_reward = $request->win_2_reward;
+        $data->win_2 = $request->win_2;
+        $data->win_2_rate = $request->win_2_rate;
+        $data->win_3_reward = $request->win_3_reward;
+        $data->win_3 = $request->win_3;
+        $data->win_3_rate = $request->win_3_rate;
+        $data->win_4_reward = $request->win_4_reward;
+        $data->win_4 = $request->win_4;
+        $data->win_4_rate = $request->win_4_rate;
+        $data->win_5_reward = $request->win_5_reward;
+        $data->win_5 = $request->win_5;
+        $data->win_5_rate = $request->win_5_rate;
+        $data->win_6_reward = $request->win_6_reward;
+        $data->win_6 = $request->win_6;
+        $data->win_6_rate = $request->win_6_rate;
+        $data->win_7_reward = $request->win_7_reward;
+        $data->win_7 = $request->win_7;
+        $data->win_7_rate = $request->win_7_rate;
+        $data->win_8_reward = $request->win_8_reward;
+        $data->win_8 = $request->win_8;
+        $data->win_8_rate = $request->win_8_rate;
+        $data->win_9_reward = $request->win_9_reward;
+        $data->win_9 = $request->win_9;
+        $data->win_9_rate = $request->win_9_rate;
+        $data->win_10_reward = $request->win_10_reward;
+        $data->win_10 = $request->win_10;
+        $data->win_10_rate = $request->win_10_rate;
+        $data->win_11_reward = $request->win_11_reward;
+        $data->win_11 = $request->win_11;
+        $data->win_11_rate = $request->win_11_rate;
+        $data->win_12_reward = $request->win_12_reward;
+        $data->win_12 = $request->win_12;
+        $data->win_12_rate = $request->win_12_rate;
+
+        if($request->image){
+            $fileName = rand().'.'.$request->image->extension();
+            $request->image->move(public_path('images/wheel'), $fileName);
+            $data->image = "/images/wheel/".$fileName;
+        }
+        $data->save();
+
+        return redirect()->route('setting.wheel')->with('status','success');
     }
 
     /**

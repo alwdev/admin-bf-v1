@@ -93,6 +93,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/affiliate_deposit/update', [SettingController::class, 'affiliate_deposit_update'])->name('setting.affiliate_deposit_update');
     Route::post('/affiliate_winlose/update', [SettingController::class, 'affiliate_winlose_update'])->name('setting.affiliate_winlose_update');
     Route::post('/maintenance', [SettingController::class, 'maintenance'])->name('setting.maintenance');
+    Route::get('/setting/wheel', [SettingController::class, 'wheel'])->name('setting.wheel');
+    Route::post('/setting/wheel_update', [SettingController::class, 'wheel_update'])->name('setting.wheel_update');
 
     //Report
     Route::get('/wrongdeposit', [ReportController::class, 'wrongdeposit'])->name('report.wrongdeposit')->middleware('CheckPermissionUser:report,view');

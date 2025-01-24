@@ -19,6 +19,7 @@ use \Crypt;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
 use NotificationChannels\Telegram\TelegramMessage;
+use App\Models\WheelSpin;
 use App\Models\PromotionUsed;
 
 class TransactionController extends Controller
@@ -200,10 +201,18 @@ class TransactionController extends Controller
                 }
 
 
+
                 $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
                 Log::info('Deposit Betflix '.$bf_deposit.' '.floor($amount_betflix).' User =  '.$member->username);
 
                 if($bf_deposit == "success"){
+
+                    $wheel_setting = WheelSpin::first();
+                    if((float) $transfer->amount >= (float) $wheel_setting->ticket_condition){
+                        $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
+                        $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+                    }
+
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->save();
@@ -330,6 +339,13 @@ class TransactionController extends Controller
                 Log::info('Deposit Betflix '.$bf_deposit.' '.floor($amount_betflix).' User =  '.$member->username);
 
                 if($bf_deposit == "success"){
+
+                    $wheel_setting = WheelSpin::first();
+                    if((float) $transfer->amount >= (float) $wheel_setting->ticket_condition){
+                        $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
+                        $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+                    }
+
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->save();
@@ -456,6 +472,13 @@ class TransactionController extends Controller
                 Log::info('Deposit Betflix '.$bf_deposit.' '.floor($amount_betflix).' User =  '.$member->username);
 
                 if($bf_deposit == "success"){
+
+                    $wheel_setting = WheelSpin::first();
+                    if((float) $transfer->amount >= (float) $wheel_setting->ticket_condition){
+                        $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
+                        $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+                    }
+
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->save();
