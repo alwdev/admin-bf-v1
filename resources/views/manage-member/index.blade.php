@@ -77,7 +77,7 @@
                             @endif
                             <td>{{ $member->fullname }}</td>
                             @php
-                                $member_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
+                                $member_balance = $member->wallet_balance; //app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
                             @endphp
                             <td class="text-right">{{ $member_balance }} ฿
                                 @if( json_decode(auth()->user()->permissions)->manageuser > 2  )

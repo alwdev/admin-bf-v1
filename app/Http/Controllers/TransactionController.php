@@ -33,7 +33,7 @@ class TransactionController extends Controller
             $join->on('members.id','=','transfer.member_id');
         })
         ->select(\DB::raw('transfer.*,members.bank_number,members.account_name,members.bank_name,members.username'))
-        ->where('transfer.type','!=','cashback')->where('transfer.type','!=','commission')
+        ->where('transfer.type','!=','cashback')->where('transfer.type','!=','commission')->where('transfer.type','!=','wheel')
         ->orderby('transfer.created_at','desc')
         ->get();
 
