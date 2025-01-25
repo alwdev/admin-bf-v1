@@ -131,9 +131,11 @@ class ManageMemberController extends Controller
                 if($bf_deposit == "success"){
 
                     $wheel_setting = WheelSpin::first();
-                    if((float) $transfer->amount >= (float) $wheel_setting->ticket_condition){
-                        $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
-                        $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+                    if($wheel_setting->ticket_condition > 0){
+                        if((float) $transfer->amount >= (float) $wheel_setting->ticket_condition){
+                            $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
+                            $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+                        }
                     }
 
                     $member->save();
