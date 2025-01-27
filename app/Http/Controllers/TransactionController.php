@@ -250,7 +250,7 @@ class TransactionController extends Controller
                 ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
                 ->send();
 
-            return response()->json(['message' => 'พบข้อผิดพลาดในการตรวจสอบ SMS'], 400);
+            return response()->json(['message' => 'SMS error Transaction'], 400);
         }
 
         if($key == 'รับโอนจาก'){
@@ -295,24 +295,10 @@ class TransactionController extends Controller
 
                 if($bf_deposit == "success"){
 
-                    $wheel_setting = WheelSpin::first();
-                    if((float) $transfer->amount >= (float) $wheel_setting->ticket_condition){
-                        $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
-                        $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
-                    }
-
                     $member->save();
                     $transfer->new_balance = $member->wallet_balance;
                     $transfer->save();
 
-                    if($transfer->promotion_id != 0){
-                        PromotionUsed::create([
-                            'member_id' => $member->id,
-                            'promotion_id' => $transfer->promotion_id,
-                            'promotion_name' => $pro->name,
-                            'amount' => $bonus
-                        ]);
-                    }
                 }
 
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
