@@ -37,7 +37,11 @@ class DashboardController extends Controller
         }
         $topgame =[];
             $players =app(\App\Http\Controllers\BetflixController::class)->Multiple_Member_Report(now());
-            $total_online = count($players);
+            try{
+                $total_online = count($players);
+            }catch(\Exception $e){
+                $total_online = 0;
+            }
             // foreach($players as $p){
             //    $playersgame = app(\App\Http\Controllers\BetflixController::class)->Single_ReportTimeProvider($p->username,now(),now());
             //   foreach($playersgame as $pp){
