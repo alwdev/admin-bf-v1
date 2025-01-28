@@ -285,7 +285,7 @@ class ManageMemberController extends Controller
         // }
 
         $new_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
-        dd($request->type,$old_balance , $request->balance,$new_balance );
+        // dd($request->type,$old_balance , $request->balance,$new_balance );
         $new_balance = 2;
         $currentBalance = $member->wallet_balance;
 
@@ -294,7 +294,7 @@ class ManageMemberController extends Controller
         $member->wallet_balance = $new_balance;
         $member->update_by = $request->user_id;
         $member->save();
-		
+        dd($member );
         $d = new MemberEditBalance;
 		$d->user_id = $request->user_id;
  		$d->member_id = $request->member_id;
