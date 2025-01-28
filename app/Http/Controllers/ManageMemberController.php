@@ -267,21 +267,22 @@ class ManageMemberController extends Controller
         $update_balance = 0;
         $member = Members::find($request->member_id);
         if($member){
-        // $old_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
-        // if ($old_balance < $request->balance) {
-        //     $update_balance = $request->balance - $old_balance;
-        //     Log::info(" + Deposit update_balance =".$update_balance);
-        //     $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,$update_balance);
-        //     Log::info("Betflix Deposit ".$bf.' '.$update_balance.' User =  '.$member->username);
-        // }else if ($old_balance > $request->balance) {
-        //     $update_balance = $old_balance - $request->balance;
+        $old_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
 
-        //     Log::info(" - Withdraw update_balance =".$update_balance);
-        //     $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,$update_balance);
-        //     Log::info("Betflix Withdraw ".$bf.' '.$update_balance.' User =  '.$member->username);
-        // }
+        if ($old_balance < $request->balance) {
+            $update_balance = $request->balance - $old_balance;
+            Log::info(" + Deposit update_balance =".$update_balance);
+            $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,$update_balance);
+            Log::info("Betflix Deposit ".$bf.' '.$update_balance.' User =  '.$member->username);
+        }else if ($old_balance > $request->balance) {
+            // $update_balance = $old_balance - $request->balance;
 
-        //     $new_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
+            // Log::info(" - Withdraw update_balance =".$update_balance);
+            // $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,$update_balance);
+            // Log::info("Betflix Withdraw ".$bf.' '.$update_balance.' User =  '.$member->username);
+        }
+
+        $new_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
 
         $new_balance = 2;
         $currentBalance = $member->wallet_balance;
