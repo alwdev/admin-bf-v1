@@ -291,10 +291,10 @@ class ManageMemberController extends Controller
 
         $amount2 = ((float) $request->balance - (float) $currentBalance);
 
-        $member->wallet_balance = $new_balance;
-        $member->update_by = $request->user_id;
-        $member->save();
+        // $member->wallet_balance = $new_balance;
+        // $member->update_by = $request->user_id;
         dd($member );
+        $member->save();
         $d = new MemberEditBalance;
 		$d->user_id = $request->user_id;
  		$d->member_id = $request->member_id;
