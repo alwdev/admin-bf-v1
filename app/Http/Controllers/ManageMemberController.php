@@ -292,7 +292,7 @@ class ManageMemberController extends Controller
         MemberEditBalance::create([
             'user_id' => $request->user_id,
             'member_id' => $request->member_id,
-            'amount' => ($new_balance - $currentBalance),
+            'amount' => ((float) $new_balance - (float)$currentBalance),
             'type' => $request->type,
             'balance' => $currentBalance,
             'edit_balance' => $new_balance,
