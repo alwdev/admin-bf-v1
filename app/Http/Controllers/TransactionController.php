@@ -813,4 +813,8 @@ class TransactionController extends Controller
             return response()->json(['message' => 'SMS Not valid.','txt' => 'Amount :'.$amount.', Text3 : '.$key], 200);
         }
     }
+
+    public function trueCallback(Request $request){
+        Log::info($request->getContent());
+    }
 }
