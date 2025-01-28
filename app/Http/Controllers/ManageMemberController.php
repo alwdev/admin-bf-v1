@@ -292,16 +292,24 @@ class ManageMemberController extends Controller
         $member->wallet_balance = $new_balance;
         $member->update_by = $request->user_id;
         $member->save();
+		
+        $d = new MemberEditBalance;
+		$d->user_id = $request->user_id;
+ 		$d->member_id = $request->member_id;
+		$d->amount = $amount2;
+ 		$d->type = $request->type;
+ 		$d->balance = $currentBalance;
+		$d->edit_balance = $new_balance;
+		$d->save();
 
-
-        MemberEditBalance::create([
-            'user_id' => $request->user_id,
-            'member_id' => $request->member_id,
-            'amount' => $amount2,
-            'type' => $request->type,
-            'balance' => $currentBalance,
-            'edit_balance' => $new_balance,
-        ]);
+        // MemberEditBalance::create([
+        //     'user_id' => $request->user_id,
+        //     'member_id' => $request->member_id,
+        //     'amount' => $amount2,
+        //     'type' => $request->type,
+        //     'balance' => $currentBalance,
+        //     'edit_balance' => $new_balance,
+        // ]);
     }
 
         return redirect()->route('managemember.index')->with('success', 'success');
