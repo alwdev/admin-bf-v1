@@ -275,11 +275,13 @@ class ManageMemberController extends Controller
             $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,$update_balance);
             Log::info("Betflix Deposit ".$bf.' '.$update_balance.' User =  '.$member->username);
         }else if ($old_balance > $request->balance) {
-            // $update_balance = $old_balance - $request->balance;
-
-            // Log::info(" - Withdraw update_balance =".$update_balance);
-            // $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,$update_balance);
-            // Log::info("Betflix Withdraw ".$bf.' '.$update_balance.' User =  '.$member->username);
+            if($request->type == "แก้เครดิต"){
+                $update_balance = $old_balance - $request->balance;
+    
+                Log::info(" - Withdraw update_balance =".$update_balance);
+                $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,$update_balance);
+                Log::info("Betflix Withdraw ".$bf.' '.$update_balance.' User =  '.$member->username);
+            }
         }
 
         $new_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);

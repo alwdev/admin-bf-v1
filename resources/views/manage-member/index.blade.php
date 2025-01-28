@@ -107,6 +107,7 @@
                                                     <option value=""></option>
                                                     <option value="เติมมือ">เติมมือ</option>
                                                     <option value="คืนลูกค้า">คืนลูกค้า</option>
+                                                    <option value="แก้เครดิต">แก้เครดิต</option>
                                                 </select>
                                             </div>
                                             
