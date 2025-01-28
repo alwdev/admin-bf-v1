@@ -81,7 +81,47 @@
                             @endphp
                             <td class="text-right">{{ $member_balance }} ฿
                                 @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
-                                <button type="button" class="btn btn-primary btn-sm waves-effect waves-light" onclick="editBalance('{{ $member->id }}','{{ $member->username }}','{{ Auth::user()->id }}')"><i class="bx bx-edit-alt"></i></button>
+                                {{-- <button type="button" class="btn btn-primary btn-sm waves-effect waves-light" onclick="editBalance('{{ $member->id }}','{{ $member->username }}','{{ Auth::user()->id }}')"><i class="bx bx-edit-alt"></i></button> --}}
+                                <button type="button" class="btn btn-primary btn-sm waves-effect waves-light"  data-toggle="modal" data-target="#editBalance{{ $key }}"><i class="bx bx-edit-alt"></i></button>
+
+                                <div class="modal fade" id="editBalance{{ $key }}" tabindex="-1" aria-labelledby="editBalance{{ $key }}Label" aria-hidden="true">
+                                    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title" id="editBalance{{ $key }}Label">แก้ไขยอดเงิน</h5>
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                          </button>
+                                        </div>
+                                        <form action="{{ route('managemember.memberEditBalance') }}" method="POST" id="form_editBalance{{ $key }}"> 
+                                        <div class="modal-body">
+                                            @csrf
+                                            <input type="hidden" name="member_id" value="{{ $member->id }}" required>
+                                            <input type="hidden" name="user_id" value="{{ Auth::user()->id }}" required>
+                                            <div class="form-group  text-left">
+                                                <label for="">จำนวนเงิน</label>
+                                                <input type="text" name="balance" class="form-control" onkeypress="return isNumberKey(event)" required>
+                                            </div>
+                                            <div class="form-group text-left">
+                                                <label for="">ประเภท</label>
+                                                <select name="type" class="form-control" required>
+                                                    <option value=""></option>
+                                                    <option value="เติมมือ">เติมมือ</option>
+                                                    <option value="คืนลูกค้า">คืนลูกค้า</option>
+                                                </select>
+                                            </div>
+                                            
+                                       
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                          <button type="submit" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                    </form>
+                                      </div>
+                                    </div>
+                                  </div>
+
                                 @endif
                             </td>
                             <td>
@@ -424,5 +464,16 @@
             }
       })
     }
+
+    @if (session('success'))
+        Swal.fire({
+            position: 'top-end',
+            type: 'success',
+            title: 'Your work has been saved',
+            showConfirmButton: false,
+            timer: 1500
+        })
+
+    @endif
     </script>
 @endsection

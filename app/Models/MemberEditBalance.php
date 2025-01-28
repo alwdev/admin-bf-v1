@@ -14,5 +14,6 @@ class MemberEditBalance extends Model
         "balance",
         "edit_balance",
         "user_id",
+        "type",
     ];
 }

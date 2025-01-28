@@ -9,6 +9,7 @@ use App\Models\Members;
 use App\Models\Payout;
 use App\Models\Bank;
 use App\Models\PromotionUsed;
+use App\Models\MemberEditBalance;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -58,10 +59,12 @@ class DashboardController extends Controller
             ->get();
 
             $total_bonus = PromotionUsed::whereDate('created_at', Carbon::today())->sum('amount');
-
+        
+        $manual_topup = MemberEditBalance::whereDate('created_at', Carbon::today())->where('type','เติมมือ')->sum('amount');
+        $manual_cashback = MemberEditBalance::whereDate('created_at', Carbon::today())->where('type','คืนลูกค้า')->sum('amount');
 
         $banks = Bank::where('enable',1)->where('active',1)->get();
-        return view('welcome', compact('banks','total_deposit', 'total_withdraw','new_member','total_member','players','total_online','topgame','transfer','member_new','total_bonus'));
+        return view('welcome', compact('manual_topup','manual_cashback','banks','total_deposit', 'total_withdraw','new_member','total_member','players','total_online','topgame','transfer','member_new','total_bonus'));
     }
 
     public function dashboard_date(Request $request){
@@ -119,7 +122,10 @@ class DashboardController extends Controller
 
             $total_bonus = PromotionUsed::whereBetween('created_at', [$dateS->format('Y-m-d')." 00:00:00", $dateE->format('Y-m-d')." 23:59:59"])->sum('amount');
 
+            $manual_topup = MemberEditBalance::whereDate('created_at', [$dateS->format('Y-m-d')." 00:00:00", $dateE->format('Y-m-d')." 23:59:59"])->where('type','เติมมือ')->sum('amount');
+            $manual_cashback = MemberEditBalance::whereDate('created_at', [$dateS->format('Y-m-d')." 00:00:00", $dateE->format('Y-m-d')." 23:59:59"])->where('type','คืนลูกค้า')->sum('amount');
+    
             $banks = Bank::where('enable',1)->where('active',1)->get();
-        return view('welcome', compact('total_bonus','banks','total_deposit', 'total_withdraw','new_member','total_member','players','total_online','topgame','transfer','member_new'));
+        return view('welcome', compact('manual_topup','manual_cashback','total_bonus','banks','total_deposit', 'total_withdraw','new_member','total_member','players','total_online','topgame','transfer','member_new'));
     }
 }

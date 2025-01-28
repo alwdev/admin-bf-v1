@@ -292,12 +292,14 @@ class ManageMemberController extends Controller
             MemberEditBalance::create([
                 'user_id' => $request->user_id,
                 'member_id' => $request->member_id,
+                'amount' => abs($request->balance - $currentBalance),
+                'type' => $request->type,
                 'balance' => $currentBalance,
                 'edit_balance' => $new_balance,
             ]);
         }
 
-        return redirect()->route('managemember.index');
+        return redirect()->route('managemember.index')->with('success', 'success');
     }
 
     public static function staff_detail($id)
