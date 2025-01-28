@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/memberlock', [ManageMemberController::class, 'memberlock'])->name('managemember.memberlock')->middleware('CheckPermissionUser:member,edit');
     Route::post('/memberdelete', [ManageMemberController::class, 'memberdelete'])->name('managemember.memberdelete')->middleware('CheckPermissionUser:member,edit');
     Route::post('/memberEditBalance', [ManageMemberController::class, 'memberEditBalance'])->name('managemember.memberEditBalance')->middleware('CheckPermissionUser:member,edit');
+    Route::post('/memberupdateBankAccount', [ManageMemberController::class, 'memberupdateBankAccount'])->name('managemember.memberupdateBankAccount')->middleware('CheckPermissionUser:member,edit');
     Route::get('/getcashback', [ManageMemberController::class, 'cash_back'])->name('managemember.getcashback')->middleware('CheckPermissionUser:member,view');
 
 
