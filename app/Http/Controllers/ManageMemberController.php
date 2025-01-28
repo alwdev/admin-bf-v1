@@ -268,7 +268,7 @@ class ManageMemberController extends Controller
         $member = Members::find($request->member_id);
         if($member){
         $old_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
-        dd($request->type,$old_balance , $request->balance );
+        // dd($request->type,$old_balance , $request->balance );
         // if ($old_balance < $request->balance) {
         //     $update_balance = $request->balance - $old_balance;
         //     Log::info(" + Deposit update_balance =".$update_balance);
