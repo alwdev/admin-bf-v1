@@ -277,7 +277,7 @@ class ManageMemberController extends Controller
         }else if ($old_balance > $request->balance) {
             if($request->type == "แก้เครดิต"){
                 $update_balance = $old_balance - $request->balance;
-    
+                dd($update_balance);
                 Log::info(" - Withdraw update_balance =".$update_balance);
                 $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,$update_balance);
                 Log::info("Betflix Withdraw ".$bf.' '.$update_balance.' User =  '.$member->username);
