@@ -815,6 +815,19 @@ class TransactionController extends Controller
     }
 
     public function trueCallback(Request $request){
-        Log::info($request->getContent());
+        $key = "86ad666d769cb1b2947f980c459c3aad";
+        $data = json_decode($request->getContent());
+        $header =explode('.',$data->message);
+        $payload = base64_decode($header[1]);
+        $payload = json_decode($payload);
+        // error_log(json_encode($payload));
+
+        Log::info($payload->event_type);
+        Log::info($payload->received_time);
+        Log::info($payload->amount);
+        Log::info($payload->sender_mobile);
+        Log::info($payload->channel);
+        Log::info($payload->iat);
+        // Log::info('CALLBACK payload : '.$payload);
     }
 }
