@@ -820,14 +820,86 @@ class TransactionController extends Controller
         $header =explode('.',$data->message);
         $payload = base64_decode($header[1]);
         $payload = json_decode($payload);
-        // error_log(json_encode($payload));
+        Log::info(json_encode($payload));
 
-        Log::info($payload->event_type);
-        Log::info($payload->received_time);
-        Log::info($payload->amount);
-        Log::info($payload->sender_mobile);
-        Log::info($payload->channel);
-        Log::info($payload->iat);
-        // Log::info('CALLBACK payload : '.$payload);
+
+        $amount = number_format($payload->amount / 100,2);
+
+
+        $transfer = Transfer::where('amount',$amount)
+        ->where('type','deposit')->where('deposit_from_bank_no',$payload->sender_mobile)
+        ->where('status',1)
+        ->whereTime('created_at', '>=', now()->subMinute(5))
+        ->first();
+
+        if($transfer){
+            $member = Members::find($transfer->member_id);
+            $amount_betflix=0;
+            $old_balance = $member->wallet_balance;
+
+            $transfer->status = 2;
+            $transfer->status_code ="BOT.อนุมัติ";
+            $transfer->old_balance = $old_balance;
+
+            if($transfer->promotion_id != 0){
+                $pro = Promotion::find($transfer->promotion_id);
+                $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->get();  /// เช็คฝากครั้งแรก
+                $user_transfer_count = $user_transfer->count();
+                if($user_transfer_count == 0){
+
+                    $bonus = $pro->bonus;
+                    $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
+                    $amount_betflix = $transfer->amount + $bonus;
+                    $transfer->promotion = $pro->name;
+                    Log::info($pro->name);
+
+                }else{
+                    $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+                    $amount_betflix = $transfer->amount;
+                }
+
+            }else{
+                $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
+                $amount_betflix = (float) $transfer->amount;
+            }
+
+
+
+            $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
+            Log::info('Deposit Betflix '.$bf_deposit.' '.floor($amount_betflix).' User =  '.$member->username);
+
+            if($bf_deposit == "success"){
+
+                $wheel_setting = WheelSpin::first();
+                if((float) $transfer->amount >= (float) $wheel_setting->ticket_condition){
+                    $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
+                    $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+                }
+
+                $member->save();
+                $transfer->new_balance = $member->wallet_balance;
+                $transfer->save();
+
+                if($transfer->promotion_id != 0){
+                    PromotionUsed::create([
+                        'member_id' => $member->id,
+                        'promotion_id' => $transfer->promotion_id,
+                        'promotion_name' => $pro->name,
+                        'amount' => $bonus
+                    ]);
+                }
+            }
+
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+            ->line('BOT '.env('APP_NAME'))
+            ->line('ทำรายการสำเร็จ โอนเครดิตเข้า '.$member->username)
+            ->line($payload->event_type)
+            ->line('จำนวน :'.$transfer->amount)
+            ->line('Bonus :'.$bonus)
+            ->send();
+            return response()->json(['message' => 'success'], 200);
+        }else{
+            return response()->json(['message' => 'error Transfer not found.'], 400);
+        }
     }
 }
