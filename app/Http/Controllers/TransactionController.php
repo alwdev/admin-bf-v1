@@ -229,7 +229,7 @@ class TransactionController extends Controller
 
 
         }else{
-            return response()->json(['message' => 'SMS Not valid.','txt' => 'Amount :'.$amount.', Text3 : '.$key], 200);
+            return response()->json(['message' => 'SMS Not valid.'], 200);
         }
     }
     public function sms_step2($sms){
@@ -827,7 +827,8 @@ class TransactionController extends Controller
 
 
         $transfer = Transfer::where('amount',$amount)
-        ->where('type','deposit')->where('deposit_from_bank_no',$payload->sender_mobile)
+        ->where('type','deposit')
+        ->where('deposit_from_bank_no',$payload->sender_mobile)
         ->where('status',1)
         ->whereTime('created_at', '>=', now()->subMinute(5))
         ->first();
@@ -899,6 +900,11 @@ class TransactionController extends Controller
             ->send();
             return response()->json(['message' => 'success'], 200);
         }else{
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+            ->line('BOT '.env('APP_NAME'))
+            ->line('error Transfer not found.')
+            ->line(json_encode($payload))
+            ->send();
             return response()->json(['message' => 'error Transfer not found.'], 400);
         }
     }
