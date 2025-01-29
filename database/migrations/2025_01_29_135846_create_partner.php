@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('rate',16,2)->default(0);
             $table->decimal('total_profit',16,2)->default(0);
             $table->decimal('total_profit_rate',16,2)->default(0);
-            $table->json('members')->nullable();
+            $table->text('members')->nullable();
             $table->boolean('enable')->default(1);
             $table->timestamps();
         });
