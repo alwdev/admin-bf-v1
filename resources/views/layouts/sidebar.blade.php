@@ -58,9 +58,9 @@
                 </li>
                 @if( json_decode(auth()->user()->permissions)->manageuser > 1  )
 
-                {{-- <li>
-                    <a href="{{ route('setting.index') }}" class="waves-effect"><i class='bx bx-cog'></i><span>ตั้งค่า</span></a>
-                </li> --}}
+                <li>
+                    <a href="{{ route('partner.index') }}" class="waves-effect"><i class='bx bx-user-circle'></i><span>พันธมิตร</span></a>
+                </li>
                     {{-- @if( json_decode(auth()->user()->level) < 2  ) --}}
                     <li>
                         <a href="{{ route('manageuser.index') }}" class="waves-effect"><i class='bx bx-group'></i><span>จัดการพนักงาน</span></a>
