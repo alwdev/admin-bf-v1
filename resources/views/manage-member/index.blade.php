@@ -83,7 +83,6 @@
                                 @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
                                 {{-- <button type="button" class="btn btn-primary btn-sm waves-effect waves-light" onclick="editBalance('{{ $member->id }}','{{ $member->username }}','{{ Auth::user()->id }}')"><i class="bx bx-edit-alt"></i></button> --}}
                                 <button type="button" class="btn btn-primary btn-sm waves-effect waves-light"  data-toggle="modal" data-target="#editBalance{{ $key }}"><i class="bx bx-edit-alt"></i></button>
-
                                 <div class="modal fade" id="editBalance{{ $key }}" tabindex="-1" aria-labelledby="editBalance{{ $key }}Label" aria-hidden="true">
                                     <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
                                       <div class="modal-content">
@@ -108,6 +107,7 @@
                                                     <option value=""></option>
                                                     <option value="เติมมือ">เติมมือ</option>
                                                     <option value="คืนลูกค้า">คืนลูกค้า</option>
+                                                    <option value="แก้เครดิต">แก้เครดิต</option>
                                                 </select>
                                             </div>
                                             
@@ -194,6 +194,71 @@
                                         <div class="modal-footer">
                                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                         </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                <button type="button" class="btn btn-primary btn-sm waves-effect waves-light"  data-toggle="modal" data-target="#updateBankAccount{{ $key }}"><i class="bx bx-edit-alt"></i></button>
+                                <div class="modal fade" id="updateBankAccount{{ $key }}" tabindex="-1" aria-labelledby="updateBankAccount{{ $key }}Label" aria-hidden="true">
+                                    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title" id="updateBankAccount{{ $key }}Label">แก้ไขบัญชีธนาคาร</h5>
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                          </button>
+                                        </div>
+                                        <form action="{{ route('managemember.memberupdateBankAccount') }}" method="POST" id="form_updateBankAccount{{ $key }}"> 
+                                        <div class="modal-body">
+                                            @csrf
+                                            <input type="hidden" name="member_id" value="{{ $member->id }}" required>
+                                            <input type="hidden" name="user_id" value="{{ Auth::user()->id }}" required>
+                                            <div class="col-12  mb-3">
+                                                <div class="form-group">
+                                                    <input type="hidden" value="" name="bank_logo" id="bank_logo">
+                                                    <select name="bank_name" id="bank_name" required class="form-control" onchange="$('#bank_code{{ $key }}').val(this.options[this.selectedIndex].getAttribute('code'))">
+                                                        <option value="">เลือกธนาคาร</option>
+                                                        <option code="true-wallet" value="TrueMoney Wallet" @if($member->bank_name == "TrueMoney Wallet") selected @endif>TrueMoney Wallet</option>
+                                                        <option code="bank-1" value="ธนาคารกรุงเทพ" @if($member->bank_name == "ธนาคารกรุงเทพ") selected @endif>ธนาคารกรุงเทพ</option>
+                                                        <option code="bank-0" value="ธนาคารกสิกรไทย" @if($member->bank_name == "ธนาคารกสิกรไทย") selected @endif>ธนาคารกสิกรไทย</option>
+                                                        <option code="bank-2" value="ธนาคารกรุงไทย" @if($member->bank_name == "ธนาคารกรุงไทย") selected @endif>ธนาคารกรุงไทย</option>
+                                                        <option code="bank-3" value="ธนาคารทหารไทยธนชาต" @if($member->bank_name == "ธนาคารทหารไทยธนชาต") selected @endif>ธนาคารทหารไทยธนชาต</option>
+                                                        <option code="bank-4" value="ธนาคารไทยพาณิชย์" @if($member->bank_name == "ธนาคารไทยพาณิชย์") selected @endif>ธนาคารไทยพาณิชย์</option>
+                                                        <option code="bank-10" value="ธนาคารกรุงศรีอยุธยา" @if($member->bank_name == "ธนาคารกรุงศรีอยุธยา") selected @endif>ธนาคารกรุงศรีอยุธยา</option>
+                                                        <option code="bank-25" value="ธนาคารเกียรตินาคินภัทร" @if($member->bank_name == "ธนาคารเกียรตินาคินภัทร") selected @endif>ธนาคารเกียรตินาคินภัทร</option>
+                                                        <option code="bank-8" value="ธนาคารซีไอเอ็มบีไทย" @if($member->bank_name == "ธนาคารซีไอเอ็มบีไทย") selected @endif>ธนาคารซีไอเอ็มบีไทย</option>
+                                                        <option code="bank-24" value="ธนาคารทิสโก้" @if($member->bank_name == "ธนาคารทิสโก้") selected @endif>ธนาคารทิสโก้</option>
+                                                        <option code="bank-9" value="ธนาคารยูโอบี" @if($member->bank_name == "ธนาคารยูโอบี") selected @endif>ธนาคารยูโอบี</option>
+                                                        {{-- <option code="014" value="ธนาคารไทยเครดิต" @if($member->bank_name == "ธนาคารไทยเครดิต") selected @endif>{{ trans('register.CREDIT') }}</option> --}}
+                                                        <option code="bank-11" value="ธนาคารออมสิน" @if($member->bank_name == "ธนาคารออมสิน") selected @endif>ธนาคารออมสิน</option>
+                                                        <option code="bank-15" value="ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร" @if($member->bank_name == "ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร") selected @endif>ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-12  mb-3">
+                                                <div class="form-group">
+                                                    <label for="">รหัสธนาคาร</label>
+                                                    <input type="text" class="form-control w-100" id="bank_code{{ $key }}" name="bank_code" value="{{ $member->bank_code }}" readonly autofocus autocomplete="bank_code" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-12  mb-3">
+                                                <div class="form-group">
+                                                    <label for="">เลขที่บัญชี</label>
+                                                    <input type="text" class="form-control w-100" name="bank_number" value="{{ $member->bank_number }}"  onkeypress="return isNumber(event)" autofocus autocomplete="bank_number" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-12  mb-3">
+                                                <div class="form-group">
+                                                    <label for="">ชื่อบัญชี</label>
+                                                    <input type="text" class="form-control w-100" name="account_name"  value="{{ $member->account_name }}" autofocus autocomplete="account_name" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                          <button type="submit" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                    </form>
                                       </div>
                                     </div>
                                   </div>
