@@ -928,9 +928,19 @@ class TransactionController extends Controller
             Log::info($tmn_transfer);
             if($tmn_transfer['type'] == 'p2p' || $tmn_transfer['type'] == 'p2pw'){
                 if($tmn_transfer['amount'] == $transferAmount || $tmn_transfer['transaction_reference_id'] == $transferAccno){
-                   $approve = $this->approveDeposit($transfer);
-                   error_log($approve);
-                   return response()->json(['success']);
+                    $check_transfers = Transfer::where('ref_id',$tmn_transfer['report_id'])->first();
+                    if($check_transfers){
+                        return response()->json(['error']);
+                    }else{
+                        $approve = $this->approveDeposit($transfer);
+                        if($approve == 'success'){
+                            $transfer->ref_id = $tmn_transfer['report_id'];
+                            return response()->json(['success']);
+                        }else{
+                            return response()->json(['error']);
+                        }
+                    }
+
                 }else{
                     return response()->json(['error']);
                 }
