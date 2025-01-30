@@ -909,14 +909,15 @@ class TransactionController extends Controller
         }
     }
 
-    public function checkdepositTMN(){
+    public function checkdepositTMN($id){
         // error_log('checkdepositTMN');
 
-        $transfer = Transfer::where('type','deposit')
-        ->where('status',1)->where('deposit_to_bank_type','TrueMoney Wallet')
-        ->where('deposit_from_bank_type','TrueMoney Wallet')
-        ->latest('created_at')->first();
-        if($transfer){
+        $transfer = Transfer::find($id);
+        if($transfer->status == 1){
+            Log::info($transfer->amount);
+            Log::info($transfer->deposit_from_bank_no);
+            Log::info($transfer->deposit_from_bank_type);
+
 
            $transferAmount = '+'.$transfer->amount;
            $transferAccno = $this->getPhoneAttribute($transfer->deposit_from_bank_no);
@@ -924,7 +925,7 @@ class TransactionController extends Controller
         //    error_log($transferAmount);
             $tmn_transfer = app(\App\Http\Controllers\TMN_Controller::class)->lastTransactionHistory();
             // error_log(json_encode($tmn_transfer));
-            Log::info(json_encode($tmn_transfer));
+            Log::info($tmn_transfer);
             if($tmn_transfer['type'] == 'p2p' || $tmn_transfer['type'] == 'p2pw'){
                 if($tmn_transfer['amount'] == $transferAmount || $tmn_transfer['transaction_reference_id'] == $transferAccno){
                    $approve = $this->approveDeposit($transfer);
@@ -976,7 +977,7 @@ class TransactionController extends Controller
 
 
         $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
-        Log::info('Deposit Betflix '.$bf_deposit.' '.floor($amount_betflix).' User =  '.$member->username);
+        Log::info('Deposit Betflix '.$bf_deposit.' amount : '.floor($amount_betflix).' User =  '.$member->username);
 
         if($bf_deposit == "success"){
 
