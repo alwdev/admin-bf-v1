@@ -158,7 +158,8 @@ class TMN_Controller extends Controller
 
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT '.env('APP_NAME'))
-                ->line('ทำรายการสำเร็จ TMN API โอนเงินให้ username '.$member->username)
+                ->line('TMN API ทำรายการโอนสำเร็จ')
+                ->line('username :'.$member->username)
                 ->line('Bank :'.$member->bank_name)
                 ->line('ACC NUMBER :'.$transfer->withdraw_bank_no)
                 ->line('จำนวน :'.$transfer->amount)
