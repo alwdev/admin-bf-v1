@@ -910,31 +910,37 @@ class TransactionController extends Controller
     }
 
     public function checkdepositTMN(){
+        // error_log('checkdepositTMN');
+
         $transfer = Transfer::where('type','deposit')
         ->where('status',1)->where('deposit_to_bank_type','TrueMoney Wallet')
         ->where('deposit_from_bank_type','TrueMoney Wallet')
         ->latest('created_at')->first();
         if($transfer){
+            $transfer->status = 4;
+            $transfer->status_code = "กำลังตรวจสอบ";
+            $transfer->save();
+
            $transferAmount = '+'.$transfer->amount;
            $transferAccno = $this->getPhoneAttribute($transfer->deposit_from_bank_no);
-           error_log($transferAccno);
-           error_log($transferAmount);
+        //    error_log($transferAccno);
+        //    error_log($transferAmount);
             $tmn_transfer = app(\App\Http\Controllers\TMN_Controller::class)->lastTransactionHistory();
-            error_log(json_encode($tmn_transfer));
+            // error_log(json_encode($tmn_transfer));
             Log::info(json_encode($tmn_transfer));
             if($tmn_transfer['type'] == 'p2p' || $tmn_transfer['type'] == 'p2pw'){
                 if($tmn_transfer['amount'] == $transferAmount || $tmn_transfer['transaction_reference_id'] == $transferAccno){
                    $approve = $this->approveDeposit($transfer);
                    error_log($approve);
-                   return response()->json(['message' => 'success'], 200);
+                   return response()->json(['success']);
                 }else{
-                    return response()->json(['message' => 'error'], 400);
+                    return response()->json(['error']);
                 }
 
             }
 
         }else{
-            return null;
+            return response()->json(['error']);
         }
     }
 
