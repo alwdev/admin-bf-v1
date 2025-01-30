@@ -936,7 +936,14 @@ class TransactionController extends Controller
                         if($approve == 'success'){
                             $transfer->ref_id = $tmn_transfer['report_id'];
                             $transfer->save();
-                            
+
+                            $truewallet = Bank::where('active',1)->where('bank_name','TrueMoney Wallet')
+                            ->where('account_no',$transfer->deposit_to_bank_no)->first();
+                            if($truewallet){
+                                $truewallet->balance = app(\App\Http\Controllers\TMN_Controller::class)->index();
+                                $truewallet->save();
+                            }
+
                             return response()->json(['success']);
                         }else{
                             return response()->json(['error']);

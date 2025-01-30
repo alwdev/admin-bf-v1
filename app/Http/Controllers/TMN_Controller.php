@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Members;
 use App\Models\Transfer;
+use App\Models\Bank;
 use NotificationChannels\Telegram\TelegramMessage;
 
 class TMN_Controller extends Controller
@@ -155,6 +156,12 @@ class TMN_Controller extends Controller
             $transfer->new_balance = $member->wallet_balance;
             $transfer->withdraw_slip = "";
             $transfer->save();
+
+            $truewallet = Bank::where('active',1)->where('bank_name','TrueMoney Wallet')->where('account_no',env('TMN_MOBILE_NUMBER'))->first();
+              if($truewallet){
+                $truewallet->balance = app(\App\Http\Controllers\TMN_Controller::class)->index();
+                $truewallet->save();
+            }
 
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT '.env('APP_NAME'))
