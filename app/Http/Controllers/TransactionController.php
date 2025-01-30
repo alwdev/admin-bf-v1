@@ -914,10 +914,101 @@ class TransactionController extends Controller
         ->where('status',1)->where('deposit_to_bank_type','TrueMoney Wallet')
         ->where('deposit_from_bank_type','TrueMoney Wallet')
         ->latest('created_at')->first();
-        // if($transfer){
+        if($transfer){
+           $transferAmount = '+'.$transfer->amount;
+           $transferAccno = $this->getPhoneAttribute($transfer->deposit_from_bank_no);
+           error_log($transferAccno);
+           error_log($transferAmount);
             $tmn_transfer = app(\App\Http\Controllers\TMN_Controller::class)->lastTransactionHistory();
+            error_log(json_encode($tmn_transfer));
             Log::info(json_encode($tmn_transfer));
-            return $tmn_transfer->type;
-        // }
+            if($tmn_transfer['type'] == 'p2p' || $tmn_transfer['type'] == 'p2pw'){
+                if($tmn_transfer['amount'] == $transferAmount || $tmn_transfer['transaction_reference_id'] == $transferAccno){
+                   $approve = $this->approveDeposit($transfer);
+                   error_log($approve);
+                   return response()->json(['message' => 'success'], 200);
+                }else{
+                    return response()->json(['message' => 'error'], 400);
+                }
+
+            }
+
+        }else{
+            return null;
+        }
+    }
+
+    static function approveDeposit($transfer){
+        $member = Members::find($transfer->member_id);
+        $amount_betflix=0;
+        $old_balance = $member->wallet_balance;
+
+        $transfer->status = 2;
+        $transfer->status_code ="BOT.อนุมัติ";
+        $transfer->old_balance = $old_balance;
+
+        if($transfer->promotion_id != 0){
+            $pro = Promotion::find($transfer->promotion_id);
+            $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->get();  /// เช็คฝากครั้งแรก
+            $user_transfer_count = $user_transfer->count();
+            if($user_transfer_count == 0){
+
+                $bonus = $pro->bonus;
+                $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
+                $amount_betflix = $transfer->amount + $bonus;
+                $transfer->promotion = $pro->name;
+                Log::info($pro->name);
+
+            }else{
+                $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+                $amount_betflix = $transfer->amount;
+            }
+
+        }else{
+            $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
+            $amount_betflix = (float) $transfer->amount;
+        }
+
+
+
+        $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
+        Log::info('Deposit Betflix '.$bf_deposit.' '.floor($amount_betflix).' User =  '.$member->username);
+
+        if($bf_deposit == "success"){
+
+            $wheel_setting = WheelSpin::first();
+            if((float) $transfer->amount >= (float) $wheel_setting->ticket_condition){
+                $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
+                $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+            }
+
+            $member->save();
+            $transfer->new_balance = $member->wallet_balance;
+            $transfer->save();
+
+            if($transfer->promotion_id != 0){
+                PromotionUsed::create([
+                    'member_id' => $member->id,
+                    'promotion_id' => $transfer->promotion_id,
+                    'promotion_name' => $pro->name,
+                    'amount' => $bonus
+                ]);
+            }
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+            ->line('BOT '.env('APP_NAME'))
+            ->line('ทำรายการสำเร็จ โอนเครดิตเข้า '.$member->username)
+            ->line('จำนวน :'.$transfer->amount)
+            ->line('Bonus :'.$bonus)
+            ->send();
+
+            return 'success';
+        }else{
+            return 'error';
+        }
+
+    }
+    public function getPhoneAttribute($phone){
+        $phone = preg_replace("/[^0-9]/","",$phone);
+        return substr($phone ,0,3)."-".substr($phone ,3,3)."-".substr($phone ,6,4);
     }
 }
