@@ -935,6 +935,8 @@ class TransactionController extends Controller
                         $approve = $this->approveDeposit($transfer);
                         if($approve == 'success'){
                             $transfer->ref_id = $tmn_transfer['report_id'];
+                            $transfer->save();
+                            
                             return response()->json(['success']);
                         }else{
                             return response()->json(['error']);
