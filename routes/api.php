@@ -46,3 +46,5 @@ Route::get('/lastTransactionHistory', [App\Http\Controllers\TMN_Controller::clas
 Route::post('/smsTest', [App\Http\Controllers\TransactionController::class, 'smsTest']);
 
 Route::post('/trueCallback', [App\Http\Controllers\TransactionController::class, 'trueCallback']);
+
+Route::get('/checkdepositTMN', [App\Http\Controllers\TransactionController::class, 'checkdepositTMN']);

@@ -908,4 +908,16 @@ class TransactionController extends Controller
             return response()->json(['message' => 'error Transfer not found.'], 400);
         }
     }
+
+    public function checkdepositTMN(){
+        $transfer = Transfer::where('type','deposit')
+        ->where('status',1)->where('deposit_to_bank_type','TrueMoney Wallet')
+        ->where('deposit_from_bank_type','TrueMoney Wallet')
+        ->latest('created_at')->first();
+        // if($transfer){
+            $tmn_transfer = app(\App\Http\Controllers\TMN_Controller::class)->lastTransactionHistory();
+            Log::info(json_encode($tmn_transfer));
+            return $tmn_transfer->type;
+        // }
+    }
 }
