@@ -947,6 +947,7 @@ class TransactionController extends Controller
     static function approveDeposit($transfer){
         $member = Members::find($transfer->member_id);
         $amount_betflix=0;
+        $bonus = 0;
         $old_balance = $member->wallet_balance;
 
         $transfer->status = 2;
