@@ -917,9 +917,6 @@ class TransactionController extends Controller
         ->where('deposit_from_bank_type','TrueMoney Wallet')
         ->latest('created_at')->first();
         if($transfer){
-            $transfer->status = 4;
-            $transfer->status_code = "กำลังตรวจสอบ";
-            $transfer->save();
 
            $transferAmount = '+'.$transfer->amount;
            $transferAccno = $this->getPhoneAttribute($transfer->deposit_from_bank_no);
