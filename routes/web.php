@@ -155,6 +155,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/order_top', [App\Http\Controllers\ProviderController::class, 'order_top'])->name('provider.order_top');
 
     Route::get('/GetAllGame', [App\Http\Controllers\ProviderController::class, 'GetAllGame']);
+
+    Route::get('/partner', [App\Http\Controllers\PartnerController::class, 'index'])->name('partner.index')->middleware('CheckPermissionUser:manageuser,edit');
+    Route::get('/partner/add', [App\Http\Controllers\PartnerController::class, 'add'])->name('partner.add')->middleware('CheckPermissionUser:manageuser,edit');
+    Route::post('/partner/create', [App\Http\Controllers\PartnerController::class, 'create'])->name('partner.create')->middleware('CheckPermissionUser:manageuser,edit');
+    Route::get('/partner/edit/{id}', [App\Http\Controllers\PartnerController::class, 'edit'])->name('partner.edit')->middleware('CheckPermissionUser:manageuser,edit');
+    Route::post('/partner/update', [App\Http\Controllers\PartnerController::class, 'update'])->name('partner.update')->middleware('CheckPermissionUser:manageuser,edit');;
 });
 
 require __DIR__.'/auth.php';
@@ -171,6 +177,7 @@ Route::get('/get_cashback', [ManageMemberController::class, 'cash_back']);
 Route::get('/get_affiliate', [ManageMemberController::class, 'affiliate']);
 Route::get('/affiliate_fixdate/{date_start}/{date_end}', [ManageMemberController::class, 'affiliate_fixdate']);
 
+Route::get('/partner_call_winlose', [App\Http\Controllers\PartnerController::class, 'partner_call_winlose']);
 
 Route::get('/QueryBetRecordsV2', [ReportController::class, 'QueryBetRecordsV2']);
 
