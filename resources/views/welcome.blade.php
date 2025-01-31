@@ -66,8 +66,12 @@
                         <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
                     </span>
                 </div>
+                @php
+                    $totao_profit = (float) $total_withdraw - (float) $total_deposit;
+                @endphp
                 <h6 class="text-muted text-uppercase mt-0">กำไรสุทธิ</h6>
-                <h3 class="my-3 @if((float) $total_withdraw - (float) $total_withdraw > 0) text-success @elseif((float) $total_withdraw - (float) $total_withdraw < 0) text-danger @endif">{{ number_format((float) $total_withdraw - (float) $total_withdraw,2) }} ฿</h3>
+                {{-- <h3 class="my-3 @if((float) $total_withdraw - (float) $total_withdraw > 0) text-success @elseif((float) $total_withdraw - (float) $total_withdraw < 0) text-danger @endif">{{ number_format((float) $total_withdraw - (float) $total_withdraw,2) }} ฿</h3> --}}
+                <h3 class="my-3">{{ number_format((float) $totao_profit,2) }} ฿</h3>
                 {{-- <span class="badge badge-soft-primary mr-1"> -29% </span> <span class="text-muted">This Month</span> --}}
             </div>
         </div>
@@ -117,21 +121,6 @@
             </div>
         </div>
     </div>
-
-    <div class="col-xl-3 col-md-6">
-        <div class="card card-animate">
-            <div class="card-body">
-                <div class="avatar-sm float-right">
-                    <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
-                    </span>
-                </div>
-                <h6 class="text-muted text-uppercase mt-0">ยอดเงินคงเหลือ  <span class="badge rounded-pill text-bg-primary" style="font-weight: 300;background: green;color: white;">จำนวน {{ $banks->count() }} บัญชี</span></h6>
-                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $banks->sum('balance'),2) }}</h3>
-            </div>
-        </div>
-    </div>
-
     <div class="col-xl-3 col-md-6">
         <div class="card card-animate">
             <div class="card-body">
@@ -173,6 +162,40 @@
             </div>
         </div>
     </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-animate">
+            <div class="card-body">
+                <div class="avatar-sm float-right">
+                    <span class="avatar-title bg-soft-primary rounded-circle">
+                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
+                    </span>
+                </div>
+                <h6 class="text-muted text-uppercase mt-0">ยอดเงินคงเหลือ  <span class="badge rounded-pill text-bg-primary" style="font-weight: 300;background: green;color: white;">จำนวน {{ $banks->count() }} บัญชี</span></h6>
+                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $banks->sum('balance'),2) }}</h3>
+            </div>
+        </div>
+    </div>
+    @php
+     $all_bank = \App\Models\Bank::where('enable',1)->get();
+    @endphp
+    @foreach ( $all_bank as $a_bank)
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-animate">
+            <div class="card-body">
+                <div class="avatar-sm float-right">
+                    <span class="avatar-title bg-soft-primary rounded-circle">
+                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
+                    </span>
+                </div>
+                <h6 class="text-muted text-uppercase mt-0">ยอดเงินคงเหลือ  <span class="badge rounded-pill text-bg-primary" style="font-weight: 300;background: green;color: white;">{{ $a_bank->bank_name }} {{ $a_bank->account_no }}</span></h6>
+                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $a_bank->balance,2) }}</h3>
+            </div>
+        </div>
+    </div>
+    @endforeach
+
+
 
 
 
