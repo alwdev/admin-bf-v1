@@ -67,11 +67,11 @@
                     </span>
                 </div>
                 @php
-                    $totao_profit = (float) $total_withdraw - (float) $total_deposit;
+                    $total_profit =   (float) $total_deposit - (float) $total_withdraw;
                 @endphp
                 <h6 class="text-muted text-uppercase mt-0">กำไรสุทธิ</h6>
                 {{-- <h3 class="my-3 @if((float) $total_withdraw - (float) $total_withdraw > 0) text-success @elseif((float) $total_withdraw - (float) $total_withdraw < 0) text-danger @endif">{{ number_format((float) $total_withdraw - (float) $total_withdraw,2) }} ฿</h3> --}}
-                <h3 class="my-3">{{ number_format((float) $totao_profit,2) }} ฿</h3>
+                <h3 class="my-3">{{ number_format((float) $total_profit,2) }} ฿</h3>
                 {{-- <span class="badge badge-soft-primary mr-1"> -29% </span> <span class="text-muted">This Month</span> --}}
             </div>
         </div>
