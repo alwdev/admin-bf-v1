@@ -84,6 +84,10 @@ class TransactionController extends Controller
     public function Checktransfer(){
         $check_transfers = Transfer::where('type','withdraw')->where('status',1)->latest('created_at')->first();
         if($check_transfers){
+            $check_transfers->status = 4;
+            $check_transfers->status_code = 'กำลังดำเนินการ';
+            $check_transfers->save();
+            
             return response()->json([$check_transfers],200);
         }else{
             return response()->json([],204);
