@@ -106,7 +106,7 @@ class TransactionController extends Controller
 
             if($chectText1[0] === 'คุณกำลังโอนเงินให้'){
                 $refNo =explode(')', explode('รหัสอ้างอิง: ',$request->sms)[1])[0];
-                $otp = explode('(รหัสอ้างอิง', explode('OTP: ',$request->sms)[1])[0];
+                $otp =  explode(' ',   explode('(รหัสอ้างอิง', explode('OTP: ',$request->sms)[1])[0])[0];
                 // error_log("refNo =".$refNo);
                 // error_log("otp =".$otp);
 
