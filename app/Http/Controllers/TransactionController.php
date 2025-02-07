@@ -652,6 +652,11 @@ class TransactionController extends Controller
 
     public function approvewithdraw(Request $request)
     {
+        $slip_path = public_path().'/slip/';
+        if(!\File::exists($slip_path)){
+            \File::makeDirectory($slip_path, 0777, true);
+        }
+
         Log::info("approvewithdraw ".$request->getContent());
         $member = Members::find($request->member_id);
         $transfer = Transfer::find($request->id);
