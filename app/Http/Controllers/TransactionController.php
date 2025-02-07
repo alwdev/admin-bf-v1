@@ -87,7 +87,7 @@ class TransactionController extends Controller
             $check_transfers->status = 4;
             $check_transfers->status_code = 'กำลังดำเนินการ';
             $check_transfers->save();
-            
+
             return response()->json([$check_transfers],200);
         }else{
             return response()->json([],204);
@@ -658,8 +658,8 @@ class TransactionController extends Controller
         $transfer->old_balance = $member->wallet_balance;
         $old_balance = $member->wallet_balance;
 
-        $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,floor($transfer->amount));
-        Log::info('Betflix Withdraw '.$bf_deposit.' '.floor($transfer->amount).' User =  '.$member->username);
+        // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,floor($transfer->amount));
+        // Log::info('Betflix Withdraw '.$bf_deposit.' '.floor($transfer->amount).' User =  '.$member->username);
 
         $bank = Bank::where('account_no',$transfer->deposit_to_bank_no)->first();
             if($bank){
