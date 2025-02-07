@@ -101,17 +101,30 @@ class TransactionController extends Controller
 
         try{
             $chectText1 = explode(' ',$request->sms);
+            // error_log($chectText1[0]);
+
+
             if($chectText1[0] === 'คุณกำลังโอนเงินให้'){
-                $otp = $chectText1[12];
-                $refNo = explode(')',$chectText1[14])[0];
+                $refNo =explode(')', explode('รหัสอ้างอิง: ',$request->sms)[1])[0];
+                $otp = explode('(รหัสอ้างอิง', explode('OTP: ',$request->sms)[1])[0];
+                // error_log("refNo =".$refNo);
+                // error_log("otp =".$otp);
 
 
                 $trans = Transfer::where('refNo',$refNo)->first();
                 if($trans){
                     $trans->otp = $otp;
                     $trans->save();
+                    return response()->json(["OTP"=>$otp,"refNo"=>$refNo],200);
+                }else{
+                    TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                    ->line('BOT '.env('APP_NAME'))
+                    ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
+                    ->line("refNo =".$refNo)
+                    ->line("otp =".$otp)
+                    ->send();
                 }
-                return response()->json(["OTP"=>$otp,"refNo"=>$refNo],200);
+
             }
 
         } catch(\Exception $e){
