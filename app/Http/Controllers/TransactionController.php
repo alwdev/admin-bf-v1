@@ -931,6 +931,16 @@ class TransactionController extends Controller
         }
     }
 
+    public function checkdeposit($id){
+        $transfer = Transfer::find($id);
+        if($transfer->status == 1){
+            return response()->json(['error']);
+        }else if($transfer->status == 2){
+            return response()->json(['success']);
+        }else{
+            return response()->json(['error']);
+        }
+    }
     public function checkdepositTMN($id){
         // error_log('checkdepositTMN');
 

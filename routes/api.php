@@ -48,3 +48,4 @@ Route::post('/smsTest', [App\Http\Controllers\TransactionController::class, 'sms
 // Route::post('/trueCallback', [App\Http\Controllers\TransactionController::class, 'trueCallback']);
 
 Route::get('/checkdepositTMN/{id}', [App\Http\Controllers\TransactionController::class, 'checkdepositTMN']);
+Route::get('/checkdeposit/{id}', [App\Http\Controllers\TransactionController::class, 'checkdeposit']);
