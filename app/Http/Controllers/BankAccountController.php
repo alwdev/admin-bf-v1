@@ -109,6 +109,7 @@ class BankAccountController extends Controller
         }
         $bank->active = 1;
         $bank->user_id = auth()->user()->id;
+        $bank->prompay_no = $request->prompay_no;
         $bank->save();
 
         return redirect()->route('bankaccount.index')->with('banksave','200');

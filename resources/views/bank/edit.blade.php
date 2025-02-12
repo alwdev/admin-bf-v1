@@ -19,10 +19,10 @@
                     <li class="breadcrumb-item active">อัพเดตสมุดบัญชี</li>
                 </ol>
             </div>
-            
+
         </div>
     </div>
-</div>     
+</div>
 <!-- end page title -->
 <div class="row">
     <div class="col-12">
@@ -51,7 +51,7 @@
                             <option  @if($bank->bank_name == 'ธนาคารออมสิน') selected @endif value="ธนาคารออมสิน" data-img="gsb.png" data-logo="{{ asset('images/bank/gsb.png') }}"> ธนาคารออมสิน</option>
                             <option  @if($bank->bank_name == 'ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร') selected @endif value="ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร" data-img="baac.png" data-logo="{{ asset('images/bank/baac.png') }}"> ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร</option>
                             <option  @if($bank->bank_name == 'TrueMoney Wallet') selected @endif value="TrueMoney Wallet" data-img="truemoney.png" data-logo="{{ asset('images/bank/truemoney.png') }}"> TrueMoney Wallet</option>
-            
+
                         </select>
                     </div>
                     <div class="form-group">
@@ -63,6 +63,11 @@
                         <label for="account_no">เลขที่บัญชี</label>
                         <input class="form-control"  type="number" id="account_no" name="account_no" required onkeypress="return isNumberKey(event)"  value="{{ $bank->account_no }}">
                         <x-input-error :messages="$errors->get('account_no')" class="mt-2" />
+                    </div>
+                    <div class="form-group">
+                        <label for="account_no">เลขพร้อมเพย์</label>
+                        <input class="form-control"  type="number" id="prompay_no" name="prompay_no" required onkeypress="return isNumberKey(event)"  value="{{ $bank->prompay_no }}">
+                        <x-input-error :messages="$errors->get('prompay_no')" class="mt-2" />
                     </div>
                     {{-- <div class="form-group">
                         <label for="balance">ยอดคงเหลือในบัญชี</label>
@@ -147,11 +152,11 @@
                             })
                         return true;
                 }
-                else{   
+                else{
                     $('#img_qrcode').attr('src',URL.createObjectURL(this.files[0]));
                 }
             });
-            
+
         });
 
         function isNumberKey(evt) {
