@@ -271,7 +271,7 @@ class TransactionController extends Controller
 
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT '.env('APP_NAME'))
-                ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
+                ->line('sms_step2 พบข้อผิดพลาดในการตรวจสอบ SMS')
                 ->line($e->getMessage())
                 ->send();
 
@@ -347,10 +347,6 @@ class TransactionController extends Controller
                 ->line('ทำรายการสำเร็จ โอนเครดิตเข้า '.$member->username)
                 ->line('จำนวน :'.$amount)
                 ->line('Bonus :'.$bonus)
-                // ->button('View page', env('APP_URL'))
-                // ->button('View page',env('APP_URL'))
-                // ->keyboard('Button 1')
-                // ->keyboard('Button 2')
                 ->send();
 
                 return response()->json(['message' => 'SMS request sent successfully.','txt' => 'Amount :'.$amount], 200);
@@ -358,13 +354,9 @@ class TransactionController extends Controller
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 // ->content('Choose an option:')
                 ->line('BOT '.env('APP_NAME'))
-                ->line('ไม่พบรายการโอนเงินในช่วงเวลา ')
+                ->line('sms_step2 ไม่พบรายการโอนเงินในช่วงเวลา ')
                 ->line('จำนวน :'.$amount)
                 ->line('subMinute(5)'.now()->subMinute(5))
-                // ->button('View page', env('APP_URL'))
-                // ->button('View page',env('APP_URL'))
-                // ->keyboard('Button 1')
-                // ->keyboard('Button 2')
                 ->send();
                 return response()->json(['message' => 'ไม่พบรายการโอนเงินในช่วงเวลา','txt' => 'Amount :'.$amount], 404);
             }
