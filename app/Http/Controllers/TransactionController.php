@@ -139,10 +139,10 @@ class TransactionController extends Controller
 
     public function smsRequest(Request $request){
         $log = new Logs;
-        $log->log = "SMS : ".$request->sms;
+        $log->log = "smsRequest : ".$request->sms;
         $log->save();
         date_default_timezone_set("Asia/Bangkok");
-
+        $amount = '';
         try{
 
             $key = explode(' ',$request->sms)[4] ;
@@ -162,6 +162,7 @@ class TransactionController extends Controller
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT '.env('APP_NAME'))
                 ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
+                ->line($e->getMessage())
                 ->send();
 
             return response()->json(['message' => 'พบข้อผิดพลาดในการตรวจสอบ SMS'], 400);
@@ -253,7 +254,7 @@ class TransactionController extends Controller
         $log = new Logs;
         $log->log = "sms_step2 : ".$sms;
         $log->save();
-
+        $amount = '';
 
         try{
             $key = explode(' ',$sms)[4] ;
@@ -271,6 +272,7 @@ class TransactionController extends Controller
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT '.env('APP_NAME'))
                 ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
+                ->line($e->getMessage())
                 ->send();
 
             return response()->json(['message' => 'พบข้อผิดพลาดในการตรวจสอบ SMS'], 400);
