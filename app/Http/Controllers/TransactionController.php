@@ -184,7 +184,7 @@ class TransactionController extends Controller
                     $pro = Promotion::find($transfer->promotion_id);
                     $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->get();  /// เช็คฝากครั้งแรก
                     $user_transfer_count = $user_transfer->count();
-                    if($user_transfer_count == 0){
+                    // if($user_transfer_count == 0){
 
                         $bonus = $pro->bonus;
                         $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
@@ -192,10 +192,10 @@ class TransactionController extends Controller
                         $transfer->promotion = $pro->name;
                         Log::info($pro->name);
 
-                    }else{
-                        $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
-                        $amount_betflix = $transfer->amount;
-                    }
+                    // }else{
+                    //     $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+                    //     $amount_betflix = $transfer->amount;
+                    // }
 
                 }else{
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
@@ -293,17 +293,17 @@ class TransactionController extends Controller
                     $pro = Promotion::find($transfer->promotion_id);
                     $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->get();  /// เช็คฝากครั้งแรก
                     $user_transfer_count = $user_transfer->count();
-                    if($user_transfer_count == 0){
+                    // if($user_transfer_count == 0){
                         $bonus = $pro->bonus;
                         $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                         $amount_betflix = $transfer->amount + $bonus;
                         $transfer->promotion = $pro->name;
                         Log::info($pro->name);
 
-                    }else{
-                        $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
-                        $amount_betflix = $transfer->amount;
-                    }
+                    // }else{
+                    //     $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+                    //     $amount_betflix = $transfer->amount;
+                    // }
 
 
                 }else{
@@ -1007,7 +1007,7 @@ class TransactionController extends Controller
             $pro = Promotion::find($transfer->promotion_id);
             $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->get();  /// เช็คฝากครั้งแรก
             $user_transfer_count = $user_transfer->count();
-            if($user_transfer_count == 0){
+            // if($user_transfer_count == 0){
 
                 $bonus = $pro->bonus;
                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
@@ -1015,10 +1015,10 @@ class TransactionController extends Controller
                 $transfer->promotion = $pro->name;
                 Log::info($pro->name);
 
-            }else{
-                $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
-                $amount_betflix = $transfer->amount;
-            }
+            // }else{
+            //     $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+            //     $amount_betflix = $transfer->amount;
+            // }
 
         }else{
             $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;

@@ -77,12 +77,12 @@ class ManageMemberController extends Controller
                 }
 
                 if($transfer->promotion_id != 0){
-                    if($transfer->turnover_on == 1){
+                    // if($transfer->turnover_on == 1){
                         $pro = Promotion::find($transfer->promotion_id);
                         $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->get();  /// เช็คฝากครั้งแรก
                         $user_transfer_count = $user_transfer->count();
 
-                        if($user_transfer_count == 0){
+                        // if($user_transfer_count == 0){
 
                             $bonus = $pro->bonus;
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
@@ -90,32 +90,17 @@ class ManageMemberController extends Controller
                             $transfer->promotion = $pro->name;
                             Log::info($pro->name);
 
-                            // if($transfer->amount >= 20 && $transfer->amount < 300){  /// สมาชิกใหม่ ฝาก 20 รับ 100 บาท
-                            //     $bonus = 80;
-                            //     $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
-                            //     $amount_betflix = $transfer->amount + $bonus;
-                            //     $transfer->promotion ='สมาชิกใหม่ ฝาก 20 รับ 100 บาท';
-                            //     Log::info('สมาชิกใหม่ ฝาก 20 รับ 100 บาท');
 
-                            // }else if($transfer->amount >= 300){  /// สมาชิกใหม่ ฝาก 300 รับ 500 บาท
-                            //     $bonus = 200;
-                            //     $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
-                            //     $amount_betflix = $transfer->amount + $bonus;
-                            //     $transfer->promotion ='สมาชิกใหม่ ฝาก 300 รับ 500 บาท';
-                            //     Log::info('สมาชิกใหม่ ฝาก 300 รับ 500 บาท');
+                        // }else{
+                        //     $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+                        //     $amount_betflix = $transfer->amount;
 
-                            // }
+                        // }
 
-
-                        }else{
-                            $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
-                            $amount_betflix = $transfer->amount;
-
-                        }
-                    }else{
-                        $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
-                        $amount_betflix = $transfer->amount;
-                    }
+                    // }else{
+                    //     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
+                    //     $amount_betflix = $transfer->amount;
+                    // }
                 }else{
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                     $amount_betflix = $transfer->amount;
@@ -277,7 +262,7 @@ class ManageMemberController extends Controller
         }else if ($old_balance > $request->balance) {
             if($request->type == "แก้เครดิต"){
                 $update_balance = $old_balance - $request->balance;
-  
+
                 Log::info(" - Withdraw update_balance =".$update_balance);
                 $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,$update_balance);
                 Log::info("Betflix Withdraw ".$bf.' '.$update_balance.' User =  '.$member->username);
@@ -294,7 +279,7 @@ class ManageMemberController extends Controller
         $member->wallet_balance = $new_balance;
         $member->update_by = $request->user_id;
         $member->save();
-		
+
         $d = new MemberEditBalance;
 		$d->user_id = $request->user_id;
  		$d->member_id = $request->member_id;
