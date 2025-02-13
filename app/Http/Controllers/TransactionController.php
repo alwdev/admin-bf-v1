@@ -359,7 +359,7 @@ class TransactionController extends Controller
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 // ->content('Choose an option:')
                 ->line('BOT '.env('APP_NAME'))
-                ->line('ไม่พบรายการโอนเงินในช่วงเวลา **')
+                ->line('TEP2ไม่พบรายการโอนเงินในช่วงเวลา')
                 ->line('จำนวน :'.$amount)
                 ->line('subMinute(5)'.now()->subMinute(5))
                 // ->button('View page', env('APP_URL'))
