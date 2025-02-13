@@ -143,6 +143,7 @@ class TransactionController extends Controller
         $log->save();
         date_default_timezone_set("Asia/Bangkok");
         $amount = '';
+        $key = '';
         try{
 
             $key = explode(' ',$request->sms)[4] ;
@@ -255,7 +256,7 @@ class TransactionController extends Controller
         $log->log = "sms_step2 : ".$sms;
         $log->save();
         $amount = '';
-
+        $key = '';
         try{
             $key = explode(' ',$sms)[4] ;
             if($key == 'รับโอนจาก'){
@@ -353,7 +354,7 @@ class TransactionController extends Controller
                 // ->keyboard('Button 2')
                 ->send();
 
-                return response()->json(['message' => 'SMS request sent successfully.','txt' => 'Amount :'.$amount], 200);
+                return response()->json(['message' => 'SMS request sent successfully.'], 200);
             }else{
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 // ->content('Choose an option:')
@@ -366,12 +367,12 @@ class TransactionController extends Controller
                 // ->keyboard('Button 1')
                 // ->keyboard('Button 2')
                 ->send();
-                return response()->json(['message' => 'ไม่พบรายการโอนเงินในช่วงเวลา','txt' => 'Amount :'.$amount], 404);
+                return response()->json(['message' => 'ไม่พบรายการโอนเงินในช่วงเวลา'], 404);
             }
 
 
         }else{
-            return response()->json(['message' => 'SMS Not valid.','txt' => 'Amount :'.$amount.', Text3 : '.$key], 200);
+            return response()->json(['message' => 'SMS Not valid.'], 200);
         }
     }
 
