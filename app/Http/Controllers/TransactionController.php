@@ -367,7 +367,7 @@ class TransactionController extends Controller
                 // ->keyboard('Button 1')
                 // ->keyboard('Button 2')
                 ->send();
-                return response()->json(['message' => 'ไม่พบรายการโอนเงินในช่วงเวลา'], 400);
+                return response()->json(['message' => 'No trans'], 400);
             }
 
 
@@ -607,14 +607,14 @@ class TransactionController extends Controller
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 // ->content('Choose an option:')
                 ->line('BOT '.env('APP_NAME'))
-                ->line('ไม่พบรายการโอนเงินในช่วงเวลา')
+                ->line('sms scbไม่พบรายการในช่วงเวลา')
                 ->line('จำนวน :'.$amount)
                 // ->button('View page', env('APP_URL'))
                 // ->button('View page',env('APP_URL'))
                 // ->keyboard('Button 1')
                 // ->keyboard('Button 2')
                 ->send();
-                return response()->json(['message' => 'ไม่พบรายการโอนเงินในช่วงเวลา','txt' => 'Amount :'.$amount], 404);
+                return response()->json(['message' => 'error'], 404);
             }
 
 
