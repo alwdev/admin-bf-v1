@@ -77,35 +77,37 @@ class ManageMemberController extends Controller
                 }
 
                 if($transfer->promotion_id != 0){
-                    // if($transfer->turnover_on == 1){
+                    if($transfer->turnover_on == 1){
                         $pro = Promotion::find($transfer->promotion_id);
                         $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->get();  /// เช็คฝากครั้งแรก
                         $user_transfer_count = $user_transfer->count();
+                        if($pro->is_newuser == 1){ //โปร member ใหม่
+                            if($user_transfer_count == 0){
+                                /// ฝากครั้งแรก
+                                $bonus = $pro->bonus;
+                                $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
+                                $amount_betflix = $transfer->amount + $bonus;
+                                $transfer->promotion = $pro->name;
 
-                        // if($user_transfer_count == 0){
+                            }else{
+                                $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+                                $amount_betflix = $transfer->amount;
 
+                            }
+                        }else{//โปร member ทุกคน
                             $bonus = $pro->bonus;
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
                             $transfer->promotion = $pro->name;
-                            Log::info($pro->name);
+                        }
 
-
-                        // }else{
-                        //     $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
-                        //     $amount_betflix = $transfer->amount;
-
-                        // }
-
-                    // }else{
-                    //     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
-                    //     $amount_betflix = $transfer->amount;
-                    // }
-                }else{
+                    }else{
+                        $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
+                        $amount_betflix = $transfer->amount;
+                    }
+                }else{ //ไม่มีโปร
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                     $amount_betflix = $transfer->amount;
-
-
                 }
 
 
