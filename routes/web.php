@@ -160,7 +160,27 @@ Route::middleware('auth')->group(function () {
     Route::get('/partner/add', [App\Http\Controllers\PartnerController::class, 'add'])->name('partner.add')->middleware('CheckPermissionUser:manageuser,edit');
     Route::post('/partner/create', [App\Http\Controllers\PartnerController::class, 'create'])->name('partner.create')->middleware('CheckPermissionUser:manageuser,edit');
     Route::get('/partner/edit/{id}', [App\Http\Controllers\PartnerController::class, 'edit'])->name('partner.edit')->middleware('CheckPermissionUser:manageuser,edit');
-    Route::post('/partner/update', [App\Http\Controllers\PartnerController::class, 'update'])->name('partner.update')->middleware('CheckPermissionUser:manageuser,edit');;
+    Route::post('/partner/update', [App\Http\Controllers\PartnerController::class, 'update'])->name('partner.update')->middleware('CheckPermissionUser:manageuser,edit');
+
+    Route::get('/total-income', function () {
+        return view('income');
+    })->name('totalincome');
+
+    Route::get('/report-refund', function () {
+        return view('report_refund');
+    })->name('report_refund');
+
+    Route::get('/company', function () {
+        return view('company.company');
+    })->name('company.company');
+
+    Route::get('/news', function () {
+        return view('news');
+    })->name('news');
+
+    Route::get('/store/edit', [App\Http\Controllers\StoreController::class, 'edit'])->name('company.store.edit');
+    Route::POST('/storeconfigure', [App\Http\Controllers\StoreController::class, 'saveconfigure'])->name('update.store.configure');
+    Route::POST('/uploadstoreimage', [App\Http\Controllers\StoreController::class, 'uploadstoreimage'])->name('uploadstoreimage');
 });
 
 require __DIR__.'/auth.php';

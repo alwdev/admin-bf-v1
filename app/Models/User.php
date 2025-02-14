@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -64,6 +65,20 @@ class User extends Authenticatable
         return new Attribute(
             get: fn () => Hashids::encode($this->attributes['id']),
         );
+    }
+
+    public function storename()
+    {
+        return $this->hasOne(Store::class, 'id', 'store_id');
+    }
+
+    public static function active_users() {
+        return User::where('isActive','=', true)->get();
+    }
+
+
+    public static function storeID() {
+        return session('storeId');
     }
 
 }

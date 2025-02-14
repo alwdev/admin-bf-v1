@@ -1,6 +1,47 @@
 @extends('layouts.guest')
 @section('styles')
 <link href="{{asset('daterangepicker/daterangepicker.css')}}" rel="stylesheet">
+<style>
+.icon-cdc {
+	background: #037cc3;
+}
+.icon-int {
+	background: #0330c3;
+}
+.icon-qr {
+	background: #ed2d36;
+}
+.icon-int-mb {
+	background: #fdc803;
+}
+.icon-bp {
+	background: #8c00ff;
+}
+.icon-tmw {
+	background: #fd5403;
+}
+.icon-wc-ap {
+	background: #84c44c;
+}
+.icon-cp {
+	background: #ff00ba;
+}
+.icon-xnap {
+	background: #00ffc2;
+}
+.icon-atome {
+	background: #FFC6C6;
+}
+
+.icon-size {
+    width: 12px;
+    height: 12px;
+    border-radius: 10px;
+    float: left;
+    margin-right: 10px;
+    margin-top: 7px;
+}
+</style>
 @endsection
 @section('content')
   <!-- start page title -->
@@ -28,13 +69,13 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-xl-3 col-md-6">
+    <div class="col-xl-4 col-md-6">
         <div class="card card-animate">
             <div class="card-body">
                 <div class="avatar-sm float-right">
-                    <span class="avatar-title bg-soft-primary rounded-circle">
+                    {{-- <span class="avatar-title bg-soft-primary rounded-circle">
                         <i class="bx bx-dollar m-0 h3 text-primary"></i>
-                    </span>
+                    </span> --}}
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">ยอดฝาก</h6>
                 <h3 class="my-3">{{ number_format((float) $total_deposit,2) }} ฿</h3>
@@ -43,13 +84,13 @@
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6">
+    <div class="col-xl-4 col-md-6">
         <div class="card card-animate">
             <div class="card-body">
                 <div class="avatar-sm float-right">
-                    <span class="avatar-title bg-soft-primary rounded-circle">
+                    {{-- <span class="avatar-title bg-soft-primary rounded-circle">
                         <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
-                    </span>
+                    </span> --}}
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">ยอดถอน</h6>
                 <h3 class="my-3">{{ number_format((float) $total_withdraw,2) }} ฿</h3>
@@ -58,13 +99,13 @@
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6">
+    <div class="col-xl-4 col-md-6">
         <div class="card card-animate">
             <div class="card-body">
                 <div class="avatar-sm float-right">
-                    <span class="avatar-title bg-soft-primary rounded-circle">
+                    {{-- <span class="avatar-title bg-soft-primary rounded-circle">
                         <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
-                    </span>
+                    </span> --}}
                 </div>
                 @php
                     $total_profit =   (float) $total_deposit - (float) $total_withdraw;
@@ -77,104 +118,10 @@
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6">
-        <div class="card card-animate">
-            <div class="card-body">
-                <div class="avatar-sm float-right">
-                    <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-analyse m-0 h3 text-primary"></i>
-                    </span>
-                </div>
-                <h6 class="text-muted text-uppercase mt-0">Member สมัครใหม่</h6>
-                <h3 class="my-3"><span data-plugin="counterup">{{ number_format((float) $new_member,0) }}</span></h3>
-                {{-- <span class="badge badge-soft-primary mr-1"> 0% </span> <span class="text-muted">This Month</span> --}}
-            </div>
-        </div>
-    </div>
+</div>
+<!-- end row -->
 
-    <div class="col-xl-3 col-md-6">
-        <div class="card card-animate">
-            <div class="card-body">
-                <div class="avatar-sm float-right">
-                    <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-user m-0 h3 text-primary"></i>
-                    </span>
-                </div>
-                <h6 class="text-muted text-uppercase mt-0">Member ทั้งหมด</h6>
-                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $total_member,0) }}</h3>
-                {{-- <span class="badge badge-soft-primary mr-1"> +89% </span> <span class="text-muted">This Month</span> --}}
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6">
-        <div class="card card-animate">
-            <div class="card-body">
-                <div class="avatar-sm float-right">
-                    <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-user m-0 h3 text-primary"></i>
-                    </span>
-                </div>
-                <h6 class="text-muted text-uppercase mt-0">Online วันนี้</h6>
-                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $total_online,0) }}</h3>
-                {{-- <span class="badge badge-soft-primary mr-1"> +89% </span> <span class="text-muted">This Month</span> --}}
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="card card-animate">
-            <div class="card-body">
-                <div class="avatar-sm float-right">
-                    <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
-                    </span>
-                </div>
-                <h6 class="text-muted text-uppercase mt-0">Bonus</h6>
-                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $total_bonus,2) }}</h3>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6">
-        <div class="card card-animate">
-            <div class="card-body">
-                <div class="avatar-sm float-right">
-                    <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
-                    </span>
-                </div>
-                <h6 class="text-muted text-uppercase mt-0">เติมมือ</h6>
-                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $manual_topup,2) }}</h3>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6">
-        <div class="card card-animate">
-            <div class="card-body">
-                <div class="avatar-sm float-right">
-                    <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
-                    </span>
-                </div>
-                <h6 class="text-muted text-uppercase mt-0">คืนลูกค้า</h6>
-                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $manual_cashback,2) }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="card card-animate">
-            <div class="card-body">
-                <div class="avatar-sm float-right">
-                    <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
-                    </span>
-                </div>
-                <h6 class="text-muted text-uppercase mt-0">ยอดเงินคงเหลือ  <span class="badge rounded-pill text-bg-primary" style="font-weight: 300;background: green;color: white;">จำนวน {{ $banks->count() }} บัญชี</span></h6>
-                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $banks->sum('balance'),2) }}</h3>
-            </div>
-        </div>
-    </div>
+<div class="row">
     @php
      $all_bank = \App\Models\Bank::where('enable',1)->get();
     @endphp
@@ -184,9 +131,9 @@
         <div class="card card-animate">
             <div class="card-body">
                 <div class="avatar-sm float-right">
-                    <span class="avatar-title bg-soft-primary rounded-circle">
+                    {{-- <span class="avatar-title bg-soft-primary rounded-circle">
                         <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
-                    </span>
+                    </span> --}}
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">ยอดเงินคงเหลือ  <span class="badge rounded-pill text-bg-primary" style="font-weight: 300;background: green;color: white;">{{ $a_bank->bank_name }} {{ $a_bank->account_no }}</span></h6>
                 <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $a_bank->balance,2) }}</h3>
@@ -195,138 +142,130 @@
     </div>
     @endforeach
 
-
-
-
-
-</div>
-<!-- end row -->
-
-<div class="row">
-
-    {{-- <div class="col-lg-8">
-         <div class="card card-animate">
-            <div class="card-body">
-
-                <h4 class="card-title d-inline-block">Total Online</h4>
-                <canvas id="line-chart" class="morris-chart"  height="94"></canvas>
-
-                <div class="row text-center mt-4">
-                    <div class="col-6">
-                        <h4>{{ $total_online }}</h4>
-                        <p class="text-muted mb-0">Total Online today.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> <!-- end col --> --}}
-
-    {{-- <div class="col-lg-12">
-         <div class="card card-animate">
-            <div class="card-body">
-
-                <h4 class="card-title d-inline-block">Top 10 Games</h4>
-                <canvas id="donut-chart" class="morris-chart"  height="234"></canvas>
-
-                <div class="row text-center mt-4">
-
-                </div>
-            </div>
-        </div>
-    </div> --}}
 </div>
 <!-- end row-->
 
 <div class="row">
-    <div class="col-lg-5">
-         <div class="card card-animate">
+    <div class="col-lg-12">
+         <div class="card card-animate"  style="min-height: 400px;">
             <div class="card-body">
 
-                <h4 class="card-title d-inline-block mb-3">Members ใหม่</h4>
+                <h4 class="card-title d-inline-block mb-3">รายได้ตามช่วงเวลา</h4>
 
-                <div class="table-responsive">
-                    <table class="table table-borderless table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th data-field="username" data-filter-control="input" data-sortable="true">สมาชิก</th>
-                                <th data-field="type" data-filter-control="select" data-sortable="true">ชื่อ</th>
-                                <th data-field="amount" data-sortable="true">วันที่</th>
-                                <th data-sortable="true">ยอดเงิน</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @php
-                                $i=0;
-                            @endphp
-                            @foreach ($member_new as $item)
-                                @if (++$i == 7)
-                                    @break;
-                                @endif
-                                <tr>
-                                    <td>{{ $item->username }}</td>
-                                    <td>{{ $item->fullname }}</td>
-                                    <td>{{ $item->created_at }}</td>
-                                    <td>{{ number_format((float) $item->wallet_balance,2) }} <i class="bx bx-bitcoin"></i></td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div class="">
+                    
                 </div>
 
             </div>
         </div>
     </div> <!-- end col -->
-
-    <div class="col-lg-7">
-         <div class="card card-animate">
+    <div class="col-lg-6">
+         <div class="card card-animate"  style="min-height: 400px;">
             <div class="card-body">
 
-                <h4 class="card-title d-inline-block">รายการ ฝาก/ถอน ล่าสุด</h4>
+                <h4 class="card-title d-inline-block mb-3">ช่องทางชำระเงิน (ตามช่วงเวลา)</h4>
 
-                <div class="table-responsive">
-                    <table class="table table-borderless table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th data-field="username" data-filter-control="input" data-sortable="true">สมาชิก</th>
-                                <th data-field="type" data-filter-control="select" data-sortable="true">ประเภท</th>
-                                <th data-field="amount" data-sortable="true">จำนวนเงิน</th>
-                                <th data-sortable="true">วันที่ทำรายการ</th>
-                                <th data-sortable="true">สถานะ</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($transfer as $item)
-                                <tr>
-                                    <td>{{ $item->username }}</td>
-                                    @if ($item->type == 'deposit')
-                                        <td>ฝาก</td>
-                                    @elseif ($item->type == 'withdraw')
-                                        <td>ถอน</td>
-                                    @else
-                                        <td>{{ $item->type }}</td>
-                                    @endif
-
-                                    <td>{{ number_format((float) $item->amount,2) }} <i class="bx bx-bitcoin"></i></td>
-                                    <td>{{ date('d/m/Y H:i:s',$item->transfer_date) }}</td>
-                                    <td>
-                                        @if ($item->status == 1)
-                                             <h5><span class="badge badge-pill badge-warning text-bg-warning">{{ $item->status_code }}</span></h5>
-                                         @elseif ($item->status == 2)
-                                             <h5><span class="badge badge-pill badge-success text-bg-success">{{ $item->status_code }}</span></h5>
-                                         @else
-                                             <h5><span class="badge badge-pill badge-danger text-bg-danger">{{ $item->status_code }}</span></h5>
-                                         @endif
-                                     </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div class="">
+                    <div class="row">
+                        <div class="col-md-6">
+                          
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row clearfix m-l-20">
+                                <div class="col-lg-12 col-md-12 col-sm-12 txt-b">
+                                    <div class="icon icon-size icon-cdc"></div>
+                                    <div class="col-in">
+                                        <small class="text-muted m-t-0 text-11">Credit
+                                            / Debit
+                                            Card</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 txt-b">
+                                    <div class="icon icon-size icon-int">-</div>
+                                    <div class="col-in">
+                                        <small class="text-muted m-t-0 text-11">Installment</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 txt-b">
+                                    <div class="icon icon-size icon-qr"></div>
+                                    <div class="col-in">
+                                        <small class="text-muted m-t-0 text-11">QR
+                                            Promptpay /
+                                            Paypal</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 txt-b">
+                                    <div class="icon icon-size icon-int-mb"></div>
+                                    <div class="col-in">
+                                        <small class="text-muted m-t-0 text-11">Internet
+                                            / Mobile
+                                            Banking</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 txt-b">
+                                    <div class="icon icon-size icon-bp"></div>
+                                    <div class="col-in">
+                                        <small class="text-muted m-t-0 text-11">Bill
+                                            Payment</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 txt-b">
+                                    <div class="icon icon-size icon-tmw"></div>
+                                    <div class="col-in">
+                                        <small class="text-muted m-t-0 text-11">True
+                                            Money
+                                            Wallet</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 txt-b">
+                                    <div class="icon icon-size icon-wc-ap"></div>
+                                    <div class="col-in">
+                                        <small class="text-muted m-t-0 text-11">WeChat
+                                            / Ali
+                                            Pay</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 txt-b" style="margin-bottom: 0px;">
+                                    <div class="icon icon-size icon-cp"></div>
+                                    <div class="col-in">
+                                        <small class="text-muted m-t-0 text-11">Crypto
+                                            Payment</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 txt-b" style="margin-bottom: 0px;">
+                                    <div class="icon icon-size icon-xnap"></div>
+                                    <div class="col-in">
+                                        <small class="text-muted m-t-0 text-11">Xnap</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 txt-b" style="margin-bottom: 0px;">
+                                    <div class="icon icon-size icon-atome"></div>
+                                    <div class="col-in">
+                                        <small class="text-muted m-t-0 text-11">Atome</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+  
+                    </div>
                 </div>
 
             </div>
         </div>
     </div> <!-- end col -->
+    <div class="col-lg-6">
+        <div class="card card-animate"  style="min-height: 400px;">
+           <div class="card-body">
 
+               <h4 class="card-title d-inline-block mb-3">ชำระเต็มจำนวน</h4>
+
+               <div class="">
+                   
+               </div>
+
+           </div>
+       </div>
+   </div> <!-- end col -->
 </div>
 <form action="{{ route('dashboard_date') }}" id="form_dashboard" method="get">
     @csrf
