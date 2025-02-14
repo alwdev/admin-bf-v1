@@ -76,53 +76,57 @@ class ManageMemberController extends Controller
                     $bank->save();
                 }
 
+                $message = "";
+                $pro_name ="";
+
                 if($transfer->promotion_id != 0){
+                    error_log("promotion id = ".$transfer->promotion_id);
                     if($transfer->turnover_on == 1){
+                        error_log("turnover on = ".$transfer->turnover_on);
                         $pro = Promotion::find($transfer->promotion_id);
+                        $pro_name = $pro->name;
                         $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->get();  /// เช็คฝากครั้งแรก
                         $user_transfer_count = $user_transfer->count();
+                        error_log("user transfer count = ".$user_transfer_count);
+                        error_log("Pro is_newuser = ".$pro->is_newuser);
+                        if($pro->is_newuser == 1){ //โปร member ใหม่
+                            error_log("โปร member ใหม่");
+                            if($user_transfer_count == 0){
+                                /// ฝากครั้งแรก
+                                error_log("เข้าเงื่อนไข member ใหม่");
+                                $message .= "เข้าเงื่อนไข member ใหม่, ";
+                                $bonus = $pro->bonus;
+                                $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
+                                $amount_betflix = $transfer->amount + $bonus;
+                                $transfer->promotion = $pro->name;
 
-                        if($user_transfer_count == 0){
-
+                            }else{
+                                error_log("ไม่เข้าเงื่อนไข member ใหม่");
+                                $message .= "ไม่เข้าเงื่อนไข member ใหม่, ";
+                                $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+                                $amount_betflix = $transfer->amount;
+                            }
+                        }else{//โปร member ทุกคน
+                            error_log("โปร member ทุกคน");
+                            $message .= "โปร member ทุกคน, ";
                             $bonus = $pro->bonus;
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
                             $transfer->promotion = $pro->name;
-                            Log::info($pro->name);
-
-                            // if($transfer->amount >= 20 && $transfer->amount < 300){  /// สมาชิกใหม่ ฝาก 20 รับ 100 บาท
-                            //     $bonus = 80;
-                            //     $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
-                            //     $amount_betflix = $transfer->amount + $bonus;
-                            //     $transfer->promotion ='สมาชิกใหม่ ฝาก 20 รับ 100 บาท';
-                            //     Log::info('สมาชิกใหม่ ฝาก 20 รับ 100 บาท');
-
-                            // }else if($transfer->amount >= 300){  /// สมาชิกใหม่ ฝาก 300 รับ 500 บาท
-                            //     $bonus = 200;
-                            //     $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
-                            //     $amount_betflix = $transfer->amount + $bonus;
-                            //     $transfer->promotion ='สมาชิกใหม่ ฝาก 300 รับ 500 บาท';
-                            //     Log::info('สมาชิกใหม่ ฝาก 300 รับ 500 บาท');
-
-                            // }
-
-
-                        }else{
-                            $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
-                            $amount_betflix = $transfer->amount;
-
                         }
+
                     }else{
                         $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                         $amount_betflix = $transfer->amount;
                     }
-                }else{
+                }else{ //ไม่มีโปร
+                    error_log("ไม่มีโปร / ไม่กดรับโปร");
+                    $message .= "ไม่มีโปร / ไม่กดรับโปร, ";
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                     $amount_betflix = $transfer->amount;
 
-
                 }
-
+                error_log("Bonus = ". $bonus);
 
                 $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($amount_betflix));
                 Log::info('Deposit Betflix '.$bf_deposit.' '.$amount_betflix.' User =  '.$member->username);
@@ -163,6 +167,7 @@ class ManageMemberController extends Controller
               ->line('Admin ทำรายการ อนุมัติเครดิตเข้า '.$member->username)
               ->line('จำนวน :'.floor($transfer->amount))
               ->line('Bonus :'.$bonus)
+              ->line($pro_name.': '.$message)
               ->send();
 
 
@@ -277,7 +282,7 @@ class ManageMemberController extends Controller
         }else if ($old_balance > $request->balance) {
             if($request->type == "แก้เครดิต"){
                 $update_balance = $old_balance - $request->balance;
-  
+
                 Log::info(" - Withdraw update_balance =".$update_balance);
                 $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,$update_balance);
                 Log::info("Betflix Withdraw ".$bf.' '.$update_balance.' User =  '.$member->username);
@@ -294,7 +299,7 @@ class ManageMemberController extends Controller
         $member->wallet_balance = $new_balance;
         $member->update_by = $request->user_id;
         $member->save();
-		
+
         $d = new MemberEditBalance;
 		$d->user_id = $request->user_id;
  		$d->member_id = $request->member_id;
