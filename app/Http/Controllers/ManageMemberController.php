@@ -75,13 +75,16 @@ class ManageMemberController extends Controller
                     $bank->balance = (float) $bank->balance + (float) $transfer->amount;
                     $bank->save();
                 }
+
                 $message = "";
+                $pro_name ="";
 
                 if($transfer->promotion_id != 0){
                     error_log("promotion id = ".$transfer->promotion_id);
                     if($transfer->turnover_on == 1){
                         error_log("turnover on = ".$transfer->turnover_on);
                         $pro = Promotion::find($transfer->promotion_id);
+                        $pro_name = $pro->name;
                         $user_transfer = Transfer::where('member_id',$member->id)->where('status',2)->where('type','deposit')->get();  /// เช็คฝากครั้งแรก
                         $user_transfer_count = $user_transfer->count();
                         error_log("user transfer count = ".$user_transfer_count);
@@ -164,7 +167,7 @@ class ManageMemberController extends Controller
               ->line('Admin ทำรายการ อนุมัติเครดิตเข้า '.$member->username)
               ->line('จำนวน :'.floor($transfer->amount))
               ->line('Bonus :'.$bonus)
-              ->line($message)
+              ->line($pro_name.': '.$message)
               ->send();
 
 
