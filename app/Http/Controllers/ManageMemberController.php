@@ -75,7 +75,7 @@ class ManageMemberController extends Controller
                     $bank->balance = (float) $bank->balance + (float) $transfer->amount;
                     $bank->save();
                 }
-
+                $message = "";
 
                 if($transfer->promotion_id != 0){
                     error_log("promotion id = ".$transfer->promotion_id);
@@ -91,6 +91,7 @@ class ManageMemberController extends Controller
                             if($user_transfer_count == 0){
                                 /// ฝากครั้งแรก
                                 error_log("เข้าเงื่อนไข member ใหม่");
+                                $message .= "เข้าเงื่อนไข member ใหม่, ";
                                 $bonus = $pro->bonus;
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                                 $amount_betflix = $transfer->amount + $bonus;
@@ -98,11 +99,13 @@ class ManageMemberController extends Controller
 
                             }else{
                                 error_log("ไม่เข้าเงื่อนไข member ใหม่");
+                                $message .= "ไม่เข้าเงื่อนไข member ใหม่, ";
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
                                 $amount_betflix = $transfer->amount;
                             }
                         }else{//โปร member ทุกคน
                             error_log("โปร member ทุกคน");
+                            $message .= "โปร member ทุกคน, ";
                             $bonus = $pro->bonus;
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
@@ -115,6 +118,7 @@ class ManageMemberController extends Controller
                     }
                 }else{ //ไม่มีโปร
                     error_log("ไม่มีโปร / ไม่กดรับโปร");
+                    $message .= "ไม่มีโปร / ไม่กดรับโปร, ";
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                     $amount_betflix = $transfer->amount;
 
@@ -160,6 +164,7 @@ class ManageMemberController extends Controller
               ->line('Admin ทำรายการ อนุมัติเครดิตเข้า '.$member->username)
               ->line('จำนวน :'.floor($transfer->amount))
               ->line('Bonus :'.$bonus)
+              ->line($message)
               ->send();
 
 
