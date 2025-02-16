@@ -143,9 +143,9 @@ class TransactionController extends Controller
         $log->save();
 
         if($request->sms =='test-sms'){
-            response()->json(['message' => 'test ok'], 200);
+            return  response()->json(['message' => 'test ok'], 200);
         }
-        
+
         date_default_timezone_set("Asia/Bangkok");
         $amount = '';
         $key = '';
