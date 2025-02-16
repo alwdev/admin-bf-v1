@@ -141,6 +141,11 @@ class TransactionController extends Controller
         $log = new Logs;
         $log->log = "smsRequest : ".$request->sms;
         $log->save();
+
+        if($request->sms =='test-sms'){
+            response()->json(['message' => 'test ok'], 200);
+        }
+        
         date_default_timezone_set("Asia/Bangkok");
         $amount = '';
         $key = '';
