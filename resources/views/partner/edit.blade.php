@@ -18,10 +18,10 @@
                     <li class="breadcrumb-item active">ตั้งค่า</li>
                 </ol>
             </div>
-            
+
         </div>
     </div>
-</div>     
+</div>
 <!-- end page title -->
 <div class="row">
     <div class="col-12">
@@ -37,7 +37,7 @@
                     <input type="hidden" name="id" value="{{ $data->id }}">
                     <div class="form-group">
                         <label for="slug_name">รหัส</label>
-                        <input class="form-control" type="text" id="slug_name" name="slug_name" value="{{ $data->slug_name }}" required value="{{ old('slug_name') }}" placeholder="รหัส">
+                        <input class="form-control" type="text" id="slug_name" name="slug_name" value="{{ $data->slug_name }}" required value="{{ old('slug_name') }}" placeholder="รหัส" readonly>
                         <x-input-error :messages="$errors->get('slug_name')" class="mt-2" />
                     </div>
                     {{-- <div class="form-group">
