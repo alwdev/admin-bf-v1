@@ -7,8 +7,8 @@
                 <i class="fa fa-fw fa-bars"></i>
             </button>
 
-            <div class="dropdown d-none d-sm-inline-block">
-
+            <div class="dropdown d-none d-sm-inline-block" style="margin-left: 4px">
+                <h4>Agent Back Office v.2</h4>
             </div>
         </div>
 
