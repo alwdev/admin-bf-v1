@@ -18,18 +18,18 @@
                     <li class="breadcrumb-item active">จัดการพันธมิตร</li>
                 </ol>
             </div>
-            
+
         </div>
     </div>
-</div>     
+</div>
 <!-- end page title -->
 
         <div class="row">
             <div class="card-header text-right" style="background: transparent;">
-              
+
             </div>
             <div class="col-12 card">
-           
+
                     <div class="card-body">
                         @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
                         <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('partner.add') }}">เพิ่มพันธมิตร</a>
@@ -37,7 +37,7 @@
                         <h4 class="card-title"></h4>
                         <p class="card-subtitle mb-4">
                         </p>
-        
+
                         <table id="basic-datatable" class="table m-10 table-bordered"
                         data-filter-control="true"
                         data-toggle="table"
@@ -52,12 +52,14 @@
                                     <th data-field="contact_phonenumber"  data-sortable="true">เบอร์โทรศัพท์</th>
                                     <th data-field="slug_name"  data-sortable="true">รหัส</th>
                                     <th data-field="url"  data-sortable="true">URL</th>
-                                    <th data-sortable="true">created_at</th>
-                                    <th></th>
+                                    <th data-sortable="true">วันที่ลงทะเบียน</th>
+                                    <th data-sortable="true">รายได้รวม</th>
+                                    <th>รายงาน</th>
+                                    <th>แก้ไข</th>
                                 </tr>
-                            </thead>  
+                            </thead>
                             <tbody>
-                                @foreach ($list as $partner)                            
+                                @foreach ($list as $partner)
                                 <tr>
                                     <td>{{ $partner->contact_name }}</td>
                                     <td>{{ $partner->contact_mail }}</td>
@@ -66,6 +68,10 @@
                                     <td>
                                         {{ $partner->created_at->format('d/m/Y H:i:s') }}
                                     </td>
+                                    <td>{{ $partner->total_profit }}</td>
+                                    <td>
+                                        <a href="{{ route('partner.report',$partner->id) }}" type="button" class="btn btn-secondary btn-sm waves-effect waves-light"><i class="bx bx-copy"></i> </a>
+                                    </td>
                                     <td>
                                         <a href="{{ route('partner.edit',$partner->id) }}" type="button" class="btn btn-secondary btn-sm waves-effect waves-light"><i class="bx bx-edit-alt"></i> </a>
                                     </td>
@@ -73,7 +79,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-        
+
                     </div> <!-- end card body-->
 
             </div><!-- end col-->
@@ -186,10 +192,10 @@
 				}
 			});
 
-  
+
             }
         }
-      }) 
+      })
     }
     function changePass(userid) {
         Swal.mixin({
@@ -269,7 +275,7 @@
 
                 }
             }
-      }) 
+      })
     }
 
     function deluser(userid) {
@@ -307,11 +313,11 @@
                     }
 				}
 			});
-                
-                      
+
+
             }
         }
-      }) 
+      })
     }
     </script>
 @endsection

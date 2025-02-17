@@ -11,6 +11,8 @@ use App\Models\PromotionUsed;
 use App\Models\Affiliate;
 use App\Models\WheelSpin;
 use App\Models\Setting;
+use App\Models\Members;
+use App\Models\PartnerCommission;
 use NotificationChannels\Telegram\TelegramMessage;
 
 
@@ -37,8 +39,14 @@ class PartnerController extends Controller
         return view('partner.edit',compact('data'));
     }
 
+    public function report($id){
+        $partner = Partner::find($id);
+        $data = PartnerCommission::where('partner_id',$id)->get();
+        return view('partner.report',compact('data', 'partner'));
+    }
+
     public function create(Request $request){
-        
+
         $request->validate([
             'contact_name' => ['required','string','max:255'],
             'slug_name' => ['required','string','unique:partner'],
@@ -58,7 +66,7 @@ class PartnerController extends Controller
     }
 
     public function update(Request $request){
-        
+
         $request->validate([
             'id' => ['required'],
             'contact_name' => ['required','string','max:255'],
@@ -149,8 +157,19 @@ class PartnerController extends Controller
                     }
                 }
                 if($total_commission > 0){
-                    $value->total_profit = $total_commission;
+                    $value->total_profit = $value->total_profit + $total_commission;
                     $value->save();
+
+                    $start_date=date('Y-m-d',strtotime('-1 day'));
+                    $end_date=date('Y-m-d',strtotime('-1 day'));
+                    PartnerCommission::create([
+                        'partner_id' => $value->id,
+                        'amount' => $value->amount,
+                        'payment_type' => $value->payment_type,
+                        'payment_status' => 'pending',
+                        'transaction_id' =>'',
+                        'note' => $start_date+ '-' + $end_date
+                    ]);
                 }
 
                 // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($value->username,floor($commission));

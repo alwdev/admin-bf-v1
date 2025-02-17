@@ -160,7 +160,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/partner/add', [App\Http\Controllers\PartnerController::class, 'add'])->name('partner.add')->middleware('CheckPermissionUser:manageuser,edit');
     Route::post('/partner/create', [App\Http\Controllers\PartnerController::class, 'create'])->name('partner.create')->middleware('CheckPermissionUser:manageuser,edit');
     Route::get('/partner/edit/{id}', [App\Http\Controllers\PartnerController::class, 'edit'])->name('partner.edit')->middleware('CheckPermissionUser:manageuser,edit');
-    Route::post('/partner/update', [App\Http\Controllers\PartnerController::class, 'update'])->name('partner.update')->middleware('CheckPermissionUser:manageuser,edit');;
+    Route::post('/partner/update', [App\Http\Controllers\PartnerController::class, 'update'])->name('partner.update')->middleware('CheckPermissionUser:manageuser,edit');
+    Route::get('/partner/report/{id}', [App\Http\Controllers\PartnerController::class, 'report'])->name('partner.report')->middleware('CheckPermissionUser:manageuser,edit');
+
 });
 
 require __DIR__.'/auth.php';
