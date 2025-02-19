@@ -66,7 +66,7 @@
                     </div>
                     <div class="form-group">
                         <label for="account_no">เลขพร้อมเพย์</label>
-                        <input class="form-control"  type="number" id="prompay_no" name="prompay_no" required onkeypress="return isNumberKey(event)"  value="{{ $bank->prompay_no }}">
+                        <input class="form-control"  type="number" id="prompay_no" name="prompay_no"  onkeypress="return isNumberKey(event)"  value="{{ $bank->prompay_no }}">
                         <x-input-error :messages="$errors->get('prompay_no')" class="mt-2" />
                     </div>
                     {{-- <div class="form-group">
