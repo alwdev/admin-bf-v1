@@ -86,7 +86,7 @@
                     {{-- @endif --}}
                 @endif
                 <li>
-                    <a href="#" class="waves-effect"><i class='bx bx-copy'></i><span>คู่มือการใช้งาน</span></a>
+                    <a href="document.pdf" target="_blank" class="waves-effect"><i class='bx bx-copy'></i><span>คู่มือการใช้งาน</span></a>
                 </li>
             </ul>
         </div>

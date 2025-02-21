@@ -33,7 +33,8 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-dollar m-0 h3 text-primary"></i>
+                        {{-- <i class="bx bx-bitcoin m-0 h3 text-primary"></i> --}}
+                        <img src="{{ asset('images/dashboard_icon/savings.png') }}" alt="" width="32">
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">ยอดฝาก</h6>
@@ -48,7 +49,8 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
+                        {{-- <i class="bx bx-money-withdraw m-0 h3 text-primary"></i> --}}
+                        <img src="{{ asset('images/dashboard_icon/cash-withdrawal.png') }}" alt="" width="32">
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">ยอดถอน</h6>
@@ -63,7 +65,8 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
+                        {{-- <i class="bx bx-dollar-circle m-0 h3 text-primary"></i> --}}
+                        <img src="{{ asset('images/dashboard_icon/earnings.png') }}" alt="" width="32">
                     </span>
                 </div>
                 @php
@@ -82,7 +85,8 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-analyse m-0 h3 text-primary"></i>
+                        {{-- <i class="bx bx-analyse m-0 h3 text-primary"></i> --}}
+                        <img src="{{ asset('images/dashboard_icon/followers.png') }}" alt="" width="32">
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">Member สมัครใหม่</h6>
@@ -97,7 +101,8 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-user m-0 h3 text-primary"></i>
+                        {{-- <i class="bx bx-user m-0 h3 text-primary"></i> --}}
+                        <img src="{{ asset('images/dashboard_icon/team.png') }}" alt="" width="32">
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">Member ทั้งหมด</h6>
@@ -112,7 +117,8 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-user m-0 h3 text-primary"></i>
+                        {{-- <i class="bx bx-user m-0 h3 text-primary"></i> --}}
+                        <img src="{{ asset('images/dashboard_icon/www.png') }}" alt="" width="32">
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">Online วันนี้</h6>
@@ -126,7 +132,8 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
+                        {{-- <i class="bx bx-dollar-circle m-0 h3 text-primary"></i> --}}
+                        <img src="{{ asset('images/dashboard_icon/bonus.png') }}" alt="" width="32">
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">Bonus</h6>
@@ -140,7 +147,8 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
+                        {{-- <i class="bx bx-dollar-circle m-0 h3 text-primary"></i> --}}
+                        <img src="{{ asset('images/dashboard_icon/mobile-banking.png') }}" alt="" width="32">
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">เติมมือ</h6>
@@ -154,7 +162,8 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
+                        {{-- <i class="bx bx-dollar-circle m-0 h3 text-primary"></i> --}}
+                        <img src="{{ asset('images/dashboard_icon/refund.png') }}" alt="" width="32">
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">คืนลูกค้า</h6>
@@ -167,7 +176,8 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
+                        {{-- <i class="bx bx-dollar-circle m-0 h3 text-primary"></i> --}}
+                        <img src="{{ asset('images/dashboard_icon/bank.png') }}" alt="" width="32">
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">ยอดเงินคงเหลือ  <span class="badge rounded-pill text-bg-primary" style="font-weight: 300;background: green;color: white;">จำนวน {{ $banks->count() }} บัญชี</span></h6>
@@ -185,7 +195,8 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
+                        {{-- <i class="bx bx-dollar-circle m-0 h3 text-primary"></i> --}}
+                        <img src="{{ asset('images/dashboard_icon/bank.png') }}" alt="" width="32">
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">ยอดเงินคงเหลือ  <span class="badge rounded-pill text-bg-primary" style="font-weight: 300;background: green;color: white;">{{ $a_bank->bank_name }} {{ $a_bank->account_no }}</span></h6>
