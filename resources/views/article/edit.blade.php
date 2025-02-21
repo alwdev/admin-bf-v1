@@ -30,25 +30,30 @@
             <div class="card-body">
                 <div class="text-center mb-4 mt-3">
                 </div>
-                <form class="p-2" action="{{ route('article.store') }}" method="POST" enctype="multipart/form-data">
+                <form class="p-2" action="{{ route('article.update',$article->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
+
                     <div class="form-group">
                         <label for="title">Title</label>
-                        <input class="form-control" type="text" id="title" name="title" required value="{{ old('title') }}">
+                        <input class="form-control" type="text" id="title" name="title" required value="{{ $article->title }}">
                         <x-input-error :messages="$errors->get('title')" class="mt-2" />
                     </div>
                     <div class="form-group">
                         <label for="image">รูปภาพ</label>
-                        <input class="form-control" type="file" id="image" name="image" required  value="{{ old('image') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
+                        @if ($article->image)
+
+                            <img src="{{ $article->image }}" class="img-thumbnail rounded" style="height:200px;cursor: pointer;"  onclick="showImage('{{ $article->image }}')">
+                        @endif
+                        <input class="form-control" type="file" id="image" name="image" value="{{ old('image') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
                         <x-input-error :messages="$errors->get('image')" class="mt-2" />
                     </div>
                     <div class="form-group">
                         <label for="content">บทความ</label>
-                        <textarea class="form-control" id="content" rows="15" name="content">{{ old('content') }}</textarea>
+                        <textarea class="form-control" id="content" rows="15" name="content">{{ $article->content }}</textarea>
                         <x-input-error :messages="$errors->get('content')" class="mt-2" />
                     </div>
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
-                        <input type="checkbox" class="custom-control-input" id="enable" name="enable" checked value="1">
+                        <input type="checkbox" class="custom-control-input" id="enable" name="enable"  @if($article->status) checked @endif value="1">
                         <label class="custom-control-label" for="enable">Enable (เผยแพร่)</label>
                     </div>
                     <div class="mb-3 text-center">
@@ -81,24 +86,19 @@
     <!-- Datatables init -->
     <script src="{{ asset('pages/datatables-demo.js')}}"></script>
     <script>
-        $(document).ready(function() {
-            $('#bank_name').change(function() {
-                if($('option:selected').val() == ''){
-                    $('#bank-logo').html('');
-                    $('#bank_logo').val('');
-                }else{
-                    $('#bank-logo').html('<img src="'+$('option:selected').attr('data-logo')+'" alt="" width="54"/>');
-                    $('#bank_logo').val($('option:selected').attr('data-img'));
-                }
-            });
-
-        });
-
         function isNumberKey(evt) {
         var charCode = (evt.which) ? evt.which : evt.keyCode
         if (charCode > 31 && (charCode < 48 || charCode > 57))
             return false;
         return true;
+        }
+
+        function showImage(image){
+            Swal.fire({
+                imageUrl: image,
+                imageHeight: 500,
+                imageAlt: "A tall image"
+            });
         }
     </script>
 @endsection

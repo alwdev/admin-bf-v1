@@ -48,7 +48,8 @@
                 data-url="">
                 <thead  class="table-light">
                     <tr>
-                        <th data-sortable="true">บทความ</th>
+                        <th data-sortable="true">Title</th>
+                        <th>บทความ</th>
                         <th>ภาพ</th>
                         <th data-sortable="true">วันที่สร้าง</th>
                         <th data-sortable="true">สถานะ</th>
@@ -58,6 +59,23 @@
                 <tbody>
                     @foreach ($articles as $item)
                         <tr>
+                            <td>
+                                <a href="{{ route('article.edit', $item->id) }}">{{ $item->title }}</a>
+                            </td>
+                            <td>{{ $item->content }}</td>
+                            <td>
+                                @if(!is_null($item->image))
+                                    <img src="{{ asset( $item->image)}}" alt="Image" style="width: 100px; height: 100px;">
+                                @endif
+                            </td>
+                            <td>{{ $item->created_at->format('d-m-Y') }}</td>
+                            <td>
+                                @if($item->status == 1)
+                                    <span class="badge badge-success">ใช้งาน</span>
+                                @else
+                                    <span class="badge badge-danger">ไม่ใช้งาน</span>
+                                @endif
+                            </td>
 
                         </tr>
                     @endforeach

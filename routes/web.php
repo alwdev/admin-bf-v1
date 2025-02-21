@@ -165,6 +165,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/article', [App\Http\Controllers\ArticleController::class,'index'])->name('article.index');
     Route::get('/articleCreate', [App\Http\Controllers\ArticleController::class,'create'])->name('article.create');
+    Route::post('/article/store', [App\Http\Controllers\ArticleController::class,'store'])->name('article.store');
+    Route::get('/articleEdit/{id}', [App\Http\Controllers\ArticleController::class,'edit'])->name('article.edit');
+    Route::post('/article/update/{id}', [App\Http\Controllers\ArticleController::class,'update'])->name('article.update');
 });
 
 require __DIR__.'/auth.php';

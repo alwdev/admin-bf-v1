@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Article;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
@@ -16,5 +17,68 @@ class ArticleController extends Controller
     public function create(){
         // Show the form to create a new article
         return view('article.create');
+    }
+
+    public function store(Request $request){
+        // Validate the input
+        $request->validate([
+            'title' => ['required','string','max:255'],
+            'content' => ['required','string'],
+        ]);
+
+        // Create a new article
+        $article = new Article();
+        $article->author_id = auth::user()->id;
+        $article->title = $request->title;
+        $article->content = $request->content;
+
+        if($request->image){
+            $fileName = time().'.'.$request->image->extension();
+            $request->image->move('_image', $fileName);  ////  server public_html path
+            $article->image = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
+        }
+        if(isset($request->enable)){
+            $article->status = $request->enable;
+        }else{
+            $article->status = 0;
+        }
+
+        $article->save();
+
+        // Redirect to the articles index page
+        return redirect()->route('article.index')->with('status','200');
+    }
+
+    public function edit($id){
+        // Show the form to edit an article
+        $article = Article::find($id);
+        return view('article.edit', compact('article'));
+    }
+    public function update(Request $request, $id){
+        // Validate the input
+        $request->validate([
+            'title' => ['required','string','max:255'],
+            'content' => ['required','string'],
+        ]);
+
+        // Update the article
+        $article = Article::find($id);
+        $article->title = $request->title;
+        $article->content = $request->content;
+
+        if($request->image){
+            $fileName = time().'.'.$request->image->extension();
+            $request->image->move('_image', $fileName);  ////  server public_html path
+            $article->image = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
+        }
+        if(isset($request->enable)){
+            $article->status = $request->enable;
+        } else{
+            $article->status = 0;
+        }
+
+        $article->save();
+
+        return redirect()->route('article.index')->with('status','200');
     }
 }
