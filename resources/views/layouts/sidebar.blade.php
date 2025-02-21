@@ -56,6 +56,9 @@
                 <li>
                     <a href="{{ route('promotion_ads.index') }}" class="waves-effect"><i class='bx bx-star'></i><span>Ads</span></a>
                 </li>
+                <li>
+                    <a href="{{ route('article.index') }}" class="waves-effect"><i class='bx bx-copy'></i><span>บทความ</span></a>
+                </li>
                 @if( json_decode(auth()->user()->permissions)->manageuser > 1  )
 
                 <li>
@@ -82,6 +85,9 @@
                     </li>
                     {{-- @endif --}}
                 @endif
+                <li>
+                    <a href="#" class="waves-effect"><i class='bx bx-copy'></i><span>คู่มือการใช้งาน</span></a>
+                </li>
             </ul>
         </div>
         <!-- Sidebar -->
