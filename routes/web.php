@@ -116,6 +116,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/member_play_casino/{date_id}', [ReportController::class, 'member_play_casino'])->name('report.member_play_casino')->middleware('CheckPermissionUser:report,view');
     Route::get('/member_play_sport/{date_id}', [ReportController::class, 'member_play_sport'])->name('report.member_play_sport')->middleware('CheckPermissionUser:report,view');
     Route::get('/member_play_egame/{date_id}', [ReportController::class, 'member_play_egame'])->name('report.member_play_egame')->middleware('CheckPermissionUser:report,view');
+    Route::get('/member_transfer/{date_id}', [ReportController::class, 'transfer_report'])->name('report.member_transfer')->middleware('CheckPermissionUser:report,view');
 
     Route::get('/Multiple_Member_Report/{day}', [BetflixController::class, 'Multiple_Member_Report'])->name('report.Multiple_Member_Report')->middleware('CheckPermissionUser:report,view');
     Route::get('/Single_ReportTimeProvider/{username}/{start_day}/{end_day}', [BetflixController::class, 'Single_ReportTimeProvider'])->name('report.Single_ReportTimeProvider')->middleware('CheckPermissionUser:report,view');
