@@ -73,7 +73,41 @@
                             <td>{{ $member->member_id }}</td>
                             <td>{{ $member->username }}</td>
                             @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
-                            <td><button type="button" class="btn btn-primary btn-sm waves-effect waves-light" onclick="changePass('{{ $member->id }}')"><i class="bx bx-edit-alt"></i>เปลียน</button></td>
+                            {{-- <td><button type="button" class="btn btn-primary btn-sm waves-effect waves-light" onclick="changePass('{{ $member->id }}')"><i class="bx bx-edit-alt"></i>เปลียน</button>
+                            </td> --}}
+                            <td class="text-right">
+                                @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
+                                <button type="button" class="btn btn-primary btn-sm waves-effect waves-light"  data-toggle="modal" data-target="#editPass{{ $key }}"><i class="bx bx-edit-alt"></i>เปลี่ยน</button>
+                                <div class="modal fade" id="editPass{{ $key }}" tabindex="-1" aria-labelledby="editPass{{ $key }}Label" aria-hidden="true">
+                                    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title" id="editPass{{ $key }}Label">แก้ไขรหัส</h5>
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                          </button>
+                                        </div>
+                                        <form action="{{ route('managemember.changePassword') }}" method="POST" id="form_editPass{{ $key }}">
+                                        <div class="modal-body">
+                                            @csrf
+                                            <input type="hidden" name="id" value="{{ $member->id }}" required>
+                                            <div class="form-group  text-left">
+                                                <label for="">ระบุรหัสใหม่</label>
+                                                <input type="text" name="password" class="form-control" required>
+                                            </div>
+
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                          <button type="submit" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                    </form>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                @endif
+                            </td>
                             @endif
                             <td>{{ $member->fullname }}</td>
                             @php
@@ -92,7 +126,7 @@
                                             <span aria-hidden="true">&times;</span>
                                           </button>
                                         </div>
-                                        <form action="{{ route('managemember.memberEditBalance') }}" method="POST" id="form_editBalance{{ $key }}"> 
+                                        <form action="{{ route('managemember.memberEditBalance') }}" method="POST" id="form_editBalance{{ $key }}">
                                         <div class="modal-body">
                                             @csrf
                                             <input type="hidden" name="member_id" value="{{ $member->id }}" required>
@@ -110,8 +144,8 @@
                                                     <option value="แก้เครดิต">แก้เครดิต</option>
                                                 </select>
                                             </div>
-                                            
-                                       
+
+
                                         </div>
                                         <div class="modal-footer">
                                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -208,7 +242,7 @@
                                             <span aria-hidden="true">&times;</span>
                                           </button>
                                         </div>
-                                        <form action="{{ route('managemember.memberupdateBankAccount') }}" method="POST" id="form_updateBankAccount{{ $key }}"> 
+                                        <form action="{{ route('managemember.memberupdateBankAccount') }}" method="POST" id="form_updateBankAccount{{ $key }}">
                                         <div class="modal-body">
                                             @csrf
                                             <input type="hidden" name="member_id" value="{{ $member->id }}" required>
@@ -375,6 +409,7 @@
         }).queue([
             {
             title: 'ต้องการเปลี่ยนรหัสผ่าน หรือไม่',
+            text: '',
             }
         ]).then( function (result) {
             if (result.value) {

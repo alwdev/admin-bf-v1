@@ -228,10 +228,10 @@ class ManageMemberController extends Controller
 
     function changePassword(Request $request){
         $member = Members::find($request->id);
-        $random_pass = $this->strRandom(8);
-        $member->password = Hash::make($random_pass);
+        // $random_pass = $this->strRandom(8);
+        $member->password = Hash::make($request->password);
         $member->save();
-        return [$member,$random_pass];
+        return redirect()->back()->with('status','success');
     }
 
     public static function strRandom($length)
