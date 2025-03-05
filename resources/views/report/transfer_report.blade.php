@@ -58,6 +58,7 @@
                             <thead>
                                 <tr class="text-center">
                                     <th data-field="username" data-filter-control="select" data-sortable="true">ชื่อผู้ใช้</th>
+                                    <th>วันที่</th>
                                     <th data-sortable="true">ยอดเงิน</th>
                                     <th data-field="" data-filter-control="select" data-sortable="true">ประเภท</th>
                                     <th></th>
@@ -67,6 +68,7 @@
                                 @foreach ($transfers as $item)
                                 <tr>
                                     <td>{{ $item->username }}</td>
+                                    <td>{{ $date_ }}</td>
                                     <td>{{ number_format($item->amount, 2) }}</td>
                                     <td>
                                         @if($item->type == 'deposit')

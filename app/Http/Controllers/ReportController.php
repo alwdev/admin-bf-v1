@@ -340,7 +340,7 @@ class ReportController extends Controller
         }else if($date_id = 3){
             $lastDate = Carbon::now()->isoFormat('YYYY-MM-DD').' 00:00:00';
             $firstDate = Carbon::now()->subDays(30)->isoFormat('YYYY-MM-DD').' 23:59:59';
-            $date_ = Carbon::now()->startOfMonth()->isoFormat('DD/MM/YYYY').' - '.Carbon::now()->endOfMonth()->isoFormat('DD/MM/YYYY');
+            $date_ = Carbon::now()->subDays(30)->isoFormat('DD/MM/YYYY').' - '.Carbon::now()->isoFormat('DD/MM/YYYY');
         }
         error_log($firstDate.','.$lastDate);
         $transfers = Transfer::join('members',function($join){
