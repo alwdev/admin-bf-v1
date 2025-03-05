@@ -42,7 +42,6 @@ class DashboardController extends Controller
         }
         $topgame =[];
             $players =app(\App\Http\Controllers\BetflixController::class)->Multiple_Member_Report(now());
-            error_log($players);
             if($players != 'error'){
                 $total_online = count($players);
             }else{
