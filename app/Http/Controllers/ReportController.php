@@ -338,13 +338,11 @@ class ReportController extends Controller
             $firstDate = Carbon::now()->subDays(7)->isoFormat('YYYY-MM-DD').' 23:59:59';
             $date_ = Carbon::now()->subDays(7)->isoFormat('DD/MM/YYYY').' - '.Carbon::now()->isoFormat('DD/MM/YYYY');
         }else if($date_id = 3){
-            $firstDate = Carbon::now()->startOfMonth()->isoFormat('YYYY-MM-DD').' 00:00:00';
-            $lastDate = Carbon::now()->endOfMonth()->isoFormat('YYYY-MM-DD').' 23:59:59';
+            $lastDate = Carbon::now()->isoFormat('YYYY-MM-DD').' 00:00:00';
+            $firstDate = Carbon::now()->subDays(30)->isoFormat('YYYY-MM-DD').' 23:59:59';
             $date_ = Carbon::now()->startOfMonth()->isoFormat('DD/MM/YYYY').' - '.Carbon::now()->endOfMonth()->isoFormat('DD/MM/YYYY');
         }
-        // $transfers = Transfer::where('status',2)
-        // // ->whereBetween('created_at', [$firstDate,$lastDate ])
-        // ->get();
+        error_log($firstDate.','.$lastDate);
         $transfers = Transfer::join('members',function($join){
             $join->on('members.id','=','transfer.member_id');
         })
@@ -354,7 +352,7 @@ class ReportController extends Controller
         ->groupby('transfer.member_id','members.username','transfer.type')
         ->get();
 
-        return view('report.transfer_report',compact('transfers','date_id'));
+        return view('report.transfer_report',compact('transfers','date_id','date_'));
     }
 
     public function sum_trans($date_id){
