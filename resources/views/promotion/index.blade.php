@@ -53,6 +53,7 @@
                         <th data-field="bonus" data-sortable="true">โบนัส (บาท)</th>
                         <th data-field="turnover" data-sortable="true">เทิร์นโอเวอร์ (เท่า)</th>
                         <th data-field="is_newuser" data-sortable="true">เฉพาะผู้เล่นใหม่</th>
+                        <th data-field="action" data-sortable="true">เผยแพร่</th>
                         <th data-sortable="true">วันที่สร้าง</th>
                         {{-- @if( json_decode(auth()->user()->permissions)->transfer > 2  ) --}}
                         <th data-sortable="true"></th>
@@ -75,6 +76,13 @@
                             </td>  
                             <td>{{ $item->created_at->format('d/m/Y H:i:s') }}</td>
                             {{-- @if( json_decode(auth()->user()->permissions)->transfer > 2  ) --}}
+                            <td>
+                                @if($item->action == 1)
+                                    <span class="badge badge-success">เผยแพร่</span>
+                                @else
+                                    <span class="badge badge-secondary">ไม่เผยแพร่</span>
+                                @endif 
+                            </td>  
                             <td class="text-right">
                                 <a href="{{ route('promotion.edit',$item->id) }}" type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="width: 80px;"><i class="bx bx-edit-alt" ></i> แก้ไข</a>
                                 <button type="button" class="btn btn-danger btn-sm waves-effect waves-light" onclick="approveDeposit('#formdel{{ $item->id }}')"  style="width: 80px;"><i class="bx bx-trash"></i> ลบ</button>
