@@ -139,17 +139,40 @@ class SettingController extends Controller
         }
         // dd((isset($request->active) ? 1 : 0));
         $popup = new Popup;
-        $popup->show_page = implode(',',$page);
+        $popup->show_page = implode(",", $request->input('show_page', []));
         $popup->note = $request->note;
         $popup->active = (isset($request->active) ? 1 : 0);
+
         if($request->image){
             $fileName = rand().'.'.$request->image->extension();
             $request->image->move(public_path('images/popup'), $fileName);
             $popup->image = "/images/popup/".$fileName;
         }
+
         $popup->save();
         return redirect()->route('setting.popup')->with('status','success');
     }
+
+    public function popup_update(Request $request)
+    {
+        $popup = Popup::findOrFail($request->id);
+    
+        // ✅ เช็คว่ามีไฟล์ใหม่ไหม
+        if($request->image){
+            $fileName = rand().'.'.$request->image->extension();
+            $request->image->move(public_path('images/popup'), $fileName);
+            $popup->image = "/images/popup/".$fileName;
+        }
+
+        $popup->show_page = implode(",", $request->input('show_page', []));
+        $popup->note = $request->note;
+        $popup->active = $request->has('active') ? 1 : 0;
+        $popup->save();
+    
+        return redirect()->route('setting.popup')->with('status','success');
+    }
+    
+
 
     public function level_create(Request $request)
     {   

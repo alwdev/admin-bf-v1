@@ -1,192 +1,194 @@
 @extends('layouts.guest')
+
 @section('styles')
-{{-- <link href="{{ asset('plugins/datatables/dataTables.bootstrap4.css')}}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('plugins/datatables/responsive.bootstrap4.css')}}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('plugins/datatables/buttons.bootstrap4.css')}}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('plugins/datatables/select.bootstrap4.css')}}" rel="stylesheet" type="text/css" /> --}}
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
-<style>.ql-editor{
-    min-height:200px;
-}
-.ql-hidden{
-    display: none;
-}
+<style>
+    .ql-editor {
+        min-height: 200px;
+    }
+    .ql-hidden {
+        display: none;
+    }
 </style>
 @endsection
+
 @section('content')
-   <!-- start page title -->
-   <div class="row">
+<div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
             <h4 class="mb-0 font-size-18">ตั้งค่าป๊อบอัพ</h4>
-
-            <div class="page-title-right">
-                <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
-                    <li class="breadcrumb-item active">ตั้งค่าป๊อบอัพ</li>
-                </ol>
-            </div>
-            
         </div>
     </div>
-</div>     
-<!-- end page title -->
+</div>
 
-        <div class="row">
-            <div class="card-header text-right" style="background: transparent;">
-              
-            </div>
-            <div class="col-12 card">
-           
-                    <div class="card-body">
-                        <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="#" data-toggle="modal" data-target="#staticBackdrop">เพิ่มป๊อบอัพ</a>
-                        <h4 class="card-title"></h4>
-                        <p class="card-subtitle mb-4">
-                        </p>
-        
-                        <table id="basic-datatable" class="table m-10 table-bordered"
-                        data-filter-control="true"
-                        data-toggle="table"
-                        data-search="true"
-                        data-show-export="false"
-                        data-click-to-select="false"
-                        data-pagination="true"
-                        data-url="">
-                        <thead  class="table-light">
-                                <tr>
-                                    <th>รูป</th>
-                                    <th>เพจ</th>
-                                    <th>ข้อความ</th>
-                                    <th>สถานะ</th>
-                                </tr>
-                            </thead>  
-                            <tbody>
-                                @foreach ($list as $item)                            
-                                <tr>
-                                    <td>
-                                        @if($item->image)
-                                        <img src="{{ asset($item->image) }}" class="img-responsive img-thumbnail" alt="User Image">
-                                        @endif
-                                    </td>
-                                    <td>{{ $item->show_page }}</td>
-                                    <td>{!! $item->note !!}</td>
-                                    <td>
-                                       @if($item->active == 1)
-                                       <span class="badge badge-pill badge-success">ใช้งาน</span>
-                                       @else
-                                       <span class="badge badge-pill badge-danger">ปิดใช้งาน</span>
-                                       @endif 
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-        
-                    </div> <!-- end card body-->
+<div class="row">
+    <div class="col-12 card">
+        <div class="card-body">
+            <button type="button" class="btn btn-primary btn-gold waves-effect waves-light"
+                data-toggle="modal" data-target="#createPopupModal">
+                เพิ่มป๊อบอัพ
+            </button>
 
-            </div><!-- end col-->
-        </div>
+            <table id="basic-datatable" class="table m-10 table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>รูป</th>
+                        <th>เพจ</th>
+                        <th>ข้อความ</th>
+                        <th>สถานะ</th>
+                        <th>จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($list as $item)
+                    <tr>
+                        <td>
+                            @if($item->image)
+                            <img src="{{ asset($item->image) }}" class="img-thumbnail preview-img" width="100">
+                            @endif
+                        </td>
+                        <td>{{ $item->show_page }}</td>
+                        <td>{!! $item->note !!}</td>
+                        <td>
+                            @if($item->active == 1)
+                            <span class="badge badge-success">ใช้งาน</span>
+                            @else
+                            <span class="badge badge-danger">ปิดใช้งาน</span>
+                            @endif
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-warning btn-sm edit-popup"
+                                data-id="{{ $item->id }}"
+                                data-image="{{ asset($item->image) }}"
+                                data-show_page="{{ $item->show_page }}"
+                                data-note="{{ $item->note }}"
+                                data-active="{{ $item->active }}"
+                                data-toggle="modal" data-target="#editPopupModal">
+                                แก้ไข
+                            </button>
+                        </td>
+                    </tr>
+                    @endforeach
+                    
 
-  <!-- Modal -->
-  <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered  modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel"></h1>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+                    
+                </tbody>
+            </table>
         </div>
-        <div class="modal-body">
-            <form class="form-horizontal" id="form-add-popup" action="{{ route('setting.popup_create') }}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="mb-2">
-                    <label class="" for="image">รูปภาพ</label>
-                    <input type="file" class="form-control" name="image" accept="image/png, image/gif, image/jpeg">
-                </div>
-                <div class="mb-2">
-                    <label class="">หน้าที่ต้องการแสดง</label>
-                    <br>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="allpage" name="allpage" value="ทุกหน้า" checked>
-                        <label class="form-check-label" for="allpage">ทุกหน้า</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="homepage" name="homepage" value="หน้าแรก">
-                        <label class="form-check-label" for="homepage">หน้าแรก</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="promotionpage" name="promotionpage" value="หน้าโปรโมชั่น">
-                        <label class="form-check-label" for="promotionpage">หน้าโปรโมชั่น</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="gamepage" name="gamepage" value="หน้าเกม">
-                        <label class="form-check-label" for="gamepage">หน้าเกม</label>
-                    </div>
-                </div>
-                <div  class="mb-2">
-                    <div id="editor">
-                    </div>
-                </div>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="active" name="active" checked>
-                    <label class="custom-control-label" for="active">สถานะ 
-                    </label>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-          <button type="button" onclick="submit_('#form-add-popup')" class="btn btn-primary">บันทึก</button>
-        </div>
-      </div>
     </div>
-  </div>
-<!-- end row-->
+</div>
+
+<!-- ✅ Create Popup Modal -->
+<div class="modal fade" id="createPopupModal" data-backdrop="static" data-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">เพิ่มป๊อบอัพ</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-create-popup" action="{{ route('setting.popup_create') }}" method="post" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="id">
+
+                    <div class="mb-2">
+                        <label for="popup_image">รูปภาพ</label>
+                        <input type="file" class="form-control" name="image" id="popup_image" accept="image/png, image/gif, image/jpeg">
+                        <br>
+                        <img id="preview_image" src="" width="100" style="display: none;">
+                    </div>
+
+                    <div class="mb-2">
+                        <label>หน้าที่ต้องการแสดง</label><br>
+                        @php
+                        $pages = ["หน้าแรก" => "homepage", "หน้าโปรโมชั่น" => "promotionpage", "หน้าเกม" => "gamepage"];
+                        @endphp
+                        @foreach ($pages as $label => $id)
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input show_page_checkbox" type="checkbox" id="{{ $id }}" name="show_page[]" value="{{ $label }}" required>
+                            <label class="form-check-label" for="{{ $id }}">{{ $label }}</label>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    <div class="mb-2">
+                        <label>ข้อความ</label>
+                        <div id="editor"></div>
+                        <input type="hidden" name="note" id="popup_note">
+                    </div>
+
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="popup_active" name="active">
+                        <label class="custom-control-label" for="popup_active">สถานะ</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
+                <button type="button" onclick="submitCreatePopup()" class="btn btn-primary">บันทึก</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+                    <!-- ✅ Edit Popup Modal (อยู่นอก foreach) -->
+                    <div class="modal fade" id="editPopupModal" data-backdrop="static" data-keyboard="false" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">แก้ไขป๊อบอัพ</h5>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="form-edit-popup" action="{{ route('setting.popup_update') }}" method="post" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="hidden" name="id" id="edit_popup_id">
+                    
+                                        <div class="mb-2">
+                                            <label for="edit_popup_image">รูปภาพ</label>
+                                            <input type="file" class="form-control" name="image" id="edit_popup_image" accept="image/*">
+                                            <br>
+                                            <img id="edit_preview_image" src="" width="100" style="display: none;">
+                                        </div>
+                    
+                                        <div class="mb-2">
+                                            <label>หน้าที่ต้องการแสดง</label><br>
+                                            @php
+                                            $pages = ["หน้าแรก" => "homepage", "หน้าโปรโมชั่น" => "promotionpage", "หน้าเกม" => "gamepage"];
+                                            @endphp
+                                            @foreach ($pages as $label => $id)
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input show_page_checkbox" type="checkbox" id="edit_{{ $id }}" name="show_page[]" value="{{ $label }}" required>
+                                                <label class="form-check-label" for="edit_{{ $id }}">{{ $label }}</label>
+                                            </div>
+                                            @endforeach
+                                        </div>
+                    
+                                        <div class="mb-2">
+                                            <label>ข้อความ</label>
+                                            <div id="edit_editor"></div>
+                                            <input type="hidden" name="note" id="edit_popup_note">
+                                        </div>
+                    
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="edit_popup_active" name="active">
+                                            <label class="custom-control-label" for="edit_popup_active">สถานะ</label>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
+                                    <button type="button" onclick="submitEditPopup()" class="btn btn-primary">บันทึก</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 @endsection
+
 @section('scripts')
-
-    <!-- third party js -->
-    {{-- <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/dataTables.bootstrap4.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/dataTables.responsive.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/responsive.bootstrap4.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/dataTables.buttons.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/buttons.bootstrap4.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/buttons.html5.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/buttons.flash.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/buttons.print.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/dataTables.keyTable.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/dataTables.select.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/pdfmake.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/vfs_fonts.js')}}"></script> --}}
-    <!-- third party js ends -->
-
-    <!-- Datatables init -->
-    {{-- <script src="{{ asset('pages/datatables-demo.js')}}"></script> --}}
-    <link rel="stylesheet" href="{{ asset('plugins/datatables/dataTables.bootstrap4.css') }}">
-    <link rel="stylesheet" href="{{ asset('plugins/datatables/responsive.bootstrap4.css') }}">
-    <link rel="stylesheet" href="{{ asset('plugins/datatables/buttons.bootstrap4.css') }}">
-    <link href="https://unpkg.com/bootstrap-table@1.21.2/dist/bootstrap-table.min.css" rel="stylesheet">
-
-    <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables/dataTables.bootstrap4.js') }}"></script>
-    <script src="{{ asset('plugins/datatables/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables/responsive.bootstrap4.min.js') }}"></script>
-    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-    <script src="https://unpkg.com/bootstrap-table@1.21.2/dist/bootstrap-table.min.js"></script>
-    <script src="https://unpkg.com/bootstrap-table@1.21.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
-    <script>
-
-        function submit_(form) {
-            var content = $('#editor').html();
-            $("<input />").attr("type", "hidden").attr("name", "note").attr("value", content).appendTo(form);
-            $(form).submit();
-        }
-
-    @if (session('status'))
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script>
+        @if (session('status'))
 
         Swal.fire({
             position: 'top-end',
@@ -195,200 +197,121 @@
             showConfirmButton: false,
             timer: 1500
         })
+@endif
+document.addEventListener("DOMContentLoaded", function () {
 
-    @endif
-    @if (session('del_status'))
 
-        Swal.fire({
-            position: 'top-end',
-            type: 'success',
-            title: 'Your work has been saved',
-            showConfirmButton: false,
-            timer: 1500
-        })
+    let quillEditor = null;
 
-    @endif
-
-    function confirmPass(userid) {
-        Swal.mixin({
-        input: 'text',
-        confirmButtonText: 'ยืนยัน &rarr;',
-        showCancelButton: true,
-        cancelButtonText: 'ยกเลิก',
-        progressSteps: ['1', '2']
-      }).queue([
-        {
-          title: 'แจ้งเตือน',
-          text: 'กรุณายืนยันรหัสผ่านของคุณเพือดำเนินการต่อ.'
-        }
-      ]).then( function (result) {
-
-        if (result.value) {
-            if (result.value != ""){
-
-                $.ajax({
-				type: 'post',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-				url: '{{ route('manageuser.checkPassword') }}',
-				data: { password:result.value,userId:userid },
-				success: function (data) {
-					if(data!=false){
-                        Swal.fire(
-                        {
-                            title: '',
-                            html: '<h4>ชื่อผู้ใช้: '+data.name+'</br></h4>' +
-                            '<h4>รหัสผ่าน: '+data.truepass+'</br></h4>',
-                            type: 'success',
-                            confirmButtonText: 'ตกลง',
-                            confirmButtonClass: 'btn btn-confirm mt-2'
-                        }
-                    )
-                    }else{
-                        Swal.fire({
-                        type: 'error',
-                        title: "แจ้งเตือน!",
-                        text: "รหัสผ่านไม่ถูกต้อง",
-                        });
-                    }
-				}
-			});
-
-  
+    // ✅ ตรวจสอบว่า Quill Editor ถูกสร้างแล้วหรือไม่
+    function initQuillEditor() {
+        if (!quillEditor) {
+            let editorElement = document.getElementById("editor");
+            if (editorElement) {
+                quillEditor = new Quill('#editor', { theme: 'snow' });
+                console.log("✅ Quill Editor ถูกสร้างแล้ว");
+            } else {
+                console.error("❌ ERROR: ไม่พบ #editor ใน DOM!");
             }
         }
-      }) 
-    }
-    function changePass(userid) {
-        Swal.mixin({
-            input: 'text',
-            confirmButtonText: 'ยืนยัน &rarr;',
-            showCancelButton: true,
-            cancelButtonText: 'ยกเลิก',
-            progressSteps: ['1', '2']
-        }).queue([
-            {
-            title: 'แจ้งเตือน',
-            text: 'กรุณายืนยันรหัสผ่านของคุณเพือดำเนินการต่อ.'
-            }
-        ]).then( function (result) {
-            if (result.value) {
-                if (result.value != ""){
-
-                    $.ajax({
-                        type: 'post',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: '{{ route('manageuser.checkPassword') }}',
-                        data: { password:result.value,userId:userid },
-                        success: function (data) {
-                            if(data!=false){
-                                Swal.mixin({
-                                    input: 'text',
-                                    confirmButtonText: 'ยืนยัน &rarr;',
-                                    showCancelButton: true,
-                                    cancelButtonText: 'ยกเลิก',
-                                    progressSteps: ['1', '2']
-                                }).queue([
-                                    {
-                                    title: 'แจ้งเตือน',
-                                    text: 'รหัสผ่านใหม่'
-                                    }
-                                ]).then( function (result2) {
-                                    $.ajax({
-                                        type: 'post',
-                                        headers: {
-                                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                        },
-                                        url: '{{ route('manageuser.changePassword') }}',
-                                        data: { password:result.value,userId:userid },
-                                        success: function (data) {
-                                            if(data!=false){
-                                                Swal.fire(
-                                                    {
-                                                        title: 'เปลี่ยนรหัสผ่านสำเร็จ',
-                                                        html: '<h4>ชื่อผู้ใช้: '+data.name+'</br></h4>' +
-                                                        '<h4>รหัสผ่าน: '+data.truepass+'</br></h4>',
-                                                        type: 'success',
-                                                        confirmButtonText: 'ตกลง',
-                                                        confirmButtonClass: 'btn btn-confirm mt-2'
-                                                    }
-                                                )
-                                            }else{
-                                                // Swal.fire({
-                                                //     type: 'error',
-                                                //     title: "แจ้งเตือน!",
-                                                //     text: "รหัสผ่านไม่ถูกต้อง",
-                                                // });
-                                            }
-                                        }
-                                    });
-                                })
-                            }else{
-                                Swal.fire({
-                                type: 'error',
-                                title: "แจ้งเตือน!",
-                                text: "รหัสผ่านไม่ถูกต้อง",
-                                });
-                            }
-                        }
-                    });
-
-                }
-            }
-      }) 
     }
 
-    function deluser(userid) {
-        Swal.mixin({
-        input: 'text',
-        confirmButtonText: 'ยืนยัน &rarr;',
-        showCancelButton: true,
-        cancelButtonText: 'ยกเลิก',
-        progressSteps: ['1', '2']
-      }).queue([
-        {
-          title: 'แจ้งเตือน',
-          text: 'กรุณายืนยันรหัสผ่านของคุณเพือดำเนินการต่อ.'
-        }
-      ]).then( function (result) {
+    initQuillEditor();
 
-        if (result.value) {
-            if (result.value != ""){
-                $.ajax({
-				type: 'post',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-				url: '{{ route('manageuser.checkPassword') }}',
-				data: { password:result.value,userId:userid },
-				success: function (data) {
-					if(data!=false){
-                        $('#del'+userid).submit();
-                    }else{
-                        Swal.fire({
-                        type: 'error',
-                        title: "แจ้งเตือน!",
-                        text: "รหัสผ่านไม่ถูกต้อง",
-                        });
-                    }
-				}
-			});
-                
-                      
-            }
+    // ✅ ฟังก์ชัน Preview รูปภาพตอนเลือกไฟล์
+    document.getElementById("popup_image").addEventListener("change", function (event) {
+        let file = event.target.files[0];
+        if (file) {
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                let previewImage = document.getElementById("preview_image");
+                previewImage.src = e.target.result;
+                previewImage.style.display = "block";
+            };
+            reader.readAsDataURL(file);
         }
-      }) 
+    });
+
+    // ✅ ฟังก์ชัน Submit Form สำหรับ Create
+    window.submitCreatePopup = function() {
+        if (!quillEditor) {
+            console.error("❌ ERROR: Quill Editor ยังไม่ถูกสร้าง!");
+            return;
+        }
+
+        let form = document.getElementById("form-create-popup");
+        if (!form) {
+            console.error("❌ ERROR: ไม่พบ #form-create-popup ใน DOM!");
+            return;
+        }
+
+        document.getElementById("popup_note").value = quillEditor.root.innerHTML;
+        form.submit();
+    };
+});
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    let editQuillEditor = new Quill('#edit_editor', { theme: 'snow' });
+
+    // ✅ ฟังก์ชัน Preview รูปภาพ
+    function previewImage(input, previewElement) {
+        let file = input.files[0];
+        if (file) {
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                previewElement.src = e.target.result;
+                previewElement.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+        }
     }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 
-    <!-- Initialize Quill editor -->
-    <script>
-      const quill = new Quill('#editor', {
-        theme: 'snow'
-      });
-    </script>
+    document.getElementById("edit_popup_image").addEventListener("change", function () {
+        previewImage(this, document.getElementById("edit_preview_image"));
+    });
+
+    // ✅ โหลดข้อมูลเมื่อกดปุ่มแก้ไข
+    document.body.addEventListener("click", function (event) {
+        let button = event.target.closest(".edit-popup");
+        if (button) {
+            let id = button.getAttribute("data-id");
+            let image = button.getAttribute("data-image");
+            let showPage = button.getAttribute("data-show_page").split(",");
+            let note = button.getAttribute("data-note");
+            let active = button.getAttribute("data-active") == "1";
+
+            document.getElementById("edit_popup_id").value = id;
+            document.getElementById("edit_popup_active").checked = active;
+
+            // ✅ โหลดข้อความลง Quill Editor
+            editQuillEditor.root.innerHTML = note ? note : "";
+
+            // ✅ แสดงรูปเก่าถ้ามี
+            let previewImage = document.getElementById("edit_preview_image");
+            if (image && image.trim() !== "") {
+                previewImage.src = image;
+                previewImage.style.display = "block";
+            } else {
+                previewImage.style.display = "none";
+            }
+
+            // ✅ เช็ค checkbox ของ show_page ตามค่าที่มีอยู่
+            document.querySelectorAll(".show_page_checkbox").forEach(checkbox => {
+                checkbox.checked = showPage.includes(checkbox.value);
+            });
+
+            document.getElementById("edit_popup_image").value = ""; // ✅ รีเซ็ต input file เพื่อให้แก้ไขรูปได้
+        }
+    });
+
+    window.submitEditPopup = function() {
+        document.getElementById("edit_popup_note").value = editQuillEditor.root.innerHTML;
+        document.getElementById("form-edit-popup").submit();
+    };
+});
+
+</script>
+
 @endsection
