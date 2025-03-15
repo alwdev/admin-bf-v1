@@ -172,6 +172,16 @@ class SettingController extends Controller
         return redirect()->route('setting.popup')->with('status','success');
     }
     
+public function popup_delete(Request $request)
+{
+    $popup = Popup::find($request->id);
+    if (!$popup) {
+        return response()->json(['success' => false, 'message' => 'ไม่พบป๊อบอัพนี้!']);
+    }
+
+    $popup->delete(); // ลบจากฐานข้อมูล
+    return response()->json(['success' => true]);
+}
 
 
     public function level_create(Request $request)

@@ -41,7 +41,7 @@
                 </thead>
                 <tbody>
                     @foreach ($list as $item)
-                    <tr>
+                    <tr id="popup-row-{{ $item->id }}"> <!-- ใช้ ID เพื่อลบ row ได้ -->
                         <td>
                             @if($item->image)
                             <img src="{{ asset($item->image) }}" class="img-thumbnail preview-img" width="100">
@@ -57,6 +57,7 @@
                             @endif
                         </td>
                         <td>
+                            <!-- ปุ่มแก้ไข -->
                             <button type="button" class="btn btn-warning btn-sm edit-popup"
                                 data-id="{{ $item->id }}"
                                 data-image="{{ asset($item->image) }}"
@@ -66,14 +67,17 @@
                                 data-toggle="modal" data-target="#editPopupModal">
                                 แก้ไข
                             </button>
+            
+                            <!-- ปุ่มลบ -->
+                            <button type="button" class="btn btn-danger btn-sm delete-popup" data-id="{{ $item->id }}">
+                                ลบ
+                            </button>
                         </td>
                     </tr>
                     @endforeach
-                    
-
-                    
                 </tbody>
             </table>
+            
         </div>
     </div>
 </div>
@@ -184,6 +188,11 @@
                         </div>
                     </div>
 @endsection
+
+<form action="{{ route('setting.popup_delete') }}" method="post" id="delect_popup">
+    @csrf
+    <input type="hidden" name="id" id="delete_popup_id">
+</form>
 
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
@@ -311,6 +320,56 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("form-edit-popup").submit();
     };
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    // ✅ ลบ popup เมื่อกดปุ่ม
+    document.body.addEventListener("click", function (event) {
+        let button = event.target.closest(".delete-popup");
+        if (button) {
+            let popupId = button.getAttribute("data-id");
+
+            // ✅ ใช้ SweetAlert ยืนยันก่อนลบ
+            Swal.fire({
+                title: "คุณแน่ใจหรือไม่?",
+                text: "เมื่อลบแล้วจะไม่สามารถกู้คืนได้!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "ลบ",
+                cancelButtonText: "ยกเลิก"
+            }).then((result) => {
+                if (result.value) {
+                    // ✅ ใช้ fetch() ส่ง DELETE request ไปที่ backend
+                    fetch("{{ route('setting.popup_delete') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({ id: popupId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // ✅ ลบ row ออกจากตารางโดยไม่ต้องโหลดหน้าใหม่
+                            document.getElementById(`popup-row-${popupId}`).remove();
+                            Swal.fire("ลบสำเร็จ!", "ป๊อบอัพถูกลบแล้ว", "success");
+                        } else {
+                            Swal.fire("เกิดข้อผิดพลาด!", data.message, "error");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        Swal.fire("เกิดข้อผิดพลาด!", "ไม่สามารถลบได้", "error");
+                    });
+                }
+            });
+        }
+    });
+});
+
 
 </script>
 
