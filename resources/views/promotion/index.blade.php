@@ -74,15 +74,15 @@
                                     <span class="badge badge-danger">ไม่ใช่</span>
                                 @endif 
                             </td>  
-                            <td>{{ $item->created_at->format('d/m/Y H:i:s') }}</td>
-                            {{-- @if( json_decode(auth()->user()->permissions)->transfer > 2  ) --}}
                             <td>
-                                @if($item->action == 1)
+                                @if($item->enable == 1)
                                     <span class="badge badge-success">เผยแพร่</span>
                                 @else
                                     <span class="badge badge-secondary">ไม่เผยแพร่</span>
                                 @endif 
                             </td>  
+                            <td>{{ $item->created_at->format('d/m/Y H:i:s') }}</td>
+                            {{-- @if( json_decode(auth()->user()->permissions)->transfer > 2  ) --}}
                             <td class="text-right">
                                 <a href="{{ route('promotion.edit',$item->id) }}" type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="width: 80px;"><i class="bx bx-edit-alt" ></i> แก้ไข</a>
                                 <button type="button" class="btn btn-danger btn-sm waves-effect waves-light" onclick="approveDeposit('#formdel{{ $item->id }}')"  style="width: 80px;"><i class="bx bx-trash"></i> ลบ</button>

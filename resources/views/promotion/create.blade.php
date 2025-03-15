@@ -30,7 +30,7 @@
             <div class="card-body">
                 <div class="text-center mb-4 mt-3">
                 </div>
-                <form class="p-2" action="{{ route('promotion.store') }}" method="POST">
+                <form class="p-2" action="{{ route('promotion.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label for="name">โปรโมชั่น</label>
@@ -56,6 +56,16 @@
                         <label for="withdraw_limit">ถอนได้สูงสุด (บาท)</label>
                         <input class="form-control"  type="number" id="withdraw_limit" name="withdraw_limit" required onkeypress="return isNumberKey(event)"  value="{{ old('withdraw_limit') }}">
                         <x-input-error :messages="$errors->get('withdraw_limit')" class="mt-2" />
+                    </div>
+                    <div class="form-group">
+                        <label for="image">รูปภาพ</label>
+                        <input class="form-control" type="file" id="image" name="image" required  value="{{ old('image') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
+                        <x-input-error :messages="$errors->get('image')" class="mt-2" />
+                    </div>
+                    <div class="form-group">
+                        <label for="description">รายละเอียด</label>
+                        <textarea class="form-control" id="description" rows="15" name="description">{{ old('description') }}</textarea>
+                        <x-input-error :messages="$errors->get('description')" class="mt-2" />
                     </div>
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
                         <input type="checkbox" class="custom-control-input" id="is_newuser" name="is_newuser"  value="1">
@@ -115,11 +125,19 @@
         return true;
         }
         jQuery(document).ready(function() {
-    $('.float-number').keypress(function(event) {
-        if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
-            event.preventDefault();
+            $('.float-number').keypress(function(event) {
+                if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+                    event.preventDefault();
+                }
+            });
+        });
+
+        function showImage(image){
+            Swal.fire({
+                imageUrl: image,
+                imageHeight: 500,
+                imageAlt: "A tall image"
+            });
         }
-    });
-});
     </script>
 @endsection
