@@ -74,6 +74,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/setting/mission_win/update', [SettingController::class, 'mission_win_update'])->name('setting.mission_win_update');
 
     Route::get('/setting/popup', [SettingController::class, 'popup'])->name('setting.popup');
+    Route::post('/setting/popup/update', [SettingController::class, 'popup_update'])->name('setting.popup_update');
+    Route::post('/popup/delete', [SettingController::class, 'popup_delete'])->name('setting.popup_delete');
+
     Route::get('/setting/coupon', [SettingController::class, 'coupon'])->name('setting.coupon');
     Route::post('/setting/coupon_create', [SettingController::class, 'coupon_create'])->name('setting.coupon_create');
     Route::post('/setting/coupon_update', [SettingController::class, 'coupon_update'])->name('setting.coupon_update');

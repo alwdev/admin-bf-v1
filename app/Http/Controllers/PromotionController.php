@@ -47,6 +47,12 @@ class PromotionController extends Controller
         }else{
             $pro->is_newuser = 0;
         }
+        $pro->description = $request->description;
+        if($request->image){
+            $fileName = time().'.'.$request->image->extension();
+            $request->image->move('_image', $fileName);  ////  server public_html path
+            $pro->image = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
+        }
         $pro->withdraw_limit = $request->withdraw_limit;
         $pro->active = 1;
         $pro->save();
@@ -91,6 +97,12 @@ class PromotionController extends Controller
             $pro->is_newuser = $request->is_newuser;
         }else{
             $pro->is_newuser = 0;
+        }
+        $pro->description = $request->description;
+        if($request->image){
+            $fileName = time().'.'.$request->image->extension();
+            $request->image->move('_image', $fileName);  ////  server public_html path
+            $pro->image = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
         }
         $pro->withdraw_limit = $request->withdraw_limit;
         $pro->active = 1;
