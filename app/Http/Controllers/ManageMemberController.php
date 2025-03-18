@@ -648,6 +648,16 @@ class ManageMemberController extends Controller
             ->send();
         return 'success';
     }
+
+    public function check_token(Request $request){
+
+        $user = User::where('token', $request->token)->first();
+        if ($user) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
     /**
      * Display the specified resource.
      */

@@ -446,7 +446,7 @@ class TransactionController extends Controller
     }
 
     public function smsRequest2(Request $request){
-        $text = $text =  $_POST["text"];
+        $text =   $_POST["text"];
         $log = new Logs;
         $log->log = "smsRequest2 : ".$text;
         $log->save();

@@ -49,3 +49,5 @@ Route::post('/smsTest', [App\Http\Controllers\TransactionController::class, 'sms
 
 Route::get('/checkdepositTMN/{id}', [App\Http\Controllers\TransactionController::class, 'checkdepositTMN']);
 Route::get('/checkdeposit/{id}', [App\Http\Controllers\TransactionController::class, 'checkdeposit']);
+
+Route::post('/check_token', [App\Http\Controllers\ManageMemberController::class, 'check_token']);
