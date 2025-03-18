@@ -39,7 +39,7 @@
                         <x-input-error :messages="$errors->get('title')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="image">รูปภาพ (ขนาด 400x400px)</label>
+                        <label for="image">รูปภาพ (ขนาด 900x400px)</label>
                         @if ($article->image)
 
                             <img src="{{ $article->image }}" class="img-thumbnail rounded" style="height:200px;cursor: pointer;"  onclick="showImage('{{ $article->image }}')">

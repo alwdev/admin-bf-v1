@@ -38,7 +38,7 @@
                         <x-input-error :messages="$errors->get('title')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="image">รูปภาพ (ขนาด 400x400px)</label>
+                        <label for="image">รูปภาพ (ขนาด 900x400px)</label>
                         <input class="form-control" type="file" id="image" name="image" required  value="{{ old('image') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
                         <x-input-error :messages="$errors->get('image')" class="mt-2" />
                     </div>
