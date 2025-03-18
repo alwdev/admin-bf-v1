@@ -651,7 +651,7 @@ class ManageMemberController extends Controller
 
     public function check_token(Request $request){
 
-        $user = User::where('token', $request->token)->first();
+        $user = Members::where('token', $request->token)->first();
         if ($user) {
             return 1;
         } else {
