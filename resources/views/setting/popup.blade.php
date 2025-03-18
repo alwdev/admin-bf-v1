@@ -96,7 +96,7 @@
                     <input type="hidden" name="id">
 
                     <div class="mb-2">
-                        <label for="popup_image">รูปภาพ</label>
+                        <label for="popup_image">รูปภาพ (ขนาด 400x400px)</label>
                         <input type="file" class="form-control" name="image" id="popup_image" accept="image/png, image/gif, image/jpeg">
                         <br>
                         <img id="preview_image" src="" width="100" style="display: none;">
@@ -149,7 +149,7 @@
                                         <input type="hidden" name="id" id="edit_popup_id">
                     
                                         <div class="mb-2">
-                                            <label for="edit_popup_image">รูปภาพ</label>
+                                            <label for="edit_popup_image">รูปภาพ (ขนาด 400x400px)</label>
                                             <input type="file" class="form-control" name="image" id="edit_popup_image" accept="image/*">
                                             <br>
                                             <img id="edit_preview_image" src="" width="100" style="display: none;">

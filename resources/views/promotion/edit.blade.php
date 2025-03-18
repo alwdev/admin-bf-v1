@@ -58,7 +58,7 @@
                         <x-input-error :messages="$errors->get('withdraw_limit')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="image">รูปภาพ</label><br>
+                        <label for="image">รูปภาพ (ขนาด 400x400px)</label><br>
                         @if ($promotion->image)
 
                             <img src="{{ $promotion->image }}" class="img-thumbnail rounded" style="height:200px;cursor: pointer;"  onclick="showImage('{{ $promotion->image }}')">
