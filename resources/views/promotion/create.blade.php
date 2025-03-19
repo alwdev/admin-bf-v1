@@ -48,7 +48,7 @@
                         <x-input-error :messages="$errors->get('bonus')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="turnover">เทิร์นโอเวอร์(เท่า)</label>
+                        <label for="turnover">เทิร์นโอเวอร์(บาท)</label>
                         <input class="form-control float-number"  type="text" id="turnover" name="turnover" required   value="{{ old('turnover') }}">
                         <x-input-error :messages="$errors->get('turnover')" class="mt-2" />
                     </div>
