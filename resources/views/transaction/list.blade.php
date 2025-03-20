@@ -71,7 +71,13 @@
                     @foreach ($transfer as $key_ => $item)
                         <tr>
                             <td>{{ $item->username }}</td>
-                            <td>{{ $item->type }}</td>
+                            <td>
+                                @if($item->type == "deposit")
+                                <span class="badge badge-pill badge-success text-bg-success">ฝาก</span>
+                                @elseif($item->type == "withdraw")
+                                <span class="badge badge-pill badge-warning text-bg-warning">ถอน</span>
+                                @endif
+                            </td>
                             <td>{{ (float) $item->amount }}</td>
                             <td>{{ date('d/m/Y H:i:s',$item->transfer_date) }}</td>
                             <td>
