@@ -43,6 +43,16 @@
                         <x-input-error :messages="$errors->get('image')" class="mt-2" />
                     </div>
                     <div class="form-group">
+                        <label for="category">หมวดหมู่</label>
+                        <select class="form-control" id="category" name="category">
+                            <option value="">-- เลือกหมวดหมู่ --</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category }}">{{ $category }}</option>
+                            @endforeach
+                        </select>
+                        <x-input-error :messages="$errors->get('category')" class="mt-2" />
+                    </div>
+                    <div class="form-group">
                         <label for="content">บทความ</label>
                         <textarea class="form-control" id="content" rows="15" name="content">{{ old('content') }}</textarea>
                         <x-input-error :messages="$errors->get('content')" class="mt-2" />

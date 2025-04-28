@@ -11,12 +11,12 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">เพิ่มบทความ</h4>
+            <h4 class="mb-0 font-size-18">แก้ไขบทความ</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>
-                    <li class="breadcrumb-item active">เพิ่มบทความ</li>
+                    <li class="breadcrumb-item active">แก้ไขบทความ</li>
                 </ol>
             </div>
 
@@ -46,6 +46,16 @@
                         @endif
                         <input class="form-control" type="file" id="image" name="image" value="{{ old('image') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
                         <x-input-error :messages="$errors->get('image')" class="mt-2" />
+                    </div>
+                    <div class="form-group">
+                        <label for="category">หมวดหมู่</label>
+                        <select class="form-control" id="category" name="category">
+                            <option value="">-- เลือกหมวดหมู่ --</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category }}" @if($article->category == $category) selected @endif>{{ $category }}</option>
+                            @endforeach
+                        </select>
+                        <x-input-error :messages="$errors->get('category')" class="mt-2" />
                     </div>
                     <div class="form-group">
                         <label for="content">บทความ</label>

@@ -16,7 +16,8 @@ class ArticleController extends Controller
 
     public function create(){
         // Show the form to create a new article
-        return view('article.create');
+        $categories = ['บอล', 'หวย', 'ดูหนังออนไลน์', '18+','การพนัน','ข่าวในประเทศ'];
+        return view('article.create',compact('categories'));
     }
 
     public function store(Request $request){
@@ -31,7 +32,7 @@ class ArticleController extends Controller
         $article->author_id = auth::user()->id;
         $article->title = $request->title;
         $article->content = $request->content;
-
+        $article->category = $request->category;
         if($request->image){
             $fileName = time().'.'.$request->image->extension();
             $request->image->move('_image', $fileName);  ////  server public_html path
@@ -52,7 +53,8 @@ class ArticleController extends Controller
     public function edit($id){
         // Show the form to edit an article
         $article = Article::find($id);
-        return view('article.edit', compact('article'));
+        $categories = ['บอล', 'หวย', 'ดูหนังออนไลน์', '18+','การพนัน','ข่าวในประเทศ'];
+        return view('article.edit', compact('article','categories'));
     }
     public function update(Request $request, $id){
         // Validate the input
@@ -65,7 +67,7 @@ class ArticleController extends Controller
         $article = Article::find($id);
         $article->title = $request->title;
         $article->content = $request->content;
-
+        $article->category = $request->category;
         if($request->image){
             $fileName = time().'.'.$request->image->extension();
             $request->image->move('_image', $fileName);  ////  server public_html path
