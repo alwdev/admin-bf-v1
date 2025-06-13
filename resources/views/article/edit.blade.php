@@ -1,11 +1,23 @@
 @extends('layouts.guest')
+
 @section('styles')
 <link href="{{ asset('plugins/datatables/dataTables.bootstrap4.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('plugins/datatables/responsive.bootstrap4.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('plugins/datatables/buttons.bootstrap4.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('plugins/datatables/select.bootstrap4.css')}}" rel="stylesheet" type="text/css" />
+<style>
+/* กำหนดความสูงของ Quill editor */
+.ql-container {
+    height: 600px;  /* ปรับขนาดความสูงให้ใหญ่ขึ้น */
+}
 
+/* หรือปรับการแสดงผลของแต่ละบรรทัด */
+.ql-editor {
+    min-height: 600px;  /* กำหนดความสูงต่ำสุดของ editor */
+}
+</style>
 @endsection
+
 @section('content')
    <!-- start page title -->
    <div class="row">
@@ -28,25 +40,24 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <div class="text-center mb-4 mt-3">
-                </div>
-                <form class="p-2" action="{{ route('article.update',$article->id) }}" method="POST" enctype="multipart/form-data">
+                <form class="p-2" action="{{ route('article.update', $article->id) }}" method="POST" enctype="multipart/form-data" id="article-form">
                     @csrf
 
                     <div class="form-group">
                         <label for="title">Title</label>
-                        <input class="form-control" type="text" id="title" name="title" required value="{{ $article->title }}">
+                        <input class="form-control" type="text" id="title" name="title" required value="{{ old('title', $article->title) }}">
                         <x-input-error :messages="$errors->get('title')" class="mt-2" />
                     </div>
+
                     <div class="form-group">
                         <label for="image">รูปภาพ (ขนาด 900x400px)</label>
                         @if ($article->image)
-
-                            <img src="{{ $article->image }}" class="img-thumbnail rounded" style="height:200px;cursor: pointer;"  onclick="showImage('{{ $article->image }}')">
+                            <img src="{{ $article->image }}" class="img-thumbnail rounded" style="height:200px;cursor: pointer;" onclick="showImage('{{ $article->image }}')">
                         @endif
-                        <input class="form-control" type="file" id="image" name="image" value="{{ old('image') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
+                        <input class="form-control" type="file" id="image" name="image" accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
                         <x-input-error :messages="$errors->get('image')" class="mt-2" />
                     </div>
+
                     <div class="form-group">
                         <label for="category">หมวดหมู่</label>
                         <select class="form-control" id="category" name="category">
@@ -57,15 +68,19 @@
                         </select>
                         <x-input-error :messages="$errors->get('category')" class="mt-2" />
                     </div>
+
                     <div class="form-group">
                         <label for="content">บทความ</label>
-                        <textarea class="form-control" id="content" rows="15" name="content">{{ $article->content }}</textarea>
+                        <div id="editor-container">{!! $article->content !!}</div>
+                        <input type="hidden" name="content" id="content">
                         <x-input-error :messages="$errors->get('content')" class="mt-2" />
                     </div>
+
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
-                        <input type="checkbox" class="custom-control-input" id="enable" name="enable"  @if($article->status) checked @endif value="1">
+                        <input type="checkbox" class="custom-control-input" id="enable" name="enable" @if($article->status) checked @endif value="1">
                         <label class="custom-control-label" for="enable">Enable (เผยแพร่)</label>
                     </div>
+
                     <div class="mb-3 text-center">
                         <button class="btn btn-primary btn-block" type="submit"> บันทึก </button>
                     </div>
@@ -76,6 +91,7 @@
     </div> <!-- end col-->
 </div> <!-- end row -->
 @endsection
+
 @section('scripts')
     <!-- third party js -->
     <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
@@ -93,22 +109,68 @@
     <script src="{{ asset('plugins/datatables/vfs_fonts.js')}}"></script>
     <!-- third party js ends -->
 
-    <!-- Datatables init -->
-    <script src="{{ asset('pages/datatables-demo.js')}}"></script>
+    <!-- Quill Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0"></script>
     <script>
-        function isNumberKey(evt) {
-        var charCode = (evt.which) ? evt.which : evt.keyCode
-        if (charCode > 31 && (charCode < 48 || charCode > 57))
-            return false;
-        return true;
-        }
+        // Initialize Quill editor
+        var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline', 'strike'], // Text formatting buttons
+                    [{ 'align': [] }],  // Text alignment
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }], // Lists
+                    ['link', 'image'], // Insert link and image
+                    ['blockquote', 'code-block'], // Blockquote and Code block
+                    [{ 'size': ['small', false, 'large', 'huge'] }], // Font size
+                    [{ 'color': [] }, { 'background': [] }], // Text color and background
+                    ['video'], // Embed video
+                ],
+                 
+        imageResize: {
+          displaySize: true,  // Show image size when resizing
+        },
+            }
+        });
+const imageHandler = function() {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
 
-        function showImage(image){
-            Swal.fire({
-                imageUrl: image,
-                imageHeight: 500,
-                imageAlt: "A tall image"
-            });
+    input.addEventListener('change', () => {
+        const file = input.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                // ตรวจสอบขนาดไฟล์ก่อนที่จะแทรกใน Quill
+                const fileSize = file.size; // ขนาดไฟล์เป็น bytes
+                if (fileSize > 1048576) {  // 1MB = 1048576 bytes
+                    alert('ไฟล์ภาพใหญ่เกิน 1MB ไม่สามารถอัปโหลดได้');
+                } else {
+                    // ถ้าขนาดไฟล์ไม่เกิน 1MB ให้แทรกภาพใน Quill
+                    const range = quill.getSelection();
+                    quill.insertEmbed(range.index, 'image', reader.result);
+                }
+            };
+            reader.readAsDataURL(file);  // แปลงไฟล์เป็น base64 เพื่อแทรกใน Quill
         }
+    });
+
+    input.click();
+};
+
+// ตั้งค่าฟังก์ชันให้ Quill ใช้งาน
+quill.getModule('toolbar').addHandler('image', imageHandler);
+        // Function to set content from Quill to hidden input when submitting the form
+        document.getElementById('article-form').addEventListener('submit', function() {
+            // Get the HTML content from the editor and assign it to the hidden input
+            var content = quill.root.innerHTML;
+            document.getElementById('content').value = content;
+        });
+
+
     </script>
 @endsection

@@ -49,7 +49,7 @@
                 <thead  class="table-light">
                     <tr>
                         <th data-sortable="true">Title</th>
-                        <th>บทความ</th>
+                        <th>หมวดหมู่</th>
                         <th>ภาพ</th>
                         <th data-sortable="true">วันที่สร้าง</th>
                         <th data-sortable="true">สถานะ</th>
@@ -62,7 +62,7 @@
                             <td>
                                 <a href="{{ route('article.edit', $item->id) }}">{{ $item->title }}</a>
                             </td>
-                            <td>{{ $item->content }}</td>
+                            <td>{{ $item->category }}</td>
                             <td>
                                 @if(!is_null($item->image))
                                     <img src="{{ asset( $item->image)}}" alt="Image" style="width: 100px; height: 100px;">
