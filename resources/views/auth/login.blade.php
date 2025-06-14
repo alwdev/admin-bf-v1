@@ -43,7 +43,7 @@
                                         <div class="card-body">
                                             <div class="text-center mb-4 mt-3">
                                                 <a href="/">
-                                                    <span><img src="{{ asset('logo3.png') }}" alt="" height="50"></span>
+                                                    <span><img src="{{ asset('logo3.png') }}" alt="" height="120"></span>
                                                 </a>
                                             </div>
                                             <form action="{{ route('login') }}" method="post" class="p-2">
