@@ -93,7 +93,7 @@ class ArticleController extends Controller
         
         if ($article->image) {
             try {
-                /            // ลบภาพจาก storage หรือ server ถ้ามี
+                 // ลบภาพจาก storage หรือ server ถ้ามี
             // ปรับ path ให้ตรงกับตำแหน่งที่เก็บภาพใน _image
             $imagePath = public_path('_image/' . basename($article->image));
             
