@@ -32,6 +32,7 @@ class ArticleController extends Controller
         $article->author_id = auth::user()->id;
         $article->title = $request->title;
         $article->content = $request->content;
+        $article->description = $request->description;
         $article->category = $request->category;
         if($request->image){
             $fileName = time().'.'.$request->image->extension();
@@ -67,6 +68,7 @@ class ArticleController extends Controller
         $article = Article::find($id);
         $article->title = $request->title;
         $article->content = $request->content;
+        $article->description = $request->description;
         $article->category = $request->category;
         if($request->image){
             $fileName = time().'.'.$request->image->extension();
@@ -83,4 +85,32 @@ class ArticleController extends Controller
 
         return redirect()->route('article.index')->with('status','200');
     }
+
+    public function destroy($id)
+    {
+        // ค้นหาบทความตาม id
+        $article = Article::findOrFail($id);
+        
+        if ($article->image) {
+            try {
+                /            // ลบภาพจาก storage หรือ server ถ้ามี
+            // ปรับ path ให้ตรงกับตำแหน่งที่เก็บภาพใน _image
+            $imagePath = public_path('_image/' . basename($article->image));
+            
+            if (file_exists($imagePath)) {
+                unlink($imagePath);  // ใช้ unlink() เพื่อลบไฟล์จาก server
+            }
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
+
+        }
+
+        // ลบบทความจากฐานข้อมูล
+        $article->delete();
+
+        // แสดงข้อความแจ้งเตือนหลังจากลบสำเร็จ
+        return redirect()->route('article.index')->with('success', 'บทความถูกลบเรียบร้อยแล้ว');
+    }
+
 }

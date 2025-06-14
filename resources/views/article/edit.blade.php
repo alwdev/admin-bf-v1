@@ -68,7 +68,11 @@
                         </select>
                         <x-input-error :messages="$errors->get('category')" class="mt-2" />
                     </div>
-
+                    <div class="form-group">
+                        <label for="description">ย่อหน้า</label>
+                        <textarea name="description" id="description" rows="5">{!! $article->description !!}</textarea>
+                        <x-input-error :messages="$errors->get('description')" class="mt-2" />
+                    </div>
                     <div class="form-group">
                         <label for="content">บทความ</label>
                         <div id="editor-container">{!! $article->content !!}</div>

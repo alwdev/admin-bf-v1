@@ -38,7 +38,7 @@
             <p class="card-subtitle mb-4">
             </p>
 
-            <table id="basic-datatable" class="table nowrap"
+<table id="basic-datatable" class="table nowrap"
             data-filter-control="true"
                 data-toggle="table"
                 data-search="true"
@@ -46,41 +46,50 @@
                 data-click-to-select="false"
                 data-pagination="true"
                 data-url="">
-                <thead  class="table-light">
-                    <tr>
-                        <th data-sortable="true">Title</th>
-                        <th>หมวดหมู่</th>
-                        <th>ภาพ</th>
-                        <th data-sortable="true">วันที่สร้าง</th>
-                        <th data-sortable="true">สถานะ</th>
+    <thead class="table-light">
+        <tr>
+            <th data-sortable="true">Title</th>
+            <th>หมวดหมู่</th>
+            <th>ภาพ</th>
+            <th data-sortable="true">วันที่สร้าง</th>
+            <th data-sortable="true">สถานะ</th>
+            <th>Actions</th> <!-- เพิ่มคอลัมน์สำหรับปุ่มลบ -->
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($articles as $item)
+            <tr>
+                <td>
+                    <a href="{{ route('article.edit', $item->id) }}">{{ $item->title }}</a>
+                </td>
+                <td>{{ $item->category }}</td>
+                <td>
+                    @if(!is_null($item->image))
+                        <img src="{{ asset($item->image) }}" alt="Image" style="width: 100px; height: 100px;">
+                    @endif
+                </td>
+                <td>{{ $item->created_at->format('d-m-Y') }}</td>
+                <td>
+                    @if($item->status == 1)
+                        <span class="badge badge-success">ใช้งาน</span>
+                    @else
+                        <span class="badge badge-danger">ไม่ใช้งาน</span>
+                    @endif
+                </td>
+                <td>
+                    <!-- ปุ่มลบ -->
+                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteArticle({{ $item->id }})">ลบ</button>
+                    {{-- <form action="{{ route('article.destroy', $item->id) }}" method="POST" id="form_del{{ $item->id }}" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('คุณต้องการลบบทความนี้?')">ลบ</button>
+                    </form> --}}
+                </td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
 
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($articles as $item)
-                        <tr>
-                            <td>
-                                <a href="{{ route('article.edit', $item->id) }}">{{ $item->title }}</a>
-                            </td>
-                            <td>{{ $item->category }}</td>
-                            <td>
-                                @if(!is_null($item->image))
-                                    <img src="{{ asset( $item->image)}}" alt="Image" style="width: 100px; height: 100px;">
-                                @endif
-                            </td>
-                            <td>{{ $item->created_at->format('d-m-Y') }}</td>
-                            <td>
-                                @if($item->status == 1)
-                                    <span class="badge badge-success">ใช้งาน</span>
-                                @else
-                                    <span class="badge badge-danger">ไม่ใช้งาน</span>
-                                @endif
-                            </td>
-
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
 
             </div> <!-- end card body-->
         </div> <!-- end card -->
@@ -152,4 +161,47 @@
                 });
         }
     </script>
+
+
+
+<script>
+    function deleteArticle(id) {
+        // SweetAlert ยืนยันการลบ
+        Swal.fire({
+            title: 'คุณแน่ใจหรือไม่?',
+            text: "บทความนี้จะถูกลบอย่างถาวร!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'ใช่, ลบเลย!',
+            cancelButtonText: 'ยกเลิก',
+            reverseButtons: true
+        }).then((result) => {
+
+            if (result.value) {
+                // // ส่งคำขอลบ
+                // alert('#form_del' + id);
+                // $('#form_del' + id).submit();
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/article/' + id;
+                
+                var csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = '_token';
+                csrfToken.value = '{{ csrf_token() }}';
+                form.appendChild(csrfToken);
+
+                var methodInput = document.createElement('input');
+                methodInput.type = 'hidden';
+                methodInput.name = '_method';
+                methodInput.value = 'DELETE'; // ใช้ method DELETE
+                form.appendChild(methodInput);
+
+                document.body.appendChild(form);
+                form.submit(); // ส่งฟอร์มไปยัง server
+            }
+        });
+    }
+</script>
+
 @endsection
