@@ -15,6 +15,9 @@
 .ql-editor {
     min-height: 600px;  /* กำหนดความสูงต่ำสุดของ editor */
 }
+.tag-item{
+    margin-top: 0.5rem;
+}
 </style>
 @endsection
 
@@ -79,7 +82,24 @@
                         <input type="hidden" name="content" id="content">
                         <x-input-error :messages="$errors->get('content')" class="mt-2" />
                     </div>
+                     <div class="form-group">
+                    <label for="tags">Tags</label>
+                    <div id="tags-container">
+                        <input type="text" id="tag-input" class="form-control" placeholder="Add a tag">
+                        <button type="button" class="btn btn-info mt-2" id="add-tag">Add Tag</button>
+                       <input type="hidden" id="tags-input" name="tags" value="{{ old('tags', is_array($article->tags) ? implode(',', $article->tags) : '') }}">
 
+                    </div>
+                    <div id="tags-list" class="mt-2">
+                        @if ($article->tags)
+                            @foreach (explode(',', $article->tags ?? '') as $tag)
+                            <div class="tag-item">
+                                {{ $tag }} <button type="button" class="remove-tag btn btn-danger btn-sm">x</button>
+                            </div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
                         <input type="checkbox" class="custom-control-input" id="enable" name="enable" @if($article->status) checked @endif value="1">
                         <label class="custom-control-label" for="enable">Enable (เผยแพร่)</label>
@@ -176,5 +196,54 @@ quill.getModule('toolbar').addHandler('image', imageHandler);
         });
 
 
+    </script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Function to handle adding tags
+    document.getElementById('add-tag').addEventListener('click', function() {
+        var tagInput = document.getElementById('tag-input');
+        var tagValue = tagInput.value.trim();
+
+        if (tagValue) {
+            // Create tag div with remove button
+            var tagDiv = document.createElement('div');
+            tagDiv.className = 'tag-item';
+            tagDiv.innerHTML = tagValue + ' <button type="button" class="remove-tag btn btn-danger btn-sm">x</button>';
+            document.getElementById('tags-list').appendChild(tagDiv);
+
+            // Clear the input field
+            tagInput.value = '';
+
+            // Add event listener for remove button
+            tagDiv.querySelector('.remove-tag').addEventListener('click', function() {
+                tagDiv.remove();
+                updateTagsInput();
+            });
+            
+            // Update hidden input field with all tags
+            updateTagsInput();
+        }
+    });
+
+    // Update the hidden tags input field
+    function updateTagsInput() {
+        var tags = [];
+        var tagItems = document.querySelectorAll('.tag-item');
+        tagItems.forEach(function(tag) {
+            tags.push(tag.innerText.replace(' x', ''));
+        });
+        document.getElementById('tags-input').value = tags.join(',');
+    }
+
+    // Handle remove tags when editing existing ones
+    document.querySelectorAll('.remove-tag').forEach(function(button) {
+        button.addEventListener('click', function() {
+            this.closest('.tag-item').remove();
+            updateTagsInput();
+        });
+    });
+});
     </script>
 @endsection

@@ -15,6 +15,9 @@
 .ql-editor {
     min-height: 600px;  /* กำหนดความสูงต่ำสุดของ editor */
 }
+.tag-item{
+    margin-top: 0.5rem;
+}
 </style>
 @endsection
 
@@ -75,6 +78,16 @@
                         <input type="hidden" name="content" id="content">
                         <x-input-error :messages="$errors->get('content')" class="mt-2" />
                     </div>
+                     <div class="form-group">
+                        <label for="tags">Tags</label>
+                        <div id="tags-container">
+                            <input type="text" id="tag-input" class="form-control" placeholder="Add a tag">
+                            <button type="button" class="btn btn-info mt-2" id="add-tag">Add Tag</button>
+                            <input type="hidden" id="tags-input" name="tags">
+                        </div>
+                        <div id="tags-list" class="mt-2"></div>
+                    </div>
+
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
                         <input type="checkbox" class="custom-control-input" id="enable" name="enable" checked value="1">
                         <label class="custom-control-label" for="enable">Enable (เผยแพร่)</label>
@@ -172,4 +185,39 @@ quill.getModule('toolbar').addHandler('image', imageHandler);
             document.getElementById('content').value = content;
         });
     </script>
+
+    <script>
+    // JavaScript to handle adding and removing tags
+    document.getElementById('add-tag').addEventListener('click', function() {
+        var tagInput = document.getElementById('tag-input');
+        var tagValue = tagInput.value.trim();
+
+        if (tagValue) {
+            // Create tag div with remove button
+            var tagDiv = document.createElement('div');
+            tagDiv.className = 'tag-item';
+            tagDiv.innerHTML = tagValue + ' <button type="button" class="remove-tag btn btn-danger btn-sm">x</button>';
+            document.getElementById('tags-list').appendChild(tagDiv);
+
+            // Clear the input field
+            tagInput.value = '';
+
+            // Add event listener for remove button
+            tagDiv.querySelector('.remove-tag').addEventListener('click', function() {
+                tagDiv.remove();
+            });
+        }
+    });
+
+    // Optionally handle form submission
+    document.getElementById('article-form').addEventListener('submit', function(e) {
+        // Gather all the tags and append to the hidden field
+        var tags = [];
+        var tagItems = document.querySelectorAll('.tag-item');
+        tagItems.forEach(function(tag) {
+            tags.push(tag.innerText.replace(' x', ''));
+        });
+        document.getElementById('tags-input').value = tags.join(',');
+    });
+</script>
 @endsection

@@ -27,13 +27,19 @@ class ArticleController extends Controller
             'content' => ['required','string'],
         ]);
 
+        $tags = null;  // Default is null
+        if (!empty($request->tags)) {
+            $tags = is_array($request->tags) ? implode(',', $request->tags) : $request->tags;
+        }
+
         // Create a new article
         $article = new Article();
         $article->author_id = auth::user()->id;
         $article->title = $request->title;
         $article->content = $request->content;
         $article->description = $request->description;
-        $article->category = $request->category;
+        $article->category = $tags;
+        $article->tags = $request->tags;
         if($request->image){
             $fileName = time().'.'.$request->image->extension();
             $request->image->move('_image', $fileName);  ////  server public_html path
@@ -54,6 +60,7 @@ class ArticleController extends Controller
     public function edit($id){
         // Show the form to edit an article
         $article = Article::find($id);
+
         $categories = ['บอล', 'หวย', 'ดูหนังออนไลน์', '18+','การพนัน','ข่าวในประเทศ'];
         return view('article.edit', compact('article','categories'));
     }
@@ -63,13 +70,17 @@ class ArticleController extends Controller
             'title' => ['required','string','max:255'],
             'content' => ['required','string'],
         ]);
-
+        $tags = null;  // Default is null
+        if (!empty($request->tags)) {
+            $tags = is_array($request->tags) ? implode(',', $request->tags) : $request->tags;
+        }
         // Update the article
         $article = Article::find($id);
         $article->title = $request->title;
         $article->content = $request->content;
         $article->description = $request->description;
         $article->category = $request->category;
+        $article->tags = $tags;
         if($request->image){
             $fileName = time().'.'.$request->image->extension();
             $request->image->move('_image', $fileName);  ////  server public_html path
