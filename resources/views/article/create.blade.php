@@ -65,7 +65,7 @@
                     </div>
                     <div class="form-group">
                         <label for="description">ย่อหน้า</label>
-                        <textarea name="description" id="description" rows="5"></textarea>
+                        <textarea name="description" class="form-control" id="description" rows="5"></textarea>
                         <x-input-error :messages="$errors->get('description')" class="mt-2" />
                     </div>
                     <div class="form-group">
