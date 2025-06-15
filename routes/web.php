@@ -173,6 +173,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/articleEdit/{id}', [App\Http\Controllers\ArticleController::class,'edit'])->name('article.edit');
     Route::post('/article/update/{id}', [App\Http\Controllers\ArticleController::class,'update'])->name('article.update');
     Route::delete('/article/{id}', [App\Http\Controllers\ArticleController::class, 'destroy'])->name('article.destroy');
+    Route::post('upload-image', [App\Http\Controllers\ArticleController::class, 'upload']);
 
     // Route::get('/download', function () {
     //     $file="{{ asset('document.pdf')}}";

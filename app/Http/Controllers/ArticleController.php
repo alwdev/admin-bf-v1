@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Article;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
@@ -38,12 +39,17 @@ class ArticleController extends Controller
         $article->title = $request->title;
         $article->content = $request->content;
         $article->description = $request->description;
-        $article->category = $tags;
-        $article->tags = $request->tags;
+        $article->category = $request->category;
+        $article->tags = $tags;
         if($request->image){
             $fileName = time().'.'.$request->image->extension();
             $request->image->move('_image', $fileName);  ////  server public_html path
             $article->image = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
+        }
+        if($request->image_end){
+            $fileName = time().'END.'.$request->image_end->extension();
+            $request->image_end->move('_image', $fileName);  ////  server public_html path
+            $article->image_end = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
         }
         if(isset($request->enable)){
             $article->status = $request->enable;
@@ -86,6 +92,11 @@ class ArticleController extends Controller
             $request->image->move('_image', $fileName);  ////  server public_html path
             $article->image = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
         }
+        if($request->image_end){
+            $fileName = time().'END.'.$request->image_end->extension();
+            $request->image_end->move('_image', $fileName);  ////  server public_html path
+            $article->image_end = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
+        }
         if(isset($request->enable)){
             $article->status = $request->enable;
         } else{
@@ -124,4 +135,19 @@ class ArticleController extends Controller
         return redirect()->route('article.index')->with('success', 'บทความถูกลบเรียบร้อยแล้ว');
     }
 
+     public function upload(Request $request)
+    {
+        // ตรวจสอบว่ามีไฟล์ที่ถูกอัปโหลดมาหรือไม่
+        if ($request->hasFile('file') && $request->file('file')->isValid()) {
+            // อัปโหลดไฟล์ไปยังโฟลเดอร์ public/images
+            $path = $request->file('file')->store('images', 'public');
+
+            // สร้าง URL ที่จะส่งกลับให้กับ Quill editor
+            $url = asset('storage/' . $path);
+
+            return response()->json(['url' => $url]);
+        }
+
+        return response()->json(['error' => 'ไม่สามารถอัปโหลดไฟล์ได้'], 400);
+    }
 }
