@@ -174,9 +174,9 @@ class TransferController extends Controller
         ]);
     }
 
-  public function generateMockupMembers()
-{
-    // รายการข้อมูลสมาชิก (ตัวอย่าง)
+    public function generateMockupMembers()
+    {
+        // รายการข้อมูลสมาชิก (ตัวอย่าง)
 $members = [
     [
         'member_id' => 'bhm516zhlqcG',
@@ -308,55 +308,46 @@ $members = [
     ]
 ];
 
-    // Loop เพื่อ insert ข้อมูล mockup
-    foreach ($members as $member) {
-        // สุ่มวันที่จากวันที่ 1-17 มิถุนายน 2025
-        $randomDate = Carbon::create(2025, 6, rand(1, 17), rand(0, 23), rand(0, 59), rand(0, 59));
-
-        // ถ้าเวลาที่สุ่มเกินเวลาปัจจุบัน ให้ปรับเวลาปัจจุบัน
-        if ($randomDate->greaterThan(Carbon::now())) {
-            $randomDate = Carbon::now();
+        // Loop เพื่อ insert ข้อมูล mockup
+        foreach ($members as $member) {
+            DB::table('members')->insert([
+                'member_id' => $member['member_id'],
+                'username' => $member['username'],
+                'password' => $member['password'],
+                'wallet_balance' => $member['wallet_balance'],
+                'wallet_specialBuyIn' => '',
+                'wallet_lastUpdate' => '',
+                'level' => $member['level'],
+                'parent' => '',
+                'type' => '',
+                'playId' => '',
+                'currency' => '',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+                'fullname' => $member['fullname'],
+                'bank_name' => $member['bank_name'],
+                'bank_number' => $member['bank_number'],
+                'bank_code' => $member['bank_code'],
+                'birth_date' => NULL,
+                'account_name' => $member['account_name'],
+                'phone' => $member['phone'],
+                'enable' => 1,
+                'active' => 1,
+                'update_by' => 0,
+                'ref_click_link' => 0,
+                'ref_user' => '',
+                'ref_commission' => 0.00,
+                'token' => '',
+                'ranking' => '',
+                'source' => '',
+                'role' => '',
+                'nickname' => '',
+                'remaining_spin' => 0.00,
+            ]);
         }
 
-        DB::table('members')->insert([
-            'member_id' => $member['member_id'],
-            'username' => $member['username'],
-            'password' => $member['password'],
-            'wallet_balance' => $member['wallet_balance'],
-            'wallet_specialBuyIn' => '',
-            'wallet_lastUpdate' => '',
-            'level' => $member['level'],
-            'parent' => '',
-            'type' => '',
-            'playId' => '',
-            'currency' => '',
-            'created_at' => $randomDate,
-            'updated_at' => $randomDate,
-            'fullname' => $member['fullname'],
-            'bank_name' => $member['bank_name'],
-            'bank_number' => $member['bank_number'],
-            'bank_code' => $member['bank_code'],
-            'birth_date' => NULL,
-            'account_name' => $member['account_name'],
-            'phone' => $member['phone'],
-            'enable' => 1,
-            'active' => 1,
-            'update_by' => 0,
-            'ref_click_link' => 0,
-            'ref_user' => '',
-            'ref_commission' => 0.00,
-            'token' => '',
-            'ranking' => '',
-            'source' => '',
-            'role' => '',
-            'nickname' => '',
-            'remaining_spin' => 0.00,
-        ]);
+        // return response()->json([
+        //     'message' => 'Generated Mockup Member Data successfully!',
+        // ]);
     }
-
-    return response()->json([
-        'message' => 'Generated Mockup Member Data successfully!',
-    ]);
-}
-
 }
