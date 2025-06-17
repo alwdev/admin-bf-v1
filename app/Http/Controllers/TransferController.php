@@ -177,37 +177,136 @@ class TransferController extends Controller
   public function generateMockupMembers()
 {
     // รายการข้อมูลสมาชิก (ตัวอย่าง)
-    $members = [
-        [
-            'member_id' => 'bhm516zhlqcG',
-            'username' => '0999999999',
-            'password' => '$2y$12$44.wjKRcKC3F6by9E5GFnevZSfgiMBySpNON/.UwzyaLtoVlOXDBe',
-            'wallet_balance' => '128.42',
-            'fullname' => 'กวินทรา ใช้ฮวดเจริญ',
-            'bank_name' => 'ธนาคารกสิกรไทย',
-            'bank_number' => '0999999999',
-            'bank_code' => 'bank-0',
-            'account_name' => 'กวินทรา ใช้ฮวดเจริญ',
-            'phone' => '0999999999',
-            'status_code' => 2,  // BOT.อนุมัติ
-            'level' => 'Platinum',
-        ],
-        [
-            'member_id' => 'bhm516igVqNm',
-            'username' => '0649174824',
-            'password' => '$2y$12$Gscd8Yz4Nw95R9TPGLiPQeBHjkSFH3zUW1lylNdXLrnGkOzBWR/MW',
-            'wallet_balance' => '0',
-            'fullname' => 'จักรพันธ์ มณีปกรณ์',
-            'bank_name' => 'ธนาคารกสิกรไทย',
-            'bank_number' => '0811854956',
-            'bank_code' => 'bank-0',
-            'account_name' => 'จักรพันธ์ มณีปกรณ์',
-            'phone' => '0649174824',
-            'status_code' => 1,  // BOT.ปฏิเสธ
-            'level' => 'Bronze',
-        ],
-        // ... (สมาชิกอื่น ๆ)
-    ];
+$members = [
+    [
+        'member_id' => 'bhm516zhlqcG',
+        'username' => '0999999999',
+        'password' => '$2y$12$44.wjKRcKC3F6by9E5GFnevZSfgiMBySpNON/.UwzyaLtoVlOXDBe',
+        'wallet_balance' => '128.42',
+        'fullname' => 'กวินทรา ใช้ฮวดเจริญ',
+        'bank_name' => 'ธนาคารกสิกรไทย',
+        'bank_number' => '0999999999',
+        'bank_code' => 'bank-0',
+        'account_name' => 'กวินทรา ใช้ฮวดเจริญ',
+        'phone' => '0999999999',
+        'status_code' => 2,  // BOT.อนุมัติ
+        'level' => 'Bronze',
+    ],
+    [
+        'member_id' => 'bhm516igVqNm',
+        'username' => '0649174824',
+        'password' => '$2y$12$Gscd8Yz4Nw95R9TPGLiPQeBHjkSFH3zUW1lylNdXLrnGkOzBWR/MW',
+        'wallet_balance' => '0',
+        'fullname' => 'จักรพันธ์ มณีปกรณ์',
+        'bank_name' => 'ธนาคารกสิกรไทย',
+        'bank_number' => '0811854956',
+        'bank_code' => 'bank-0',
+        'account_name' => 'จักรพันธ์ มณีปกรณ์',
+        'phone' => '0649174824',
+        'status_code' => 1,  // BOT.ปฏิเสธ
+        'level' => 'Bronze',
+    ],
+    [
+        'member_id' => 'bhm516YvcvL4',
+        'username' => '0876543210',
+        'password' => '$2y$12$Afjjs8I1FEws9jv8tIwiMe21gxwASL8DA2W2bDe1g7We3kHS1zYpu',
+        'wallet_balance' => '1,200.00',
+        'fullname' => 'พิมพ์ชนก สุขจิตร',
+        'bank_name' => 'ธนาคารกรุงไทย',
+        'bank_number' => '0876543210',
+        'bank_code' => 'bank-1',
+        'account_name' => 'พิมพ์ชนก สุขจิตร',
+        'phone' => '0876543210',
+        'status_code' => 2,  // BOT.อนุมัติ
+        'level' => 'Bronze',
+    ],
+    [
+        'member_id' => 'bhm516zfgTht',
+        'username' => '0898765432',
+        'password' => '$2y$12$96DE29nDh2X4jdsKBgDZTz11dxBoGgPxKNNkgadKnQykCjcPOg7ZO',
+        'wallet_balance' => '0',
+        'fullname' => 'นัทธมนต์ สุริยะ',
+        'bank_name' => 'ธนาคารกรุงเทพ',
+        'bank_number' => '0898765432',
+        'bank_code' => 'bank-2',
+        'account_name' => 'นัทธมนต์ สุริยะ',
+        'phone' => '0898765432',
+        'status_code' => 2,  // BOT.อนุมัติ
+        'level' => 'Bronze',
+    ],
+    [
+        'member_id' => 'bhm516qdhtLz',
+        'username' => '0623456789',
+        'password' => '$2y$12$G5fyygsn04l9y9uPTd7nMzQN9K6X5x2hWiPYI1d8Aq0O0El8VR2iu',
+        'wallet_balance' => '500.50',
+        'fullname' => 'วินิจ สุรยุทธ',
+        'bank_name' => 'ธนาคารทหารไทย',
+        'bank_number' => '0623456789',
+        'bank_code' => 'bank-3',
+        'account_name' => 'วินิจ สุรยุทธ',
+        'phone' => '0623456789',
+        'status_code' => 1,  // BOT.ปฏิเสธ
+        'level' => 'Bronze',
+    ],
+
+    // เพิ่มเติมสมาชิกใหม่ 2 คนที่คุณขอ
+    [
+        'member_id' => 'bhm516FQXpdG',
+        'username' => '0959988776',
+        'password' => '$2y$12$CBwFpPnLgtS0E5zvbT6Edt9csezECGBXBmfM9Jg46EFswrj4BlFCi',
+        'wallet_balance' => '745.50',
+        'fullname' => 'ไกรสร บัวหอม',
+        'bank_name' => 'ธนาคารกรุงเทพ',
+        'bank_number' => '0959988776',
+        'bank_code' => 'bank-4',
+        'account_name' => 'ไกรสร บัวหอม',
+        'phone' => '0959988776',
+        'status_code' => 2,  // BOT.อนุมัติ
+        'level' => 'Bronze',
+    ],
+    [
+        'member_id' => 'bhm516XTJhUd',
+        'username' => '0847234567',
+        'password' => '$2y$12$8xzHjkdlwJkpfS8ji6cQjwPKYgb9Yr6w4KXrbdbSEjDXlsR9W.jfC',
+        'wallet_balance' => '1,150.00',
+        'fullname' => 'พิมพ์ชนก อารีย์',
+        'bank_name' => 'ธนาคารไทยพาณิชย์',
+        'bank_number' => '0847234567',
+        'bank_code' => 'bank-5',
+        'account_name' => 'พิมพ์ชนก อารีย์',
+        'phone' => '0847234567',
+        'status_code' => 2,  // BOT.อนุมัติ
+        'level' => 'Bronze',
+    ],
+    [
+        'member_id' => 'bhm516ZG3r9y',
+        'username' => '0859123456',
+        'password' => '$2y$12$k7EKcvfgyNUNyFHXmmD7fS0JJlSo01g1HXJcODdjGh8kLC4fpTlyE',
+        'wallet_balance' => '250.75',
+        'fullname' => 'สุภัทรา ศรีบุญญา',
+        'bank_name' => 'ธนาคารทหารไทย',
+        'bank_number' => '0859123456',
+        'bank_code' => 'bank-6',
+        'account_name' => 'สุภัทรา ศรีบุญญา',
+        'phone' => '0859123456',
+        'status_code' => 1,  // BOT.ปฏิเสธ
+        'level' => 'Bronze',
+    ],
+    [
+        'member_id' => 'bhm516NC8cF6',
+        'username' => '0823456789',
+        'password' => '$2y$12$ovNsOSivLghsW9P57UffuORu3.9r6fn6bzNjfZPvJpycA29C7CHyS',
+        'wallet_balance' => '450.25',
+        'fullname' => 'สมปอง พรหมมา',
+        'bank_name' => 'ธนาคารกรุงไทย',
+        'bank_number' => '0823456789',
+        'bank_code' => 'bank-7',
+        'account_name' => 'สมปอง พรหมมา',
+        'phone' => '0823456789',
+        'status_code' => 2,  // BOT.อนุมัติ
+        'level' => 'Bronze',
+    ]
+];
 
     // Loop เพื่อ insert ข้อมูล mockup
     foreach ($members as $member) {
