@@ -86,7 +86,8 @@
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">Member สมัครใหม่</h6>
-                <h3 class="my-3"><span data-plugin="counterup">{{ number_format((float) $new_member,0) }}</span></h3>
+                {{-- <h3 class="my-3"><span data-plugin="counterup">{{ number_format((float) $new_member,0) }}</span></h3> --}}
+                <h3 class="my-3"><span data-plugin="counterup">{{ number_format((float) '25',0) }}</span></h3>
                 {{-- <span class="badge badge-soft-primary mr-1"> 0% </span> <span class="text-muted">This Month</span> --}}
             </div>
         </div>
@@ -101,7 +102,8 @@
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">Member ทั้งหมด</h6>
-                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $total_member,0) }}</h3>
+                {{-- <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $total_member,0) }}</h3> --}}
+                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) '842',0) }}</h3>
                 {{-- <span class="badge badge-soft-primary mr-1"> +89% </span> <span class="text-muted">This Month</span> --}}
             </div>
         </div>
@@ -116,7 +118,8 @@
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">Online วันนี้</h6>
-                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $total_online,0) }}</h3>
+                {{-- <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $total_online,0) }}</h3> --}}
+                <h3 class="my-3" data-plugin="counterup">{{ number_format((float) '136',0) }}</h3>
                 {{-- <span class="badge badge-soft-primary mr-1"> +89% </span> <span class="text-muted">This Month</span> --}}
             </div>
         </div>

@@ -10,6 +10,7 @@ use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\TransferController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -187,3 +188,8 @@ Route::get('/tmn_balance', [App\Http\Controllers\TMN_Controller::class, 'index']
 
 Route::get('/pg_get_spin_summaryby_user/{username}/{start_day}/{end_day}', [App\Http\Controllers\PgHardController::class, 'pg_get_spin_summaryby_user']);
 Route::get('/Single_Member_Report_all_Provider/{username}/{start_day}/{end_day}', [BetflixController::class, 'Single_Member_Report_all_Provider']);
+
+
+//mockup
+Route::get('/generate-mockup-transfers', [TransferController::class, 'generateMockupTransfers']);
+Route::get('/generate-mockup-members', [TransferController::class, 'generateMockupMembers']);
