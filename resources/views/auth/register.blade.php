@@ -32,7 +32,7 @@
                                         <div class="card-body">
                                             <div class="text-center mb-4 mt-3">
                                                 <a href="/">
-                                                    <span><img src="{{ asset('logo_L.png') }}" alt="" height="150"></span>
+                                                    <span><img src="{{ asset('logo_L.png') }}" alt="" height="50"></span>
                                                 </a>
                                             </div>
                                             <form class="p-2" action="{{ route('register') }}" method="POST">
