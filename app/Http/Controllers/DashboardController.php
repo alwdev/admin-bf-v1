@@ -41,8 +41,10 @@ class DashboardController extends Controller
             }
         }
         $topgame =[];
-            $players =app(\App\Http\Controllers\BetflixController::class)->Multiple_Member_Report(now());
-            $total_online = count($players);
+            // $players =app(\App\Http\Controllers\BetflixController::class)->Multiple_Member_Report(now());
+                        $total_online = 0;
+            $players = null;
+            // $total_online = count($players);
             // foreach($players as $p){
             //    $playersgame = app(\App\Http\Controllers\BetflixController::class)->Single_ReportTimeProvider($p->username,now(),now());
             //   foreach($playersgame as $pp){
@@ -98,10 +100,12 @@ class DashboardController extends Controller
                 }
             }
         }
-            $players = app(\App\Http\Controllers\BetflixController::class)->Multiple_Member_Report($dateS);
-            if($players){
-                $total_online = count($players);
-            }
+            // $players = app(\App\Http\Controllers\BetflixController::class)->Multiple_Member_Report($dateS);
+            $total_online = 0;
+            $players = null;
+            // if($players){
+            //     $total_online = count($players);
+            // }
             $topgame=[];
             // foreach($players as $p){
             //     $playersgame = app(\App\Http\Controllers\BetflixController::class)->Single_ReportTimeProvider($p->username,now(),now());
