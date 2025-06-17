@@ -27,7 +27,7 @@ class TransferController extends Controller
         $maxWithdraw = 1500000;  // กำหนดยอดถอนสูงสุดไม่เกิน 1.5 ล้าน
 
         // --- Loop สำหรับยอดถอน (withdraw) ---
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
             // เลือกผู้ฝากและข้อมูลที่เกี่ยวข้อง
             $withdrawBankName = $banks[array_rand($banks)];
             $withdrawBankAccount = $bankAccounts[array_rand($bankAccounts)];
