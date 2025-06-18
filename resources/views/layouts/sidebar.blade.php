@@ -4,7 +4,7 @@
 
         <div class="navbar-brand-box">
             <a href="/" class="logo">
-                <img src="{{ asset('logo3.png') }}" width="200" style="height: auto;"/>
+                <img src="{{ env('APP_LOGO') }}" width="200" style="height: auto;"/>
             </a>
         </div>
 
