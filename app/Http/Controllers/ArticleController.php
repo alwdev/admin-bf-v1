@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Article;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
@@ -27,16 +28,28 @@ class ArticleController extends Controller
             'content' => ['required','string'],
         ]);
 
+        $tags = null;  // Default is null
+        if (!empty($request->tags)) {
+            $tags = is_array($request->tags) ? implode(',', $request->tags) : $request->tags;
+        }
+
         // Create a new article
         $article = new Article();
         $article->author_id = auth::user()->id;
         $article->title = $request->title;
         $article->content = $request->content;
+        $article->description = $request->description;
         $article->category = $request->category;
+        $article->tags = $tags;
         if($request->image){
             $fileName = time().'.'.$request->image->extension();
             $request->image->move('_image', $fileName);  ////  server public_html path
             $article->image = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
+        }
+        if($request->image_end){
+            $fileName = time().'END.'.$request->image_end->extension();
+            $request->image_end->move('_image', $fileName);  ////  server public_html path
+            $article->image_end = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
         }
         if(isset($request->enable)){
             $article->status = $request->enable;
@@ -53,6 +66,7 @@ class ArticleController extends Controller
     public function edit($id){
         // Show the form to edit an article
         $article = Article::find($id);
+
         $categories = ['บอล', 'หวย', 'ดูหนังออนไลน์', '18+','การพนัน','ข่าวในประเทศ'];
         return view('article.edit', compact('article','categories'));
     }
@@ -62,16 +76,26 @@ class ArticleController extends Controller
             'title' => ['required','string','max:255'],
             'content' => ['required','string'],
         ]);
-
+        $tags = null;  // Default is null
+        if (!empty($request->tags)) {
+            $tags = is_array($request->tags) ? implode(',', $request->tags) : $request->tags;
+        }
         // Update the article
         $article = Article::find($id);
         $article->title = $request->title;
         $article->content = $request->content;
+        $article->description = $request->description;
         $article->category = $request->category;
+        $article->tags = $tags;
         if($request->image){
             $fileName = time().'.'.$request->image->extension();
             $request->image->move('_image', $fileName);  ////  server public_html path
             $article->image = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
+        }
+        if($request->image_end){
+            $fileName = time().'END.'.$request->image_end->extension();
+            $request->image_end->move('_image', $fileName);  ////  server public_html path
+            $article->image_end = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
         }
         if(isset($request->enable)){
             $article->status = $request->enable;
@@ -82,5 +106,48 @@ class ArticleController extends Controller
         $article->save();
 
         return redirect()->route('article.index')->with('status','200');
+    }
+
+    public function destroy($id)
+    {
+        // ค้นหาบทความตาม id
+        $article = Article::findOrFail($id);
+        
+        if ($article->image) {
+            try {
+                 // ลบภาพจาก storage หรือ server ถ้ามี
+            // ปรับ path ให้ตรงกับตำแหน่งที่เก็บภาพใน _image
+            $imagePath = public_path('_image/' . basename($article->image));
+            
+            if (file_exists($imagePath)) {
+                unlink($imagePath);  // ใช้ unlink() เพื่อลบไฟล์จาก server
+            }
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
+
+        }
+
+        // ลบบทความจากฐานข้อมูล
+        $article->delete();
+
+        // แสดงข้อความแจ้งเตือนหลังจากลบสำเร็จ
+        return redirect()->route('article.index')->with('success', 'บทความถูกลบเรียบร้อยแล้ว');
+    }
+
+     public function upload(Request $request)
+    {
+        // ตรวจสอบว่ามีไฟล์ที่ถูกอัปโหลดมาหรือไม่
+        if ($request->hasFile('file') && $request->file('file')->isValid()) {
+            // อัปโหลดไฟล์ไปยังโฟลเดอร์ public/images
+            $path = $request->file('file')->store('images', 'public');
+
+            // สร้าง URL ที่จะส่งกลับให้กับ Quill editor
+            $url = asset('storage/' . $path);
+
+            return response()->json(['url' => $url]);
+        }
+
+        return response()->json(['error' => 'ไม่สามารถอัปโหลดไฟล์ได้'], 400);
     }
 }

@@ -15,6 +15,9 @@
 .ql-editor {
     min-height: 600px;  /* กำหนดความสูงต่ำสุดของ editor */
 }
+.tag-item{
+    margin-top: 0.5rem;
+}
 </style>
 @endsection
 
@@ -27,7 +30,7 @@
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('article.index') }}">บทความ</a></li>
                     <li class="breadcrumb-item active">แก้ไขบทความ</li>
                 </ol>
             </div>
@@ -50,14 +53,21 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="image">รูปภาพ (ขนาด 900x400px)</label>
+                        <label for="image">รูปภาพ(หัว) (ขนาด 900x400px)</label>
                         @if ($article->image)
                             <img src="{{ $article->image }}" class="img-thumbnail rounded" style="height:200px;cursor: pointer;" onclick="showImage('{{ $article->image }}')">
                         @endif
                         <input class="form-control" type="file" id="image" name="image" accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
                         <x-input-error :messages="$errors->get('image')" class="mt-2" />
                     </div>
-
+                    <div class="form-group">
+                        <label for="image_end">รูปภาพ(ท้าย) (ขนาด 900x400px)</label>
+                        @if ($article->image_end)
+                            <img src="{{ $article->image_end }}" class="img-thumbnail rounded" style="height:200px;cursor: pointer;" onclick="showImage('{{ $article->image_end }}')">
+                        @endif
+                        <input class="form-control" type="file" id="image_end" name="image_end"   value="{{ old('image_end') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
+                        <x-input-error :messages="$errors->get('image_end')" class="mt-2" />
+                    </div>
                     <div class="form-group">
                         <label for="category">หมวดหมู่</label>
                         <select class="form-control" id="category" name="category">
@@ -68,14 +78,35 @@
                         </select>
                         <x-input-error :messages="$errors->get('category')" class="mt-2" />
                     </div>
-
+                    <div class="form-group">
+                        <label for="description">ย่อหน้า</label>
+                        <textarea name="description" id="description" class="form-control" rows="5">{!! $article->description !!}</textarea>
+                        <x-input-error :messages="$errors->get('description')" class="mt-2" />
+                    </div>
                     <div class="form-group">
                         <label for="content">บทความ</label>
                         <div id="editor-container">{!! $article->content !!}</div>
                         <input type="hidden" name="content" id="content">
                         <x-input-error :messages="$errors->get('content')" class="mt-2" />
                     </div>
+                     <div class="form-group">
+                    <label for="tags">Tags</label>
+                    <div id="tags-container">
+                        <input type="text" id="tag-input" class="form-control" placeholder="Add a tag">
+                        <button type="button" class="btn btn-info mt-2" id="add-tag">Add Tag</button>
+                       <input type="hidden" id="tags-input" name="tags" value="{{ old('tags', is_array($article->tags) ? implode(',', $article->tags) : '') }}">
 
+                    </div>
+                    <div id="tags-list" class="mt-2">
+                        @if ($article->tags)
+                            @foreach (explode(',', $article->tags ?? '') as $tag)
+                            <div class="tag-item">
+                                {{ $tag }} <button type="button" class="remove-tag btn btn-danger btn-sm">x</button>
+                            </div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
                         <input type="checkbox" class="custom-control-input" id="enable" name="enable" @if($article->status) checked @endif value="1">
                         <label class="custom-control-label" for="enable">Enable (เผยแพร่)</label>
@@ -134,6 +165,30 @@
         },
             }
         });
+                const MAX_CHARACTERS = 15000;
+
+quill.on('text-change', function(delta, oldDelta, source) {
+    const currentTextLength = quill.getText().length;
+
+    // If text exceeds the max limit of 15,000 characters
+    if (currentTextLength > MAX_CHARACTERS) {
+        // Calculate how much text is exceeding the limit
+        const excessText = currentTextLength - MAX_CHARACTERS;
+        const currentText = quill.getText();
+        const truncatedText = currentText.slice(0, -excessText);
+
+        // Prevent the "text-change" event from being triggered again
+        quill.root.innerHTML = truncatedText;
+
+        // Show a SweetAlert with the message
+        Swal.fire({
+            icon: 'warning',
+            title: 'Character Limit Reached',
+            text: 'You have reached the maximum character limit of 15,000.',
+            confirmButtonText: 'OK'
+        });
+    }
+});
 const imageHandler = function() {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
@@ -143,24 +198,44 @@ const imageHandler = function() {
         const file = input.files[0];
 
         if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                // ตรวจสอบขนาดไฟล์ก่อนที่จะแทรกใน Quill
-                const fileSize = file.size; // ขนาดไฟล์เป็น bytes
-                if (fileSize > 1048576) {  // 1MB = 1048576 bytes
-                    alert('ไฟล์ภาพใหญ่เกิน 1MB ไม่สามารถอัปโหลดได้');
-                } else {
-                    // ถ้าขนาดไฟล์ไม่เกิน 1MB ให้แทรกภาพใน Quill
-                    const range = quill.getSelection();
-                    quill.insertEmbed(range.index, 'image', reader.result);
-                }
-            };
-            reader.readAsDataURL(file);  // แปลงไฟล์เป็น base64 เพื่อแทรกใน Quill
+            // ตรวจสอบขนาดไฟล์ก่อนที่จะแทรกใน Quill
+            const fileSize = file.size; // ขนาดไฟล์เป็น bytes
+            if (fileSize > 1048576) {  // 1MB = 1048576 bytes
+                alert('ไฟล์ภาพใหญ่เกิน 1MB ไม่สามารถอัปโหลดได้');
+            } else {
+                // ถ้าขนาดไฟล์ไม่เกิน 1MB ให้ส่งไฟล์ไปยังเซิร์ฟเวอร์
+                const formData = new FormData();
+                formData.append('file', file);
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                fetch('/upload-image', {
+                    method: 'POST',
+                     headers: {
+                        'X-CSRF-TOKEN': csrfToken // ใส่ CSRF token ใน headers
+                    },
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.url) {
+                        // ถ้าได้รับ URL ของภาพจากเซิร์ฟเวอร์ ให้แทรก URL ของภาพใน Quill
+                        const range = quill.getSelection();
+                        quill.insertEmbed(range.index, 'image', data.url);
+                    } else {
+                        alert('ไม่สามารถอัปโหลดภาพได้');
+                    }
+                })
+                .catch(error => {
+                    console.error('เกิดข้อผิดพลาด:', error);
+                    alert('ไม่สามารถอัปโหลดภาพได้');
+                });
+            }
         }
     });
 
     input.click();
 };
+
 
 // ตั้งค่าฟังก์ชันให้ Quill ใช้งาน
 quill.getModule('toolbar').addHandler('image', imageHandler);
@@ -172,5 +247,54 @@ quill.getModule('toolbar').addHandler('image', imageHandler);
         });
 
 
+    </script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Function to handle adding tags
+    document.getElementById('add-tag').addEventListener('click', function() {
+        var tagInput = document.getElementById('tag-input');
+        var tagValue = tagInput.value.trim();
+
+        if (tagValue) {
+            // Create tag div with remove button
+            var tagDiv = document.createElement('div');
+            tagDiv.className = 'tag-item';
+            tagDiv.innerHTML = tagValue + ' <button type="button" class="remove-tag btn btn-danger btn-sm">x</button>';
+            document.getElementById('tags-list').appendChild(tagDiv);
+
+            // Clear the input field
+            tagInput.value = '';
+
+            // Add event listener for remove button
+            tagDiv.querySelector('.remove-tag').addEventListener('click', function() {
+                tagDiv.remove();
+                updateTagsInput();
+            });
+            
+            // Update hidden input field with all tags
+            updateTagsInput();
+        }
+    });
+
+    // Update the hidden tags input field
+    function updateTagsInput() {
+        var tags = [];
+        var tagItems = document.querySelectorAll('.tag-item');
+        tagItems.forEach(function(tag) {
+            tags.push(tag.innerText.replace(' x', ''));
+        });
+        document.getElementById('tags-input').value = tags.join(',');
+    }
+
+    // Handle remove tags when editing existing ones
+    document.querySelectorAll('.remove-tag').forEach(function(button) {
+        button.addEventListener('click', function() {
+            this.closest('.tag-item').remove();
+            updateTagsInput();
+        });
+    });
+});
     </script>
 @endsection

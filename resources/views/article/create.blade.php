@@ -15,6 +15,9 @@
 .ql-editor {
     min-height: 600px;  /* กำหนดความสูงต่ำสุดของ editor */
 }
+.tag-item{
+    margin-top: 0.5rem;
+}
 </style>
 @endsection
 
@@ -27,7 +30,7 @@
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('article.index') }}">บทความ</a></li>
                     <li class="breadcrumb-item active">เพิ่มบทความ</li>
                 </ol>
             </div>
@@ -49,9 +52,14 @@
                         <x-input-error :messages="$errors->get('title')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="image">รูปภาพ (ขนาด 900x400px)</label>
+                        <label for="image">รูปภาพ(หัว) (ขนาด 900x400px)</label>
                         <input class="form-control" type="file" id="image" name="image" required  value="{{ old('image') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
                         <x-input-error :messages="$errors->get('image')" class="mt-2" />
+                    </div>
+                    <div class="form-group">
+                        <label for="image_end">รูปภาพ(ท้าย) (ขนาด 900x400px)</label>
+                        <input class="form-control" type="file" id="image_end" name="image_end" required  value="{{ old('image_end') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
+                        <x-input-error :messages="$errors->get('image_end')" class="mt-2" />
                     </div>
                     <div class="form-group">
                         <label for="category">หมวดหมู่</label>
@@ -64,12 +72,27 @@
                         <x-input-error :messages="$errors->get('category')" class="mt-2" />
                     </div>
                     <div class="form-group">
+                        <label for="description">ย่อหน้า</label>
+                        <textarea name="description" class="form-control" id="description" rows="5"></textarea>
+                        <x-input-error :messages="$errors->get('description')" class="mt-2" />
+                    </div>
+                    <div class="form-group">
                         <label for="content">บทความ</label>
                         {{-- Quill Editor --}}
                         <div id="editor-container"></div>
                         <input type="hidden" name="content" id="content">
                         <x-input-error :messages="$errors->get('content')" class="mt-2" />
                     </div>
+                     <div class="form-group">
+                        <label for="tags">Tags</label>
+                        <div id="tags-container">
+                            <input type="text" id="tag-input" class="form-control" placeholder="Add a tag">
+                            <button type="button" class="btn btn-info mt-2" id="add-tag">Add Tag</button>
+                            <input type="hidden" id="tags-input" name="tags">
+                        </div>
+                        <div id="tags-list" class="mt-2"></div>
+                    </div>
+
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
                         <input type="checkbox" class="custom-control-input" id="enable" name="enable" checked value="1">
                         <label class="custom-control-label" for="enable">Enable (เผยแพร่)</label>
@@ -130,6 +153,30 @@
         },
             }
         });
+        const MAX_CHARACTERS = 15000;
+
+quill.on('text-change', function(delta, oldDelta, source) {
+    const currentTextLength = quill.getText().length;
+
+    // If text exceeds the max limit of 15,000 characters
+    if (currentTextLength > MAX_CHARACTERS) {
+        // Calculate how much text is exceeding the limit
+        const excessText = currentTextLength - MAX_CHARACTERS;
+        const currentText = quill.getText();
+        const truncatedText = currentText.slice(0, -excessText);
+
+        // Prevent the "text-change" event from being triggered again
+        quill.root.innerHTML = truncatedText;
+
+        // Show a SweetAlert with the message
+        Swal.fire({
+            icon: 'warning',
+            title: 'Character Limit Reached',
+            text: 'You have reached the maximum character limit of 15,000.',
+            confirmButtonText: 'OK'
+        });
+    }
+});
 const imageHandler = function() {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
@@ -139,24 +186,44 @@ const imageHandler = function() {
         const file = input.files[0];
 
         if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                // ตรวจสอบขนาดไฟล์ก่อนที่จะแทรกใน Quill
-                const fileSize = file.size; // ขนาดไฟล์เป็น bytes
-                if (fileSize > 1048576) {  // 1MB = 1048576 bytes
-                    alert('ไฟล์ภาพใหญ่เกิน 1MB ไม่สามารถอัปโหลดได้');
-                } else {
-                    // ถ้าขนาดไฟล์ไม่เกิน 1MB ให้แทรกภาพใน Quill
-                    const range = quill.getSelection();
-                    quill.insertEmbed(range.index, 'image', reader.result);
-                }
-            };
-            reader.readAsDataURL(file);  // แปลงไฟล์เป็น base64 เพื่อแทรกใน Quill
+            // ตรวจสอบขนาดไฟล์ก่อนที่จะแทรกใน Quill
+            const fileSize = file.size; // ขนาดไฟล์เป็น bytes
+            if (fileSize > 1048576) {  // 1MB = 1048576 bytes
+                alert('ไฟล์ภาพใหญ่เกิน 1MB ไม่สามารถอัปโหลดได้');
+            } else {
+                // ถ้าขนาดไฟล์ไม่เกิน 1MB ให้ส่งไฟล์ไปยังเซิร์ฟเวอร์
+                const formData = new FormData();
+                formData.append('file', file);
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                fetch('/upload-image', {
+                    method: 'POST',
+                     headers: {
+                        'X-CSRF-TOKEN': csrfToken // ใส่ CSRF token ใน headers
+                    },
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.url) {
+                        // ถ้าได้รับ URL ของภาพจากเซิร์ฟเวอร์ ให้แทรก URL ของภาพใน Quill
+                        const range = quill.getSelection();
+                        quill.insertEmbed(range.index, 'image', data.url);
+                    } else {
+                        alert('ไม่สามารถอัปโหลดภาพได้');
+                    }
+                })
+                .catch(error => {
+                    console.error('เกิดข้อผิดพลาด:', error);
+                    alert('ไม่สามารถอัปโหลดภาพได้');
+                });
+            }
         }
     });
 
     input.click();
 };
+
 
 // ตั้งค่าฟังก์ชันให้ Quill ใช้งาน
 quill.getModule('toolbar').addHandler('image', imageHandler);
@@ -167,4 +234,39 @@ quill.getModule('toolbar').addHandler('image', imageHandler);
             document.getElementById('content').value = content;
         });
     </script>
+
+    <script>
+    // JavaScript to handle adding and removing tags
+    document.getElementById('add-tag').addEventListener('click', function() {
+        var tagInput = document.getElementById('tag-input');
+        var tagValue = tagInput.value.trim();
+
+        if (tagValue) {
+            // Create tag div with remove button
+            var tagDiv = document.createElement('div');
+            tagDiv.className = 'tag-item';
+            tagDiv.innerHTML = tagValue + ' <button type="button" class="remove-tag btn btn-danger btn-sm">x</button>';
+            document.getElementById('tags-list').appendChild(tagDiv);
+
+            // Clear the input field
+            tagInput.value = '';
+
+            // Add event listener for remove button
+            tagDiv.querySelector('.remove-tag').addEventListener('click', function() {
+                tagDiv.remove();
+            });
+        }
+    });
+
+    // Optionally handle form submission
+    document.getElementById('article-form').addEventListener('submit', function(e) {
+        // Gather all the tags and append to the hidden field
+        var tags = [];
+        var tagItems = document.querySelectorAll('.tag-item');
+        tagItems.forEach(function(tag) {
+            tags.push(tag.innerText.replace(' x', ''));
+        });
+        document.getElementById('tags-input').value = tags.join(',');
+    });
+</script>
 @endsection
