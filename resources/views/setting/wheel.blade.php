@@ -97,10 +97,10 @@
                                 <label class="" for="win_1">ได้รับเครดิต :</label>
                                 <input required type="text" class="form-control" name="win_1" value="{{ $setting->win_1 }}">
                             </div>
-                            {{-- <div class="mb-2">
+                            <div class="mb-2">
                                 <label class="" for="win_1_rate">เปอร์เซ็น :</label>
                                 <input required type="text" class="form-control" name="win_1_rate" value="{{ $setting->win_1_rate }}">
-                            </div> --}}
+                            </div>
                         </div>
                         <div class="col-4">
                             <h4>รางวัลที่ 2</h4>
@@ -112,10 +112,10 @@
                                 <label class="" for="win_2">ได้รับเครดิต :</label>
                                 <input required type="text" class="form-control" name="win_2" value="{{ $setting->win_2 }}">
                             </div>
-                            {{-- <div class="mb-2">
+                            <div class="mb-2">
                                 <label class="" for="win_2_rate">เปอร์เซ็น :</label>
                                 <input required type="text" class="form-control" name="win_2_rate" value="{{ $setting->win_2_rate }}">
-                            </div> --}}
+                            </div>
                         </div>
                         <div class="col-4">
                             <h4>รางวัลที่ 3</h4>
@@ -127,10 +127,10 @@
                                 <label class="" for="win_3">ได้รับเครดิต :</label>
                                 <input required type="text" class="form-control" name="win_3" value="{{ $setting->win_3 }}">
                             </div>
-                            {{-- <div class="mb-2">
+                            <div class="mb-2">
                                 <label class="" for="win_3_rate">เปอร์เซ็น :</label>
                                 <input required type="text" class="form-control" name="win_3_rate" value="{{ $setting->win_3_rate }}">
-                            </div> --}}
+                            </div>
                         </div>
                         <div class="col-4">
                             <h4>รางวัลที่ 4</h4>
@@ -142,10 +142,10 @@
                                 <label class="" for="win_4">ได้รับเครดิต :</label>
                                 <input required type="text" class="form-control" name="win_4" value="{{ $setting->win_4 }}">
                             </div>
-                            {{-- <div class="mb-2">
+                            <div class="mb-2">
                                 <label class="" for="win_4_rate">เปอร์เซ็น :</label>
                                 <input required type="text" class="form-control" name="win_4_rate" value="{{ $setting->win_4_rate }}">
-                            </div> --}}
+                            </div>
                         </div>
                         <div class="col-4">
                             <h4>รางวัลที่ 5</h4>
@@ -157,10 +157,10 @@
                                 <label class="" for="win_5">ได้รับเครดิต :</label>
                                 <input required type="text" class="form-control" name="win_5" value="{{ $setting->win_5 }}">
                             </div>
-                            {{-- <div class="mb-2">
+                            <div class="mb-2">
                                 <label class="" for="win_5_rate">เปอร์เซ็น :</label>
                                 <input required type="text" class="form-control" name="win_5_rate" value="{{ $setting->win_5_rate }}">
-                            </div> --}}
+                            </div>
                         </div>
                         <div class="col-4">
                             <h4>รางวัลที่ 6</h4>
@@ -172,10 +172,10 @@
                                 <label class="" for="win_6">ได้รับเครดิต :</label>
                                 <input required type="text" class="form-control" name="win_6" value="{{ $setting->win_6 }}">
                             </div>
-                            {{-- <div class="mb-2">
+                            <div class="mb-2">
                                 <label class="" for="win_6_rate">เปอร์เซ็น :</label>
                                 <input required type="text" class="form-control" name="win_6_rate" value="{{ $setting->win_6_rate }}">
-                            </div> --}}
+                            </div>
                         </div>
                         <div class="col-4">
                             <h4>รางวัลที่ 7</h4>
@@ -187,10 +187,10 @@
                                 <label class="" for="win_7">ได้รับเครดิต :</label>
                                 <input required type="text" class="form-control" name="win_7" value="{{ $setting->win_7 }}">
                             </div>
-                            {{-- <div class="mb-2">
+                            <div class="mb-2">
                                 <label class="" for="win_7_rate">เปอร์เซ็น :</label>
                                 <input required type="text" class="form-control" name="win_7_rate" value="{{ $setting->win_7_rate }}">
-                            </div> --}}
+                            </div>
                         </div>
                         <div class="col-4">
                             <h4>รางวัลที่ 8</h4>
@@ -202,10 +202,10 @@
                                 <label class="" for="win_8">ได้รับเครดิต :</label>
                                 <input required type="text" class="form-control" name="win_8" value="{{ $setting->win_8 }}">
                             </div>
-                            {{-- <div class="mb-2">
+                            <div class="mb-2">
                                 <label class="" for="win_8_rate">เปอร์เซ็น :</label>
                                 <input required type="text" class="form-control" name="win_8_rate" value="{{ $setting->win_8_rate }}">
-                            </div> --}}
+                            </div>
                         </div>
                         <div class="col-4">
                             <h4>รางวัลที่ 9</h4>
@@ -217,10 +217,10 @@
                                 <label class="" for="win_9">ได้รับเครดิต :</label>
                                 <input required type="text" class="form-control" name="win_9" value="{{ $setting->win_9 }}">
                             </div>
-                            {{-- <div class="mb-2">
+                            <div class="mb-2">
                                 <label class="" for="win_9_rate">เปอร์เซ็น :</label>
                                 <input required type="text" class="form-control" name="win_9_rate" value="{{ $setting->win_9_rate }}">
-                            </div> --}}
+                            </div>
                         </div>
                         <div class="col-4">
                             <h4>รางวัลที่ 10</h4>
@@ -232,10 +232,10 @@
                                 <label class="" for="win_10">ได้รับเครดิต :</label>
                                 <input required type="text" class="form-control" name="win_10" value="{{ $setting->win_10 }}">
                             </div>
-                            {{-- <div class="mb-2">
+                            <div class="mb-2">
                                 <label class="" for="win_10_rate">เปอร์เซ็น :</label>
                                 <input required type="text" class="form-control" name="win_10_rate" value="{{ $setting->win_10_rate }}">
-                            </div> --}}
+                            </div>
                         </div>
                         <div class="col-4">
                             <h4>รางวัลที่ 11</h4>
@@ -247,10 +247,10 @@
                                 <label class="" for="win_11">ได้รับเครดิต :</label>
                                 <input required type="text" class="form-control" name="win_11" value="{{ $setting->win_11 }}">
                             </div>
-                            {{-- <div class="mb-2">
+                            <div class="mb-2">
                                 <label class="" for="win_11_rate">เปอร์เซ็น :</label>
                                 <input required type="text" class="form-control" name="win_11_rate" value="{{ $setting->win_11_rate }}">
-                            </div> --}}
+                            </div>
                         </div>
                         <div class="col-4">
                             <h4>รางวัลที่ 12</h4>
@@ -262,10 +262,10 @@
                                 <label class="" for="win_12">ได้รับเครดิต :</label>
                                 <input required type="text" class="form-control" name="win_12" value="{{ $setting->win_12 }}">
                             </div>
-                            {{-- <div class="mb-2">
+                            <div class="mb-2">
                                 <label class="" for="win_12_rate">เปอร์เซ็น :</label>
                                 <input required type="text" class="form-control" name="win_12_rate" value="{{ $setting->win_12_rate }}">
-                            </div> --}}
+                            </div>
                         </div>
 
                    </div>
