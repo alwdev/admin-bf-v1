@@ -9,7 +9,7 @@ class Hashtag extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['hashtag'];
+    protected $fillable = ['hashtags'];
 
     public function articles()
     {

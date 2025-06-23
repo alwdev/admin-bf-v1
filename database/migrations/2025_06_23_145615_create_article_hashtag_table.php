@@ -16,11 +16,10 @@ return new class extends Migration
         Schema::create('article_hashtag', function (Blueprint $table) {
             $table->id();
             $table->foreignId('article_id')->constrained()->onDelete('cascade');
-            $table->foreignId('hashtag_id')->constrained('hashtags')->onDelete('cascade'); // กำหนดให้คอลัมน์นี้อ้างอิงตาราง hashtags
+            $table->foreignId('hashtag_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
-
 
 
     /**
