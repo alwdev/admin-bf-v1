@@ -61,6 +61,18 @@
                         <input class="form-control" type="file" id="image_end" name="image_end" required  value="{{ old('image_end') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
                         <x-input-error :messages="$errors->get('image_end')" class="mt-2" />
                     </div>
+                    <!-- Hashtags Field -->
+                    <div class="form-group">
+                        <label for="hashtags">เลือก Hashtags</label>
+                        <div id="hashtags-container">
+                            @foreach ($hashtags as $hashtag)
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="hashtag-{{ $hashtag->id }}" name="hashtags[]" value="{{ $hashtag->id }}">
+                                    <label class="custom-control-label" for="hashtag-{{ $hashtag->id }}">{{ $hashtag->hashtag }}</label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="category">หมวดหมู่</label>
                         <select class="form-control" id="category" name="category">

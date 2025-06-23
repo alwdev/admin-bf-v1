@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('bank_account', function (Blueprint $table) {
-            $table->string('prompay_no')->nullable();
-        });
+        // Schema::table('bank_account', function (Blueprint $table) {
+        //     $table->string('prompay_no')->nullable();
+        // });
     }
 
     /**

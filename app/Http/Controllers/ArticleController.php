@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Article;
+use App\Models\Hashtag;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,23 +18,26 @@ class ArticleController extends Controller
 
     public function create(){
         // Show the form to create a new article
+        $hashtags = Hashtag::all();
         $categories = ['บอล', 'หวย', 'ดูหนังออนไลน์', '18+','การพนัน','ข่าวในประเทศ'];
-        return view('article.create',compact('categories'));
+        return view('article.create',compact('categories','hashtags'));
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         // Validate the input
         $request->validate([
-            'title' => ['required','string','max:255'],
-            'content' => ['required','string'],
+            'title' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string'],
         ]);
 
-        $tags = null;  // Default is null
+        // บันทึก Tags (ถ้ามี)
+        $tags = null;
         if (!empty($request->tags)) {
             $tags = is_array($request->tags) ? implode(',', $request->tags) : $request->tags;
         }
 
-        // Create a new article
+        // บันทึกบทความ
         $article = new Article();
         $article->author_id = auth::user()->id;
         $article->title = $request->title;
@@ -41,72 +45,87 @@ class ArticleController extends Controller
         $article->description = $request->description;
         $article->category = $request->category;
         $article->tags = $tags;
-        if($request->image){
-            $fileName = time().'.'.$request->image->extension();
-            $request->image->move('_image', $fileName);  ////  server public_html path
-            $article->image = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
-        }
-        if($request->image_end){
-            $fileName = time().'END.'.$request->image_end->extension();
-            $request->image_end->move('_image', $fileName);  ////  server public_html path
-            $article->image_end = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
-        }
-        if(isset($request->enable)){
-            $article->status = $request->enable;
-        }else{
-            $article->status = 0;
+
+        // จัดการกับรูปภาพ
+        if ($request->image) {
+            $fileName = time() . '.' . $request->image->extension();
+            $request->image->move('_image', $fileName);
+            $article->image = "http://" . $_SERVER['HTTP_HOST'] . '/_image/' . $fileName;
         }
 
+        if ($request->image_end) {
+            $fileName = time() . 'END.' . $request->image_end->extension();
+            $request->image_end->move('_image', $fileName);
+            $article->image_end = "http://" . $_SERVER['HTTP_HOST'] . '/_image/' . $fileName;
+        }
+
+        // ตรวจสอบสถานะ
+        $article->status = $request->enable ? $request->enable : 0;
         $article->save();
 
+        // เชื่อมโยง Hashtags กับบทความ
+        if ($request->hashtags) {
+            $article->hashtags()->attach($request->hashtags);  // เชื่อมโยง Hashtags
+        }
+
         // Redirect to the articles index page
-        return redirect()->route('article.index')->with('status','200');
+        return redirect()->route('article.index')->with('status', '200');
     }
+
 
     public function edit($id){
         // Show the form to edit an article
         $article = Article::find($id);
-
+        $hashtags = Hashtag::all();
         $categories = ['บอล', 'หวย', 'ดูหนังออนไลน์', '18+','การพนัน','ข่าวในประเทศ'];
-        return view('article.edit', compact('article','categories'));
+        return view('article.edit', compact('article','categories','hashtags'));
     }
-    public function update(Request $request, $id){
-        // Validate the input
-        $request->validate([
-            'title' => ['required','string','max:255'],
-            'content' => ['required','string'],
-        ]);
-        $tags = null;  // Default is null
-        if (!empty($request->tags)) {
-            $tags = is_array($request->tags) ? implode(',', $request->tags) : $request->tags;
-        }
-        // Update the article
-        $article = Article::find($id);
-        $article->title = $request->title;
-        $article->content = $request->content;
-        $article->description = $request->description;
-        $article->category = $request->category;
-        $article->tags = $tags;
-        if($request->image){
-            $fileName = time().'.'.$request->image->extension();
-            $request->image->move('_image', $fileName);  ////  server public_html path
-            $article->image = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
-        }
-        if($request->image_end){
-            $fileName = time().'END.'.$request->image_end->extension();
-            $request->image_end->move('_image', $fileName);  ////  server public_html path
-            $article->image_end = "http://" . $_SERVER['HTTP_HOST'].'/_image/'.$fileName;
-        }
-        if(isset($request->enable)){
-            $article->status = $request->enable;
-        } else{
-            $article->status = 0;
-        }
+    public function update(Request $request, $id)
+{
+    // Validate the input
+    $request->validate([
+        'title' => ['required', 'string', 'max:255'],
+        'content' => ['required', 'string'],
+    ]);
 
-        $article->save();
-
-        return redirect()->route('article.index')->with('status','200');
+    // บันทึก Tags (ถ้ามี)
+    $tags = null;
+    if (!empty($request->tags)) {
+        $tags = is_array($request->tags) ? implode(',', $request->tags) : $request->tags;
     }
+
+    // Update the article
+    $article = Article::find($id);
+    $article->title = $request->title;
+    $article->content = $request->content;
+    $article->description = $request->description;
+    $article->category = $request->category;
+    $article->tags = $tags;
+
+    // จัดการกับรูปภาพ
+    if ($request->image) {
+        $fileName = time() . '.' . $request->image->extension();
+        $request->image->move('_image', $fileName);
+        $article->image = "http://" . $_SERVER['HTTP_HOST'] . '/_image/' . $fileName;
+    }
+
+    if ($request->image_end) {
+        $fileName = time() . 'END.' . $request->image_end->extension();
+        $request->image_end->move('_image', $fileName);
+        $article->image_end = "http://" . $_SERVER['HTTP_HOST'] . '/_image/' . $fileName;
+    }
+
+    $article->status = $request->enable ? $request->enable : 0;
+    $article->save();
+
+    // อัปเดต Hashtags
+    if ($request->hashtags) {
+        $article->hashtags()->sync($request->hashtags);  // ใช้ sync สำหรับอัปเดต Hashtags
+    }
+
+    return redirect()->route('article.index')->with('status', '200');
+}
+
 
     public function destroy($id)
     {

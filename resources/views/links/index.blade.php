@@ -1,0 +1,55 @@
+<!-- resources/views/links/index.blade.php -->
+
+@extends('layouts.guest')
+
+@section('content')
+   <!-- start page title -->
+   <div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-flex align-items-center justify-content-between">
+            <h4 class="mb-0 font-size-18">จัดการ Links และ # Hashtags</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="card">
+    <div class="card-body"> 
+        <h5>รายการ Links และ # Hashtags</h5>
+
+        <a href="{{ route('links.create') }}" class="btn btn-primary mb-3">เพิ่ม Link และ # Hashtag ใหม่</a>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Link</th>
+                    <th>Hashtags</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($links as $link)
+                    <tr>
+                        <td>{{ $link->id }}</td>
+                        <td><a href="{{ $link->link }}" target="_blank">{{ $link->link }}</a></td>
+                        <td>
+                            @foreach($link->hashtags as $hashtag)
+                                {{ $hashtag }} 
+                            @endforeach
+                        </td>
+                        <td>
+                            <a href="{{ route('links.edit', $link->id) }}" class="btn btn-warning btn-sm">แก้ไข</a>
+                            <form action="{{ route('links.destroy', $link->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">ลบ</button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+@endsection

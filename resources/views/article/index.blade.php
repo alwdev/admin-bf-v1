@@ -33,7 +33,9 @@
 </div>
 <div class="row">
     <div class="col-12 card">
-        <div class="card-body"> <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('article.create') }}">เพิ่มบทความ</a>
+        <div class="card-body"> 
+            <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('article.create') }}">เพิ่มบทความ</a>
+            <a type="button" class="btn btn-info waves-effect waves-light" href="{{ route('links.index') }}">จัดการ # Hashtag</a>
             <h4 class="card-title"></h4>
             <p class="card-subtitle mb-4">
             </p>

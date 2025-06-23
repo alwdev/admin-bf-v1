@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('partner_commissions', function (Blueprint $table) {
-            $table->id();
-            $table->integer('partner_id');
-            $table->string('amount');
-            $table->string('payment_type');
-            $table->string('payment_status')->nullable()->nullable();
-            $table->string('transaction_id')->nullable();
-            $table->string('note')->nullable();
-            $table->timestamps();
-        });
+        // Schema::create('partner_commissions', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->integer('partner_id');
+        //     $table->string('amount');
+        //     $table->string('payment_type');
+        //     $table->string('payment_status')->nullable()->nullable();
+        //     $table->string('transaction_id')->nullable();
+        //     $table->string('note')->nullable();
+        //     $table->timestamps();
+        // });
     }
 
     /**

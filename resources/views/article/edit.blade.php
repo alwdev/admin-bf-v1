@@ -68,6 +68,19 @@
                         <input class="form-control" type="file" id="image_end" name="image_end"   value="{{ old('image_end') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
                         <x-input-error :messages="$errors->get('image_end')" class="mt-2" />
                     </div>
+                    <!-- Hashtags Field -->
+                       <div class="form-group">
+                           <label for="hashtags">เลือก Hashtags</label>
+                           <div id="hashtags-container">
+                               @foreach ($hashtags as $hashtag)
+                                   <div class="custom-control custom-checkbox">
+                                       <input type="checkbox" class="custom-control-input" id="hashtag-{{ $hashtag->id }}" name="hashtags[]" value="{{ $hashtag->id }}"
+                                       @if($article->hashtags->contains($hashtag->id)) checked @endif>
+                                       <label class="custom-control-label" for="hashtag-{{ $hashtag->id }}">{{ $hashtag->hashtag }}</label>
+                                   </div>
+                               @endforeach
+                           </div>
+                       </div>
                     <div class="form-group">
                         <label for="category">หมวดหมู่</label>
                         <select class="form-control" id="category" name="category">
@@ -89,24 +102,24 @@
                         <input type="hidden" name="content" id="content">
                         <x-input-error :messages="$errors->get('content')" class="mt-2" />
                     </div>
-                     <div class="form-group">
-                    <label for="tags">Tags</label>
-                    <div id="tags-container">
-                        <input type="text" id="tag-input" class="form-control" placeholder="Add a tag">
-                        <button type="button" class="btn btn-info mt-2" id="add-tag">Add Tag</button>
-                       <input type="hidden" id="tags-input" name="tags" value="{{ old('tags', is_array($article->tags) ? implode(',', $article->tags) : '') }}">
-
+                    <!-- Tags Field -->
+                    <div class="form-group">
+                        <label for="tags">Tags</label>
+                        <div id="tags-container">
+                            <input type="text" id="tag-input" class="form-control" placeholder="Add a tag">
+                            <button type="button" class="btn btn-info mt-2" id="add-tag">Add Tag</button>
+                            <input type="hidden" id="tags-input" name="tags" value="{{ old('tags', is_array($article->tags) ? implode(',', $article->tags) : '') }}">
+                        </div>
+                        <div id="tags-list" class="mt-2">
+                            @if ($article->tags)
+                                @foreach (explode(',', $article->tags ?? '') as $tag)
+                                <div class="tag-item">
+                                    {{ $tag }} <button type="button" class="remove-tag btn btn-danger btn-sm">x</button>
+                                </div>
+                                @endforeach
+                            @endif
+                        </div>
                     </div>
-                    <div id="tags-list" class="mt-2">
-                        @if ($article->tags)
-                            @foreach (explode(',', $article->tags ?? '') as $tag)
-                            <div class="tag-item">
-                                {{ $tag }} <button type="button" class="remove-tag btn btn-danger btn-sm">x</button>
-                            </div>
-                            @endforeach
-                        @endif
-                    </div>
-                </div>
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
                         <input type="checkbox" class="custom-control-input" id="enable" name="enable" @if($article->status) checked @endif value="1">
                         <label class="custom-control-label" for="enable">Enable (เผยแพร่)</label>
@@ -297,4 +310,62 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
     </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var tags = @json(explode(',', $article->tags ?? ''));  // ใช้ค่า tags ที่มีอยู่แล้วจากฐานข้อมูล
+    const tagsInput = document.getElementById('tags-input');
+    const tagContainer = document.getElementById('tags-container');
+
+    // ฟังก์ชันที่ใช้แสดง Tags ในหน้าฟอร์ม
+    function addTagToList(tag) {
+        if (!tags.includes(tag)) {  // ตรวจสอบว่า tag นี้มีอยู่แล้วใน tags หรือไม่
+            const tagDiv = document.createElement('div');
+            tagDiv.classList.add('tag-item');
+            tagDiv.innerHTML = tag + ' <button type="button" class="remove-tag btn btn-danger btn-sm">x</button>';
+            tagContainer.appendChild(tagDiv);
+            tags.push(tag);  // เพิ่ม tag ไปใน tags
+        }
+    }
+
+    // แสดง Tags ที่มีอยู่แล้วเมื่อหน้าโหลด
+    tags.forEach(function(tag) {
+        if (tag) addTagToList(tag);
+    });
+
+    // ฟังก์ชันการเพิ่ม Tag ใหม่
+    document.getElementById('add-tag').addEventListener('click', function () {
+        const tagValue = document.getElementById('tag-input').value.trim();
+        if (tagValue && !tags.includes(tagValue)) {
+            addTagToList(tagValue);
+            document.getElementById('tag-input').value = '';  // ล้าง input หลังจากเพิ่ม tag
+            updateTagsInput();  // อัปเดตค่าใน hidden input
+        }
+    });
+
+    // ฟังก์ชันการลบ Tag
+    document.querySelectorAll('.remove-tag').forEach(function (button) {
+        button.addEventListener('click', function () {
+            this.closest('.tag-item').remove();
+            updateTagsInput();  // อัปเดต hidden input หลังจากลบ tag
+        });
+    });
+
+    // อัปเดต hidden input เมื่อมีการเปลี่ยนแปลง tags
+    function updateTagsInput() {
+        const tagItems = document.querySelectorAll('.tag-item');
+        const updatedTags = [];
+        tagItems.forEach(function (item) {
+            updatedTags.push(item.innerText.replace(' x', '').trim());
+        });
+        tagsInput.value = updatedTags.join(',');  // อัปเดต hidden input ด้วย tags ที่ถูกต้อง
+    }
+
+    // อัปเดต hidden input เมื่อฟอร์มถูกส่ง
+    document.getElementById('article-form').addEventListener('submit', function () {
+        updateTagsInput();  // อัปเดตค่า tags ก่อนส่งฟอร์ม
+    });
+});
+
+</script>
 @endsection
