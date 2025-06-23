@@ -1,5 +1,3 @@
-<!-- resources/views/links/index.blade.php -->
-
 @extends('layouts.guest')
 
 @section('content')
@@ -34,9 +32,7 @@
                         <td>{{ $link->id }}</td>
                         <td><a href="{{ $link->link }}" target="_blank">{{ $link->link }}</a></td>
                         <td>
-                            @foreach($link->hashtags as $hashtag)
-                                {{ $hashtag }} 
-                            @endforeach
+                            {{ $link->hashtag }}
                         </td>
                         <td>
                             <a href="{{ route('links.edit', $link->id) }}" class="btn btn-warning btn-sm">แก้ไข</a>

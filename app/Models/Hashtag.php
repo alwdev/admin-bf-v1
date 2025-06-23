@@ -9,8 +9,7 @@ class Hashtag extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['hashtags'];
-
+    protected $fillable = ['link', 'hashtag'];
     public function articles()
     {
         return $this->belongsToMany(Article::class, 'article_hashtag');

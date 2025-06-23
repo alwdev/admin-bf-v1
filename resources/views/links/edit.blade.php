@@ -1,5 +1,3 @@
-<!-- resources/views/links/edit.blade.php -->
-
 @extends('layouts.guest')
 
 @section('content')
@@ -17,7 +15,7 @@
 
         <form action="{{ route('links.update', $link->id) }}" method="POST">
             @csrf
-            @method('PUT')
+            @method('PUT')  <!-- ใช้ @method('PUT') เพื่อบอกว่าฟอร์มนี้เป็นการแก้ไข -->
 
             <div class="form-group">
                 <label for="link">Link</label>
@@ -27,17 +25,15 @@
                 @enderror
             </div>
 
-            <div class="form-group">
-                <label for="hashtags">Hashtags (ใส่หลายๆ # แยกด้วยเครื่องหมายคอมมา)</label>
-                @foreach($link->hashtags as $hashtag)
-                    <input type="text" name="hashtags[]" class="form-control mb-2" value="{{ old('hashtags.' . $loop->index, $hashtag) }}">
-                @endforeach
-                @error('hashtags')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
-                @enderror
-            </div>
+        <div class="form-group">
+    <label for="hashtags">Hashtags</label>
+    <input type="text" name="hashtags" class="form-control" value="{{ old('hashtags', $link->hashtag) }}" placeholder="ใส่ # Hashtag (คั่นด้วยเครื่องหมายจุลภาค)" required>
+    @error('hashtags')
+        <div class="alert alert-danger mt-2">{{ $message }}</div>
+    @enderror
+</div>
 
-            <button type="submit" class="btn btn-primary mt-3">บันทึกการเปลี่ยนแปลง</button>
+            <button type="submit" class="btn btn-success mt-3">บันทึก</button>
             <a href="{{ route('links.index') }}" class="btn btn-secondary mt-3 ml-3">ยกเลิก</a>
         </form>
     </div>

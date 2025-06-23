@@ -4,7 +4,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Link;
+use App\Models\Hashtag;
 use Illuminate\Http\Request;
 
 class HashtagController extends Controller
@@ -12,7 +12,7 @@ class HashtagController extends Controller
 
     public function index()
     {
-        $links = Link::all();  // ดึงรายการ Links ทั้งหมดจากฐานข้อมูล
+        $links = Hashtag::all();  // ดึงรายการ Links ทั้งหมดจากฐานข้อมูล
         return view('links.index', compact('links')); // ส่งข้อมูลไปที่หน้า index
     }
 
@@ -27,39 +27,53 @@ class HashtagController extends Controller
     {
         $request->validate([
             'link' => 'required|url',
-            'hashtags' => 'required|array', // รับค่าจากฟอร์มที่เป็น array
-            'hashtags.*' => 'string', // ตรวจสอบให้แน่ใจว่าแต่ละค่าใน array เป็น string
+            'hashtags' => 'required|string', // ต้องเป็น string
         ]);
-
         // สร้างลิงก์พร้อมกับ Hashtags
-        Link::create([
+        Hashtag::create([
             'link' => $request->link,
-            'hashtags' => $request->hashtags, // เก็บ Hashtags เป็น array
+            'hashtag' => $request->hashtags, // เก็บ Hashtags เป็น array ในรูปแบบ JSON
         ]);
 
         return redirect()->route('links.index')->with('success', 'Link and Hashtags added successfully');
     }
 
+
     public function edit($id)
     {
-        $link = Link::findOrFail($id);
-        return view('links.edit', compact('link'));
+        $link = Hashtag::findOrFail($id);  // ค้นหาข้อมูลที่ต้องการแก้ไขจากฐานข้อมูล
+        return view('links.edit', compact('link'));  // ส่งข้อมูลไปที่หน้าฟอร์มแก้ไข
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
             'link' => 'required|url',
-            'hashtags' => 'required|array',
-            'hashtags.*' => 'string',
+            'hashtags' => 'required|string',  // ตรวจสอบให้ hashtags เป็น string
         ]);
 
-        $link = Link::findOrFail($id);
+        $link = Hashtag::findOrFail($id);  // ค้นหาข้อมูลที่ต้องการแก้ไขจากฐานข้อมูล
+
+        // อัปเดตข้อมูลในฐานข้อมูล
         $link->update([
             'link' => $request->link,
-            'hashtags' => $request->hashtags,
+            'hashtag' => $request->hashtags,  // แปลง array ของ hashtags กลับเป็น JSON
         ]);
 
         return redirect()->route('links.index')->with('success', 'Link and Hashtags updated successfully');
     }
+
+    public function destroy($id)
+    {
+        // ค้นหาข้อมูลที่ต้องการลบ
+        $link = Hashtag::findOrFail($id);
+
+        // ลบข้อมูล
+        $link->delete();
+
+        // ส่งข้อความสำเร็จกลับไปยังหน้ารายการ
+        return redirect()->route('links.index')->with('success', 'Link and Hashtags deleted successfully');
+    }
+
+
 }

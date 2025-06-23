@@ -11,8 +11,4 @@ class Link extends Model
     use HasFactory;
 
     protected $fillable = ['link', 'hashtags'];
-
-    protected $casts = [
-        'hashtags' => 'array', // แปลง field 'hashtags' เป็น array
-    ];
 }
