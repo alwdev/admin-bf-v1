@@ -62,17 +62,41 @@
                         <x-input-error :messages="$errors->get('image_end')" class="mt-2" />
                     </div>
                     <!-- Hashtags Field -->
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="hashtags">เลือก Hashtags</label>
-                        <div id="hashtags-container">
+                        <div id="hashtags-container" class="row">
                             @foreach ($hashtags as $hashtag)
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="hashtag-{{ $hashtag->id }}" name="hashtags[]" value="{{ $hashtag->id }}">
-                                    <label class="custom-control-label" for="hashtag-{{ $hashtag->id }}">{{ $hashtag->hashtag }}</label>
+                                <div class="col-md-3 col-6 mb-3"> <!-- ใช้ Bootstrap grid เพื่อจัดแถว -->
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="hashtag-{{ $hashtag->id }}" name="hashtags[]" value="{{ $hashtag->id }}">
+                                        <label class="custom-control-label" for="hashtag-{{ $hashtag->id }}">{{ $hashtag->hashtag }}</label>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
-                    </div>
+                    </div> --}}
+ <!-- Hashtags Field -->
+                        <div class="form-group">
+                            <label for="hashtags">เลือก Hashtags</label>
+                            <div id="hashtags-container">
+                                @foreach ($groupedHashtags as $link => $hashtags)
+                                    <div class="card mt-3">
+                                        <div class="card-header">
+                                            <h5>{{ $link }}</h5> <!-- แสดง link ของแต่ละกลุ่ม -->
+                                        </div>
+                                        <div class="card-body">
+                                            @foreach ($hashtags as $hashtag)
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" id="hashtag-{{ $hashtag->id }}" name="hashtags[]" value="{{ $hashtag->id }}">
+                                                    <label class="custom-control-label" for="hashtag-{{ $hashtag->id }}">{{ $hashtag->hashtag }}</label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
                     <div class="form-group">
                         <label for="category">หมวดหมู่</label>
                         <select class="form-control" id="category" name="category">

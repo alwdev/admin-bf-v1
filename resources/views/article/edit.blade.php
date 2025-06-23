@@ -69,18 +69,29 @@
                         <x-input-error :messages="$errors->get('image_end')" class="mt-2" />
                     </div>
                     <!-- Hashtags Field -->
-                       <div class="form-group">
-                           <label for="hashtags">เลือก Hashtags</label>
-                           <div id="hashtags-container">
-                               @foreach ($hashtags as $hashtag)
-                                   <div class="custom-control custom-checkbox">
-                                       <input type="checkbox" class="custom-control-input" id="hashtag-{{ $hashtag->id }}" name="hashtags[]" value="{{ $hashtag->id }}"
-                                       @if($article->hashtags->contains($hashtag->id)) checked @endif>
-                                       <label class="custom-control-label" for="hashtag-{{ $hashtag->id }}">{{ $hashtag->hashtag }}</label>
-                                   </div>
-                               @endforeach
-                           </div>
-                       </div>
+<div class="form-group"> 
+    <label for="hashtags">เลือก Hashtags</label>
+    <div id="hashtags-container">
+        @foreach ($groupedHashtags as $link => $hashtags)
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5>{{ $link }}</h5> <!-- แสดง link ของแต่ละกลุ่ม -->
+                </div>
+                <div class="card-body">
+                    @foreach ($hashtags as $hashtag)
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="hashtag-{{ $hashtag->id }}" name="hashtags[]" value="{{ $hashtag->id }}"
+                                @if($article->hashtags->contains($hashtag->id)) checked @endif>
+                            <label class="custom-control-label" for="hashtag-{{ $hashtag->id }}">{{ $hashtag->hashtag }}</label>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endforeach
+    </div>
+</div>
+
+
                     <div class="form-group">
                         <label for="category">หมวดหมู่</label>
                         <select class="form-control" id="category" name="category">

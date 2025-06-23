@@ -19,8 +19,9 @@ class ArticleController extends Controller
     public function create(){
         // Show the form to create a new article
         $hashtags = Hashtag::all();
+        $groupedHashtags = $hashtags->groupBy('link');  // จัดกลุ่ม Hashtags ตาม link
         $categories = ['บอล', 'หวย', 'ดูหนังออนไลน์', '18+','การพนัน','ข่าวในประเทศ'];
-        return view('article.create',compact('categories','hashtags'));
+        return view('article.create',compact('categories','hashtags','groupedHashtags'));
     }
 
     public function store(Request $request)
@@ -77,8 +78,9 @@ class ArticleController extends Controller
         // Show the form to edit an article
         $article = Article::find($id);
         $hashtags = Hashtag::all();
+        $groupedHashtags = $hashtags->groupBy('link');  // จัดกลุ่ม Hashtags ตาม link
         $categories = ['บอล', 'หวย', 'ดูหนังออนไลน์', '18+','การพนัน','ข่าวในประเทศ'];
-        return view('article.edit', compact('article','categories','hashtags'));
+        return view('article.edit', compact('article','categories','hashtags','groupedHashtags'));
     }
     public function update(Request $request, $id)
 {
