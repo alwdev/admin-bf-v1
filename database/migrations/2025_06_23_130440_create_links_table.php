@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('links', function (Blueprint $table) {
             $table->id();
             $table->string('link');
-            $table->json('hashtags')->nullable(); // เก็บ Hashtags เป็น JSON array
+            $table->text('hashtags')->nullable(); 
             $table->timestamps();
         });
     }
