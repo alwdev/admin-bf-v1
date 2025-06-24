@@ -19,7 +19,6 @@ yarn-error.log
 /.vscode
 storage/logs/laravel.log
 *.log
-/public/images
 /public/image
 /public/slip
 /public/_images

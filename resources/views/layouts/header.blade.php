@@ -36,27 +36,64 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
                     <a class="dropdown-item d-flex align-items-center justify-content-between"
+                        href="{{ route('profile.edit') }}">Profile</a>
+                    <a class="dropdown-item d-flex align-items-center justify-content-between" href="javascript:void(0)"
+                        onclick="$('#from-logout').submit()">
+                        <span>Log Out</span>
+                        <form action="{{ route('logout') }}" id="from-logout" method="post">@csrf</form>
+                    </a>
+                </div>
+            </div>
+            <div class="dropdown d-inline-block">
+                <button type="button" class="btn header-item waves-effect" id="page-header-lang-dropdown"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    @if(session()->has('locale'))
+                        @if(session()->get('locale') == 'en')
+                            <img class="rounded-circle header-profile-user" src="/images/auth/icon-en.svg"alt="">
+                            <span class="d-none d-sm-inline-block ml-1">EN</span>
+                        @elseif(session()->get('locale') == 'th')
+                            <img class="rounded-circle header-profile-user" src="/images/auth/icon-th.svg"alt="">
+                            <span class="d-none d-sm-inline-block ml-1">TH</span>
+                        @else
+                            <img class="rounded-circle header-profile-user" src="/images/auth/icon-en.svg"alt="">
+                            <span class="d-none d-sm-inline-block ml-1">EN</span>
+                        @endif
+                    @else
+                    @endif
+
+                    <i class="mdi mdi-chevron-down d-none d-sm-inline-block"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    {{-- <a class="dropdown-item d-flex align-items-center justify-content-between"
                     href="{{ route('profile.edit') }}">Profile</a>
                     <a class="dropdown-item d-flex align-items-center justify-content-between"
                     href="javascript:void(0)" onclick="$('#from-logout').submit()">
                     <span>Log Out</span>
                     <form action="{{ route('logout') }}" id="from-logout" method="post">@csrf</form>
+                    </a> --}}
+                    <a class="dropdown-item d-flex align-items-center justify-content-between"
+                    href="{{ route('change.lang', ['lang' => 'th']) }}" data-icon="/images/thailand.svg">
+                        <img src="/images/auth/icon-th.svg" alt="">
+                        <span>ภาษาไทย</span>
                     </a>
+                    <a class="dropdown-item d-flex align-items-center justify-content-between"
+                    href="{{ route('change.lang', ['lang' => 'en']) }}"  data-icon="/images/united-kingdom.svg">
+						<img src="/images/auth/icon-en.svg" alt="">
+						<span>English</span>
+					</a>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
 
-    <script src = "https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.1/howler.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.1/howler.js"></script>
 <script>
-
     var count_event_lose = 0;
     var count_event = 0;
     if (sessionStorage.getItem("count_event") === null) {
         sessionStorage.setItem("count_event", 0);
-    }else {
+    } else {
         count_event_lose = sessionStorage.getItem("count_event");
     }
 
@@ -67,34 +104,33 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             url: '{{ route('report.count_last_tranfer') }}',
-            success: function (data) {
-            if(data){
-                $('#tran_count').text('รายการ ฝาก/ถอน รออนุมัติ : '+data);
-                // console.log(count_event_lose);
-                if(parseInt(data) != 0){
-                    if(parseInt(data) != count_event_lose && count_event < parseInt(data)){
-                        var alarm = new Howl({
-                            src: ["{{ asset('noti.mp3?002') }}"],
-                            autoplay: false,
-                            loop: false,
-                            // volume: 0.5,
-                        });
-                        alarm.play();
-                        count_event = count_event + 1;
+            success: function(data) {
+                if (data) {
+                    $('#tran_count').text('รายการ ฝาก/ถอน รออนุมัติ : ' + data);
+                    // console.log(count_event_lose);
+                    if (parseInt(data) != 0) {
+                        if (parseInt(data) != count_event_lose && count_event < parseInt(data)) {
+                            var alarm = new Howl({
+                                src: ["{{ asset('noti.mp3?002') }}"],
+                                autoplay: false,
+                                loop: false,
+                                // volume: 0.5,
+                            });
+                            alarm.play();
+                            count_event = count_event + 1;
+                        }
+                        count_event_lose = parseInt(data);
+                        sessionStorage.setItem("count_event", parseInt(data));
+                    } else {
+                        sessionStorage.setItem("count_event", 0);
+                        count_event_lose = 0;
+                        count_event = 0;
                     }
-                    count_event_lose = parseInt(data);
-                    sessionStorage.setItem("count_event", parseInt(data));
-                }else{
-                    sessionStorage.setItem("count_event", 0);
-                    count_event_lose = 0;
-                    count_event = 0;
+                } else {
+                    console.log('error');
                 }
-            }else{
-                console.log('error');
-            }
             }
         });
 
     }, 2000);
-
 </script>

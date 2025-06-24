@@ -209,3 +209,5 @@ Route::get('/Single_Member_Report_all_Provider/{username}/{start_day}/{end_day}'
 
 
 Route::resource('links', HashtagController::class);
+
+Route::get('lang', [App\Http\Controllers\LanguageController::class, 'change'])->name("change.lang");

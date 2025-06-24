@@ -1,0 +1,48 @@
+// AOS SETTING
+AOS.init();
+
+
+$(document).ready(function(){
+    $('.language').click(function(e){
+        e.preventDefault();
+        $(this).next('.listLanguage').toggleClass('show');
+    });
+
+    $('.listLanguage a').click(function(e){
+        e.preventDefault();
+        var selectedIcon = $(this).data('icon');
+        var selectedLang = $(this).data('lang');
+        $('.language img').attr('src', selectedIcon);
+        $('.listLanguage').removeClass('show');
+    });
+
+    $(document).click(function(e) {
+        if (!$(e.target).closest('.language, .listLanguage').length) {
+            $('.listLanguage').removeClass('show');
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.services');
+    const tabDetails = document.querySelectorAll('.tabDetail');
+
+    tabs.forEach((tab, index) => {
+        tab.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            // Remove active class from all tab details
+            tabDetails.forEach(detail => {
+                detail.classList.remove('active');
+                detail.style.display = 'none'; // Ensure display is set to none after transition
+            });
+
+            // Add active class to the corresponding tab detail
+            const targetDetail = document.querySelector(`#tabDetail${index + 1}`);
+            targetDetail.style.display = 'block'; // Set display to block before adding active class
+            setTimeout(() => {
+                targetDetail.classList.add('active');
+            }, 20); // Slight delay to allow display change to take effect
+        });
+    });
+});
