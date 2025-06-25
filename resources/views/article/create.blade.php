@@ -26,12 +26,12 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">เพิ่มบทความ</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.Add an article')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="{{ route('article.index') }}">บทความ</a></li>
-                    <li class="breadcrumb-item active">เพิ่มบทความ</li>
+                    <li class="breadcrumb-item"><a href="{{ route('article.index') }}">{{__('main.article')}}</a></li>
+                    <li class="breadcrumb-item active">{{__('main.Add an article')}}</li>
                 </ol>
             </div>
         </div>
@@ -52,12 +52,12 @@
                         <x-input-error :messages="$errors->get('title')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="image">รูปภาพ(หัว) (ขนาด 900x400px)</label>
+                        <label for="image">{{__('main.Image(head) (size 900x400px)')}}</label>
                         <input class="form-control" type="file" id="image" name="image" required  value="{{ old('image') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
                         <x-input-error :messages="$errors->get('image')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="image_end">รูปภาพ(ท้าย) (ขนาด 900x400px)</label>
+                        <label for="image_end">{{__('main.Image (bottom) (size 900x400px)')}}</label>
                         <input class="form-control" type="file" id="image_end" name="image_end" required  value="{{ old('image_end') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
                         <x-input-error :messages="$errors->get('image_end')" class="mt-2" />
                     </div>
@@ -77,7 +77,7 @@
                     </div> --}}
  <!-- Hashtags Field -->
                         <div class="form-group">
-                            <label for="hashtags">เลือก Hashtags</label>
+                            <label for="hashtags">Hashtags</label>
                             <div id="hashtags-container">
                                 @foreach ($groupedHashtags as $link => $hashtags)
                                     <div class="card mt-3">
@@ -98,9 +98,9 @@
                         </div>
 
                     <div class="form-group">
-                        <label for="category">หมวดหมู่</label>
+                        <label for="category">{{__('main.Category')}}</label>
                         <select class="form-control" id="category" name="category">
-                            <option value="">-- เลือกหมวดหมู่ --</option>
+                            <option value="">-- {{__('main.Select a category')}} --</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category }}">{{ $category }}</option>
                             @endforeach
@@ -108,12 +108,12 @@
                         <x-input-error :messages="$errors->get('category')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="description">ย่อหน้า</label>
+                        <label for="description">{{__('main.paragraph')}}</label>
                         <textarea name="description" class="form-control" id="description" rows="5"></textarea>
                         <x-input-error :messages="$errors->get('description')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="content">บทความ</label>
+                        <label for="content">{{__('main.article')}}</label>
                         {{-- Quill Editor --}}
                         <div id="editor-container"></div>
                         <input type="hidden" name="content" id="content">
@@ -131,10 +131,10 @@
 
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
                         <input type="checkbox" class="custom-control-input" id="enable" name="enable" checked value="1">
-                        <label class="custom-control-label" for="enable">Enable (เผยแพร่)</label>
+                        <label class="custom-control-label" for="enable">Enable ({{__('main.Publish')}})</label>
                     </div>
                     <div class="mb-3 text-center">
-                        <button class="btn btn-primary btn-block" type="submit"> บันทึก </button>
+                        <button class="btn btn-primary btn-block" type="submit"> {{__('main.save')}} </button>
                     </div>
                 </form>
             </div>
@@ -183,7 +183,7 @@
                     [{ 'color': [] }, { 'background': [] }], // Text color and background
                     ['video'], // Embed video
                 ],
-                 
+
         imageResize: {
           displaySize: true,  // Show image size when resizing
         },

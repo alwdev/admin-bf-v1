@@ -10,34 +10,34 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">จัดการพนักงาน</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.Manage employees')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
-                    <li class="breadcrumb-item active">จัดการพนักงาน</li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                    <li class="breadcrumb-item active">{{__('main.Manage employees')}}</li>
                 </ol>
             </div>
-            
+
         </div>
     </div>
-</div>     
+</div>
 <!-- end page title -->
 
         <div class="row">
             <div class="card-header text-right" style="background: transparent;">
-              
+
             </div>
             <div class="col-12 card">
-           
+
                     <div class="card-body">
                         @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
-                        <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('manageuser.addnewuser') }}">เพิ่มพนักงาน</a>
+                        <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('manageuser.addnewuser') }}">{{__('main.Add employees')}}</a>
                         @endif
                         <h4 class="card-title"></h4>
                         <p class="card-subtitle mb-4">
                         </p>
-        
+
                         <table id="basic-datatable" class="table m-10 table-bordered"
                         data-filter-control="true"
                         data-toggle="table"
@@ -53,20 +53,20 @@
                                     <th data-field="level"  data-sortable="true">level</th>
                                     <th data-sortable="true">created_at</th>
                                 </tr>
-                            </thead>  
+                            </thead>
                             <tbody>
-                                @foreach ($alluser as $user_)                            
+                                @foreach ($alluser as $user_)
                                 <tr>
                                     <td>{{ $user_->name }}</td>
                                     <td>{{ $user_->email }}</td>
                                     <td>@if($user_->level== 1) Admin @elseif($user_->level == 2) Staff @endif </td>
                                     <td>
                                         {{ $user_->created_at->format('d/m/Y H:i:s') }}
-                                        <a href="{{ route('manageuser.show',$user_->safeId) }}" type="button" class="btn btn-secondary btn-sm waves-effect waves-light"><i class="bx bx-slider"></i> ตั้งค่าสิทธิการใช้งาน</a>
-                                        <button type="button" class="btn btn-info btn-sm waves-effect waves-light" onclick="confirmPass('{{ $user_->id }}')"><i class="bx bx-lock-open-alt"></i> ดูรหัสผ่าน</button>
-                                        <button type="button" class="btn btn-success btn-sm waves-effect waves-light" onclick="changePass('{{ $user_->id }}')"><i class="bx bx-edit-alt"></i> เปลียนรหัสผ่าน</button>
+                                        <a href="{{ route('manageuser.show',$user_->safeId) }}" type="button" class="btn btn-secondary btn-sm waves-effect waves-light"><i class="bx bx-slider"></i> {{__('main.Set permissions')}}</a>
+                                        <button type="button" class="btn btn-info btn-sm waves-effect waves-light" onclick="confirmPass('{{ $user_->id }}')"><i class="bx bx-lock-open-alt"></i> {{__('main.View password')}}</button>
+                                        <button type="button" class="btn btn-success btn-sm waves-effect waves-light" onclick="changePass('{{ $user_->id }}')"><i class="bx bx-edit-alt"></i> {{__('main.Change password')}}</button>
                                         @if( json_decode(auth()->user()->permissions)->manageuser > 3  )
-                                        <button type="button" class="btn btn-danger btn-sm waves-effect waves-light" onclick="deluser('{{ $user_->id }}')"><i class="bx bx-trash"></i> ลบ</button>
+                                        <button type="button" class="btn btn-danger btn-sm waves-effect waves-light" onclick="deluser('{{ $user_->id }}')"><i class="bx bx-trash"></i> {{__('managemember.delete')}}</button>
                                         <form method="post" action="{{ route('manageuser.deluser') }}" id="del{{ $user_->id }}">
                                             @csrf
                                             <input type="hidden" name="userid" value="{{ $user_->id }}">
@@ -77,7 +77,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-        
+
                     </div> <!-- end card body-->
 
             </div><!-- end col-->
@@ -154,7 +154,7 @@
       }).queue([
         {
           title: 'แจ้งเตือน',
-          text: 'กรุณายืนยันรหัสผ่านของคุณเพือดำเนินการต่อ.'
+          text: '{{__('main.Please confirm your password to continue.')}}'
         }
       ]).then( function (result) {
 
@@ -190,10 +190,10 @@
 				}
 			});
 
-  
+
             }
         }
-      }) 
+      })
     }
     function changePass(userid) {
         Swal.mixin({
@@ -205,7 +205,7 @@
         }).queue([
             {
             title: 'แจ้งเตือน',
-            text: 'กรุณายืนยันรหัสผ่านของคุณเพือดำเนินการต่อ.'
+            text: '{{__('main.Please confirm your password to continue.')}}'
             }
         ]).then( function (result) {
             if (result.value) {
@@ -273,7 +273,7 @@
 
                 }
             }
-      }) 
+      })
     }
 
     function deluser(userid) {
@@ -311,11 +311,11 @@
                     }
 				}
 			});
-                
-                      
+
+
             }
         }
-      }) 
+      })
     }
     </script>
 @endsection

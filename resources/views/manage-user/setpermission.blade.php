@@ -16,18 +16,18 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">จัดการพนักงาน</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.Manage employees')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
-                    <li class="breadcrumb-item active">ตั้งค่าสิทธิการใช้งาน</li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                    <li class="breadcrumb-item active">{{__('main.Set permissions')}}</li>
                 </ol>
             </div>
-            
+
         </div>
     </div>
-</div>     
+</div>
 <!-- end page title -->
 
 <div class="row">
@@ -35,7 +35,7 @@
         <div class="card">
             <div class="card-body">
 
-                <h4 class="card-title">ข้อมูล</h4>
+                <h4 class="card-title">{{__('main.details')}}</h4>
                 {{-- <p class="card-subtitle mb-4">Create horizontal forms with the grid by adding the <code>.row</code> class to form groups and using the <code>.col-*-*</code> classes to specify the width of your labels and controls. Be sure to add <code>.col-form-label</code> to your <code>&lt;label&gt;</code>s as well so they’re vertically centered with their associated form controls.</p> --}}
                 <form method="post" action="{{ route('manageuser.updateuser') }}" class="mt-6 space-y-6">
                     @csrf
@@ -45,22 +45,22 @@
                         <x-text-input id="name" name="name" type="text" class="mt-1 block w-full form-control" :value="old('name', $user->name)" required autofocus autocomplete="name" />
                         <x-input-error class="mt-2" :messages="$errors->get('name')" />
                     </div>
-            
+
                     <div class="mb-2">
                         <x-input-label for="email" :value="__('Email')" />
                         <x-text-input id="email" name="email" type="email" class="mt-1 block w-full  form-control" :value="old('email', $user->email)" required autocomplete="username" />
                         <x-input-error class="mt-2" :messages="$errors->get('email')" />
-            
+
                         @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
                             <div>
                                 <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
                                     {{ __('Your email address is unverified.') }}
-            
+
                                     <button form="send-verification" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
                                         {{ __('Click here to re-send the verification email.') }}
                                     </button>
                                 </p>
-            
+
                                 @if (session('status') === 'verification-link-sent')
                                     <p class="mt-2 font-medium text-sm text-green-600 dark:text-green-400">
                                         {{ __('A new verification link has been sent to your email address.') }}
@@ -69,7 +69,7 @@
                             </div>
                         @endif
                     </div>
-            
+
                      <div class="mb-3">
                         <label for="inputEmail3" class="col-form-label">ตำแหน่ง</label>
 
@@ -82,9 +82,9 @@
                             <option value="2">Staff</option>
                         @endif
                     </select>
-          
+
                     </div>
-            
+
                     <div class="form-group mb-0 mr-0 justify-content-end row">
                         <button class="btn btn-primary waves-effect waves-light ">{{ __('Save') }}</button>
                     </div>
@@ -102,24 +102,24 @@
             <input type="hidden" name="userid" value="{{ $user->safe_id }}" />
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">จัดการสิทธิพนักงาน</h4>
+                    <h4 class="card-title">{{__('main.Set permissions')}}</h4>
                     <p class="card-subtitle mb-4"></p>
                     <div class="table-responsive mb-3">
                         <table class="table table-bordered mb-0">
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>เพจ</th>
-                                    <th>ซ่อน</th>
-                                    <th>เรียกดู</th>
-                                    <th>แก้ไข</th>
-                                    <th>ลบ</th>
+                                    <th>{{__('main.Page')}}</th>
+                                    <th>{{__('main.hide')}}</th>
+                                    <th>{{__('main.show')}}</th>
+                                    <th>{{__('main.edit')}}</th>
+                                    <th>{{__('managemember.delete')}}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <th scope="row">1</th>
-                                    <td>จัดการสมาชิก</td>
+                                    <td>{{__('main.member_manage')}}</td>
                                     <td>
                                         <input type="radio" name="member" value="1" @if($user->permissions->member == 1) @checked(true) @endif>
                                     </td>
@@ -135,7 +135,7 @@
                                 </tr>
                                 <tr>
                                     <th scope="row">2</th>
-                                    <td>จัดการพนักงาน</td>
+                                    <td>{{__('main.Manage employees')}}</td>
                                     <td>
                                         <input type="radio" name="manageuser" value="1" @if($user->permissions->manageuser == 1) @checked(true) @endif>
                                     </td>
@@ -151,7 +151,7 @@
                                 </tr>
                                 <tr>
                                     <th scope="row">3</th>
-                                    <td>รายการฝากถอน</td>
+                                    <td>{{__('main.transfer_list')}}</td>
                                     <td>
                                         <input type="radio" name="transfer" value="1" @if($user->permissions->transfer == 1) @checked(true) @endif>
                                     </td>
@@ -167,7 +167,7 @@
                                 </tr>
                                 <tr>
                                     <th scope="row">4</th>
-                                    <td>รายงาน</td>
+                                    <td>{{__('main.report')}}</td>
                                     <td>
                                         <input type="radio" name="report" value="1" @if($user->permissions->report == 1) @checked(true) @endif>
                                     </td>
@@ -185,7 +185,7 @@
                         </table>
                     </div>
                     <div class="form-group mb-0 mr-0 justify-content-end row">
-                        <button type="submit" class="btn btn-primary waves-effect waves-light">บันทึก</button>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light">{{__('main.save')}}</button>
                     </div>
                 </div>
                 <!-- end card-body-->
@@ -227,7 +227,7 @@
         })
 
         @endif
-        
+
         @if (session('status') === 'profile-updated')
             Swal.fire({
                 position: 'top-end',

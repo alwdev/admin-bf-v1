@@ -15,7 +15,6 @@ return[
     'lock'=>'ล็อค',
     'unlock' => 'ปลดล็อค',
     'delete'=>'ลบ',
-
     'change_password'=>'แก้ไขรหัสผ่าน',
     'Enter_a_new_password'=>'ระบุรหัสผ่านใหม่',
     'Edit_balance'=>'แก้ไขยอดเงิน',
@@ -25,7 +24,6 @@ return[
     'Bank_Code'=>'รหัสธนาคาร',
     'Account_number'=>'เลขที่บัญชี',
     'Account_Name'=>'ชื่อบัญชี',
-
     'Financial_history'=>'ประวัติการเงิน',
     'from'=>'จาก',
     'to'=>'ถึง',
@@ -33,5 +31,5 @@ return[
     'Not_accepting_promotions'=>'ไม่รับโปรโมชั่น',
     'Recipient_Bank_Account'=>'บัญชีธนาคารผู้รับ',
     'slip'=>'สลิป',
-    'note'=>'หมายเหตุ'
+    'note'=>'หมายเหตุ',
 ];

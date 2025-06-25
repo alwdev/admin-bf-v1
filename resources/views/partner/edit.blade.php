@@ -10,12 +10,12 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">ตั้งค่า</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.setting')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>
-                    <li class="breadcrumb-item active">ตั้งค่า</li>
+                    <li class="breadcrumb-item active">{{__('main.setting')}}</li>
                 </ol>
             </div>
 
@@ -36,7 +36,7 @@
                     @csrf
                     <input type="hidden" name="id" value="{{ $data->id }}">
                     <div class="form-group">
-                        <label for="slug_name">รหัส</label>
+                        <label for="slug_name">{{__('main.code')}}</label>
                         <input class="form-control" type="text" id="slug_name" name="slug_name" value="{{ $data->slug_name }}" required value="{{ old('slug_name') }}" placeholder="รหัส" readonly>
                         <x-input-error :messages="$errors->get('slug_name')" class="mt-2" />
                     </div>
@@ -46,27 +46,27 @@
                         <x-input-error :messages="$errors->get('url')" class="mt-2" />
                     </div> --}}
                     <div class="form-group">
-                        <label for="rate">ส่วนแบ่ง %</label>
-                        <input class="form-control" type="text" id="rate" value="{{ $data->rate }}" name="rate" onkeypress="return isNumberKey(event)" required value="{{ old('rate') }}" placeholder="ส่วนแบ่ง %">
+                        <label for="rate"> %</label>
+                        <input class="form-control" type="text" id="rate" value="{{ $data->rate }}" name="rate" onkeypress="return isNumberKey(event)" required value="{{ old('rate') }}" placeholder=" %">
                         <x-input-error :messages="$errors->get('rate')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="contact_name">ชื่อพันธมิตร</label>
-                        <input class="form-control" type="text" id="contact_name" value="{{ $data->contact_name }}" name="contact_name" required value="{{ old('contact_name') }}" placeholder="ชื่อพันธมิตร">
+                        <label for="contact_name">{{__('dashboard.name')}}</label>
+                        <input class="form-control" type="text" id="contact_name" value="{{ $data->contact_name }}" name="contact_name" required value="{{ old('contact_name') }}" placeholder="{{__('dashboard.name')}}">
                         <x-input-error :messages="$errors->get('contact_name')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="contact_phonenumber">เบอร์โทรศัพท์</label>
-                        <input class="form-control" type="text" id="contact_phonenumber" value="{{ $data->contact_phonenumber }}" name="contact_phonenumber" value="{{ old('contact_phonenumber') }}" placeholder="เบอร์โทรศัพท์">
+                        <label for="contact_phonenumber">{{__('main.telephone number')}}</label>
+                        <input class="form-control" type="text" id="contact_phonenumber" value="{{ $data->contact_phonenumber }}" name="contact_phonenumber" value="{{ old('contact_phonenumber') }}" placeholder="{{__('main.telephone number')}}">
                         <x-input-error :messages="$errors->get('contact_phonenumber')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="contact_email">อีเมล</label>
-                        <input class="form-control" type="text" id="contact_email" value="{{ $data->contact_email }}" name="contact_email"  value="{{ old('contact_email') }}" placeholder="อีเมล">
+                        <label for="contact_email">email</label>
+                        <input class="form-control" type="text" id="contact_email" value="{{ $data->contact_email }}" name="contact_email"  value="{{ old('contact_email') }}" placeholder="emai">
                         <x-input-error :messages="$errors->get('contact_email')" class="mt-2" />
                     </div>
                     <div class="mb-3 text-center">
-                        <button class="btn btn-primary btn-block" type="submit"> บันทึก </button>
+                        <button class="btn btn-primary btn-block" type="submit"> {{__('main.save')}} </button>
                     </div>
                 </form>
             </div>

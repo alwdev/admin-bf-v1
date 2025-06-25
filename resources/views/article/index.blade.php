@@ -13,12 +13,12 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">บทความ</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.article')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
-                    <li class="breadcrumb-item active">บทความ</li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                    <li class="breadcrumb-item active">{{__('main.article')}}</li>
                 </ol>
             </div>
 
@@ -33,9 +33,9 @@
 </div>
 <div class="row">
     <div class="col-12 card">
-        <div class="card-body"> 
-            <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('article.create') }}">เพิ่มบทความ</a>
-            <a type="button" class="btn btn-info waves-effect waves-light" href="{{ route('links.index') }}">จัดการ # Hashtag</a>
+        <div class="card-body">
+            <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('article.create') }}">{{__('main.Add an article')}}</a>
+            <a type="button" class="btn btn-info waves-effect waves-light" href="{{ route('links.index') }}">{{__('managemember.manage')}} # Hashtag</a>
             <h4 class="card-title"></h4>
             <p class="card-subtitle mb-4">
             </p>
@@ -51,10 +51,10 @@
     <thead class="table-light">
         <tr>
             <th data-sortable="true">Title</th>
-            <th>หมวดหมู่</th>
-            <th>ภาพ</th>
-            <th data-sortable="true">วันที่สร้าง</th>
-            <th data-sortable="true">สถานะ</th>
+            <th>{{__("main.Category")}}</th>
+            <th>{{__('main.picture')}}</th>
+            <th data-sortable="true">{{__('main.Creation Date')}}</th>
+            <th data-sortable="true">{{__('dashboard.status')}}</th>
             <th>Actions</th> <!-- เพิ่มคอลัมน์สำหรับปุ่มลบ -->
         </tr>
     </thead>
@@ -73,14 +73,14 @@
                 <td>{{ $item->created_at->format('d-m-Y') }}</td>
                 <td>
                     @if($item->status == 1)
-                        <span class="badge badge-success">ใช้งาน</span>
+                        <span class="badge badge-success">{{__('main.Use')}}</span>
                     @else
-                        <span class="badge badge-danger">ไม่ใช้งาน</span>
+                        <span class="badge badge-danger">{{__('main.Not in use')}}</span>
                     @endif
                 </td>
                 <td>
                     <!-- ปุ่มลบ -->
-                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteArticle({{ $item->id }})">ลบ</button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteArticle({{ $item->id }})">{{__('managemember.delete')}}</button>
                     {{-- <form action="{{ route('article.destroy', $item->id) }}" method="POST" id="form_del{{ $item->id }}" style="display:inline;">
                         @csrf
                         @method('DELETE')
@@ -147,12 +147,12 @@
 
         function approveDeposit(form){
             Swal.fire({
-                    title: 'แจ้งเตือน',
-                    text: "ต้องการอัพเดตสถานะหรือไม่?",
+                    title: 'warning',
+                    text: '{{__('main.Do you want to change your status?')}}',
                     type: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'ใช่',
-                    cancelButtonText: 'ไม่, ยกเลิก!',
+                    confirmButtonText: '{{__('main.yes')}}',
+                    cancelButtonText: '{{__('main.no')}}, !',
                     confirmButtonClass: 'btn btn-success mt-2',
                     cancelButtonClass: 'btn btn-danger ml-2 mt-2',
                     buttonsStyling: false
@@ -170,12 +170,12 @@
     function deleteArticle(id) {
         // SweetAlert ยืนยันการลบ
         Swal.fire({
-            title: 'คุณแน่ใจหรือไม่?',
-            text: "บทความนี้จะถูกลบอย่างถาวร!",
+            title: 'Are you sure?',
+            text: '{{__('main.This article will be permanently deleted!')}}',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'ใช่, ลบเลย!',
-            cancelButtonText: 'ยกเลิก',
+            confirmButtonText: '{{__('main.Yes, delete it!')}}',
+            cancelButtonText: '{{__('main.cancel')}}',
             reverseButtons: true
         }).then((result) => {
 
@@ -186,7 +186,7 @@
                 var form = document.createElement('form');
                 form.method = 'POST';
                 form.action = '/article/' + id;
-                
+
                 var csrfToken = document.createElement('input');
                 csrfToken.type = 'hidden';
                 csrfToken.name = '_token';

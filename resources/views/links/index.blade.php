@@ -5,17 +5,17 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">จัดการ Links และ # Hashtags</h4>
+            <h4 class="mb-0 font-size-18">{{__('managemember.manage')}} Links & # Hashtags</h4>
         </div>
     </div>
 </div>
 <!-- end page title -->
 
 <div class="card">
-    <div class="card-body"> 
-        <h5>รายการ Links และ # Hashtags</h5>
+    <div class="card-body">
+        <h5>Links & # Hashtags</h5>
 
-        <a href="{{ route('links.create') }}" class="btn btn-primary mb-3">เพิ่ม Link และ # Hashtag ใหม่</a>
+        <a href="{{ route('links.create') }}" class="btn btn-primary mb-3">{{__('main.Add')}} Link & # Hashtag</a>
 
         <table class="table table-bordered">
             <thead>
@@ -35,11 +35,11 @@
                             {{ $link->hashtag }}
                         </td>
                         <td>
-                            <a href="{{ route('links.edit', $link->id) }}" class="btn btn-warning btn-sm">แก้ไข</a>
+                            <a href="{{ route('links.edit', $link->id) }}" class="btn btn-warning btn-sm">{{__('main.edit')}}</a>
                             <form action="{{ route('links.destroy', $link->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">ลบ</button>
+                                <button type="submit" class="btn btn-danger btn-sm">{{__('managemember.delete')}}</button>
                             </form>
                         </td>
                     </tr>

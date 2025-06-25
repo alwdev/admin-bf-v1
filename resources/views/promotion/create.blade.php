@@ -11,18 +11,18 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">เพิ่มโปรโมชั่น</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.Add Promotion')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>
-                    <li class="breadcrumb-item active">เพิ่มโปรโมชั่น</li>
+                    <li class="breadcrumb-item active">{{__('main.Add Promotion')}}</li>
                 </ol>
             </div>
-            
+
         </div>
     </div>
-</div>     
+</div>
 <!-- end page title -->
 <div class="row">
     <div class="col-12">
@@ -33,50 +33,50 @@
                 <form class="p-2" action="{{ route('promotion.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
-                        <label for="name">โปรโมชั่น</label>
+                        <label for="name">{{__('main.promotion')}}</label>
                         <input class="form-control" type="text" id="name" name="name" required value="{{ old('name') }}">
                         <x-input-error :messages="$errors->get('name')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="deposit">ฝาก(บาท)</label>
+                        <label for="deposit">{{__('dashboard.deposit')}}</label>
                         <input class="form-control"  type="number" id="deposit" name="deposit" required onkeypress="return isNumberKey(event)"  value="{{ old('deposit') }}">
                         <x-input-error :messages="$errors->get('deposit')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="bonus">โบนัส(บาท)</label>
+                        <label for="bonus">Bonus</label>
                         <input class="form-control"  type="number" id="bonus" name="bonus" required onkeypress="return isNumberKey(event)"  value="{{ old('bonus') }}">
                         <x-input-error :messages="$errors->get('bonus')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="turnover">เทิร์นโอเวอร์(บาท)</label>
+                        <label for="turnover">{{__('main.Turnover')}}</label>
                         <input class="form-control float-number"  type="text" id="turnover" name="turnover" required   value="{{ old('turnover') }}">
                         <x-input-error :messages="$errors->get('turnover')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="withdraw_limit">ถอนได้สูงสุด (บาท)</label>
+                        <label for="withdraw_limit">{{__('main.Maximum withdrawal')}}</label>
                         <input class="form-control"  type="number" id="withdraw_limit" name="withdraw_limit" required onkeypress="return isNumberKey(event)"  value="{{ old('withdraw_limit') }}">
                         <x-input-error :messages="$errors->get('withdraw_limit')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="image">รูปภาพ (ขนาด 400x400px)</label>
+                        <label for="image">{{__('main.Image (size 400x400px)')}}</label>
                         <input class="form-control" type="file" id="image" name="image" required  value="{{ old('image') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
                         <x-input-error :messages="$errors->get('image')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="description">รายละเอียด</label>
+                        <label for="description">{{__('main.details')}}</label>
                         <textarea class="form-control" id="description" rows="15" name="description">{{ old('description') }}</textarea>
                         <x-input-error :messages="$errors->get('description')" class="mt-2" />
                     </div>
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
                         <input type="checkbox" class="custom-control-input" id="is_newuser" name="is_newuser"  value="1">
-                        <label class="custom-control-label" for="is_newuser">เฉพาะผู้เล่นใหม่</label>
+                        <label class="custom-control-label" for="is_newuser">{{__('main.For new players only')}}</label>
                     </div>
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
                         <input type="checkbox" class="custom-control-input" id="enable" name="enable" checked value="1">
-                        <label class="custom-control-label" for="enable">Enable (เผยแพร่)</label>
+                        <label class="custom-control-label" for="enable">Enable ({{__('main.Publish')}})</label>
                     </div>
                     <div class="mb-3 text-center">
-                        <button class="btn btn-primary btn-block" type="submit"> บันทึก </button>
+                        <button class="btn btn-primary btn-block" type="submit"> {{__('main.save')}} </button>
                     </div>
                 </form>
             </div>
@@ -115,7 +115,7 @@
                     $('#bank_logo').val($('option:selected').attr('data-img'));
                 }
             });
-            
+
         });
 
         function isNumberKey(evt) {

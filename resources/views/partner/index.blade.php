@@ -10,12 +10,12 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">จัดการพันธมิตร</h4>
+            <h4 class="mb-0 font-size-18">{{__('managemember.manage')}} {{__('main.partners')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
-                    <li class="breadcrumb-item active">จัดการพันธมิตร</li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                    <li class="breadcrumb-item active">{{__('managemember.manage')}} {{__('main.partners')}}</li>
                 </ol>
             </div>
 
@@ -38,7 +38,7 @@
                                         <i class="bx bx-dollar m-0 h3 text-primary"></i>
                                     </span>
                                 </div>
-                                <h6 class="text-muted text-uppercase mt-0">ยอดฝาก</h6>
+                                <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.deposit_amount')}}</h6>
                                 <h3 class="my-3">0 ฿</h3>
                                 {{-- <span class="badge badge-soft-primary mr-1"> +11% </span> <span class="text-muted">From previous period</span> --}}
                             </div>
@@ -53,7 +53,7 @@
                                         <i class="bx bx-dollar-circle m-0 h3 text-primary"></i>
                                     </span>
                                 </div>
-                                <h6 class="text-muted text-uppercase mt-0">ยอดถอน</h6>
+                                <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.withdraw_amount')}}</h6>
                                 <h3 class="my-3">0 ฿</h3>
                                 {{-- <span class="badge badge-soft-primary mr-1"> -29% </span> <span class="text-muted">This Month</span> --}}
                             </div>
@@ -63,7 +63,7 @@
 
                     <div class="card-body">
                         @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
-                        <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('partner.add') }}">เพิ่มพันธมิตร</a>
+                        <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('partner.add') }}">{{__('main.Add')}} {{__('main.partners')}}</a>
                         @endif
                         <h4 class="card-title"></h4>
                         <p class="card-subtitle mb-4">
@@ -79,14 +79,14 @@
                         data-url="">
                         <thead  class="table-light">
                                 <tr>
-                                    <th data-field="contact_name" data-sortable="true">ชื่อพันธมิตร</th>
-                                    <th data-field="contact_phonenumber"  data-sortable="true">เบอร์โทรศัพท์</th>
-                                    <th data-field="slug_name"  data-sortable="true">รหัส</th>
+                                    <th data-field="contact_name" data-sortable="true">{{__('dashboard.name')}}</th>
+                                    <th data-field="contact_phonenumber"  data-sortable="true">{{__('main.telephone number')}}</th>
+                                    <th data-field="slug_name"  data-sortable="true">{{__('main.code')}}</th>
                                     <th data-field="url"  data-sortable="true">URL</th>
-                                    <th data-sortable="true">วันที่ลงทะเบียน</th>
-                                    <th data-sortable="true">รายได้รวม</th>
-                                    <th>รายงาน</th>
-                                    <th>แก้ไข</th>
+                                    <th data-sortable="true">{{__('main.Creation Date')}}</th>
+                                    <th data-sortable="true">{{__('dashboard.Total_Amount')}}</th>
+                                    <th>{{__('main.report')}}</th>
+                                    <th>{{__('main.edit')}}</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -17,7 +17,7 @@
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
                     <li class="breadcrumb-item active">Ads</li>
                 </ol>
             </div>
@@ -28,12 +28,12 @@
 <!-- end page title -->
 <div class="card-header" style="background: transparent;">
     {{-- @if( json_decode(auth()->user()->permissions)->manageuser > 2  ) --}}
-   
+
     {{-- @endif --}}
 </div>
 <div class="row">
     <div class="col-12 card">
-        <div class="card-body"> <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('promotion_ads.create') }}">เพิ่ม</a>
+        <div class="card-body"> <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('promotion_ads.create') }}">{{__('main.Add')}}</a>
             <h4 class="card-title"></h4>
             <p class="card-subtitle mb-4">
             </p>
@@ -49,9 +49,9 @@
                 <thead  class="table-light">
                     <tr>
                         <th></th>
-                        <th data-field="title"  data-sortable="true">โปรโมชั่น</th>
-                        <th data-field="updated_at">อัพเดทล่าสุด</th>
-                        <th>สถานะ</th>
+                        <th data-field="title"  data-sortable="true">{{__('main.promotion')}}</th>
+                        <th data-field="updated_at">{{__('main.Latest_update')}}</th>
+                        <th>{{__('dashboard.status')}}</th>
                         {{-- @if( json_decode(auth()->user()->permissions)->transfer > 2  ) --}}
                         <th data-sortable="true"></th>
                         {{-- @endif --}}
@@ -67,14 +67,14 @@
                             <td>{{ $item->updated_at->format('d/m/Y H:i:s') }}</td>
                             <td>
                                 @if($item->enable)
-                                <span class="badge badge-pill badge-success">เผยแพร่</span>
+                                <span class="badge badge-pill badge-success">{{__('main.Publish')}}</span>
                                 @else
-                                <span class="badge badge-pill badge-secondary">ดราฟ</span>
+                                <span class="badge badge-pill badge-secondary">{{__('main.Draft')}}</span>
                                 @endif
                             </td>
                             <td class="text-right">
-                                <a href="{{ route('promotion_ads.edit',$item->id) }}" type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="width: 80px;"><i class="bx bx-edit-alt" ></i> แก้ไข</a>
-                                <button type="button" class="btn btn-danger btn-sm waves-effect waves-light" onclick="approveDeposit('#formdel{{ $item->id }}')"  style="width: 80px;"><i class="bx bx-trash"></i> ลบ</button>
+                                <a href="{{ route('promotion_ads.edit',$item->id) }}" type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="width: 80px;"><i class="bx bx-edit-alt" ></i> {{__('main.edit')}}</a>
+                                <button type="button" class="btn btn-danger btn-sm waves-effect waves-light" onclick="approveDeposit('#formdel{{ $item->id }}')"  style="width: 80px;"><i class="bx bx-trash"></i> {{__('managemember.delete')}}</button>
                                 <form method="post" action="{{ route('promotion_ads.destroy') }}" id="formdel{{ $item->id }}">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $item->id }}">

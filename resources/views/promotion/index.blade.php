@@ -13,12 +13,12 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">โปรโมชั่น</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.promotion')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
-                    <li class="breadcrumb-item active">โปรโมชั่น</li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                    <li class="breadcrumb-item active">{{__('main.promotion')}}</li>
                 </ol>
             </div>
 
@@ -28,12 +28,12 @@
 <!-- end page title -->
 <div class="card-header" style="background: transparent;">
     {{-- @if( json_decode(auth()->user()->permissions)->manageuser > 2  ) --}}
-   
+
     {{-- @endif --}}
 </div>
 <div class="row">
     <div class="col-12 card">
-        <div class="card-body"> <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('promotion.create') }}">เพิ่มโปรโมชั่น</a>
+        <div class="card-body"> <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('promotion.create') }}">{{__('main.Add Promotion')}}</a>
             <h4 class="card-title"></h4>
             <p class="card-subtitle mb-4">
             </p>
@@ -48,13 +48,13 @@
                 data-url="">
                 <thead  class="table-light">
                     <tr>
-                        <th data-field="name" data-sortable="true">โปรโมชั่น</th>
-                        <th data-field="deposit" data-sortable="true">ฝาก (บาท)</th>
-                        <th data-field="bonus" data-sortable="true">โบนัส (บาท)</th>
-                        <th data-field="turnover" data-sortable="true">เทิร์นโอเวอร์ (เท่า)</th>
-                        <th data-field="is_newuser" data-sortable="true">เฉพาะผู้เล่นใหม่</th>
-                        <th data-field="action" data-sortable="true">เผยแพร่</th>
-                        <th data-sortable="true">วันที่สร้าง</th>
+                        <th data-field="name" data-sortable="true">{{__('main.promotion')}}</th>
+                        <th data-field="deposit" data-sortable="true">{{__('dashboard.deposit_amount')}}</th>
+                        <th data-field="bonus" data-sortable="true">Bonus</th>
+                        <th data-field="turnover" data-sortable="true">{{__('main.Turnover (times)')}}</th>
+                        <th data-field="is_newuser" data-sortable="true">{{__('main.For new players only')}}</th>
+                        <th data-field="action" data-sortable="true">{{__('main.Publish')}}</th>
+                        <th data-sortable="true">{{__('main.Creation Date')}}</th>
                         {{-- @if( json_decode(auth()->user()->permissions)->transfer > 2  ) --}}
                         <th data-sortable="true"></th>
                         {{-- @endif --}}
@@ -66,26 +66,26 @@
                             <td>{{ $item->name }}</td>
                             <td>{{ $item->deposit }}</td>
                             <td>{{ $item->bonus }}</td>
-                            <td>{{ $item->turnover }}</td>  
+                            <td>{{ $item->turnover }}</td>
                             <td>
                                 @if($item->is_newuser == 1)
-                                    <span class="badge badge-success">ใช่</span>
+                                    <span class="badge badge-success">{{__('main.yes')}}</span>
                                 @else
-                                    <span class="badge badge-danger">ไม่ใช่</span>
-                                @endif 
-                            </td>  
+                                    <span class="badge badge-danger">{{__('main.no')}}</span>
+                                @endif
+                            </td>
                             <td>
                                 @if($item->enable == 1)
-                                    <span class="badge badge-success">เผยแพร่</span>
+                                    <span class="badge badge-success">{{__('main.Publish')}}</span>
                                 @else
-                                    <span class="badge badge-secondary">ไม่เผยแพร่</span>
-                                @endif 
-                            </td>  
+                                    <span class="badge badge-secondary">{{__('main.Not published')}}</span>
+                                @endif
+                            </td>
                             <td>{{ $item->created_at->format('d/m/Y H:i:s') }}</td>
                             {{-- @if( json_decode(auth()->user()->permissions)->transfer > 2  ) --}}
                             <td class="text-right">
-                                <a href="{{ route('promotion.edit',$item->id) }}" type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="width: 80px;"><i class="bx bx-edit-alt" ></i> แก้ไข</a>
-                                <button type="button" class="btn btn-danger btn-sm waves-effect waves-light" onclick="approveDeposit('#formdel{{ $item->id }}')"  style="width: 80px;"><i class="bx bx-trash"></i> ลบ</button>
+                                <a href="{{ route('promotion.edit',$item->id) }}" type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="width: 80px;"><i class="bx bx-edit-alt" ></i> {{__('main.edit')}}</a>
+                                <button type="button" class="btn btn-danger btn-sm waves-effect waves-light" onclick="approveDeposit('#formdel{{ $item->id }}')"  style="width: 80px;"><i class="bx bx-trash"></i> {{__('managemember.delete')}}</button>
                                 <form method="post" action="{{ route('promotion.destroy') }}" id="formdel{{ $item->id }}">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $item->id }}">
@@ -151,12 +151,12 @@
 
         function approveDeposit(form){
             Swal.fire({
-                    title: 'แจ้งเตือน',
-                    text: "ต้องการอัพเดตสถานะหรือไม่?",
+                    title: 'warning',
+                    text: '{{__('main.Do you want to change your status?')}}',
                     type: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'ใช่',
-                    cancelButtonText: 'ไม่, ยกเลิก!',
+                    confirmButtonText: '{{__('main.yes')}}',
+                    cancelButtonText: '{{__('main.no')}} !',
                     confirmButtonClass: 'btn btn-success mt-2',
                     cancelButtonClass: 'btn btn-danger ml-2 mt-2',
                     buttonsStyling: false

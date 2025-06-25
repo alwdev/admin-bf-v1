@@ -11,18 +11,18 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">เพิ่ม Ads</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.Add')}} Ads</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>
-                    <li class="breadcrumb-item active">เพิ่ม Ads</li>
+                    <li class="breadcrumb-item active">{{__('main.Add')}} Ads</li>
                 </ol>
             </div>
-            
+
         </div>
     </div>
-</div>     
+</div>
 <!-- end page title -->
 <div class="row">
     <div class="col-12">
@@ -33,26 +33,26 @@
                 <form class="p-2" action="{{ route('promotion_ads.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
-                        <label for="title">โปรโมชั่น</label>
+                        <label for="title">{{__('main.promotion')}}</label>
                         <input class="form-control" type="text" id="title" name="title" required value="{{ old('title') }}">
                         <x-input-error :messages="$errors->get('title')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="image">รูปภาพ</label>
+                        <label for="image">{{__('main.picture')}}</label>
                         <input class="form-control" type="file" id="image" name="image" required  value="{{ old('image') }}"  accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps">
                         <x-input-error :messages="$errors->get('image')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="description">รายละเอียด</label>
+                        <label for="description">{{__('main.details')}}</label>
                         <textarea class="form-control" id="description" rows="15" name="description">{{ old('description') }}</textarea>
                         <x-input-error :messages="$errors->get('description')" class="mt-2" />
                     </div>
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
                         <input type="checkbox" class="custom-control-input" id="enable" name="enable" checked value="1">
-                        <label class="custom-control-label" for="enable">Enable (เผยแพร่)</label>
+                        <label class="custom-control-label" for="enable">Enable ({{__('main.Publish')}})</label>
                     </div>
                     <div class="mb-3 text-center">
-                        <button class="btn btn-primary btn-block" type="submit"> บันทึก </button>
+                        <button class="btn btn-primary btn-block" type="submit"> {{__('main.save')}} </button>
                     </div>
                 </form>
             </div>
@@ -91,7 +91,7 @@
                     $('#bank_logo').val($('option:selected').attr('data-img'));
                 }
             });
-            
+
         });
 
         function isNumberKey(evt) {
