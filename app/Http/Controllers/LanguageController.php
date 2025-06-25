@@ -14,9 +14,8 @@ class LanguageController extends Controller
      */
     public function change(Request $request)
     {
-        // dd($request);
         $lang = $request->lang;
-
+        // dd($lang);
         if (!in_array($lang, ['en', 'th','lo'])) {
             abort(400);
         }

@@ -15,12 +15,12 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">รายชื่อสมาชิก</h4>
+            <h4 class="mb-0 font-size-18">{{__('managemember.Member_list')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
-                    <li class="breadcrumb-item active">รายชื่อสมาชิก</li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">/</a></li>
+                    <li class="breadcrumb-item active">{{__('managemember.Member_list')}}</li>
                 </ol>
             </div>
 
@@ -46,20 +46,20 @@
                 data-url="">
                     <thead>
                         <tr>
-                            <th data-field="member_id" data-filter-control="input" data-sortable="true">รหัสผู้ใช้</th>
-                            <th data-field="username" data-filter-control="input" data-sortable="true">ชื่อผู้ใช้</th>
+                            <th data-field="member_id" data-filter-control="input" data-sortable="true">{{__('managemember.user_code')}}</th>
+                            <th data-field="username" data-filter-control="input" data-sortable="true">{{__('managemember.user_name')}}</th>
                             @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
-                            <th>รหัสผ่าน</th>
+                            <th>{{__('managemember.password')}}</th>
                             @endif
-                            <th data-field="fullname" data-filter-control="input" data-sortable="true">ชื่อ - นามสกุล</th>
-                            <th data-sortable="true">ยอดเงิน</th>
-                            <th>บัญชี</th>
-                            <th data-sortable="true">วันที่สมัคร</th>
+                            <th data-field="fullname" data-filter-control="input" data-sortable="true">{{__('managemember.name_lastname')}}</th>
+                            <th data-sortable="true">{{__('managemember.amount')}}</th>
+                            <th>{{__('managemember.BankAccount')}}</th>
+                            <th data-sortable="true">{{__('managemember.Registration_date')}}</th>
                             <th></th>
                             @if( json_decode(auth()->user()->permissions)->member > 2  )
-                            <th>จัดการ</th>
+                            <th>{{__('managemember.manage')}}</th>
                             @endif
-                            <th>แก้ไขโดย</th>
+                            <th>{{__('managemember.Edited_by')}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,12 +77,12 @@
                             </td> --}}
                             <td class="text-right">
                                 @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
-                                <button type="button" class="btn btn-primary btn-sm waves-effect waves-light"  data-toggle="modal" data-target="#editPass{{ $key }}"><i class="bx bx-edit-alt"></i>เปลี่ยน</button>
+                                <button type="button" class="btn btn-primary btn-sm waves-effect waves-light"  data-toggle="modal" data-target="#editPass{{ $key }}"><i class="bx bx-edit-alt"></i>{{__('managemember.change')}}</button>
                                 <div class="modal fade" id="editPass{{ $key }}" tabindex="-1" aria-labelledby="editPass{{ $key }}Label" aria-hidden="true">
                                     <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="editPass{{ $key }}Label">แก้ไขรหัส</h5>
+                                          <h5 class="modal-title" id="editPass{{ $key }}Label">{{__('managemember.change_password')}}</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
@@ -92,7 +92,7 @@
                                             @csrf
                                             <input type="hidden" name="id" value="{{ $member->id }}" required>
                                             <div class="form-group  text-left">
-                                                <label for="">ระบุรหัสใหม่</label>
+                                                <label for="">{{__('managemember.Enter_a_new_password')}}</label>
                                                 <input type="text" name="password" class="form-control" required>
                                             </div>
 
@@ -121,7 +121,7 @@
                                     <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="editBalance{{ $key }}Label">แก้ไขยอดเงิน</h5>
+                                          <h5 class="modal-title" id="editBalance{{ $key }}Label">{{__('managemember.Edit_balance')}}</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
@@ -132,16 +132,16 @@
                                             <input type="hidden" name="member_id" value="{{ $member->id }}" required>
                                             <input type="hidden" name="user_id" value="{{ Auth::user()->id }}" required>
                                             <div class="form-group  text-left">
-                                                <label for="">จำนวนเงิน</label>
+                                                <label for="">{{__('managemember.amount')}}</label>
                                                 <input type="text" name="balance" class="form-control" onkeypress="return isNumberKey(event)" required>
                                             </div>
                                             <div class="form-group text-left">
-                                                <label for="">ประเภท</label>
+                                                <label for="">{{__('dashboard.type')}}</label>
                                                 <select name="type" class="form-control" required>
                                                     <option value=""></option>
-                                                    <option value="เติมมือ">เติมมือ</option>
-                                                    <option value="คืนลูกค้า">คืนลูกค้า</option>
-                                                    <option value="แก้เครดิต">แก้เครดิต</option>
+                                                    <option value="เติมมือ">{{__('dashboard.Add_normal')}}</option>
+                                                    <option value="คืนลูกค้า">{{__('dashboard.Customer_Refund')}}</option>
+                                                    <option value="แก้เครดิต">{{__('managemember.Edit_balance')}}</option>
                                                 </select>
                                             </div>
 
@@ -159,13 +159,13 @@
                                 @endif
                             </td>
                             <td>
-                                <button href="่javascript:void(0);" data-toggle="modal" data-target="#exampleModal{{ $key }}" type="button" class="btn btn-secondary  btn-sm waves-effect waves-light">บัญชี</button>
+                                <button href="่javascript:void(0);" data-toggle="modal" data-target="#exampleModal{{ $key }}" type="button" class="btn btn-secondary  btn-sm waves-effect waves-light">{{__('managemember.BankAccount')}}</button>
                                 <!-- Modal -->
                                 <div class="modal fade" id="exampleModal{{ $key }}" tabindex="-1" aria-labelledby="exampleModal{{ $key }}Label" aria-hidden="true">
                                     <div class="modal-dialog">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="exampleModal{{ $key }}Label">รายละเอียดบัญชี</h5>
+                                          <h5 class="modal-title" id="exampleModal{{ $key }}Label">{{__('managemember.Account_details')}}</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
@@ -237,7 +237,7 @@
                                     <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="updateBankAccount{{ $key }}Label">แก้ไขบัญชีธนาคาร</h5>
+                                          <h5 class="modal-title" id="updateBankAccount{{ $key }}Label">{{__('managemember.Edit_bank_account')}}</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
@@ -251,7 +251,7 @@
                                                 <div class="form-group">
                                                     <input type="hidden" value="" name="bank_logo" id="bank_logo">
                                                     <select name="bank_name" id="bank_name" required class="form-control" onchange="$('#bank_code{{ $key }}').val(this.options[this.selectedIndex].getAttribute('code'))">
-                                                        <option value="">เลือกธนาคาร</option>
+                                                        <option value="">{{__('managemember.Select_a_bank')}}</option>
                                                         <option code="true-wallet" value="TrueMoney Wallet" @if($member->bank_name == "TrueMoney Wallet") selected @endif>TrueMoney Wallet</option>
                                                         <option code="bank-1" value="ธนาคารกรุงเทพ" @if($member->bank_name == "ธนาคารกรุงเทพ") selected @endif>ธนาคารกรุงเทพ</option>
                                                         <option code="bank-0" value="ธนาคารกสิกรไทย" @if($member->bank_name == "ธนาคารกสิกรไทย") selected @endif>ธนาคารกสิกรไทย</option>
@@ -271,19 +271,19 @@
                                             </div>
                                             <div class="col-12  mb-3">
                                                 <div class="form-group">
-                                                    <label for="">รหัสธนาคาร</label>
+                                                    <label for="">{{__('managemember.Bank_Code')}}</label>
                                                     <input type="text" class="form-control w-100" id="bank_code{{ $key }}" name="bank_code" value="{{ $member->bank_code }}" readonly autofocus autocomplete="bank_code" required>
                                                 </div>
                                             </div>
                                             <div class="col-12  mb-3">
                                                 <div class="form-group">
-                                                    <label for="">เลขที่บัญชี</label>
+                                                    <label for="">{{__('managemember.Account_number')}}</label>
                                                     <input type="text" class="form-control w-100" name="bank_number" value="{{ $member->bank_number }}"  onkeypress="return isNumber(event)" autofocus autocomplete="bank_number" required>
                                                 </div>
                                             </div>
                                             <div class="col-12  mb-3">
                                                 <div class="form-group">
-                                                    <label for="">ชื่อบัญชี</label>
+                                                    <label for="">{{__('managemember.BankAccount')}}</label>
                                                     <input type="text" class="form-control w-100" name="account_name"  value="{{ $member->account_name }}" autofocus autocomplete="account_name" required>
                                                 </div>
                                             </div>
@@ -298,11 +298,11 @@
                                   </div>
                             </td>
                             <td>{{ $member->created_at->format('d/m/Y H:i:s') }}</td>
-                            <td><a href="{{ route('managemember.historyTransfer',$member->id) }}" type="button" class="btn btn-success  btn-sm waves-effect waves-light"><i class="bx bx-bitcoin"></i> การเงิน</a></td>
+                            <td><a href="{{ route('managemember.historyTransfer',$member->id) }}" type="button" class="btn btn-success  btn-sm waves-effect waves-light"><i class="bx bx-bitcoin"></i> {{__('managemember.finance')}}</a></td>
                             @if( json_decode(auth()->user()->permissions)->member > 2  )
                             <td>
-                                <button type="button" class="btn btn-warning btn-sm waves-effect waves-light" onclick="lock('{{ $member->id }}','{{ Auth::user()->id }}','{{ $member->username }}','{{ $member->enable }}')" style="width: 80px;"><i class="bx bx-edit-alt" ></i>{{ $member->enable == 1 ? 'ล็อค' : 'ปลดล็อค'  }}</button>
-                                <button type="button" class="btn btn-danger btn-sm waves-effect waves-light" onclick="delete_member('{{ $member->id }}','{{ Auth::user()->id }}','{{ $member->username }}')" style="width: 80px;"><i class="bx bx-edit-alt"></i>ลบ</button>
+                                <button type="button" class="btn btn-warning btn-sm waves-effect waves-light" onclick="lock('{{ $member->id }}','{{ Auth::user()->id }}','{{ $member->username }}','{{ $member->enable }}')" style="width: 80px;"><i class="bx bx-edit-alt" ></i>{{ $member->enable == 1 ? __('managemember.lock') : __('managemember.unlock')  }}</button>
+                                <button type="button" class="btn btn-danger btn-sm waves-effect waves-light" onclick="delete_member('{{ $member->id }}','{{ Auth::user()->id }}','{{ $member->username }}')" style="width: 80px;"><i class="bx bx-edit-alt"></i>{{__('managemember.delete')}}</button>
                             </td>
                             @endif
                             <td>{{ App\Http\Controllers\ManageMemberController::staff_detail($member->update_by) }}</td>

@@ -19,7 +19,7 @@ return [
     'report' => 'รายงาน',
     'report_transfer' => 'รายงานการฝาก-ถอน',
     'report_edit_credit' => 'รายงานการแก้ไขยอดเงิน',
-    'report_error_transfert' => 'รายงานกการฝากผิดพลาด',
+    'report_error_transfert' => 'รายงานการฝากผิดพลาด',
     'book_bank' => 'สมุดบัญชีธนาคาร',
     'game_cate' => 'ค่ายเกมส์',
     'promotion' => 'โปรโมชั่น',
@@ -34,6 +34,22 @@ return [
     'member_level_setting' => 'ตั้งค่าระดับสมาชิก',
     'wheel_setting' => 'ตั้งค่าวงล้อ',
     'continuous_deposit_setting' => 'ตั้งค่าการฝากต่อเนื่อง',
-    'coupon_setting' => 'ตั้งค่าคูปอง'
-
+    'coupon_setting' => 'ตั้งค่าคูปอง',
+    'Add_Report'=>'เพิ่มรายงาน',
+    'Add_bank_account'=>'เพิ่มสมุดบัญชี',
+    'Manage_balance'=>'จัดการยอดเงิน',
+    'in'=>'เข้า',
+    'out'=>'ออก',
+    'close'=>'ปิด',
+    'save'=>'บันทึก',
+    'Latest_update'=>'อัพเดทล่าสุด',
+    'show'=>'แสดง',
+    'hide'=>'ซ่อน',
+    'edit'=>'แก้ไข',
+    'Small_picture'=>'รูปเล็ก',
+    'code'=>'รหัส',
+    'Category'=>'หมวดหมู่',
+    'Edit sequence'=>'แก้ไขลำดับ',
+    'order'=>'ลำดับ',
+    'Do you want to change your status?'=>'ต้องการเปลี่ยนแปลงสถานะหรือไม่?'
 ];

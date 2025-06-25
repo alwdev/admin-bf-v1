@@ -20,12 +20,12 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">รายงานฝากผิดพลาด</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.report_error_transfert')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
-                    <li class="breadcrumb-item active">รายงานฝากผิดพลาด</li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                    <li class="breadcrumb-item active">{{__('main.report_error_transfert')}}</li>
                 </ol>
             </div>
 
@@ -36,7 +36,7 @@
 
 <div class="row">
     <div class="col-12 card">
-    
+
         <div class="card-body">
             @if (session('status'))
                <div class="alert alert-success" role="alert">
@@ -51,13 +51,13 @@
             <p class="card-subtitle mb-4">
             </p>
 
-            <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="javascript:void(0);" data-toggle="modal" data-target="#staticBackdrop">เพิ่มรายงาน</a>
+            <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="javascript:void(0);" data-toggle="modal" data-target="#staticBackdrop">{{__('main.Add_Report')}}</a>
             <!-- Modal -->
             <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">รายงานฝากผิดพลาด</h1>
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">{{__('main.report_error_transfert')}}</h1>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">X</button>
                     </div>
                     <form id="form-add-transfer" action="{{ route('transfer.wrongdeposit_insert') }}" method="post" enctype="multipart/form-data">
@@ -66,13 +66,13 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="amount">จำนวนเงิน</label>
+                                        <label for="amount">{{__('managemember.amount')}}</label>
                                         <input type="number" class="form-control" id="amount" name="amount" autocomplete="off" required value="{{ old('amount') }}">
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="member_id">Username</label>
+                                        <label for="member_id">{{__('managemember.user_name')}}</label>
                                         <input type="text" class="form-control" list="members" id="member_id" name="member_id" required>
                                         <datalist id="members">
                                             @foreach ($members as $item)
@@ -88,9 +88,9 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="bank_from_name">ธนาคารผู้ฝาก</label>
+                                                <label for="bank_from_name">{{__('managemember.BankAccount')}}</label>
                                                 <select name="bank_from_name" id="bank_from_name" required class="form-control">
-                                                    <option value="">เลือกธนาคาร</option>
+                                                    <option value="">{{__('managemember.Select_a_bank')}}</option>
                                                     <option value="ธนาคารกรุงเทพ" data-img="bbl.png" data-logo="{{ asset('images/bank/bbl.png') }}"> ธนาคารกรุงเทพ</option>
                                                     <option value="ธนาคารกสิกรไทย" data-img="kbank.png" data-logo="{{ asset('images/bank/kbank.png') }}"> ธนาคารกสิกรไทย</option>
                                                     <option value="ธนาคารกรุงไทย" data-img="ktb.png" data-logo="{{ asset('images/bank/ktb.png') }}"> ธนาคารกรุงไทย</option>
@@ -110,13 +110,13 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="bank_from_account_name">ชื่อบัญชีธนาคารผู้ฝาก</label>
+                                                <label for="bank_from_account_name">{{__('managemember.Account_Name')}}</label>
                                                 <input type="text" class="form-control" id="bank_from_account_name" name="bank_from_account_name" value="{{ old('bank_from_account_name') }}">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="bank_from_number">เลขบัญชีธนาคารผู้ฝาก</label>
+                                                <label for="bank_from_number">{{__('managemember.Account_number')}}</label>
                                                 <input type="text" class="form-control" id="bank_from_number" name="bank_from_number" value="{{ old('bank_from_number') }}">
                                             </div>
                                         </div>
@@ -124,7 +124,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="bank_to">บัญชีธนาคารผู้รับ</label>
+                                        <label for="bank_to">{{__('managemember.Recipient_Bank_Account')}}</label>
                                         <select name="bank_to" class="form-control" id="bank_to">
                                             <option></option>
                                             @foreach ($banks as $item)
@@ -134,23 +134,23 @@
                                     </div>
                                 </div>
 
-                                
+
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="image">สลิป</label>
+                                        <label for="image">{{__('managemember.slip')}}</label>
                                         <input type="file" class="form-control" id="image" name="image" required>
                                     </div>
                                 </div>
 
-                                
+
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="note">หมายเหตุ</label>
+                                        <label for="note">{{__('managemember.note')}}</label>
                                         <textarea class="form-control" id="note" name="note" rows="3">{{ old('note') }}</textarea>
                                     </div>
                                 </div>
                             </div>
-                       
+
                     </div>
                     <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
@@ -198,7 +198,7 @@
 
                             <td>
                               <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalEdit{{ $key }}">Edit</button>
-                              
+
                               <div class="modal fade" id="modalEdit{{ $key }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalEditLabel{{ $key }}" aria-hidden="true">
                                 <div class="modal-dialog">
                                 <div class="modal-content">
@@ -279,8 +279,8 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                
-                                                
+
+
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="image">สลิป</label>
@@ -288,8 +288,8 @@
                                                         <img src="{{ asset($item->image) }}" style="max-width:400px;">
                                                     </div>
                                                 </div>
-                
-                                                
+
+
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="note">หมายเหตุ</label>
@@ -297,7 +297,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                       
+
                                     </div>
                                     <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>

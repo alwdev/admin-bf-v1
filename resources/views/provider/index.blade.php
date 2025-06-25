@@ -4,12 +4,12 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-flex align-items-center justify-content-between">
-                <h4 class="mb-0 font-size-18">จัดการค่ายเกม</h4>
+                <h4 class="mb-0 font-size-18">{{__('main.game_cate')}}</h4>
 
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
-                        <li class="breadcrumb-item active">จัดการค่ายเกม</li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                        <li class="breadcrumb-item active">{{__('main.game_cate')}}</li>
                     </ol>
                 </div>
 
@@ -31,13 +31,13 @@
                     <thead  class="table-light">
                         <tr>
                             <th></th>
-                            <th>รูปเล็ก</th>
-                            <th data-field="product_id" data-filter-control="input" data-sortable="true">รหัส</th>
-                            <th data-field="product_name" data-filter-control="input" data-sortable="true">ชื่อ</th>
-                            <th data-field="category" data-filter-control="select" data-sortable="true">หมวดหมู่</th>
-                            <th data-field="active" data-filter-control="select" data-sortable="true">สถานะ</th>
-                            <th data-field="order_top"  data-sortable="true">ลำดับ</th>
-                            <th >แก้ไขลำดับ</th>
+                            <th>{{__('main.Small_picture')}}</th>
+                            <th data-field="product_id" data-filter-control="input" data-sortable="true">{{__('main.code')}}</th>
+                            <th data-field="product_name" data-filter-control="input" data-sortable="true">{{__('dashboard.name')}}</th>
+                            <th data-field="category" data-filter-control="select" data-sortable="true">{{__('main.Category')}}</th>
+                            <th data-field="active" data-filter-control="select" data-sortable="true">{{__('dashboard.status')}}</th>
+                            <th data-field="order_top"  data-sortable="true">{{__('main.order')}}</th>
+                            <th >{{__('main.Edit sequence')}}</th>
                             {{-- <th>GameList</th> --}}
                             {{-- <th data-sortable="true">created_at</th> --}}
                         </tr>
@@ -168,14 +168,14 @@
         function editOrderTop(id) {
         Swal.mixin({
                 input: 'text',
-                confirmButtonText: 'ยืนยัน &rarr;',
+                confirmButtonText: 'Ok &rarr;',
                 showCancelButton: true,
-                cancelButtonText: 'ยกเลิก',
+                cancelButtonText: 'Cancel',
                 progressSteps: ['1', '2']
             }).queue([
                 {
-                title: 'แก้ไขลำดับการแสดงผล',
-                text: 'ลำดับ'
+                title: '{{__('main.Edit sequence')}}',
+                text: '{{__('main.order')}}'
                 }
             ]).then( function (result) {
                 if (result.value) {
@@ -192,7 +192,7 @@
                                             {
                                                 title: 'success',
                                                 type: 'success',
-                                                confirmButtonText: 'ตกลง',
+                                                confirmButtonText: 'OK',
                                                 confirmButtonClass: 'btn btn-confirm mt-2'
 
                                             }
@@ -236,12 +236,12 @@
             }
             Swal.fire({
                 title: "Are you sure?",
-                text: "ต้องการเปลี่ยนแปลงสถานะหรือไม่?",
+                text: "{{__('main.Do you want to change your status?')}}",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "ตกลง"
+                confirmButtonText: "Ok"
             }).then((result) => {
                 if (result.value) {
                     $.ajax({

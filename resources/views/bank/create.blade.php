@@ -11,12 +11,12 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">เพิ่มสมุดบัญชี</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.Add_bank_account')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>
-                    <li class="breadcrumb-item active">เพิ่มสมุดบัญชี</li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                    <li class="breadcrumb-item active">{{__('main.Add_bank_account')}}</li>
                 </ol>
             </div>
 
@@ -36,7 +36,7 @@
                         <div id="bank-logo" class="mb-3"></div>
                         <input type="hidden" value="" name="bank_logo" id="bank_logo">
                         <select name="bank_name" id="bank_name" required class="form-control">
-                            <option value="">เลือกธนาคาร</option>
+                            <option value="">{{__('managemember.Select_a_bank')}}</option>
                             <option value="ธนาคารกรุงเทพ" data-img="bbl.png" data-logo="{{ asset('images/bank/bbl.png') }}"> ธนาคารกรุงเทพ</option>
                             <option value="ธนาคารกสิกรไทย" data-img="kbank.png" data-logo="{{ asset('images/bank/kbank.png') }}"> ธนาคารกสิกรไทย</option>
                             <option value="ธนาคารกรุงไทย" data-img="ktb.png" data-logo="{{ asset('images/bank/ktb.png') }}"> ธนาคารกรุงไทย</option>
@@ -54,12 +54,12 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="account_name">ชื่อบัญชี</label>
+                        <label for="account_name">{{__('managemember.Account_Name')}}</label>
                         <input class="form-control" type="text" id="account_name" name="account_name" required value="{{ old('account_name') }}">
                         <x-input-error :messages="$errors->get('account_name')" class="mt-2" />
                     </div>
                     <div class="form-group">
-                        <label for="account_no">เลขที่บัญชี</label>
+                        <label for="account_no">{{__('managemember.Account_number')}}</label>
                         <input class="form-control"  type="number" id="account_no" name="account_no" required onkeypress="return isNumberKey(event)"  value="{{ old('account_no') }}">
                         <x-input-error :messages="$errors->get('account_no')" class="mt-2" />
                     </div>
@@ -70,7 +70,7 @@
                     </div> --}}
                     <div class="custom-control custom-checkbox custom-control-inline mb-3">
                         <input type="checkbox" class="custom-control-input" id="enable" name="enable" checked value="1">
-                        <label class="custom-control-label" for="enable">Enable (เผยแพร่)</label>
+                        <label class="custom-control-label" for="enable">Enable</label>
                     </div>
                     <div class="form-group">
                         <label for="qr_code">QR CODE</label>
@@ -81,7 +81,7 @@
                         </div>
                     </div>
                     <div class="mb-3 text-center">
-                        <button class="btn btn-primary btn-block" type="submit"> บันทึก </button>
+                        <button class="btn btn-primary btn-block" type="submit"> {{__('main.save')}} </button>
                     </div>
                 </form>
             </div>
@@ -147,7 +147,7 @@
                             })
                         return true;
                 }
-                else{   
+                else{
                     $('#img_qrcode').attr('src',URL.createObjectURL(this.files[0]));
                 }
             });

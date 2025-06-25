@@ -17,12 +17,12 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">สมุดบัญชีธนาคาร</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.book_bank')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
-                    <li class="breadcrumb-item active">สมุดบัญชีธนาคาร</li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                    <li class="breadcrumb-item active">{{__('main.book_bank')}}</li>
                 </ol>
             </div>
 
@@ -36,10 +36,10 @@
 <div class="row card">
     <div class="col-12">
 
-        <div class="card-body">    
+        <div class="card-body">
             @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
-                <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('bankaccount.create') }}">เพิ่มสมุดบัญชี</a>
-                <a type="button" class="btn btn-success waves-effect waves-light" href="javascript:void(0);"  data-toggle="modal" data-target="#staticBackdrop">จัดการยอดเงิน</a>
+                <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="{{ route('bankaccount.create') }}">{{__('main.Add_bank_account')}}</a>
+                <a type="button" class="btn btn-success waves-effect waves-light" href="javascript:void(0);"  data-toggle="modal" data-target="#staticBackdrop">{{__('main.Manage_balance')}}</a>
             @endif
 
             <!-- Modal -->
@@ -47,7 +47,7 @@
                 <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">จัดการยอดคงเหลือ</h1>
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">{{__('main.Manage_balance')}}</h1>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">X</button>
                     </div>
                     <form id="form-add-transfer" action="{{ route('bank.bank_forward_balance_create') }}" method="post" enctype="multipart/form-data">
@@ -56,22 +56,22 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="amount">จำนวนเงิน</label>
+                                        <label for="amount">{{__('managemember.amount')}}</label>
                                         <input type="number" class="form-control" id="amount" name="amount" autocomplete="off" required value="{{ old('amount') }}">
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="amount">ประเภท</label>
+                                        <label for="amount">{{__("dashboard.type")}}</label>
                                         <select name="type" class="form-control" id="type">
-                                             <option value="เงินเข้า">เงินเข้า</option>
-                                             <option value="เงินออก">เงินออก</option>
+                                             <option value="เงินเข้า">{{__('main.in')}}</option>
+                                             <option value="เงินออก">{{__('main.out')}}</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="bank_to">บัญชีธนาคารผู้รับ</label>
+                                        <label for="bank_to">{{__('managemember.Recipient_Bank_Account')}}</label>
                                         <select name="bank_to" class="form-control" id="bank_to">
                                             <option></option>
                                             @foreach ($banks as $item)
@@ -83,16 +83,16 @@
 
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="note">หมายเหตุ</label>
+                                        <label for="note">{{__('managemember.note')}}</label>
                                         <textarea class="form-control" id="note" name="note" rows="3">{{ old('note') }}</textarea>
                                     </div>
                                 </div>
                             </div>
-                       
+
                     </div>
                     <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-                    <button type="submit" class="btn btn-primary" >บันทึก</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__('main.close')}}</button>
+                    <button type="submit" class="btn btn-primary" >{{__('main.save')}}</button>
                     </div>
                 </form>
                 </div>
@@ -114,14 +114,14 @@
                 <thead  class="table-light">
                         <tr>
                             <th></th>
-                            <th data-field="bank_name"  data-sortable="true">ธนาคาร</th>
-                            <th data-field="account_name" data-sortable="true">ชื่อบัญชี</th>
-                            <th data-field="account_no" data-sortable="true">หมายเลขบัญชี</th>
-                            <th class="text-center">ยอดคงเหลือ</th>
-                            <th class="text-center">สถานะ</th>
-                            <th data-sortable="true">อัพเดทล่าสุด</th>
+                            <th data-field="bank_name"  data-sortable="true">{{__('dashboard.BankAccount')}}</th>
+                            <th data-field="account_name" data-sortable="true">{{__('managemember.Account_Name')}}</th>
+                            <th data-field="account_no" data-sortable="true">{{__('managemember.Account_number')}}</th>
+                            <th class="text-center">{{__('dashboard.Total_Amount')}}</th>
+                            <th class="text-center">{{__('dashboard.status')}}</th>
+                            <th data-sortable="true">{{__('main.Latest_update')}}</th>
                             @if( json_decode(auth()->user()->permissions)->member > 2  )
-                            <th>จัดการ</th>
+                            <th>{{__('managemember.manage')}}</th>
                             @endif
                         </tr>
                     </thead>
@@ -137,17 +137,17 @@
                                 <td>{{ number_format($item->balance,2,'.',',') }}</td>
                                 <td class="text-center" style="font-size: 16px;">
                                     @if ( $item->enable == 1)
-                                    <span class="badge badge-pill badge-success">แสดง</span>
+                                    <span class="badge badge-pill badge-success">{{__('main.show')}}</span>
                                     @else
-                                    <span class="badge badge-pill badge-danger">ซ่อน</span>
-                                    @endif    
+                                    <span class="badge badge-pill badge-danger">{{__('main.hide')}}</span>
+                                    @endif
                                 </td>
                                 <td>{{ $item->created_at }}</td>
                                 @if( json_decode(auth()->user()->permissions)->member > 2  )
                                 <td>
-                                    <a href="{{ route('bankaccount.show',$item->id) }}" type="button" class="btn btn-primary btn-sm waves-effect waves-light"><i class="bx bx-edit"></i>แก้ไข</a>
+                                    <a href="{{ route('bankaccount.show',$item->id) }}" type="button" class="btn btn-primary btn-sm waves-effect waves-light"><i class="bx bx-edit"></i>{{__('main.edit')}}</a>
                                     @if( json_decode(auth()->user()->permissions)->member > 3  )
-                                        <a href="javascript:void(0)" onclick="approvedel('#delbank{{ $item->id }}');" type="button" class="btn btn-danger btn-sm waves-effect waves-light"><i class="bx bxs-trash"></i>ลบ</a>
+                                        <a href="javascript:void(0)" onclick="approvedel('#delbank{{ $item->id }}');" type="button" class="btn btn-danger btn-sm waves-effect waves-light"><i class="bx bxs-trash"></i>{{__('managemember.delete')}}</a>
                                         <form action="{{ route('bankaccount.destroy') }}" method="post" id="delbank{{ $item->id }}">
                                             @csrf
                                             <input type="hidden" name="id" value="{{ $item->id }}">

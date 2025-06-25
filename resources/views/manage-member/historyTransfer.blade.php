@@ -11,13 +11,13 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">ประวัติการเงิน</h4>
+            <h4 class="mb-0 font-size-18">{{__('managemember.Financial_history')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
-                    <li class="breadcrumb-item">จัดการพนักงาน</li>
-                    <li class="breadcrumb-item active">ประวัติการเงิน</li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                    <li class="breadcrumb-item">Member</li>
+                    <li class="breadcrumb-item active">{{__('managemember.Financial_history')}}</li>
                 </ol>
             </div>
 
@@ -47,14 +47,14 @@
                 data-url="">
                     <thead>
                         <tr>
-                            <th>สมาชิก</th>
-                            <th data-field="type" data-filter-control="select" data-sortable="true">type</th>
-                            <th>จำนวนเงิน</th>
-                            <th>วันที่ทำรายการ</th>
-                            <th>จาก</th>
-                            <th>ถึง</th>
-                            <th>หลักฐาน</th>
-                            <th>สถานะ</th>
+                            <th>{{__('dashboard.member')}}</th>
+                            <th data-field="type" data-filter-control="select" data-sortable="true">{{__('dashboard.type')}}</th>
+                            <th>{{__('managemember.amount')}}</th>
+                            <th>{{__('dashboard.Date_of_transaction')}}</th>
+                            <th>{{__('managemember.from')}}</th>
+                            <th>{{__('managemember.to')}}</th>
+                            <th>{{__('managemember.evidence')}}</th>
+                            <th>{{__('dashboard.status')}}</th>
                             {{-- @if( json_decode(auth()->user()->permissions)->member > 2  )
                             <th></th>
                             @endif --}}

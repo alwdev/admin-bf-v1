@@ -37,7 +37,7 @@
                         <img src="{{ asset('images/dashboard_icon/savings.png') }}" alt="" width="32">
                     </span>
                 </div>
-                <h6 class="text-muted text-uppercase mt-0">ยอดฝาก</h6>
+                <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.deposit_amount')}}</h6>
                 <h3 class="my-3">{{ number_format((float) $total_deposit,2) }} ฿</h3>
                 {{-- <span class="badge badge-soft-primary mr-1"> +11% </span> <span class="text-muted">From previous period</span> --}}
             </div>
@@ -53,7 +53,7 @@
                         <img src="{{ asset('images/dashboard_icon/cash-withdrawal.png') }}" alt="" width="32">
                     </span>
                 </div>
-                <h6 class="text-muted text-uppercase mt-0">ยอดถอน</h6>
+                <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.withdraw_amount')}}</h6>
                 <h3 class="my-3">{{ number_format((float) $total_withdraw,2) }} ฿</h3>
                 {{-- <span class="badge badge-soft-primary mr-1"> -29% </span> <span class="text-muted">This Month</span> --}}
             </div>
@@ -72,7 +72,7 @@
                 @php
                     $total_profit =   (float) $total_deposit - (float) $total_withdraw;
                 @endphp
-                <h6 class="text-muted text-uppercase mt-0">กำไรสุทธิ</h6>
+                <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.net_profit')}}</h6>
                 {{-- <h3 class="my-3 @if((float) $total_withdraw - (float) $total_withdraw > 0) text-success @elseif((float) $total_withdraw - (float) $total_withdraw < 0) text-danger @endif">{{ number_format((float) $total_withdraw - (float) $total_withdraw,2) }} ฿</h3> --}}
                 <h3 class="my-3">{{ number_format((float) $total_profit,2) }} ฿</h3>
                 {{-- <span class="badge badge-soft-primary mr-1"> -29% </span> <span class="text-muted">This Month</span> --}}
@@ -89,7 +89,7 @@
                         <img src="{{ asset('images/dashboard_icon/followers.png') }}" alt="" width="32">
                     </span>
                 </div>
-                <h6 class="text-muted text-uppercase mt-0">Member สมัครใหม่</h6>
+                <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.new_member')}}</h6>
                 <h3 class="my-3"><span data-plugin="counterup">{{ number_format((float) $new_member,0) }}</span></h3>
                 {{-- <span class="badge badge-soft-primary mr-1"> 0% </span> <span class="text-muted">This Month</span> --}}
             </div>
@@ -105,7 +105,7 @@
                         <img src="{{ asset('images/dashboard_icon/team.png') }}" alt="" width="32">
                     </span>
                 </div>
-                <h6 class="text-muted text-uppercase mt-0">Member ทั้งหมด</h6>
+                <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.all_member')}}</h6>
                 <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $total_member,0) }}</h3>
                 {{-- <span class="badge badge-soft-primary mr-1"> +89% </span> <span class="text-muted">This Month</span> --}}
             </div>
@@ -121,7 +121,7 @@
                         <img src="{{ asset('images/dashboard_icon/www.png') }}" alt="" width="32">
                     </span>
                 </div>
-                <h6 class="text-muted text-uppercase mt-0">Online วันนี้</h6>
+                <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.Online_today')}}</h6>
                 <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $total_online,0) }}</h3>
                 {{-- <span class="badge badge-soft-primary mr-1"> +89% </span> <span class="text-muted">This Month</span> --}}
             </div>
@@ -151,7 +151,7 @@
                         <img src="{{ asset('images/dashboard_icon/mobile-banking.png') }}" alt="" width="32">
                     </span>
                 </div>
-                <h6 class="text-muted text-uppercase mt-0">เติมมือ</h6>
+                <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.Add_normal')}}</h6>
                 <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $manual_topup,2) }}</h3>
             </div>
         </div>
@@ -166,7 +166,7 @@
                         <img src="{{ asset('images/dashboard_icon/refund.png') }}" alt="" width="32">
                     </span>
                 </div>
-                <h6 class="text-muted text-uppercase mt-0">คืนลูกค้า</h6>
+                <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.Customer_Refund')}}</h6>
                 <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $manual_cashback,2) }}</h3>
             </div>
         </div>
@@ -180,7 +180,7 @@
                         <img src="{{ asset('images/dashboard_icon/bank.png') }}" alt="" width="32">
                     </span>
                 </div>
-                <h6 class="text-muted text-uppercase mt-0">ยอดเงินคงเหลือ  <span class="badge rounded-pill text-bg-primary" style="font-weight: 300;background: green;color: white;">จำนวน {{ $banks->count() }} บัญชี</span></h6>
+                <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.Balance')}}  <span class="badge rounded-pill text-bg-primary" style="font-weight: 300;background: green;color: white;">{{__('dashboard.Bankquantity')}} {{ $banks->count() }} {{__('dashboard.BankAccount')}}</span></h6>
                 <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $banks->sum('balance'),2) }}</h3>
             </div>
         </div>
@@ -199,7 +199,7 @@
                         <img src="{{ asset('images/dashboard_icon/bank.png') }}" alt="" width="32">
                     </span>
                 </div>
-                <h6 class="text-muted text-uppercase mt-0">ยอดเงินคงเหลือ  <span class="badge rounded-pill text-bg-primary" style="font-weight: 300;background: green;color: white;">{{ $a_bank->bank_name }} {{ $a_bank->account_no }}</span></h6>
+                <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.Balance')}}  <span class="badge rounded-pill text-bg-primary" style="font-weight: 300;background: green;color: white;">{{ $a_bank->bank_name }} {{ $a_bank->account_no }}</span></h6>
                 <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $a_bank->balance,2) }}</h3>
             </div>
         </div>
@@ -253,16 +253,16 @@
          <div class="card card-animate">
             <div class="card-body">
 
-                <h4 class="card-title d-inline-block mb-3">Members ใหม่</h4>
+                <h4 class="card-title d-inline-block mb-3">{{__('dashboard.new_member')}}</h4>
 
                 <div class="table-responsive">
                     <table class="table table-borderless table-hover mb-0">
                         <thead>
                             <tr>
-                                <th data-field="username" data-filter-control="input" data-sortable="true">สมาชิก</th>
-                                <th data-field="type" data-filter-control="select" data-sortable="true">ชื่อ</th>
-                                <th data-field="amount" data-sortable="true">วันที่</th>
-                                <th data-sortable="true">ยอดเงิน</th>
+                                <th data-field="username" data-filter-control="input" data-sortable="true">{{__('dashboard.member')}}</th>
+                                <th data-field="type" data-filter-control="select" data-sortable="true">{{__('dashboard.name')}}</th>
+                                <th data-field="amount" data-sortable="true">{{__('dashboard.date')}}</th>
+                                <th data-sortable="true">{{__('dashboard.Total_Amount')}}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -292,17 +292,17 @@
          <div class="card card-animate">
             <div class="card-body">
 
-                <h4 class="card-title d-inline-block">รายการ ฝาก/ถอน ล่าสุด</h4>
+                <h4 class="card-title d-inline-block">{{__('dashboard.Latest_Deposit_Withdraw')}}</h4>
 
                 <div class="table-responsive">
                     <table class="table table-borderless table-hover mb-0">
                         <thead>
                             <tr>
-                                <th data-field="username" data-filter-control="input" data-sortable="true">สมาชิก</th>
-                                <th data-field="type" data-filter-control="select" data-sortable="true">ประเภท</th>
-                                <th data-field="amount" data-sortable="true">จำนวนเงิน</th>
-                                <th data-sortable="true">วันที่ทำรายการ</th>
-                                <th data-sortable="true">สถานะ</th>
+                                <th data-field="username" data-filter-control="input" data-sortable="true">{{__('dashboard.member')}}</th>
+                                <th data-field="type" data-filter-control="select" data-sortable="true">{{__('dashboard.type')}}</th>
+                                <th data-field="amount" data-sortable="true">{{__('dashboard.Total_Amount')}}</th>
+                                <th data-sortable="true">{{__('dashboard.Date_of_transaction')}}</th>
+                                <th data-sortable="true">{{__('dashboard.status')}}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -310,9 +310,9 @@
                                 <tr>
                                     <td>{{ $item->username }}</td>
                                     @if ($item->type == 'deposit')
-                                        <td>ฝาก</td>
+                                        <td>{{__('dashboard.deposit')}}</td>
                                     @elseif ($item->type == 'withdraw')
-                                        <td>ถอน</td>
+                                        <td>{{__('dashboard.withdraw')}}</td>
                                     @else
                                         <td>{{ $item->type }}</td>
                                     @endif
@@ -320,12 +320,24 @@
                                     <td>{{ number_format((float) $item->amount,2) }} <i class="bx bx-bitcoin"></i></td>
                                     <td>{{ date('d/m/Y H:i:s',$item->transfer_date) }}</td>
                                     <td>
+                                        @php
+                                            $status = "";
+                                            if($item->status_code == 'อนุมัติ'){
+                                                $status = __('dashboard.approval');
+                                            }else if ($item->status_code == 'ปฏิเสธ') {
+                                                $status = __('dashboard.refuse');
+                                            }else if ($item->status_code == 'BOT.อนุมัติ') {
+                                                 $status = __('dashboard.bot_approval');
+                                            }else if ($item->status_code == 'กำลังดำเนินการ') {
+                                                $status = __('dashboard.In_progress');
+                                            }
+                                        @endphp
                                         @if ($item->status == 1)
-                                             <h5><span class="badge badge-pill badge-warning text-bg-warning">{{ $item->status_code }}</span></h5>
+                                             <h5><span class="badge badge-pill badge-warning text-bg-warning">{{ $status }}</span></h5>
                                          @elseif ($item->status == 2)
-                                             <h5><span class="badge badge-pill badge-success text-bg-success">{{ $item->status_code }}</span></h5>
+                                             <h5><span class="badge badge-pill badge-success text-bg-success">{{ $status }}</span></h5>
                                          @else
-                                             <h5><span class="badge badge-pill badge-danger text-bg-danger">{{ $item->status_code }}</span></h5>
+                                             <h5><span class="badge badge-pill badge-danger text-bg-danger">{{ $status }}</span></h5>
                                          @endif
                                      </td>
                                 </tr>

@@ -1,3 +1,5 @@
+<html lang="{{ session('lang', 'en') }}">
+
 <header id="page-topbar">
     <div class="navbar-header">
 
@@ -64,13 +66,7 @@
                     <i class="mdi mdi-chevron-down d-none d-sm-inline-block"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                    {{-- <a class="dropdown-item d-flex align-items-center justify-content-between"
-                    href="{{ route('profile.edit') }}">Profile</a>
-                    <a class="dropdown-item d-flex align-items-center justify-content-between"
-                    href="javascript:void(0)" onclick="$('#from-logout').submit()">
-                    <span>Log Out</span>
-                    <form action="{{ route('logout') }}" id="from-logout" method="post">@csrf</form>
-                    </a> --}}
+
                     <a class="dropdown-item d-flex align-items-center justify-content-between"
                     href="{{ route('change.lang', ['lang' => 'th']) }}" data-icon="/images/thailand.svg">
                         <img src="/images/auth/icon-th.svg" alt="">
@@ -106,7 +102,7 @@
             url: '{{ route('report.count_last_tranfer') }}',
             success: function(data) {
                 if (data) {
-                    $('#tran_count').text('รายการ ฝาก/ถอน รออนุมัติ : ' + data);
+                    $('#tran_count').text('{{ __('dashboard.AwaitingApproval') }}'+' : ' + data);
                     // console.log(count_event_lose);
                     if (parseInt(data) != 0) {
                         if (parseInt(data) != count_event_lose && count_event < parseInt(data)) {

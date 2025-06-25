@@ -32,9 +32,9 @@
                 <li>
                     <a href="#" class="waves-effect"><i class="bx bxs-report"></i><span>{{ __('main.report')}}</span></a>
                     <ul class="" aria-expanded="false">
-                        <li class=""><a href="https://bo.psg777.com/bo/simpleReport" class="active">รายงาน</a></li>
-                        <li class=""><a href="/member_transfer/0" class="active">รายงานการฝาก-ถอน</a></li>
-                        <li class=""><a href="{{ route('report.edit_balance') }}" class="active">รายงานการแก้ไขยอดเงิน</a></li>
+                        <li class=""><a href="https://bo.psg777.com/bo/simpleReport" class="active">{{__('main.report')}}</a></li>
+                        <li class=""><a href="/member_transfer/0" class="active">{{__('main.report_transfer')}}</a></li>
+                        <li class=""><a href="{{ route('report.edit_balance') }}" class="active">{{__('main.report_edit_credit')}}</a></li>
                         {{-- <li class=""><a href="{{ '/sumtrans/0' }}" class="active">รายงานธุรกรรมโดยรวม</a></li> --}}
 
                     </ul>
@@ -43,7 +43,7 @@
                     <a href="{{ route('report.wrongdeposit') }}" class="waves-effect"><i class='bx bx-bitcoin'></i><span>{{__("main.report_error_transfert")}}</span></a>
                 </li>
                 @endif
-                <li class="menu-title">ตั้งค่า</li>
+                <li class="menu-title">{{__('main.setting')}}</li>
                 <li>
                     <a href="{{ route('bankaccount.index') }}" class="waves-effect"><i class='bx bxs-bank'></i><span>{{ __('main.book_bank')}}</span></a>
                 </li>

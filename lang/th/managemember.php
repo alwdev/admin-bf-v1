@@ -1,0 +1,37 @@
+<?php
+return[
+    'Member_list'=>'รายชื่อสมาชิก',
+    'user_code'=>'รหัสผู้ใช้',
+    'user_name'=>'ชื่อผู้ใช้',
+    'password'=>'รหัสผ่าน',
+    'name_lastname'=>'ชื่อ - นามสกุล',
+    'amount'=>'ยอดเงิน',
+    'BankAccount'=>'บัญชี',
+    'Registration_date'=>'วันที่สมัคร',
+    'manage'=>'จัดการ',
+    'Edited_by'=>'แก้ไขโดย',
+    'change'=>'เปลี่ยน',
+    'finance'=>'การเงิน',
+    'lock'=>'ล็อค',
+    'unlock' => 'ปลดล็อค',
+    'delete'=>'ลบ',
+
+    'change_password'=>'แก้ไขรหัสผ่าน',
+    'Enter_a_new_password'=>'ระบุรหัสผ่านใหม่',
+    'Edit_balance'=>'แก้ไขยอดเงิน',
+    'Account_details'=>'รายละเอียดบัญชี',
+    'Edit_bank_account'=>'แก้ไขบัญชีธนาคาร',
+    'Select_a_bank'=>'เลือกธนาคาร',
+    'Bank_Code'=>'รหัสธนาคาร',
+    'Account_number'=>'เลขที่บัญชี',
+    'Account_Name'=>'ชื่อบัญชี',
+
+    'Financial_history'=>'ประวัติการเงิน',
+    'from'=>'จาก',
+    'to'=>'ถึง',
+    'evidence'=>'หลักฐาน',
+    'Not_accepting_promotions'=>'ไม่รับโปรโมชั่น',
+    'Recipient_Bank_Account'=>'บัญชีธนาคารผู้รับ',
+    'slip'=>'สลิป',
+    'note'=>'หมายเหตุ'
+];
