@@ -1,0 +1,31 @@
+<?php
+return [
+    'deposit' => 'ເພີ່ມເງິນ',
+    'withdraw' => 'ຖອນເງິນ',
+    'deposit_amount' => 'ຈໍານວນເພີ່ມເງິນ',
+    'withdraw_amount' => 'ຈໍານວນຖອນເງິນ',
+    'net_profit' => 'ກໍາໄລສຸດທິ',
+    'new_member' => 'ສະມາຊິກໃໝ່',
+    'all_member' => 'ສະມາຊິກທັງໝົດ',
+    'Online_today' => 'ອອນລາຍວັນນີ້',
+    'Add_normal' => 'ເພີ່ມປົກກະຕິ',
+    'Customer_Refund' => 'ຄືນເງິນລູກຄ້າ',
+    'Balance' => 'ຍອດເງິນ',
+    'Latest_Deposit_Withdraw' => 'ການເພີ່ມ/ຖອນເງິນລ່າສຸດ',
+    'Deposit_Withdraw' => 'ລາຍການເພີ່ມ/ຖອນເງິນ',
+    'quantity' => 'ຈໍານວນ',
+    'member' => 'ສະມາຊິກ',
+    'name' => 'ຊື່',
+    'date' => 'ວັນທີ',
+    'Total_Amount' => 'ຍອດລວມ',
+    'type' => 'ປະເພດ',
+    'Date_of_transaction' => 'ວັນທີທໍາການ',
+    'status' => 'ສະຖານະ',
+    'AwaitingApproval' => 'ລໍຖ້າການອະນຸມັດເພີ່ມ/ຖອນເງິນ',
+    'BankAccount' => 'ບັນຊີທະນາຄານ',
+    'Bankquantity' => '', // ຍັງບໍ່ມີຂໍ້ຄວາມຕົ້ນສະບັບ
+    'approval' => 'ອະນຸມັດ',
+    'bot_approval' => 'BOT ອະນຸມັດ',
+    'refuse' => 'ປະຕິເສດ',
+    'In_progress' => 'ກໍາລັງດໍາເນີນການ'
+];

@@ -18,33 +18,33 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">ตั้งค่าระดับสมาชิก</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.member_level_setting')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
-                    <li class="breadcrumb-item active">ตั้งค่าระดับสมาชิก</li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                    <li class="breadcrumb-item active">{{__('main.member_level_setting')}}</li>
                 </ol>
             </div>
-            
+
         </div>
     </div>
-</div>     
+</div>
 <!-- end page title -->
 
         <div class="row">
             <div class="card-header text-right" style="background: transparent;">
-              
+
             </div>
             <div class="col-12 card">
-           
+
                     <div class="card-body">
-                        <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="#" data-toggle="modal" data-target="#staticBackdrop">เพิ่มระดับสมาชิก
+                        <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="#" data-toggle="modal" data-target="#staticBackdrop">{{__('main.Add')}}
                         </a>
                         <h4 class="card-title"></h4>
                         <p class="card-subtitle mb-4">
                         </p>
-        
+
                         <table id="basic-datatable" class="table m-10 table-bordered"
                         data-filter-control="true"
                         data-toggle="table"
@@ -56,15 +56,15 @@
                         <thead  class="table-light">
                                 <tr>
                                     <th>#</th>
-                                    <th>ชื่อ Level</th>
-                                    <th>ยอดฝากตั้งแต่</th>
-                                    <th>ถึง</th>
-                                    <th>รูป</th>
-                                    <th>จัดการ</th>
+                                    <th>{{__('dashboard.name')}} Level</th>
+                                    <th>{{__('dashboard.deposit_amount')}}</th>
+                                    <th>{{__('managemember.to')}}</th>
+                                    <th>{{__('main.picture')}}</th>
+                                    <th>{{__('managemember.manage')}}</th>
                                 </tr>
-                            </thead>  
+                            </thead>
                             <tbody>
-                                @foreach ($list as $key => $item)                            
+                                @foreach ($list as $key => $item)
                                 <tr>
                                     <td>{{ $item->rank }}</td>
                                     <td>{{ $item->level_name }}</td>
@@ -76,7 +76,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-primary display-inline" data-toggle="modal" data-target="#modalEdit{{ $key }}">แก้ไข</button>
+                                        <button type="button" class="btn btn-primary display-inline" data-toggle="modal" data-target="#modalEdit{{ $key }}">{{__('main.edit')}}</button>
                                         <!-- Modal -->
                                         <div class="modal fade" id="modalEdit{{ $key }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalEdit{{ $key }}Label" aria-hidden="true">
                                           <div class="modal-dialog modal-dialog-centered  modal-lg">
@@ -92,7 +92,7 @@
                                                       @csrf
                                                       <input type="hidden" name="id" value="{{ $item->id }}">
                                                       <div class="mb-2">
-                                                          <label class="" for="image">รูป</label>
+                                                          <label class="" for="image">{{__('main.picture')}}</label>
                                                           @if($item->image)
                                                             <br>
                                                             <img src="{{ asset($item->image) }}" class="img-responsive img-thumbnail" width="200" alt="User Image">
@@ -100,37 +100,37 @@
                                                           <input type="file" class="form-control" name="image" accept="image/png, image/gif, image/jpeg">
                                                       </div>
                                                       <div class="mb-2">
-                                                          <label class="" for="rank">ลำดับ</label>
+                                                          <label class="" for="rank">{{__('main.order')}}</label>
                                                           <input type="number" class="form-control" name="rank" value="{{ $item->rank }}" @required(true)>
                                                       </div>
                                                       <div class="mb-2">
-                                                          <label class="" for="level_name">ชื่อ Level</label>
+                                                          <label class="" for="level_name">{{__('dashboard.name')}} Level</label>
                                                           <input type="text" class="form-control" name="level_name" value="{{ $item->level_name }}" @required(true)>
                                                       </div>
                                                       <div class="mb-2">
-                                                          <label class="" for="level_min_point">ยอดฝากตั้งแต่</label>
+                                                          <label class="" for="level_min_point">{{__('dashboard.deposit_amount')}}</label>
                                                           <input type="text" class="form-control" name="level_min_point"  value="{{ $item->level_min_point }}" @required(true)>
                                                       </div>
                                                       <div class="mb-2">
-                                                          <label class="" for="level_max_point">ถึง</label>
+                                                          <label class="" for="level_max_point">{{__('managemember.to')}}</label>
                                                           <input type="text" class="form-control" name="level_max_point"  value="{{ $item->level_max_point }}"  @required(true)>
                                                       </div>
                                                   </form>
                                               </div>
                                               <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-                                                <button type="button" onclick="submit_('#form-add-level{{ $key }}')" class="btn btn-primary">บันทึก</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__('main.close')}}</button>
+                                                <button type="button" onclick="submit_('#form-add-level{{ $key }}')" class="btn btn-primary">{{__('main.save')}}</button>
                                               </div>
                                             </div>
                                           </div>
                                         </div>
-                                        <button type="button" class="btn btn-danger display-inline" onclick="confirm_destroy('{{ $item->id }}')">ลบ</button>
+                                        <button type="button" class="btn btn-danger display-inline" onclick="confirm_destroy('{{ $item->id }}')">{{__('managemember.delete')}}</button>
                                     </td>
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
-        
+
                     </div> <!-- end card body-->
 
             </div><!-- end col-->
@@ -150,30 +150,30 @@
             <form class="form-horizontal" id="form-add-level" action="{{ route('setting.level_create') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-2">
-                    <label class="" for="image">รูป</label>
+                    <label class="" for="image">{{__('main.picture')}}</label>
                     <input type="file" class="form-control" name="image" accept="image/png, image/gif, image/jpeg">
                 </div>
                 <div class="mb-2">
-                    <label class="" for="rank">ลำดับ</label>
+                    <label class="" for="rank">{{__('main.order')}}</label>
                     <input type="number" class="form-control" name="rank" @required(true)>
                 </div>
                 <div class="mb-2">
-                    <label class="" for="level_name">ชื่อ Level</label>
+                    <label class="" for="level_name">{{__('dashboard.name')}} Level</label>
                     <input type="text" class="form-control" name="level_name" @required(true)>
                 </div>
                 <div class="mb-2">
-                    <label class="" for="level_min_point">ยอดฝากตั้งแต่</label>
+                    <label class="" for="level_min_point">{{__('dashboard.deposit_amount')}}</label>
                     <input type="text" class="form-control" name="level_min_point" @required(true)>
                 </div>
                 <div class="mb-2">
-                    <label class="" for="level_max_point">ถึง</label>
+                    <label class="" for="level_max_point">{{__('managemember.to')}}</label>
                     <input type="text" class="form-control" name="level_max_point" @required(true)>
                 </div>
             </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-          <button type="button" onclick="submit_('#form-add-level')" class="btn btn-primary">บันทึก</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__('main.close')}}</button>
+          <button type="button" onclick="submit_('#form-add-level')" class="btn btn-primary">{{__('main.save')}}</button>
         </div>
       </div>
     </div>
@@ -222,22 +222,22 @@
     <script>
 
         function confirm_destroy(id) {
-        
+
             Swal.fire({
-                title: "ต้องการลบข้อมูลนี้หรือไม่?",
+                title: "{{__('setting.Do you want to delete this information?')}}",
                 showDenyButton: true,
                 showCancelButton: true,
-                confirmButtonText: "ลบ",
-                denyButtonText: `ยกเลิก`
+                confirmButtonText: "{{__('managemember.delete')}}",
+                denyButtonText: '{{__('main.cancel')}}'
                 }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
-                }else{
                     $('#level_destroy_id').val(id);
                     $('#level_destroy_form').submit();
+                }else{
                 }
             });
-            // 
+            //
         }
 
         function submit_(form) {
@@ -315,10 +315,10 @@
 				}
 			});
 
-  
+
             }
         }
-      }) 
+      })
     }
     function changePass(userid) {
         Swal.mixin({
@@ -398,7 +398,7 @@
 
                 }
             }
-      }) 
+      })
     }
 
     function deluser(userid) {
@@ -436,11 +436,11 @@
                     }
 				}
 			});
-                
-                      
+
+
             }
         }
-      }) 
+      })
     }
     </script>
 @endsection

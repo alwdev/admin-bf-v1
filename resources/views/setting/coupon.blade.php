@@ -18,12 +18,12 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">ตั้งค่าคูปอง</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.coupon_setting')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
-                    <li class="breadcrumb-item active">ตั้งค่าคูปอง</li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                    <li class="breadcrumb-item active">{{__('main.coupon_setting')}}</li>
                 </ol>
             </div>
 
@@ -39,7 +39,7 @@
             <div class="col-12 card">
 
                     <div class="card-body">
-                        <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="#" data-toggle="modal" data-target="#staticBackdrop">เพิ่มคูปอง</a>
+                        <a type="button" class="btn btn-primary btn-gold waves-effect waves-light" href="#" data-toggle="modal" data-target="#staticBackdrop">{{__('main.Add')}}</a>
                         <h4 class="card-title"></h4>
                         <p class="card-subtitle mb-4">
                         </p>
@@ -54,12 +54,12 @@
                         data-url="">
                         <thead  class="table-light">
                                 <tr>
-                                    <th>คูปอง</th>
-                                    <th>มูลค่า</th>
-                                    <th>จำนวนจำกัด</th>
-                                    <th>ใช้ไปแล้ว</th>
-                                    <th>วันที่ใช้งาน</th>
-                                    <th>สถานะใช้งาน</th>
+                                    <th>{{__('setting.coupon')}}</th>
+                                    <th>{{__('setting.value')}}</th>
+                                    <th>{{__('setting.Limited quantity')}}</th>
+                                    <th>{{__('setting.Already used')}}</th>
+                                    <th>{{__('dashboard.date')}}</th>
+                                    <th>{{__('setting.status')}}</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -75,13 +75,13 @@
                                     <td>{{ $item->date_start.'-'.$item->date_end }}</td>
                                     <td>
                                        @if($item->enable == 1)
-                                       <button class="btn btn-sm btn-success" onclick="update_status('{{ $item->id }}','0')">ใช้งาน</button>
+                                       <button class="btn btn-sm btn-success" onclick="update_status('{{ $item->id }}','0')">{{__('main.Use')}}</button>
                                        @else
-                                       <button class="btn btn-sm btn-danger"  onclick="update_status('{{ $item->id }}','1')">ปิดใช้งาน</button>
+                                       <button class="btn btn-sm btn-danger"  onclick="update_status('{{ $item->id }}','1')">{{__('main.Not in use')}}</button>
                                        @endif
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalEdit{{ $key }}">Edit</button>
+                                        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalEdit{{ $key }}">{{__('main.edit')}}</button>
                                         <div class="modal fade" id="modalEdit{{ $key }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalEdit{{ $key }}Label" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered  modal-lg">
                                               <div class="modal-content">
@@ -96,7 +96,7 @@
                                                         @csrf
                                                         <input type="hidden" name="id" value="{{ $item->id }}">
                                                         <div class="mb-2">
-                                                            <label class="" for="coupon">คูปอง</label>
+                                                            <label class="" for="coupon">{{__('setting.coupon')}}</label>
                                                             <div class="input-group mb-3">
                                                                 <input type="text" class="form-control" required value="{{ $item->coupon }}" name="coupon" id="coupon_text{{ $key }}" aria-label="Recipient's username" aria-describedby="basic-addon2">
                                                                 <span class="input-group-text" id="basic-addon2" onclick="$('#coupon_text{{ $key }}').val(makeid(6))" style="cursor: pointer;">Generate</span>
@@ -104,32 +104,32 @@
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-6 mb-2">
-                                                                <label class="" for="amount">มูลค่า</label>
+                                                                <label class="" for="amount">{{__('setting.value')}}</label>
                                                                 <input type="text" class="form-control" value="{{ $item->amount }}" name="amount" onkeypress="return isNumberKey(event)" required>
                                                             </div>
                                                             <div class="col-6 mb-2">
-                                                                <label class="" for="max">จำนวนใช้ได้สูงสุด</label>
+                                                                <label class="" for="max">{{__('setting.Limited quantity')}}</label>
                                                                 <input type="text" class="form-control " name="max" value="{{ $item->max }}" onkeypress="return isNumberKey(event)" required>
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-6 mb-2">
-                                                                <label class="" for="date_start">วันที่เริ่มต้น</label>
+                                                                <label class="" for="date_start">{{__('setting.Start Date')}}</label>
                                                                 <input type="date" class="form-control picker" id="date_start{{ $key }}" value="{{ explode(' ',$item->date_start)[0] }}" name="date_start" placeholder="YYYY-MM-DD" required
                                                             >
                                                             </div>
                                                             <div class="col-6 mb-2">
-                                                                <label class="" for="time_start">เวลาเริ่มต้น</label>
+                                                                <label class="" for="time_start">{{__('setting.Start time')}}</label>
                                                                 <input type="time" class="form-control picker" id="time_start{{ $key }}"  value="{{ explode(' ',$item->date_start)[1] }}" name="time_start" placeholder="" required
                                                             >
                                                             </div>
                                                             <div class="col-6 mb-2">
-                                                                <label class="" for="date_end">วันที่เริ่มสิ้นสุด</label>
+                                                                <label class="" for="date_end">{{__('setting.End Date')}}</label>
                                                                 <input type="date" class="form-control picker" id="date_end{{ $key }}" value="{{ explode(' ',$item->date_end)[0] }}" name="date_end" placeholder="YYYY-MM-DD" required
                                                             >
                                                             </div>
                                                             <div class="col-6 mb-2">
-                                                                <label class="" for="time_end">เวลาสิ้นสุด</label>
+                                                                <label class="" for="time_end">{{__('setting.End Time')}}</label>
                                                                 <input type="time" class="form-control picker" id="time_end{{ $key }}" name="time_end" value="{{ explode(' ',$item->date_start)[1] }}" placeholder="" required
                                                             >
                                                             </div>
@@ -139,8 +139,8 @@
                                                             <label class="custom-control-label" for="enable">สถานะ </label>
                                                         </div> --}}
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-                                                            <button type="submit" class="btn btn-primary">บันทึก</button>
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__('main.close')}}</button>
+                                                            <button type="submit" class="btn btn-primary">{{__('main.save')}}</button>
                                                           </div>
                                                     </form>
                                                 </div>
@@ -173,7 +173,7 @@
             <form class="form-horizontal" id="form-add-popup" action="{{ route('setting.coupon_create') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-2">
-                    <label class="" for="coupon">คูปอง</label>
+                    <label class="" for="coupon">{{__('setting.coupon')}}</label>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control " required name="coupon" id="coupon_text" aria-label="Recipient's username" aria-describedby="basic-addon2">
                         <span class="input-group-text" id="basic-addon2" onclick="$('#coupon_text').val(makeid(6))" style="cursor: pointer;">Generate</span>
@@ -181,32 +181,32 @@
                 </div>
                 <div class="row">
                     <div class="col-6 mb-2">
-                        <label class="" for="amount">มูลค่า</label>
+                        <label class="" for="amount">{{__('setting.value')}}</label>
                         <input type="text" class="form-control " name="amount" onkeypress="return isNumberKey(event)" required>
                     </div>
                     <div class="col-6 mb-2">
-                        <label class="" for="max">จำนวนใช้ได้สูงสุด</label>
+                        <label class="" for="max">{{__('setting.Limited quantity')}}</label>
                         <input type="text" class="form-control " name="max" onkeypress="return isNumberKey(event)" required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-6 mb-2">
-                        <label class="" for="date_start">วันที่เริ่มต้น</label>
+                        <label class="" for="date_start">{{__('setting.Start Date')}}</label>
                         <input type="date" class="form-control picker" id="date_start" name="date_start" placeholder="YYYY-MM-DD" required
                     >
                     </div>
                     <div class="col-6 mb-2">
-                        <label class="" for="time_start">เวลาเริ่มต้น</label>
+                        <label class="" for="time_start">{{__('setting.Start time')}}</label>
                         <input type="time" class="form-control picker" id="time_start" name="time_start" placeholder="" required
                     >
                     </div>
                     <div class="col-6 mb-2">
-                        <label class="" for="date_end">วันที่เริ่มสิ้นสุด</label>
+                        <label class="" for="date_end">{{__('setting.End Date')}}</label>
                         <input type="date" class="form-control picker" id="date_end" name="date_end" placeholder="YYYY-MM-DD" required
                     >
                     </div>
                     <div class="col-6 mb-2">
-                        <label class="" for="time_end">เวลาสิ้นสุด</label>
+                        <label class="" for="time_end">{{__('setting.End Time')}}</label>
                         <input type="time" class="form-control picker" id="time_end" name="time_end" placeholder="" required
                     >
                     </div>
@@ -217,8 +217,8 @@
                     </label>
                 </div> --}}
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-                    <button type="submit" class="btn btn-primary">บันทึก</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__('main.close')}}</button>
+                    <button type="submit" class="btn btn-primary">{{__('main.save')}}</button>
                 </div>
             </form>
         </div>

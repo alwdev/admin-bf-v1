@@ -51,7 +51,7 @@
                         <th data-field="name" data-sortable="true">{{__('main.promotion')}}</th>
                         <th data-field="deposit" data-sortable="true">{{__('dashboard.deposit_amount')}}</th>
                         <th data-field="bonus" data-sortable="true">Bonus</th>
-                        <th data-field="turnover" data-sortable="true">{{__('main.Turnover (times)')}}</th>
+                        <th data-field="turnover" data-sortable="true">{{__('setting.Turns to be made(times)')}}</th>
                         <th data-field="is_newuser" data-sortable="true">{{__('main.For new players only')}}</th>
                         <th data-field="action" data-sortable="true">{{__('main.Publish')}}</th>
                         <th data-sortable="true">{{__('main.Creation Date')}}</th>

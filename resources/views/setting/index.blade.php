@@ -10,25 +10,25 @@
    <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">ตั้งค่า</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.setting')}}</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">เพจ</a></li>
-                    <li class="breadcrumb-item active">ตั้งค่า</li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                    <li class="breadcrumb-item active">{{__('main.setting')}}</li>
                 </ol>
             </div>
-            
+
         </div>
     </div>
-</div>     
+</div>
 <!-- end page title -->
 
 <div class="row">
     <div class="col-xl-6">
          <div class="card">
             <div class="card-body">
-                <h4 class="card-title">ตั้งค่าเว็บไซต์</h4>
+                <h4 class="card-title">{{__('setting.website_setting')}}</h4>
                 <form id="form-maintenance" action="{{ route('setting.maintenance') }}" method="post">
                     @csrf
                     <br>
@@ -36,7 +36,7 @@
                         <input type="checkbox" class="custom-control-input" @if($setting->maintenance == 1) checked @endif id="ismaintence" name="ismaintence">
                         <label class="custom-control-label" for="ismaintence">Maintenance</label>
                     </div>
-                    <button type="button" onclick="formsubmit('#form-maintenance')" class="btn btn-primary waves-effect waves-light mt-4">บันทึก</button>
+                    <button type="button" onclick="formsubmit('#form-maintenance')" class="btn btn-primary waves-effect waves-light mt-4">{{__('main.save')}}</button>
                 </form>
             </div>
             <!-- end card-body-->
@@ -50,25 +50,25 @@
         <div class="col-xl-4 d-flex">
             <div class="card flex-fill">
                <div class="card-body">
-                   <h4 class="card-title">ตั้งค่าฝากเงิน</h4>
+                   <h4 class="card-title">{{__('setting.deposit_setting')}}</h4>
                    <form id="form-maintenance2" action="{{ route('setting.deposit') }}" method="post">
                        @csrf
                        <br>
                        <div class="mb-2">
-                           <label class="" for="min_deposit">ฝากขั้นต่ำ</label>
+                           <label class="" for="min_deposit">{{__('setting.Minimum deposit')}}</label>
                            <input type="text" class="form-control" name="min_deposit" value="{{ $setting->min_deposit }}">
                        </div>
                        <div class="custom-control custom-checkbox">
                             <input type="checkbox" class="custom-control-input"@if($setting->is_enable_min_deposit == 1) checked @endif id="is_enable_min_deposit" name="is_enable_min_deposit">
-                            <label class="custom-control-label" for="is_enable_min_deposit">สถานะ 
-                               @if($setting->is_enable_min_deposit == 1) 
-                               <span class="badge text-bg-success text-success">ใช้งาน</span>
+                            <label class="custom-control-label" for="is_enable_min_deposit">{{__('dashboard.status')}}
+                               @if($setting->is_enable_min_deposit == 1)
+                               <span class="badge text-bg-success text-success">{{__('main.Use')}}</span>
                                @else
-                               <span class="badge text-bg-danger text-danger">ปิดใช้งาน</span>
+                               <span class="badge text-bg-danger text-danger">{{__('main.Not in use')}}</span>
                                 @endif
                             </label>
                         </div>
-                       <button type="button" onclick="formsubmit('#form-maintenance2')" class="btn btn-primary waves-effect waves-light mt-4">บันทึก</button>
+                       <button type="button" onclick="formsubmit('#form-maintenance2')" class="btn btn-primary waves-effect waves-light mt-4">{{__('main.save')}}</button>
                    </form>
                </div>
                <!-- end card-body-->
@@ -78,29 +78,29 @@
         <div class="col-xl-4 d-flex">
             <div class="card flex-fill">
                <div class="card-body">
-                   <h4 class="card-title">ตั้งค่าถอนเงิน</h4>
+                   <h4 class="card-title">{{__('setting.withdraw_setting')}}</h4>
                    <form id="form-maintenance3" action="{{ route('setting.withdraw') }}" method="post">
                        @csrf
                        <br>
                        <div class="mb-2">
-                           <label class="" for="min_withdraw">ถอนขั้นต่ำ</label>
+                           <label class="" for="min_withdraw">{{__('setting.Minimum withdrawal')}}</label>
                            <input type="text" class="form-control" name="min_withdraw" value="{{ $setting->min_withdraw }}">
                        </div>
                        <div class="mb-2">
-                           <label class="" for="auto_min_withdraw">ถอนออโต้เมื่อยอดน้อยกว่า หรือ เท่ากับ</label>
+                           <label class="" for="auto_min_withdraw">{{__('setting.Auto-withdraw when the amount is less than or equal to')}}</label>
                            <input type="text" class="form-control" name="auto_min_withdraw" value="{{ $setting->auto_min_withdraw }}">
                        </div>
                        <div class="custom-control custom-checkbox">
                             <input type="checkbox" class="custom-control-input" @if($setting->is_enable_auto_withdraw == 1) checked @endif id="is_enable_auto_withdraw" name="is_enable_auto_withdraw">
-                            <label class="custom-control-label" for="is_enable_auto_withdraw">การถอนออโต้ 
-                               @if($setting->is_enable_auto_withdraw == 1) 
-                               <span class="badge text-bg-success text-success">ใช้งาน</span>
+                            <label class="custom-control-label" for="is_enable_auto_withdraw">{{__('setting.Auto Withdrawal')}}
+                               @if($setting->is_enable_auto_withdraw == 1)
+                               <span class="badge text-bg-success text-success">{{__('main.Use')}}</span>
                                @else
-                               <span class="badge text-bg-danger text-danger">ปิดใช้งาน</span>
+                               <span class="badge text-bg-danger text-danger">{{__('main.Not in use')}}</span>
                                 @endif
                             </label>
                         </div>
-                       <button type="button" onclick="formsubmit('#form-maintenance3')" class="btn btn-primary waves-effect waves-light mt-4">บันทึก</button>
+                       <button type="button" onclick="formsubmit('#form-maintenance3')" class="btn btn-primary waves-effect waves-light mt-4">{{__('main.save')}}</button>
                    </form>
                </div>
                <!-- end card-body-->
@@ -110,33 +110,33 @@
         <div class="col-xl-4 d-flex">
             <div class="card flex-fill">
                <div class="card-body">
-                   <h4 class="card-title">ตั้งค่า Comission (คืนยอดเสีย)</h4>
+                   <h4 class="card-title">{{__('setting.commission_setting')}}</h4>
                    <form id="form-maintenance4" action="{{ route('setting.cashback') }}" method="post">
                        @csrf
                        <br>
                        <div class="mb-2">
-                           <label class="" for="cashback_percent">คืน(เปอร์เซ็นต์)</label>
+                           <label class="" for="cashback_percent">{{__('setting.Return(percent)')}}</label>
                            <input type="text" class="form-control" name="cashback_percent" value="{{ $setting->cashback_percent }}">
                        </div>
                        <div class="mb-2">
-                           <label class="" for="cashback_turnover">เทิร์นที่ต้องทำ(เท่า)</label>
+                           <label class="" for="cashback_turnover">{{__('setting.Turns to be made(times)')}}</label>
                            <input type="text" class="form-control" name="cashback_turnover" value="{{ $setting->cashback_turnover }}">
                        </div>
                        <div class="mb-2">
-                           <label class="" for="cashback_min_withdraw">ถอนยอดขั้นต่ำ(หน่วย)</label>
+                           <label class="" for="cashback_min_withdraw">{{__('setting.Minimum withdrawal amount (units)')}}</label>
                            <input type="text" class="form-control" name="cashback_min_withdraw" value="{{ $setting->cashback_min_withdraw }}">
                        </div>
                        <div class="custom-control custom-checkbox">
                             <input type="checkbox" class="custom-control-input" @if($setting->is_enable_cashback == 1) checked @endif id="is_enable_cashback" name="is_enable_cashback">
-                            <label class="custom-control-label" for="is_enable_cashback">สถานะ 
-                               @if($setting->is_enable_cashback == 1) 
-                               <span class="badge text-bg-success text-success">ใช้งาน</span>
+                            <label class="custom-control-label" for="is_enable_cashback">{{__('dashboard.status')}}
+                               @if($setting->is_enable_cashback == 1)
+                               <span class="badge text-bg-success text-success">{{__('main.Use')}}</span>
                                @else
-                               <span class="badge text-bg-danger text-danger">ปิดใช้งาน</span>
+                               <span class="badge text-bg-danger text-danger">{{__('main.Not in use')}}</span>
                                 @endif
                             </label>
                         </div>
-                       <button type="button" onclick="formsubmit('#form-maintenance4')" class="btn btn-primary waves-effect waves-light mt-4">บันทึก</button>
+                       <button type="button" onclick="formsubmit('#form-maintenance4')" class="btn btn-primary waves-effect waves-light mt-4">{{__('main.save')}}</button>
                    </form>
                </div>
                <!-- end card-body-->
@@ -151,14 +151,14 @@
     <script>
          function formsubmit(form) {
             Swal.fire({
-            title: "ต้องการบันทึกข้อมูลหรือไม่?",
+            title: '{{__('setting.Do you want to save the data?')}}',
             // text: "You won't be able to revert this!",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "บันทึก",
-            cancelButtonText: "ยกเลิก",
+            confirmButtonText: '{{__('main.save')}}',
+            cancelButtonText: '{{__('main.cancel')}}',
             }).then((result) => {
                 if (result.value) {
                     $(form).submit();

@@ -48,10 +48,10 @@
                         data-url="">
                         <thead  class="table-light">
                                 <tr>
-                                    <th data-field="username"  data-sortable="true">Username</th>
+                                    <th data-field="username"  data-sortable="true">{{__('managemember.user_name')}}</th>
                                     <th data-field="email"  data-sortable="true">Email</th>
                                     <th data-field="level"  data-sortable="true">level</th>
-                                    <th data-sortable="true">created_at</th>
+                                    <th data-sortable="true">{{__('main.Creation Date')}}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -147,13 +147,13 @@
     function confirmPass(userid) {
         Swal.mixin({
         input: 'text',
-        confirmButtonText: 'ยืนยัน &rarr;',
+        confirmButtonText: '{{__('main.confirm')}} &rarr;',
         showCancelButton: true,
-        cancelButtonText: 'ยกเลิก',
+        cancelButtonText: '{{__('main.cancel')}}',
         progressSteps: ['1', '2']
       }).queue([
         {
-          title: 'แจ้งเตือน',
+          title: 'warning',
           text: '{{__('main.Please confirm your password to continue.')}}'
         }
       ]).then( function (result) {
@@ -173,18 +173,18 @@
                         Swal.fire(
                         {
                             title: '',
-                            html: '<h4>ชื่อผู้ใช้: '+data.name+'</br></h4>' +
-                            '<h4>รหัสผ่าน: '+data.truepass+'</br></h4>',
+                            html: '<h4>{{__('managemember.user_name')}}: '+data.name+'</br></h4>' +
+                            '<h4>{{__('managemember.password')}}: '+data.truepass+'</br></h4>',
                             type: 'success',
-                            confirmButtonText: 'ตกลง',
+                            confirmButtonText: 'ok',
                             confirmButtonClass: 'btn btn-confirm mt-2'
                         }
                     )
                     }else{
                         Swal.fire({
                         type: 'error',
-                        title: "แจ้งเตือน!",
-                        text: "รหัสผ่านไม่ถูกต้อง",
+                        title: "warning!",
+                        text: '{{__('auth.password')}}',
                         });
                     }
 				}
@@ -198,13 +198,13 @@
     function changePass(userid) {
         Swal.mixin({
             input: 'text',
-            confirmButtonText: 'ยืนยัน &rarr;',
+            confirmButtonText: '{{__('main.confirm')}} &rarr;',
             showCancelButton: true,
-            cancelButtonText: 'ยกเลิก',
+            cancelButtonText: '{{__('main.cancel')}}',
             progressSteps: ['1', '2']
         }).queue([
             {
-            title: 'แจ้งเตือน',
+            title: 'warning',
             text: '{{__('main.Please confirm your password to continue.')}}'
             }
         ]).then( function (result) {
@@ -222,14 +222,14 @@
                             if(data!=false){
                                 Swal.mixin({
                                     input: 'text',
-                                    confirmButtonText: 'ยืนยัน &rarr;',
+                                    confirmButtonText: '{{__('main.confirm')}} &rarr;',
                                     showCancelButton: true,
-                                    cancelButtonText: 'ยกเลิก',
+                                    cancelButtonText: '{{__('main.cancel')}}',
                                     progressSteps: ['1', '2']
                                 }).queue([
                                     {
-                                    title: 'แจ้งเตือน',
-                                    text: 'รหัสผ่านใหม่'
+                                    title: 'warning',
+                                    text: '{{__('managemember.password')}}'
                                     }
                                 ]).then( function (result2) {
                                     $.ajax({
@@ -243,18 +243,18 @@
                                             if(data!=false){
                                                 Swal.fire(
                                                     {
-                                                        title: 'เปลี่ยนรหัสผ่านสำเร็จ',
-                                                        html: '<h4>ชื่อผู้ใช้: '+data.name+'</br></h4>' +
-                                                        '<h4>รหัสผ่าน: '+data.truepass+'</br></h4>',
+                                                        title: '{{__('passwords.reset')}}',
+                                                        html: '<h4>{{__('managemember.user_name')}}: '+data.name+'</br></h4>' +
+                                                        '<h4>{{__('managemember.password')}}: '+data.truepass+'</br></h4>',
                                                         type: 'success',
-                                                        confirmButtonText: 'ตกลง',
+                                                        confirmButtonText: 'ok',
                                                         confirmButtonClass: 'btn btn-confirm mt-2'
                                                     }
                                                 )
                                             }else{
                                                 // Swal.fire({
                                                 //     type: 'error',
-                                                //     title: "แจ้งเตือน!",
+                                                //     title: "warning!",
                                                 //     text: "รหัสผ่านไม่ถูกต้อง",
                                                 // });
                                             }
@@ -264,8 +264,8 @@
                             }else{
                                 Swal.fire({
                                 type: 'error',
-                                title: "แจ้งเตือน!",
-                                text: "รหัสผ่านไม่ถูกต้อง",
+                                title: "warning!",
+                                text: '{{__('auth.password')}}',
                                 });
                             }
                         }
@@ -279,14 +279,14 @@
     function deluser(userid) {
         Swal.mixin({
         input: 'text',
-        confirmButtonText: 'ยืนยัน &rarr;',
+        confirmButtonText: '{{__('main.confirm')}} &rarr;',
         showCancelButton: true,
-        cancelButtonText: 'ยกเลิก',
+        cancelButtonText: '{{__('main.cancel')}}',
         progressSteps: ['1', '2']
       }).queue([
         {
-          title: 'แจ้งเตือน',
-          text: 'กรุณายืนยันรหัสผ่านของคุณเพือดำเนินการต่อ.'
+          title: 'warning',
+          text: '{{__('main.Please confirm your password to continue.')}}'
         }
       ]).then( function (result) {
 
@@ -305,8 +305,8 @@
                     }else{
                         Swal.fire({
                         type: 'error',
-                        title: "แจ้งเตือน!",
-                        text: "รหัสผ่านไม่ถูกต้อง",
+                        title: "warning!",
+                        text: '{{__('auth.password')}}',
                         });
                     }
 				}

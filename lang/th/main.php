@@ -85,5 +85,6 @@ return [
     'View password'=>'ดูรหัสผ่าน',
     'Change password'=>'เปลียนรหัสผ่าน',
     'Page'=>'เพจ',
-    'Please confirm your password to continue.'=>'กรุณายืนยันรหัสผ่านของคุณเพือดำเนินการต่อ.'
+    'Please confirm your password to continue.'=>'กรุณายืนยันรหัสผ่านของคุณเพือดำเนินการต่อ.',
+    'confirm'=>'ยืนยัน'
 ];

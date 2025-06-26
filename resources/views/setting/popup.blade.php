@@ -16,7 +16,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0 font-size-18">ตั้งค่าป๊อบอัพ</h4>
+            <h4 class="mb-0 font-size-18">{{__('main.popup_setting')}}</h4>
         </div>
     </div>
 </div>
@@ -26,17 +26,17 @@
         <div class="card-body">
             <button type="button" class="btn btn-primary btn-gold waves-effect waves-light"
                 data-toggle="modal" data-target="#createPopupModal">
-                เพิ่มป๊อบอัพ
+                {{__('main.Add')}}
             </button>
 
             <table id="basic-datatable" class="table m-10 table-bordered">
                 <thead class="table-light">
                     <tr>
-                        <th>รูป</th>
-                        <th>เพจ</th>
-                        <th>ข้อความ</th>
-                        <th>สถานะ</th>
-                        <th>จัดการ</th>
+                        <th>{{__('main.picture')}}</th>
+                        <th>{{__('main.Page')}}</th>
+                        <th>{{__('setting.Text')}}</th>
+                        <th>{{__('setting.status')}}</th>
+                        <th>{{__('managemember.manage')}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,9 +51,9 @@
                         <td>{!! $item->note !!}</td>
                         <td>
                             @if($item->active == 1)
-                            <span class="badge badge-success">ใช้งาน</span>
+                            <span class="badge badge-success">{{__('main.Use')}}</span>
                             @else
-                            <span class="badge badge-danger">ปิดใช้งาน</span>
+                            <span class="badge badge-danger">{{__('main.Not in use')}}</span>
                             @endif
                         </td>
                         <td>
@@ -65,19 +65,19 @@
                                 data-note="{{ $item->note }}"
                                 data-active="{{ $item->active }}"
                                 data-toggle="modal" data-target="#editPopupModal">
-                                แก้ไข
+                                {{__('main.edit')}}
                             </button>
-            
+
                             <!-- ปุ่มลบ -->
                             <button type="button" class="btn btn-danger btn-sm delete-popup" data-id="{{ $item->id }}">
-                                ลบ
+                                {{__('managemember.delete')}}
                             </button>
                         </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
-            
+
         </div>
     </div>
 </div>
@@ -87,7 +87,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">เพิ่มป๊อบอัพ</h5>
+                <h5 class="modal-title">{{__('main.Add')}}</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -96,14 +96,14 @@
                     <input type="hidden" name="id">
 
                     <div class="mb-2">
-                        <label for="popup_image">รูปภาพ (ขนาด 400x400px)</label>
+                        <label for="popup_image">{{__('main.Image (size 400x400px)')}}</label>
                         <input type="file" class="form-control" name="image" id="popup_image" accept="image/png, image/gif, image/jpeg">
                         <br>
                         <img id="preview_image" src="" width="100" style="display: none;">
                     </div>
 
                     <div class="mb-2">
-                        <label>หน้าที่ต้องการแสดง</label><br>
+                        <label>{{__('main.Page')}}</label><br>
                         @php
                         $pages = ["หน้าแรก" => "homepage", "หน้าโปรโมชั่น" => "promotionpage", "หน้าเกม" => "gamepage"];
                         @endphp
@@ -116,20 +116,20 @@
                     </div>
 
                     <div class="mb-2">
-                        <label>ข้อความ</label>
+                        <label>{{__('setting.Text')}}</label>
                         <div id="editor"></div>
                         <input type="hidden" name="note" id="popup_note">
                     </div>
 
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="popup_active" name="active">
-                        <label class="custom-control-label" for="popup_active">สถานะ</label>
+                        <label class="custom-control-label" for="popup_active">{{__('setting.status')}}</label>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-                <button type="button" onclick="submitCreatePopup()" class="btn btn-primary">บันทึก</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__('main.close')}}</button>
+                <button type="button" onclick="submitCreatePopup()" class="btn btn-primary">{{__('main.save')}}</button>
             </div>
         </div>
     </div>
@@ -140,23 +140,23 @@
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">แก้ไขป๊อบอัพ</h5>
+                                    <h5 class="modal-title">{{__('main.edit')}}</h5>
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 </div>
                                 <div class="modal-body">
                                     <form id="form-edit-popup" action="{{ route('setting.popup_update') }}" method="post" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" name="id" id="edit_popup_id">
-                    
+
                                         <div class="mb-2">
-                                            <label for="edit_popup_image">รูปภาพ (ขนาด 400x400px)</label>
+                                            <label for="edit_popup_image">{{__('main.Image (size 400x400px)')}}</label>
                                             <input type="file" class="form-control" name="image" id="edit_popup_image" accept="image/*">
                                             <br>
                                             <img id="edit_preview_image" src="" width="100" style="display: none;">
                                         </div>
-                    
+
                                         <div class="mb-2">
-                                            <label>หน้าที่ต้องการแสดง</label><br>
+                                            <label>{{__('main.Page')}}</label><br>
                                             @php
                                             $pages = ["หน้าแรก" => "homepage", "หน้าโปรโมชั่น" => "promotionpage", "หน้าเกม" => "gamepage"];
                                             @endphp
@@ -167,22 +167,22 @@
                                             </div>
                                             @endforeach
                                         </div>
-                    
+
                                         <div class="mb-2">
-                                            <label>ข้อความ</label>
+                                            <label>{{__('setting.Text')}}</label>
                                             <div id="edit_editor"></div>
                                             <input type="hidden" name="note" id="edit_popup_note">
                                         </div>
-                    
+
                                         <div class="custom-control custom-checkbox">
                                             <input type="checkbox" class="custom-control-input" id="edit_popup_active" name="active">
-                                            <label class="custom-control-label" for="edit_popup_active">สถานะ</label>
+                                            <label class="custom-control-label" for="edit_popup_active">{{__('setting.status')}}</label>
                                         </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-                                    <button type="button" onclick="submitEditPopup()" class="btn btn-primary">บันทึก</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__('main.close')}}</button>
+                                    <button type="button" onclick="submitEditPopup()" class="btn btn-primary">{{__('main.save')}}</button>
                                 </div>
                             </div>
                         </div>

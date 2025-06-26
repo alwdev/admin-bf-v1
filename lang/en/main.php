@@ -29,7 +29,7 @@ return [
     'setting' => 'Settings',
     'user_manual' => 'User Manual',
     'website_setting' => 'Website Settings',
-    'recommend_setting' => 'Referral Settings',
+    'recommend_setting' => 'Affiliate Settings',
     'popup_setting' => 'Popup Settings',
     'member_level_setting' => 'Member Level Settings',
     'wheel_setting' => 'Wheel Settings',
@@ -85,6 +85,7 @@ return [
     'View password'=>'View password',
     'Change password'=>'Change password',
     'Page'=>'Page',
-    'Please confirm your password to continue.'=>'Please confirm your password to continue.'
+    'Please confirm your password to continue.'=>'Please confirm your password to continue.',
+    'confirm'=>'confirm'
 ];
 

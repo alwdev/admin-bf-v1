@@ -153,8 +153,8 @@
 
                     </div>
                     <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-                    <button type="submit" class="btn btn-primary" >บันทึก</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__('main.close')}}</button>
+                    <button type="submit" class="btn btn-primary" >{{__('main.save')}}</button>
                     </div>
                 </form>
                 </div>
@@ -171,12 +171,12 @@
                 data-url="">
                 <thead  class="table-light">
                     <tr>
-                        <th data-field="username" data-sortable="true">สมาชิก</th>
-                        <th data-field="amount" data-sortable="true">จำนวนเงิน</th>
-                        <th data-sortable="true">วันที่ทำรายการ</th>
-                        <th data-sortable="true">จาก</th>
-                        <th data-sortable="true">ถึง</th>
-                        <th data-sortable="true">หลักฐาน</th>
+                        <th data-field="username" data-sortable="true">{{__('dashboard.member')}}</th>
+                        <th data-field="amount" data-sortable="true">{{__('managemember.amount')}}</th>
+                        <th data-sortable="true">{{__('dashboard.Date_of_transaction')}}</th>
+                        <th data-sortable="true">{{__('managemember.from')}}</th>
+                        <th data-sortable="true">{{__('managemember.to')}}</th>
+                        <th data-sortable="true">{{__('managemember.evidence')}}</th>
                         <th data-sortable="true"></th>
                     </tr>
                 </thead>
@@ -193,17 +193,17 @@
                                 {{ $item->bank_to_name }} ( {{ $item->bank_to_account_name }} -  {{ $item->bank_to_number }})
                             </td>
                             <td>
-                                <button type="button" class="btn btn-primary btn-sm" onclick="showEvidence('{{ env('APP_URL_IMAGE_EVIDENCE').$item->image }}')">หลักฐาน</button>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="showEvidence('{{ env('APP_URL_IMAGE_EVIDENCE').$item->image }}')">{{__('managemember.evidence')}}</button>
                             </td>
 
                             <td>
-                              <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalEdit{{ $key }}">Edit</button>
+                              <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalEdit{{ $key }}">{{__('main.edit')}}</button>
 
                               <div class="modal fade" id="modalEdit{{ $key }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalEditLabel{{ $key }}" aria-hidden="true">
                                 <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="modalEditLabel{{ $key }}">รายงานฝากผิดพลาด</h1>
+                                    <h1 class="modal-title fs-5" id="modalEditLabel{{ $key }}">{{__('main.report_error_transfert')}}</h1>
                                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">X</button>
                                     </div>
                                     <form id="form-add-transfer{{ $key }}" action="{{ route('transfer.wrongdeposit_update') }}" method="post" enctype="multipart/form-data">
@@ -213,13 +213,13 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label for="amount">จำนวนเงิน</label>
+                                                        <label for="amount">{{__('managemember.amount')}}</label>
                                                         <input type="number" class="form-control" id="amount{{ $key }}" name="amount" autocomplete="off" required value="{{ $item->amount }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label for="member_id">Username</label>
+                                                        <label for="member_id">{{__('managemember.user_name')}}</label>
                                                         <input type="text" class="form-control" list="members{{ $key }}" id="member_id{{ $key }}" name="member_id" required value="{{ $item->username }}">
                                                         <datalist id="members{{ $key }}">
                                                             @foreach ($members as $item3)
@@ -235,9 +235,9 @@
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="form-group">
-                                                                <label for="bank_from_name">ธนาคารผู้ฝาก</label>
+                                                                <label for="bank_from_name">{{__('managemember.BankAccount')}}</label>
                                                                 <select name="bank_from_name" id="bank_from_name{{ $key }}" required class="form-control">
-                                                                    <option value="">เลือกธนาคาร</option>
+                                                                    <option value="">{{__('managemember.Select_a_bank')}}</option>
                                                                     <option  @if($item->bank_from_name == 'ธนาคารกรุงเทพ') selected @endif value="ธนาคารกรุงเทพ" data-img="bbl.png" data-logo="{{ asset('images/bank/bbl.png') }}"> ธนาคารกรุงเทพ</option>
                                                                     <option  @if($item->bank_from_name == 'ธนาคารกสิกรไทย') selected @endif value="ธนาคารกสิกรไทย" data-img="kbank.png" data-logo="{{ asset('images/bank/kbank.png') }}"> ธนาคารกสิกรไทย</option>
                                                                     <option  @if($item->bank_from_name == 'ธนาคารกรุงไทย') selected @endif value="ธนาคารกรุงไทย" data-img="ktb.png" data-logo="{{ asset('images/bank/ktb.png') }}"> ธนาคารกรุงไทย</option>
@@ -256,13 +256,13 @@
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group">
-                                                                <label for="bank_from_account_name">ชื่อบัญชีธนาคารผู้ฝาก</label>
+                                                                <label for="bank_from_account_name">{{__('managemember.Account_Name')}}</label>
                                                                 <input type="text" class="form-control" id="bank_from_account_name{{ $key }}" name="bank_from_account_name" value="{{ $item->bank_from_account_name }}">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group">
-                                                                <label for="bank_from_number">เลขบัญชีธนาคารผู้ฝาก</label>
+                                                                <label for="bank_from_number">{{__('managemember.Account_number')}}</label>
                                                                 <input type="text" class="form-control" id="bank_from_number{{ $key }}" name="bank_from_number" value="{{ $item->bank_from_number }}">
                                                             </div>
                                                         </div>
@@ -270,7 +270,7 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label for="bank_to">บัญชีธนาคารผู้รับ</label>
+                                                        <label for="bank_to">{{__('managemember.Recipient_Bank_Account')}}</label>
                                                         <select name="bank_to" class="form-control" id="bank_to{{ $key }}">
                                                             <option></option>
                                                             @foreach ($banks as $bank)
@@ -283,7 +283,7 @@
 
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label for="image">สลิป</label>
+                                                        <label for="image">{{__('managemember.slip')}}</label>
                                                         <input type="file" class="form-control" id="image{{ $key }}" name="image">
                                                         <img src="{{ asset($item->image) }}" style="max-width:400px;">
                                                     </div>
@@ -292,7 +292,7 @@
 
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label for="note">หมายเหตุ</label>
+                                                        <label for="note">{{__('managemember.note')}}</label>
                                                         <textarea class="form-control" id="note{{ $key }}" name="note" rows="3">{{ $item->note }}</textarea>
                                                     </div>
                                                 </div>
@@ -300,8 +300,8 @@
 
                                     </div>
                                     <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-                                    <button type="submit" class="btn btn-primary" >บันทึก</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__('main.close')}}</button>
+                                    <button type="submit" class="btn btn-primary" >{{__('main.save')}}</button>
                                     </div>
                                 </form>
                                 </div>

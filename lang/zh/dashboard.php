@@ -1,0 +1,31 @@
+<?php
+return [
+    'deposit' => '存款',
+    'withdraw' => '提款',
+    'deposit_amount' => '存款金额',
+    'withdraw_amount' => '提款金额',
+    'net_profit' => '净利润',
+    'new_member' => '新会员',
+    'all_member' => '所有会员',
+    'Online_today' => '今日在线',
+    'Add_normal' => '添加普通',
+    'Customer_Refund' => '客户退款',
+    'Balance' => '余额',
+    'Latest_Deposit_Withdraw' => '最新存提款',
+    'Deposit_Withdraw' => '存提款列表',
+    'quantity' => '数量',
+    'member' => '会员',
+    'name' => '姓名',
+    'date' => '日期',
+    'Total_Amount' => '总金额',
+    'type' => '类型',
+    'Date_of_transaction' => '交易日期',
+    'status' => '状态',
+    'AwaitingApproval' => '待审核的存提款',
+    'BankAccount' => '银行账户',
+    'Bankquantity' => '', // 没有翻译内容，可补充说明
+    'approval' => '审核通过',
+    'bot_approval' => '机器人审核',
+    'refuse' => '拒绝',
+    'In_progress' => '进行中'
+];
