@@ -29,7 +29,7 @@
     </style>
 </head>
 
-<body style="background-image: url('{{ asset('images/1920x949.jpg') }}')">
+<body style="background: linear-gradient(180deg, var(--theme-color-1, #1a1b1e) 0%, #44446a 100%);">
 
     <div>
         <div class="container">
@@ -43,7 +43,7 @@
                                         <div class="card-body">
                                             <div class="text-center mb-4 mt-3">
                                                 <a href="/">
-                                                    <span><img src="{{ env('APP_LOGO') }}" alt="" height="50"></span>
+                                                    <span><img src="{{ env('APP_LOGO') }}" alt="" height="150"></span>
                                                 </a>
                                             </div>
                                             <form action="{{ route('login') }}" method="post" class="p-2">

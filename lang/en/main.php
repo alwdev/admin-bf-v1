@@ -20,7 +20,7 @@ return [
     'report_transfer' => 'Deposit/Withdrawal Report',
     'report_edit_credit' => 'Credit Adjustment Report',
     'report_error_transfert' => 'Incorrect Deposit Report',
-    'book_bank' => 'Bank Book',
+    'book_bank' => 'Bank Account',
     'game_cate' => 'Game Providers',
     'promotion' => 'Promotions',
     'article' => 'Articles',
