@@ -65,6 +65,9 @@
                         @elseif(session()->get('locale') == 'ko')
                             <img class="rounded-circle header-profile-user" src="/images/auth/ko.png"alt="">
                             <span class="d-none d-sm-inline-block ml-1">KO</span>
+                        @elseif(session()->get('locale') == 'jp')
+                            <img class="rounded-circle header-profile-user" src="/images/auth/jp.png"alt="">
+                            <span class="d-none d-sm-inline-block ml-1">JP</span>
                         @elseif(session()->get('locale') == 'zh')
                             <img class="rounded-circle header-profile-user" src="/images/auth/zh.png"alt="">
                             <span class="d-none d-sm-inline-block ml-1">ZH</span>
@@ -112,6 +115,11 @@
                         href="{{ route('change.lang', ['lang' => 'ko']) }}" data-icon="">
                         <img src="/images/auth/ko.png" alt="" style="width: 24px">
                         <span>한국어</span>
+                    </a>
+                    <a class="dropdown-item d-flex align-items-center justify-content-between"
+                        href="{{ route('change.lang', ['lang' => 'jp']) }}" data-icon="">
+                        <img src="/images/auth/jp.png" alt="" style="width: 24px">
+                        <span>日本語</span>
                     </a>
                     {{-- <a class="dropdown-item d-flex align-items-center justify-content-between"
                         href="{{ route('change.lang', ['lang' => 'zh']) }}" data-icon="/images/auth/zh.png">

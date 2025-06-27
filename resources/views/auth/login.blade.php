@@ -29,8 +29,8 @@
     </style>
 </head>
 
-<body style="background: linear-gradient(180deg, var(--theme-color-1, #1a1b1e) 0%, #44446a 100%);">
-
+<body >
+{{-- style="background: linear-gradient(180deg, var(--theme-color-1, #1a1b1e) 0%, #44446a 100%);" --}}
     <div>
         <div class="container">
             <div class="row">
