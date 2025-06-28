@@ -20,7 +20,7 @@
         <link href="{{ asset('css/icons.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('css/theme.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('css/style.css') }}" rel="stylesheet" type="text/css" />
-        
+
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -73,11 +73,11 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-sm-6">
-                                2024 © Mexico333.
+                                2024 © Taurus.
                             </div>
                             <div class="col-sm-6">
                                 <div class="text-sm-right d-none d-sm-block">
-                                    Design & Develop Mexico333.
+                                    Design & Develop Taurus.
                                 </div>
                             </div>
                         </div>
@@ -126,7 +126,7 @@
             function isNumberKey(evt)
             {
                 var charCode = (evt.which) ? evt.which : evt.keyCode;
-                if (charCode != 46 && charCode > 31 
+                if (charCode != 46 && charCode > 31
                     && (charCode < 48 || charCode > 57))
                     return false;
 
