@@ -426,11 +426,11 @@ class ManageMemberController extends Controller
                         'new_balance' => $member->wallet_balance + $cash_back,
                         'transfer_date' => strtotime(now()),
                     ]);
-                    // $member->wallet_balance = (float) ($member->wallet_balance + $cash_back);
-                    // $member->save();
+                    $member->wallet_balance = (float) ($member->wallet_balance + $cash_back);
+                    $member->save();
 
-                    // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($cash_back));
-                    // Log::info('Betflix CashBack '.$bf_deposit.' '.floor($cash_back).' User =  '.$member->username);
+                    $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($cash_back));
+                    Log::info('Betflix CashBack '.$bf_deposit.' '.floor($cash_back).' User =  '.$member->username);
                 }
 
         }
