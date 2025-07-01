@@ -88,18 +88,19 @@
                 <li>
                     
 
-                    @if (session()->has('locale'))
-                        @if(session()->get('locale') == 'th')
-                            <a href="document-th.pdf" target="_blank" class="waves-effect"><i class='bx bx-copy'></i><span>{{__('main.user_manual')}}</span></a>
-                        @else
-                            <a href="document.pdf" target="_blank" class="waves-effect"><i class='bx bx-copy'></i><span>{{__('main.user_manual')}}</span></a>
-                        @endif
-                    @else
-                        @php
-                            Session::put('locale', 'en');
-                        @endphp
-                        <a href="document.pdf" target="_blank" class="waves-effect"><i class='bx bx-copy'></i><span>{{__('main.user_manual')}}</span></a>
-                    @endif
+@if (session()->has('locale'))
+    @if(session()->get('locale') == 'th')
+        <a href="document-th.pdf" target="_blank" class="waves-effect"><i class='bx bx-copy'></i><span>{{__('main.user_manual')}}</span></a>
+    @else
+        <a href="document.pdf" target="_blank" class="waves-effect"><i class='bx bx-copy'></i><span>{{__('main.user_manual')}}</span></a>
+    @endif
+@else
+    @php
+        Session::put('locale', 'en');
+    @endphp
+    <a href="document.pdf" target="_blank" class="waves-effect"><i class='bx bx-copy'></i><span>{{__('main.user_manual')}}</span></a>
+@endif
+
                 </li>
             </ul>
         </div>
