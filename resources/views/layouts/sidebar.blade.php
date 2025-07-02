@@ -4,7 +4,7 @@
 
         <div class="navbar-brand-box">
             <a href="/" class="logo">
-                <img src="{{ env('APP_LOGO') }}" width="200" style="height: auto;"/>
+                <img src="{{ asset(env('APP_LOGO')) }}" width="200" style="height: auto;"/>
             </a>
         </div>
 
@@ -86,7 +86,7 @@
                     {{-- @endif --}}
                 @endif
                 <li>
-                    
+
 
 @if (session()->has('locale'))
     @if(session()->get('locale') == 'th')
