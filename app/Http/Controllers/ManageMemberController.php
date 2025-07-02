@@ -93,22 +93,22 @@ class ManageMemberController extends Controller
                             error_log("โปร member ใหม่");
                             if($user_transfer_count == 0){
                                 /// ฝากครั้งแรก
-                                error_log("เข้าเงื่อนไข member ใหม่");
-                                $message .= "เข้าเงื่อนไข member ใหม่, ";
+                                error_log("Meet new member conditions");
+                                $message .= "Meet new member conditions, ";
                                 $bonus = $pro->bonus;
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                                 $amount_betflix = $transfer->amount + $bonus;
                                 $transfer->promotion = $pro->name;
 
                             }else{
-                                error_log("ไม่เข้าเงื่อนไข member ใหม่");
-                                $message .= "ไม่เข้าเงื่อนไข member ใหม่, ";
+                                error_log("Does not meet the new member requirements");
+                                $message .= "Does not meet the new member requirements, ";
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
                                 $amount_betflix = $transfer->amount;
                             }
                         }else{//โปร member ทุกคน
-                            error_log("โปร member ทุกคน");
-                            $message .= "โปร member ทุกคน, ";
+                            error_log("All member promotions");
+                            $message .= "All member promotions, ";
                             $bonus = $pro->bonus;
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
@@ -120,8 +120,8 @@ class ManageMemberController extends Controller
                         $amount_betflix = $transfer->amount;
                     }
                 }else{ //ไม่มีโปร
-                    error_log("ไม่มีโปร / ไม่กดรับโปร");
-                    $message .= "ไม่มีโปร / ไม่กดรับโปร, ";
+                    error_log("No promotion / Don't click to accept the promotion");
+                    $message .= "No promotion / Don't click to accept the promotion, ";
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                     $amount_betflix = $transfer->amount;
 
@@ -164,8 +164,8 @@ class ManageMemberController extends Controller
 
               TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
               ->line(env('APP_NAME'))
-              ->line('Admin ทำรายการ อนุมัติเครดิตเข้า '.$member->username)
-              ->line('จำนวน :'.floor($transfer->amount))
+              ->line('Admin has approved the credit. '.$member->username)
+              ->line('Amount :'.floor($transfer->amount))
               ->line('Bonus :'.$bonus)
               ->line($pro_name.': '.$message)
               ->send();
@@ -189,9 +189,9 @@ class ManageMemberController extends Controller
 
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line(env('APP_NAME'))
-                ->line('Admin ทำรายการ อนุมัติถอนเงิน '.$member->username)
-                ->line('จำนวน :'.floor($transfer->amount))
-                ->line('คำเตือน Admin ต้องทำรายการโอนเงินเองที่แอปธนาคาร')
+                ->line('Admin Make a transaction, approve a withdrawal '.$member->username)
+                ->line('Mount :'.floor($transfer->amount))
+                ->line('Warning: Admin must make the transfer by themselves via the bank app.')
                 ->send();
 
             }

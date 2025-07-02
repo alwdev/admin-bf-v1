@@ -204,22 +204,22 @@ class TransactionController extends Controller
                             error_log("โปร member ใหม่");
                             if($user_transfer_count == 0){
                                 /// ฝากครั้งแรก
-                                error_log("เข้าเงื่อนไข member ใหม่");
-                                $message .= "เข้าเงื่อนไข member ใหม่, ";
+                                error_log("Meet new member conditions");
+                                $message .= "Meet new member conditions, ";
                                 $bonus = $pro->bonus;
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                                 $amount_betflix = $transfer->amount + $bonus;
                                 $transfer->promotion = $pro->name;
 
                             }else{
-                                error_log("ไม่เข้าเงื่อนไข member ใหม่");
-                                $message .= "ไม่เข้าเงื่อนไข member ใหม่, ";
+                                error_log("Does not meet the new member requirements");
+                                $message .= "Does not meet the new member requirements, ";
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
                                 $amount_betflix = $transfer->amount;
                             }
                         }else{//โปร member ทุกคน
-                            error_log("โปร member ทุกคน");
-                            $message .= "โปร member ทุกคน, ";
+                            error_log("All member promotions");
+                            $message .= "All member promotions, ";
                             $bonus = $pro->bonus;
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
@@ -231,8 +231,8 @@ class TransactionController extends Controller
                         $amount_betflix = $transfer->amount;
                     }
                 }else{ //ไม่มีโปร
-                    error_log("ไม่มีโปร / ไม่กดรับโปร");
-                    $message .= "ไม่มีโปร / ไม่กดรับโปร, ";
+                    error_log("No promotion / Don't click to accept the promotion");
+                    $message .= "No promotion / Don't click to accept the promotion, ";
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                     $amount_betflix = $transfer->amount;
 
@@ -274,8 +274,8 @@ class TransactionController extends Controller
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 // ->content('Choose an option:')
                 ->line('BOT '.env('APP_NAME'))
-                ->line('ทำรายการสำเร็จ โอนเครดิตเข้า '.$member->username)
-                ->line('จำนวน :'.$amount)
+                ->line('Transaction completed, credit transferred '.$member->username)
+                ->line('Amount :'.$amount)
                 ->line('Bonus :'.$bonus)
                 ->line($pro_name.': '.$message)
                 ->send();
@@ -349,16 +349,16 @@ class TransactionController extends Controller
                             error_log("โปร member ใหม่");
                             if($user_transfer_count == 0){
                                 /// ฝากครั้งแรก
-                                error_log("เข้าเงื่อนไข member ใหม่");
-                                $message .= "เข้าเงื่อนไข member ใหม่, ";
+                                error_log("Meet new member conditions");
+                                $message .= "Meet new member conditions, ";
                                 $bonus = $pro->bonus;
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                                 $amount_betflix = $transfer->amount + $bonus;
                                 $transfer->promotion = $pro->name;
 
                             }else{
-                                error_log("ไม่เข้าเงื่อนไข member ใหม่");
-                                $message .= "ไม่เข้าเงื่อนไข member ใหม่, ";
+                                error_log("ไม่Meet new member conditions");
+                                $message .= "ไม่Meet new member conditions, ";
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
                                 $amount_betflix = $transfer->amount;
                             }
@@ -376,8 +376,8 @@ class TransactionController extends Controller
                         $amount_betflix = $transfer->amount;
                     }
                 }else{ //ไม่มีโปร
-                    error_log("ไม่มีโปร / ไม่กดรับโปร");
-                    $message .= "ไม่มีโปร / ไม่กดรับโปร, ";
+                    error_log("No promotion / Don't click to accept the promotion");
+                    $message .= "No promotion / Don't click to accept the promotion, ";
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                     $amount_betflix = $transfer->amount;
 
@@ -418,7 +418,7 @@ class TransactionController extends Controller
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 // ->content('Choose an option:')
                 ->line('BOT '.env('APP_NAME'))
-                ->line('ทำรายการสำเร็จ โอนเครดิตเข้า '.$member->username)
+                ->line('Transaction completed, credit transferred '.$member->username)
                 ->line('จำนวน :'.$amount)
                 ->line('Bonus :'.$bonus)
                 ->line($pro_name.': '.$message)
@@ -505,22 +505,22 @@ class TransactionController extends Controller
                             error_log("โปร member ใหม่");
                             if($user_transfer_count == 0){
                                 /// ฝากครั้งแรก
-                                error_log("เข้าเงื่อนไข member ใหม่");
-                                $message .= "เข้าเงื่อนไข member ใหม่, ";
+                                error_log("Meet new member conditions");
+                                $message .= "Meet new member conditions, ";
                                 $bonus = $pro->bonus;
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                                 $amount_betflix = $transfer->amount + $bonus;
                                 $transfer->promotion = $pro->name;
 
                             }else{
-                                error_log("ไม่เข้าเงื่อนไข member ใหม่");
-                                $message .= "ไม่เข้าเงื่อนไข member ใหม่, ";
+                                error_log("Does not meet the new member requirements");
+                                $message .= "Does not meet the new member requirements, ";
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
                                 $amount_betflix = $transfer->amount;
                             }
                         }else{//โปร member ทุกคน
-                            error_log("โปร member ทุกคน");
-                            $message .= "โปร member ทุกคน, ";
+                            error_log("All member promotions");
+                            $message .= "All member promotions, ";
                             $bonus = $pro->bonus;
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
@@ -532,8 +532,8 @@ class TransactionController extends Controller
                         $amount_betflix = $transfer->amount;
                     }
                 }else{ //ไม่มีโปร
-                    error_log("ไม่มีโปร / ไม่กดรับโปร");
-                    $message .= "ไม่มีโปร / ไม่กดรับโปร, ";
+                    error_log("No promotion / Don't click to accept the promotion");
+                    $message .= "No promotion / Don't click to accept the promotion, ";
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                     $amount_betflix = $transfer->amount;
 
@@ -574,7 +574,7 @@ class TransactionController extends Controller
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 // ->content('Choose an option:')
                 ->line('BOT '.env('APP_NAME'))
-                ->line('ทำรายการสำเร็จ โอนเครดิตเข้า '.$member->username)
+                ->line('Transaction completed, credit transferred '.$member->username)
                 ->line('จำนวน :'.$amount)
                 ->line('Bonus :'.$bonus)
                 ->line($pro_name.': '.$message)
@@ -646,22 +646,22 @@ class TransactionController extends Controller
                             error_log("โปร member ใหม่");
                             if($user_transfer_count == 0){
                                 /// ฝากครั้งแรก
-                                error_log("เข้าเงื่อนไข member ใหม่");
-                                $message .= "เข้าเงื่อนไข member ใหม่, ";
+                                error_log("Meet new member conditions");
+                                $message .= "Meet new member conditions, ";
                                 $bonus = $pro->bonus;
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                                 $amount_betflix = $transfer->amount + $bonus;
                                 $transfer->promotion = $pro->name;
 
                             }else{
-                                error_log("ไม่เข้าเงื่อนไข member ใหม่");
-                                $message .= "ไม่เข้าเงื่อนไข member ใหม่, ";
+                                error_log("ไม่Meet new member conditions");
+                                $message .= "Does not meet the new member requirements, ";
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
                                 $amount_betflix = $transfer->amount;
                             }
                         }else{//โปร member ทุกคน
                             error_log("โปร member ทุกคน");
-                            $message .= "โปร member ทุกคน, ";
+                            $message .= "All member promotions, ";
                             $bonus = $pro->bonus;
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
@@ -674,7 +674,7 @@ class TransactionController extends Controller
                     }
                 }else{ //ไม่มีโปร
                     error_log("ไม่มีโปร / ไม่กดรับโปร");
-                    $message .= "ไม่มีโปร / ไม่กดรับโปร, ";
+                    $message .= "No promotion / Don't click to accept the promotion, ";
                     $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
                     $amount_betflix = $transfer->amount;
 
@@ -715,8 +715,8 @@ class TransactionController extends Controller
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 // ->content('Choose an option:')
                 ->line('BOT '.env('APP_NAME'))
-                ->line('ทำรายการสำเร็จ โอนเครดิตเข้า '.$member->username)
-                ->line('จำนวน :'.$amount)
+                ->line('Transaction completed, credit transferred '.$member->username)
+                ->line('Amount :'.$amount)
                 ->line('Bonus :'.$bonus)
                 ->line($pro_name.': '.$message)
                 ->send();
@@ -1003,16 +1003,16 @@ class TransactionController extends Controller
                             error_log("โปร member ใหม่");
                             if($user_transfer_count == 0){
                                 /// ฝากครั้งแรก
-                                error_log("เข้าเงื่อนไข member ใหม่");
-                                $message .= "เข้าเงื่อนไข member ใหม่, ";
+                                error_log("Meet new member conditions");
+                                $message .= "Meet new member conditions, ";
                                 $bonus = $pro->bonus;
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                                 $amount_betflix = $transfer->amount + $bonus;
                                 $transfer->promotion = $pro->name;
 
                             }else{
-                                error_log("ไม่เข้าเงื่อนไข member ใหม่");
-                                $message .= "ไม่เข้าเงื่อนไข member ใหม่, ";
+                                error_log("ไม่Meet new member conditions");
+                                $message .= "ไม่Meet new member conditions, ";
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
                                 $amount_betflix = $transfer->amount;
                             }
@@ -1066,7 +1066,7 @@ class TransactionController extends Controller
 
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
             ->line('BOT '.env('APP_NAME'))
-            ->line('ทำรายการสำเร็จ โอนเครดิตเข้า '.$member->username)
+            ->line('Transaction completed, credit transferred '.$member->username)
             ->line($payload->event_type)
             ->line('จำนวน :'.$transfer->amount)
             ->line('Bonus :'.$bonus)
@@ -1172,16 +1172,16 @@ class TransactionController extends Controller
                             error_log("โปร member ใหม่");
                             if($user_transfer_count == 0){
                                 /// ฝากครั้งแรก
-                                error_log("เข้าเงื่อนไข member ใหม่");
-                                $message .= "เข้าเงื่อนไข member ใหม่, ";
+                                error_log("Meet new member conditions");
+                                $message .= "Meet new member conditions, ";
                                 $bonus = $pro->bonus;
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                                 $amount_betflix = $transfer->amount + $bonus;
                                 $transfer->promotion = $pro->name;
 
                             }else{
-                                error_log("ไม่เข้าเงื่อนไข member ใหม่");
-                                $message .= "ไม่เข้าเงื่อนไข member ใหม่, ";
+                                error_log("ไม่Meet new member conditions");
+                                $message .= "ไม่Meet new member conditions, ";
                                 $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
                                 $amount_betflix = $transfer->amount;
                             }
@@ -1239,7 +1239,7 @@ class TransactionController extends Controller
             }
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
             ->line('BOT '.env('APP_NAME'))
-            ->line('ทำรายการสำเร็จ โอนเครดิตเข้า '.$member->username)
+            ->line('Transaction completed, credit transferred '.$member->username)
             ->line('จำนวน :'.$transfer->amount)
             ->line('Bonus :'.$bonus)
             ->line($pro_name.': '.$message)
