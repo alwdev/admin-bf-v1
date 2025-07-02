@@ -109,11 +109,11 @@
                                                       </div>
                                                       <div class="mb-2">
                                                           <label class="" for="level_min_point">{{__('dashboard.deposit_amount')}}</label>
-                                                          <input type="text" class="form-control" name="level_min_point"  value="{{ $item->level_min_point }}" @required(true)>
+                                                          <input type="number" class="form-control" name="level_min_point"  value="{{ $item->level_min_point }}" @required(true)>
                                                       </div>
                                                       <div class="mb-2">
                                                           <label class="" for="level_max_point">{{__('managemember.to')}}</label>
-                                                          <input type="text" class="form-control" name="level_max_point"  value="{{ $item->level_max_point }}"  @required(true)>
+                                                          <input type="number" class="form-control" name="level_max_point"  value="{{ $item->level_max_point }}"  @required(true)>
                                                       </div>
                                                   </form>
                                               </div>
@@ -163,11 +163,11 @@
                 </div>
                 <div class="mb-2">
                     <label class="" for="level_min_point">{{__('dashboard.deposit_amount')}}</label>
-                    <input type="text" class="form-control" name="level_min_point" @required(true)>
+                    <input type="number" class="form-control" name="level_min_point" @required(true)>
                 </div>
                 <div class="mb-2">
                     <label class="" for="level_max_point">{{__('managemember.to')}}</label>
-                    <input type="text" class="form-control" name="level_max_point" @required(true)>
+                    <input type="number" class="form-control" name="level_max_point" @required(true)>
                 </div>
             </form>
         </div>
