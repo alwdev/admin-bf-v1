@@ -186,7 +186,7 @@
         </div>
     </div>
     @php
-     $all_bank = \App\Models\Bank::where('enable',1)->get();
+     $all_bank = \App\Models\Bank::where('enable',1)->where('active',1)->get();
     @endphp
     @foreach ( $all_bank as $a_bank)
 
