@@ -54,4 +54,4 @@ Route::post('/check_token', [App\Http\Controllers\ManageMemberController::class,
 Route::post('/user-login', [App\Http\Controllers\SMSController::class, 'userLogin']);
 
 //PaymenthubController
-Route::post('/Payment', [App\Http\Controllers\PaymenthubController::class, 'processPayment']);
+Route::post('/PaymentGW', [App\Http\Controllers\PaymenthubController::class, 'processPayment']);
