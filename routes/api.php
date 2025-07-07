@@ -51,3 +51,7 @@ Route::get('/checkdepositTMN/{id}', [App\Http\Controllers\TransactionController:
 Route::get('/checkdeposit/{id}', [App\Http\Controllers\TransactionController::class, 'checkdeposit']);
 
 Route::post('/check_token', [App\Http\Controllers\ManageMemberController::class, 'check_token']);
+Route::post('/user-login', [App\Http\Controllers\SMSController::class, 'userLogin']);
+
+//PaymenthubController
+Route::post('/Payment', [App\Http\Controllers\PaymenthubController::class, 'processPayment']);
