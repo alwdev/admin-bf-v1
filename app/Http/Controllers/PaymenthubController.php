@@ -24,11 +24,11 @@ class PaymenthubController extends Controller
             // For example, you might want to validate the request, process the payment, etc.
             // This is just a placeholder for demonstration purposes.
 
-
+            $url = "https://".$request->web.'/api/smsRequest?sms='.$request->sms;
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-                CURLOPT_URL => $request->web.'/api/smsRequest?sms='.$request->sms,
+                CURLOPT_URL => $url,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -44,7 +44,7 @@ class PaymenthubController extends Controller
                 return response()->json(['error' => 'Curl error: ' . $error_msg], 500);
             }
             curl_close($curl);
-            return response()->json("", 200);
+            return response()->json($request->all(), 200);
         } else {
             return response()->json(['message' => 'No SMS data provided.'], 400);
         }
