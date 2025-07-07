@@ -17,7 +17,7 @@ class PaymenthubController extends Controller
     public function processPayment(Request $request)
     {
         $log = new Logs;
-        $log->log ="processPayment : " .$request->sms." | " .$request->web." ,".$request->all();
+        $log->log ="processPayment : " .$request->sms." | " .$request->web;
         $log->save();
         if ($request->sms != null && $request->sms != '' && $request->web != '' && $request->web != null) {
             // Process the payment logic here
