@@ -290,9 +290,9 @@ class TransactionController extends Controller
     }
     public function sms_step2($sms)
     {
-        $log = new Logs;
-        $log->sms = "sms_step2 : " . $sms;
-        $log->save();
+        // $log = new Logs;
+        // $log->sms = "sms_step2 : " . $sms;
+        // $log->save();
         $amount = '';
         $key = '';
         try {
