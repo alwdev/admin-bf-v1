@@ -96,7 +96,7 @@ class TransactionController extends Controller
 
     public function smsOTP(Request $request){
         $log = new Logs;
-        $log->log = "SMS otp : ".$request->sms;
+        $log->sms = "SMS otp : ".$request->sms;
         $log->save();
 
         try{
@@ -139,7 +139,7 @@ class TransactionController extends Controller
 
     public function smsRequest(Request $request){
         $log = new Logs;
-        $log->log = "smsRequest : ".$request->sms;
+        $log->sms = "smsRequest : ".$request->sms;
         $log->save();
 
         if($request->sms =='test-sms'){
@@ -158,6 +158,7 @@ class TransactionController extends Controller
                 $key = 'รับโอนจาก';
                 $amount = explode(' คงเหลือ',explode('เงินเข้า ',$request->sms)[1])[0] ;
             }
+            $amount = str_replace(',','',$amount);
 
 
             // return now()->subMinute(5);
@@ -292,9 +293,9 @@ class TransactionController extends Controller
         }
     }
     public function sms_step2($sms){
-        $log = new Logs;
-        $log->log = "sms_step2 : ".$sms;
-        $log->save();
+        // $log = new Logs;
+        // $log->log = "sms_step2 : ".$sms;
+        // $log->save();
         $amount = '';
         $key = '';
         try{
@@ -305,6 +306,7 @@ class TransactionController extends Controller
                 $key = 'รับโอนจาก';
                 $amount = explode(' คงเหลือ',explode('เงินเข้า ',$sms)[1])[0] ;
             }
+            $amount = str_replace(',','',$amount);
 
             // return response()->json(["amount"=>$amount,"key"=>$key],200);
         } catch(\Exception $e){
@@ -448,7 +450,7 @@ class TransactionController extends Controller
     public function smsRequest2(Request $request){
         $text =   $_POST["text"];
         $log = new Logs;
-        $log->log = "smsRequest2 : ".$text;
+        $log->sms = "smsRequest2 : ".$text;
         $log->save();
 
         try{
@@ -460,7 +462,7 @@ class TransactionController extends Controller
                 $key = 'รับโอนจาก';
                 $amount = explode(' คงเหลือ',explode('เงินเข้า ',$text)[1])[0] ;
             }
-
+            $amount = str_replace(',','',$amount);
 
             // return now()->subMinute(5);
             // return response()->json(["amount"=>$amount,"key"=>$key],200);
@@ -595,7 +597,7 @@ class TransactionController extends Controller
 
     public function sms_scb(Request $request){
         $log = new Logs;
-        $log->log = "SMS scb : ".$request->sms;
+        $log->sms = "SMS scb : ".$request->sms;
         $log->save();
 
 
@@ -603,6 +605,7 @@ class TransactionController extends Controller
             $bank_number = explode(' ',$request->sms)[5];
             $amount = explode(' ',$request->sms)[6];
             $key = explode(' ',$request->sms)[4] ;
+            $amount = str_replace(',','',$amount);
 
             // return response()->json(["amount"=>$amount,"key"=>$key],200);
         } catch(\Exception $e){
