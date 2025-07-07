@@ -88,6 +88,9 @@
                 <li>
                     <a href="document.pdf" target="_blank" class="waves-effect"><i class='bx bx-copy'></i><span>{{__('main.user_manual')}}</span></a>
                 </li>
+                <li>
+                    <a href="{{ route('smsLog.index') }}" target="_blank" class="waves-effect"><i class='bx bx-copy'></i><span>SMS Logs</span></a>
+                </li>
             </ul>
         </div>
         <!-- Sidebar -->

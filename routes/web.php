@@ -180,6 +180,11 @@ Route::middleware('auth')->group(function () {
     //     $file="{{ asset('document.pdf')}}";
     //     return Response::download($file);
     // });
+    Route::get('/smsLog',function () {
+        return view('SMS.list');
+    })->name('smsLog.index');
+
+
 });
 
 require __DIR__.'/auth.php';
