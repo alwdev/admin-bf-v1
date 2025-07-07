@@ -44,7 +44,7 @@ class PaymenthubController extends Controller
                 return response()->json(['error' => 'Curl error: ' . $error_msg], 500);
             }
             curl_close($curl);
-            return response()->json([$response], 200);
+            return response()->json("", 200);
         } else {
             return response()->json(['message' => 'No SMS data provided.'], 400);
         }
