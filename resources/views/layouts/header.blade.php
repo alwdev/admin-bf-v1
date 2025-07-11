@@ -27,7 +27,7 @@
             <div class="dropdown d-inline-block">
 
             </div>
-            <span style="color: rgb(211, 88, 5);" id="tran_count">0</span>
+            <span style="color: rgb(20, 179, 5);" id="tran_count">--</span>
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -151,10 +151,11 @@
             url: '{{ route('report.count_last_tranfer') }}',
             success: function(data) {
                 if (data) {
-                    $('#tran_count').text('{{ __('dashboard.AwaitingApproval') }}' + ' : ' + data);
+
                     // console.log(count_event_lose);
                     if (parseInt(data) != 0) {
                         if (parseInt(data) != count_event_lose && count_event < parseInt(data)) {
+                             $('#tran_count').text('{{ __('dashboard.AwaitingApproval') }}');
                             var alarm = new Howl({
                                 src: ["{{ asset('noti.mp3?002') }}"],
                                 autoplay: false,

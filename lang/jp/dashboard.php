@@ -21,7 +21,7 @@ return [
     'type' => 'タイプ',
     'Date_of_transaction' => '取引日',
     'status' => 'ステータス',
-    'AwaitingApproval'=>'承認待ちの入出金',
+    'AwaitingApproval'=>'新しい入出金項目を承認する',
     'BankAccount'=>'銀行口座',
     'Bankquantity' => '',
     'approval'=>'承認',

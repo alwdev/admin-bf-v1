@@ -315,7 +315,8 @@ class ReportController extends Controller
     }
 
     public static function count_last_tranfer(){
-        $transfer = Transfer::where('status',1)->get();
+        // Get the last transfer with status 2 (completed)
+        $transfer = Transfer::where('status',2)->orderBy('created_at','DESC')->get();
         $tran_count = 0;
         if($transfer){
             $tran_count = Count($transfer);

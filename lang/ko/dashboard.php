@@ -21,7 +21,7 @@ return [
     'type' => '유형',
     'Date_of_transaction' => '거래 일자',
     'status' => '상태',
-    'AwaitingApproval' => '승인 대기 중 입출금',
+    'AwaitingApproval' => '신규 입금/출금 항목 승인',
     'BankAccount' => '은행 계좌',
     'Bankquantity' => '',
     'approval' => '승인',

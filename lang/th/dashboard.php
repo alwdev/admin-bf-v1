@@ -21,7 +21,7 @@ return[
     'type'=>'ประเภท',
     'Date_of_transaction'=>'วันที่ทำรายการ',
     'status'=>'สถานะ',
-    'AwaitingApproval'=>'รายการ ฝาก/ถอน รออนุมัติ',
+    'AwaitingApproval'=>'อนุมัติรายการ ฝาก/ถอนใหม่',
     'BankAccount'=>'บัญชี',
     'Bankquantity' => 'จำนวน',
     'approval'=>'อนุมัติ',

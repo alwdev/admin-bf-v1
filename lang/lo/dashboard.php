@@ -21,7 +21,7 @@ return [
     'type' => 'ປະເພດ',
     'Date_of_transaction' => 'ວັນທີທໍາການ',
     'status' => 'ສະຖານະ',
-    'AwaitingApproval' => 'ລໍຖ້າການອະນຸມັດເພີ່ມ/ຖອນເງິນ',
+    'AwaitingApproval' => 'ອະນຸມັດລາຍການເງິນຝາກ/ຖອນເງິນໃໝ່',
     'BankAccount' => 'ບັນຊີທະນາຄານ',
     'Bankquantity' => '', // ຍັງບໍ່ມີຂໍ້ຄວາມຕົ້ນສະບັບ
     'approval' => 'ອະນຸມັດ',

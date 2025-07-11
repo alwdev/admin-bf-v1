@@ -21,7 +21,7 @@ return [
     'type' => 'Type',
     'Date_of_transaction' => 'Date of Transaction',
     'status' => 'Status',
-    'AwaitingApproval'=>'Deposit/Withdraw Awaiting Approval',
+    'AwaitingApproval'=>'Approve new deposit/withdrawal items',
     'BankAccount'=>'Bank Account',
     'Bankquantity' => '',
     'approval'=>'Approval',
