@@ -15,7 +15,7 @@ return [
 
     'main_page' => 'หน้าหลัก',
     'member_manage' => 'จัดการสมาชิก',
-    'transfer_list' => 'รายการผากถอน',
+    'transfer_list' => 'รายการฝากถอน',
     'report' => 'รายงาน',
     'report_transfer' => 'รายงานการฝาก-ถอน',
     'report_edit_credit' => 'รายงานการแก้ไขยอดเงิน',
