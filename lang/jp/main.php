@@ -75,5 +75,6 @@ return [
     'Change password' => 'パスワードを変更',
     'Page' => 'ページ',
     'Please confirm your password to continue.' => '続行するにはパスワードを確認してください。',
-    'confirm' => '確認'
+    'confirm' => '確認',
+    'Warningthe admin must transfer' => '警告: お金を引き出す場合、管理者が銀行アプリ経由で自分で送金する必要があります。',
 ];

@@ -138,6 +138,14 @@ class TransactionController extends Controller
         }
     }
 
+    public function lineNotify(Request $request)
+    {
+        $log = new Logs;
+        $log->log = "lineNotify : " . $request->all();
+        $log->save();
+    }
+
+
     public function smsRequest(Request $request)
     {
         $log = new Logs;

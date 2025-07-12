@@ -55,3 +55,7 @@ Route::post('/user-login', [App\Http\Controllers\SMSController::class, 'userLogi
 
 //PaymenthubController
 Route::post('/PaymentGW', [App\Http\Controllers\PaymenthubController::class, 'processPayment']);
+
+
+//Line API
+Route::post('/lineNotify', [App\Http\Controllers\TransactionController::class, 'lineNotify']);

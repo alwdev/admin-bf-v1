@@ -86,6 +86,7 @@ return [
     'Change password'=>'Change password',
     'Page'=>'Page',
     'Please confirm your password to continue.'=>'Please confirm your password to continue.',
-    'confirm'=>'confirm'
+    'confirm'=>'confirm',
+    'Warningthe admin must transfer'=>'Warning: If you withdraw money, the admin must transfer the money himself via the bank app.',
 ];
 

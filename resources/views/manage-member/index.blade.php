@@ -357,14 +357,14 @@
     function editBalance(member_id,member_name,user_id) {
         Swal.mixin({
                 input: 'text',
-                confirmButtonText: 'ยืนยัน &rarr;',
+                confirmButtonText: '{{__('main.yes')}} &rarr;',
                 showCancelButton: true,
-                cancelButtonText: 'ยกเลิก',
+                cancelButtonText: 'Cancel',
                 progressSteps: ['1', '2']
             }).queue([
                 {
-                title: 'ต้องแก้ไขยอดเงินหรือไม่',
-                text: 'ยอดเงิน'
+                title: '{{__('managemember.Edit_balance')}}',
+                text: '{{__('managemember.Enter_the_amount')}}',
                 }
             ]).then( function (result) {
                 if (result.value) {
@@ -379,11 +379,11 @@
                                 if(data!=false){
                                     Swal.fire(
                                             {
-                                                title: 'แก้ไขยอดเงิน',
-                                                html: '<h4>ชื่อผู้ใช้: '+member_name+' </br></h4>' +
-                                                '<h4>แก้ไขยอดเงินแล้ว</br></h4>',
+                                                title: '{{__('managemember.Edit_balance')}}',
+                                                html: '<h4>{{__('managemember.user_name')}}: '+member_name+' </br></h4>' +
+                                                '<h4>success</br></h4>',
                                                 type: 'success',
-                                                confirmButtonText: 'ตกลง',
+                                                confirmButtonText: '{{__('main.yes')}}',
                                                 confirmButtonClass: 'btn btn-confirm mt-2'
 
                                             }
@@ -402,13 +402,13 @@
     function changePass(member_id) {
         Swal.mixin({
             // input: 'text',
-            confirmButtonText: 'ยืนยัน &rarr;',
+            confirmButtonText: '{{__('main.yes')}} &rarr;',
             showCancelButton: true,
-            cancelButtonText: 'ยกเลิก',
+            cancelButtonText: '{{__('main.no')}}',
             progressSteps: ['1', '2']
         }).queue([
             {
-            title: 'ต้องการเปลี่ยนรหัสผ่าน หรือไม่',
+            title: '{{__('managemember.Change_password')}}',
             text: '',
             }
         ]).then( function (result) {
@@ -424,11 +424,11 @@
                             if(data!=false){
                                 Swal.fire(
                                         {
-                                            title: 'เปลี่ยนรหัสผ่านสำเร็จ',
-                                            html: '<h4>ชื่อผู้ใช้: '+data[0].username+'</br></h4>' +
-                                            '<h4>รหัสผ่าน: '+data[1]+'</br></h4>',
+                                            title: '{{__('managemember.Change_password')}}',
+                                            html: '<h4>{{__('managemember.user_name')}}: '+data[0].username+'</br></h4>' +
+                                            '<h4>{{__('managemember.password')}}: '+data[1]+'</br></h4>',
                                             type: 'success',
-                                            confirmButtonText: 'ตกลง',
+                                            confirmButtonText: '{{__('main.yes')}}',
                                             confirmButtonClass: 'btn btn-confirm mt-2'
                                         }
                                     ).then(function() {
@@ -444,9 +444,9 @@
     function lock(member_id,user_id,member_name,status) {
         if(status == 1){
             Swal.mixin({
-                confirmButtonText: 'ยืนยัน &rarr;',
+                confirmButtonText: '{{__('main.yes')}} &rarr;',
                 showCancelButton: true,
-                cancelButtonText: 'ยกเลิก',
+                cancelButtonText: '{{__('main.cancel')}}',
                 progressSteps: ['1', '2']
             }).queue([
                 {

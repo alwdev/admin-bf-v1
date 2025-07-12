@@ -76,5 +76,6 @@ return [
     'Change password' => 'ປ່ຽນລະຫັດຜ່ານ',
     'Page' => 'ໜ້າ',
     'Please confirm your password to continue.' => 'ກະລຸນາຢືນຢັນລະຫັດຂອງທ່ານເພື່ອດໍາເນີນການຕໍ່.',
-    'confirm' => 'ຢືນຢັນ'
+    'confirm' => 'ຢືນຢັນ',
+    'Warningthe admin must transfer'=> 'ຄໍາເຕືອນ: ຖ້າຖອນເງິນ, admin ຕ້ອງໂອນເງິນດ້ວຍຕົນເອງຜ່ານ app ທະນາຄານ.',
 ];

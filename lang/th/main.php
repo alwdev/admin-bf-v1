@@ -86,5 +86,6 @@ return [
     'Change password'=>'เปลียนรหัสผ่าน',
     'Page'=>'เพจ',
     'Please confirm your password to continue.'=>'กรุณายืนยันรหัสผ่านของคุณเพือดำเนินการต่อ.',
-    'confirm'=>'ยืนยัน'
+    'confirm'=>'ยืนยัน',
+    'Warningthe admin must transfer'=>'คำเตือน: หากคุณถอนเงิน, ผู้ดูแลระบบต้องทำการโอนเงินเองผ่านแอปธนาคาร.',
 ];

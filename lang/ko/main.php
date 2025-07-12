@@ -76,5 +76,6 @@ return [
     'Change password' => '비밀번호 변경',
     'Page' => '페이지',
     'Please confirm your password to continue.' => '계속하려면 비밀번호를 확인하세요.',
-    'confirm' => '확인'
+    'confirm' => '확인',
+    'Warningthe admin must transfer' => '경고: 돈을 인출하는 경우 관리자가 은행 앱을 통해 직접 돈을 이체해야 합니다.',
 ];

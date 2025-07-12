@@ -538,12 +538,12 @@
 
         function approveDeposit(form) {
             Swal.fire({
-                title: 'ต้องการอัพเดตสถานะหรือไม่?',
-                text: "***คำเตือนหากเป็นการ ถอนเงิน Admin ต้องทำรายการโอนเงินเองที่แอปธนาคาร",
+                title: '{{__('main.Do you want to change your status?')}}',
+                text: "**{{ __('main.Warningthe admin must transfer') }}**",
                 type: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'ใช่',
-                cancelButtonText: 'ไม่, ยกเลิก!',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No, Cancel!',
                 confirmButtonClass: 'btn btn-success mt-2',
                 cancelButtonClass: 'btn btn-danger ml-2 mt-2',
                 buttonsStyling: false
@@ -556,12 +556,12 @@
 
         function confirm_turonver_on(form) {
             Swal.fire({
-                title: 'ต้องการอัพเดตสถานะหรือไม่?',
+                title: '{{__('main.Do you want to change your status?')}}',
                 text: "",
                 type: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'ใช่',
-                cancelButtonText: 'ไม่, ยกเลิก!',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No, Cancel!',
                 confirmButtonClass: 'btn btn-success mt-2',
                 cancelButtonClass: 'btn btn-danger ml-2 mt-2',
                 buttonsStyling: false
