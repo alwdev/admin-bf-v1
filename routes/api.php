@@ -53,3 +53,6 @@ Route::get('/checkdeposit/{id}', [App\Http\Controllers\TransactionController::cl
 Route::post('/check_token', [App\Http\Controllers\ManageMemberController::class, 'check_token']);
 
 Route::post('/user-login', [App\Http\Controllers\SMSController::class, 'userLogin']);
+
+//Line API
+Route::post('/lineNotify_tranfer', [App\Http\Controllers\TransactionController::class, 'lineNotify_tranfer']);
