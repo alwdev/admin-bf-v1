@@ -140,9 +140,7 @@ class TransactionController extends Controller
 
     public function lineNotify_tranfer(Request $request)
     {
-        $log = new Logs;
-        $log->log = "lineNotify_tranfer : " . $request->getContent();
-        $log->save();
+
         $data = json_decode($request->getContent(), true);
         error_log("lineNotify_tranfer data = " . json_encode($data));
 
@@ -260,7 +258,7 @@ class TransactionController extends Controller
 
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                     // ->content('Choose an option:')
-                    ->line('BOT ' . env('APP_NAME'))
+                    ->line('BOT-LINE ' . env('APP_NAME'))
                     ->line('ทำรายการสำเร็จ โอนเครดิตเข้า ' . $member->username)
                     ->line('จำนวน :' . $transfer->amount)
                     ->line('Bonus :' . $bonus)
