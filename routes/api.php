@@ -58,4 +58,4 @@ Route::post('/PaymentGW', [App\Http\Controllers\PaymenthubController::class, 'pr
 
 
 //Line API
-Route::post('/lineNotify', [App\Http\Controllers\TransactionController::class, 'lineNotify']);
+Route::post('/lineNotify_tranfer', [App\Http\Controllers\TransactionController::class, 'lineNotify_tranfer']);
