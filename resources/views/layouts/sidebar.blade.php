@@ -127,10 +127,10 @@
                     @endif
 
                 </li>
-                <li>
+                {{-- <li>
                     <a href="{{ route('smsLog.index') }}" class="waves-effect"><i
                             class='bx bx-copy'></i><span>SMS Logs</span></a>
-                </li>
+                </li> --}}
             </ul>
         </div>
         <!-- Sidebar -->
