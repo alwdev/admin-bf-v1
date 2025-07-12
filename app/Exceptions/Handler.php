@@ -27,4 +27,25 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+       /**
+     * Render an exception into an HTTP response.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Throwable  $exception
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Throwable
+     */
+    public function render($request, Throwable $exception)
+    {
+        // ดักจับ TokenMismatchException
+        if ($exception instanceof TokenMismatchException) {
+            return redirect()
+                ->route('login') // เปลี่ยนเป็นชื่อ route ของหน้า login ของคุณ
+                ->with('status', 'Your session has expired. Please log in again.');
+        }
+
+        return parent::render($request, $exception);
+    }
 }
