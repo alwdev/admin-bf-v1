@@ -140,6 +140,7 @@ class TransactionController extends Controller
 
             $message = "";
             $pro_name = "";
+            $bonus = 0;
 
             if ($transfer->promotion_id != 0) {
                 error_log("promotion id = " . $transfer->promotion_id);
