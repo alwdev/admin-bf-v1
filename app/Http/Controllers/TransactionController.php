@@ -98,22 +98,20 @@ class TransactionController extends Controller
     {
 
         $data = json_decode($request->getContent(), true);
-        error_log("lineNotify_tranfer data = " . json_encode($data));
+        // error_log("lineNotify_tranfer data = " . json_encode($data));
         error_log("lineNotify_tranfer amount = " . $request->amount);
         error_log("lineNotify_tranfer acc_no = " . $request->acc_no);
 
 
         $transfer = Transfer::where('amount', $request->amount)
             ->where('type', 'deposit')
-            ->where('status', 1)
-            ->whereTime('created_at', '>=', now()
-                ->subMinute(5))->first();
+            ->where('status', 1)->first();
 
         if ($transfer) {
             $lastFourCharacters = substr($transfer->deposit_from_bank_no, -4);
             error_log("lineNotify_tranfer lastFourCharacters deposit_from_bank_no = " . $lastFourCharacters);
             if ($lastFourCharacters == $request->acc_no) {
-               $do_transfer = $this->lineNotify_deposit($transfer);
+               $do_transfer = $this->lineNotify_deposit($transfer->id);
                 return  $do_transfer;
             } else {
                 return 404;
@@ -123,9 +121,12 @@ class TransactionController extends Controller
         }
     }
 
-    public function lineNotify_deposit(Transfer $transfer)
+    public function lineNotify_deposit($id)
     {
+        error_log("lineNotify_deposit id = " . $id);
+        $transfer = Transfer::where('id', $id)->first();
         if ($transfer) {
+            error_log("lineNotify_deposit transfer found id = " . $transfer->id);
                 $member = Members::find($transfer->member_id);
                 $amount_betflix = 0;
                 $old_balance = $member->wallet_balance;
@@ -227,6 +228,7 @@ class TransactionController extends Controller
                 return  200;
             }
     }
+
     public function smsOTP(Request $request){
         $log = new Logs;
         $log->sms = "SMS otp : ".$request->sms;
