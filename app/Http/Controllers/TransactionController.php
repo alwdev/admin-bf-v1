@@ -189,7 +189,7 @@ class TransactionController extends Controller
                 Log::info('Deposit Betflix ' . $bf_deposit . ' ' . floor($amount_betflix) . ' User =  ' . $member->username);
 
                 if ($bf_deposit == "success") {
-
+                    error_log("lineNotify_deposit deposit success");
                     $wheel_setting = WheelSpin::first();
                     if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
                         $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
