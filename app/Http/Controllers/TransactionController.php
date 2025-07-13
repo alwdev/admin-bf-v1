@@ -229,7 +229,7 @@ class TransactionController extends Controller
                         ->line($pro_name . ': ' . $message)
                         ->send();
                 } catch (\Exception $e) {
-                    Log::error("Error sending Telegram message: " . $e->getMessage());
+                    error_log("Error sending Telegram message: " . $e->getMessage());
                 }
                 return  200;
             } else {
