@@ -99,9 +99,11 @@ class TransactionController extends Controller
 
         $data = json_decode($request->getContent(), true);
         error_log("lineNotify_tranfer data = " . json_encode($data));
+        error_log("lineNotify_tranfer amount = " . $request->amount);
+        error_log("lineNotify_tranfer acc_no = " . $request->acc_no);
+
 
         $transfer = Transfer::where('amount', $request->amount)
-            ->where('deposit_from_bank_no', $request->acc_no)
             ->where('type', 'deposit')
             ->where('status', 1)
             ->whereTime('created_at', '>=', now()
@@ -109,6 +111,7 @@ class TransactionController extends Controller
 
         if ($transfer) {
             $lastFourCharacters = substr($transfer->deposit_from_bank_no, -4);
+            error_log("lineNotify_tranfer lastFourCharacters deposit_from_bank_no = " . $lastFourCharacters);
             if ($lastFourCharacters == $request->acc_no) {
                $do_transfer = $this->lineNotify_deposit($transfer);
                 return  $do_transfer;
