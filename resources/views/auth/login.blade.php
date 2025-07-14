@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>{{ env('APP_NAME') }} - เข้าสู่ระบบ</title>
+    <title>{{ env('APP_NAME') }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="MyraStudio" name="author" />
@@ -51,6 +51,7 @@
                                                 <a href="/">
                                                     <span><img src="{{ env('APP_LOGO') }}" alt="" height="150"></span>
                                                 </a>
+                                                <h4>Partner</h4>
                                             </div>
                                             <form action="{{ route('login') }}" method="post" class="p-2">
                                                 @csrf
@@ -59,7 +60,6 @@
                                                     <input class="form-control" type="email" name="email" id="emailaddress" required="" placeholder="john@deo.com">
                                                 </div>
                                                 <div class="form-group">
-                                                    <a href="pages-recoverpw.html" class="text-muted float-right">Forgot your password?</a>
                                                     <label for="password">Password</label>
                                                     <input class="form-control" type="password" name="password" required="" id="password" placeholder="Enter your password">
                                                 </div>
@@ -67,7 +67,7 @@
                                                 <div class="form-group mb-4 pb-3">
                                                     <div class="custom-control custom-checkbox checkbox-primary">
                                                         <input type="checkbox" class="custom-control-input" id="checkbox-signin">
-                                                        <label class="custom-control-label" for="checkbox-signin">Remember me</label>
+                                                        {{-- <label class="custom-control-label" for="checkbox-signin">Remember me</label> --}}
                                                     </div>
                                                 </div>
                                                 <div class="mb-3 text-center">
