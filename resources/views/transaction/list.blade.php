@@ -237,7 +237,15 @@
                                                 <img src="{{ asset('images/bank/askmepay.png') }}" width="25"
                                                     class="bank-logo">
                                             @break
-
+  @case("ธนาคารการค้า")
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('image/bank/bcel.jpg') }}" width="25" class="bank-logo">
+                                                @break
+                                            @case("ธนาคารลาวพัฒนา")
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('image/bank/trust.jpg') }}" width="25" class="bank-logo">
+                                                @break
+                                            @case("ธนาคารJDB")
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('image/bank/jdb.jpg') }}" width="25" class="bank-logo">
+                                                @break
                                             @case('TrueMoney Wallet')
                                                 <img src="{{ asset('images/bank/truemoney.png') }}" width="25"
                                                     class="bank-logo">
@@ -302,8 +310,16 @@
 
                                             @case('ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร')
                                                 <img src="{{ asset('images/bank/baac.png') }}" width="25" class="bank-logo">
-                                            @break
-
+                                                @break
+                                            @case("ธนาคารการค้า")
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('image/bank/bcel.jpg') }}" width="25" class="bank-logo">
+                                                @break
+                                            @case("ธนาคารลาวพัฒนา")
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('image/bank/trust.jpg') }}" width="25" class="bank-logo">
+                                                @break
+                                            @case("ธนาคารJDB")
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('image/bank/jdb.jpg') }}" width="25" class="bank-logo">
+                                                @break
                                             @case('TrueMoney Wallet')
                                                 <img src="{{ asset('images/bank/truemoney.png') }}" width="25"
                                                     class="bank-logo">
