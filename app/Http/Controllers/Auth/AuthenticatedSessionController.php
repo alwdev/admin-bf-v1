@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use App\Models\Partner;
+use Illuminate\Support\Facades\Redirect;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -24,22 +25,25 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
         error_log("store " . $request->email);
         error_log("store " . $request->password);
 
-        $partner = Partner::where('contact_email', $request->email)->where('slug_name', $request->password)->first();
-        if ($partner) {
+        $user = Partner::where('contact_email', $request->email)
+            ->where('slug_name', $request->password)
+            ->first();
+
+        if ($user) {
             error_log("partner found");
-            $request->authenticate();
-
-            $request->session()->regenerate();
+            session()->put('user', $user);
+            return redirect('/');
+        } else {
+            error_log("partner not found");
+            return back()->withErrors(['login' => 'Invalid email or password.']);
         }
-
-
-        return redirect()->intended(RouteServiceProvider::HOME);
     }
+
 
     /**
      * Destroy an authenticated session.
