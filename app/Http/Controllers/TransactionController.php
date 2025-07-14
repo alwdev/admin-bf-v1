@@ -159,6 +159,16 @@ class TransactionController extends Controller
                 error_log("lineNotify_tranfer do_transfer = " . $do_transfer);
                 return  $do_transfer;
             } else {
+                error_log("lineNotify_tranfer acc_no not match");
+                $member = Members::find($transfer->member_id);
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                    ->line('LINE-BOT ' . env('APP_NAME'))
+                    ->line('เลขบัญชีผู้โอนเงินไม่ตรงกับเลขบัญชีที่แจ้งไว้')
+                    ->line('User : ' . $member->username)
+                    ->line("amount = " . $request->amount)
+                    ->line("acc_no = " . $request->acc_no)
+                    ->line("transfer acc_no = " . $lastFourCharacters)
+                    ->send();
                 return 404;
             }
         } else {
