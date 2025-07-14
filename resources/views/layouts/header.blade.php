@@ -10,7 +10,7 @@
             </button>
 
             <div class="dropdown d-none d-sm-inline-block" style="margin-left: 4px">
-                <h4>Agent Back Office v.2</h4>
+                <h4>Partner Bo v.1</h4>
             </div>
         </div>
 
@@ -27,7 +27,7 @@
             <div class="dropdown d-inline-block">
 
             </div>
-            <span style="color: rgb(211, 88, 5);" id="tran_count">0</span>
+
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -141,40 +141,5 @@
         count_event_lose = sessionStorage.getItem("count_event");
     }
 
-    setInterval(function() {
-        $.ajax({
-            type: 'get',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            url: '{{ route('report.count_last_tranfer') }}',
-            success: function(data) {
-                if (data) {
-                    $('#tran_count').text('{{ __('dashboard.AwaitingApproval') }}' + ' : ' + data);
-                    // console.log(count_event_lose);
-                    if (parseInt(data) != 0) {
-                        if (parseInt(data) != count_event_lose && count_event < parseInt(data)) {
-                            var alarm = new Howl({
-                                src: ["{{ asset('noti.mp3?002') }}"],
-                                autoplay: false,
-                                loop: false,
-                                // volume: 0.5,
-                            });
-                            alarm.play();
-                            count_event = count_event + 1;
-                        }
-                        count_event_lose = parseInt(data);
-                        sessionStorage.setItem("count_event", parseInt(data));
-                    } else {
-                        sessionStorage.setItem("count_event", 0);
-                        count_event_lose = 0;
-                        count_event = 0;
-                    }
-                } else {
-                    console.log('error');
-                }
-            }
-        });
 
-    }, 2000);
 </script>
