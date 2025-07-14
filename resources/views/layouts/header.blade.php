@@ -37,8 +37,7 @@
                     <i class="mdi mdi-chevron-down d-none d-sm-inline-block"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item d-flex align-items-center justify-content-between"
-                        href="{{ route('profile.edit') }}">Profile</a>
+
                     <a class="dropdown-item d-flex align-items-center justify-content-between" href="javascript:void(0)"
                         onclick="$('#from-logout').submit()">
                         <span>Log Out</span>

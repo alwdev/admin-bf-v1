@@ -27,7 +27,7 @@ use App\Http\Controllers\HashtagController;
 
 Route::middleware('auth')->group(function () {
     // Route::get('/', function(){ return view('welcome'); });
-    Route::get('/', [App\Http\Controllers\PartnerController::class, 'report'])->name('partner.report');
+    Route::get('/', [App\Http\Controllers\PartnerController::class, 'index'])->name('partner.index');
 });
 
 require __DIR__.'/auth.php';
