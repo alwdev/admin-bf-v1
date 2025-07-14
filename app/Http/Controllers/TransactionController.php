@@ -169,8 +169,8 @@ class TransactionController extends Controller
                             $amount_betflix = $transfer->amount;
                         }
                     } else { //โปร member ทุกคน
-                        error_log("Promo member new");
-                        $message .= "Promo member new, ";
+                        error_log("Promo all member");
+                        $message .= "Promo all member, ";
                         $bonus = $pro->bonus;
                         $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                         $amount_betflix = $transfer->amount + $bonus;
