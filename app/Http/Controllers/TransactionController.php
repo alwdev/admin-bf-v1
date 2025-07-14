@@ -98,28 +98,57 @@ class TransactionController extends Controller
 
     public function lineNotify_tranfer(Request $request)
     {
-
-        $data = json_decode($request->getContent(), true);
-        // error_log("lineNotify_tranfer data = " . json_encode($data));
         error_log("lineNotify_tranfer amount = " . $request->amount);
         error_log("lineNotify_tranfer acc_no = " . $request->acc_no);
 
 
         $transfer = Transfer::where('amount', $request->amount)
+            ->where('deposit_from_bank_no', 'like', '%' . $request->acc_no)
             ->where('type', 'deposit')
             ->where('status', 1)->first();
 
         if ($transfer) {
-            $lastFourCharacters = substr($transfer->deposit_from_bank_no, -4);
-            error_log("lineNotify_tranfer lastFourCharacters deposit_from_bank_no = " . $lastFourCharacters);
-            if ($lastFourCharacters == $request->acc_no) {
-                $do_transfer = $this->lineNotify_deposit($transfer->id);
-                error_log("lineNotify_tranfer do_transfer = " . $do_transfer);
-                return  $do_transfer;
-            } else {
-                return 404;
-            }
+
+            $do_transfer = $this->lineNotify_deposit($transfer->id);
+            error_log("lineNotify_tranfer do_transfer = " . $do_transfer);
+            return  $do_transfer;
         } else {
+            error_log("lineNotify_tranfer transfer not found");
+            $recheck_transfer = Transfer::where('amount', $request->amount)
+                ->where('type', 'deposit')
+                ->where('status', 1)->first();
+            if ($recheck_transfer) {
+                $lastFourCharacters = substr($recheck_transfer->deposit_from_bank_no, -4);
+                error_log("recheck_transfer lastFourCharacters deposit_from_bank_no = " . $lastFourCharacters);
+                if ($lastFourCharacters == $request->acc_no) {
+
+                    $do_transfer = $this->lineNotify_deposit($recheck_transfer->id);
+                    error_log("lineNotify_tranfer do_transfer = " . $do_transfer);
+                    return  $do_transfer;
+                } else {
+                    error_log("lineNotify_tranfer acc_no not match");
+                    $member = Members::find($recheck_transfer->member_id);
+                    TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                        ->line('LINE-BOT ' . env('APP_NAME'))
+                        ->line('เลขบัญชีผู้โอนเงินไม่ตรงกับเลขบัญชีที่แจ้งไว้')
+                        ->line('User : ' . $member->username)
+                        ->line("amount = " . $request->amount)
+                        ->line("acc_no = " . $request->acc_no)
+                        ->line("transfer acc_no = " . $lastFourCharacters)
+                        ->send();
+                    return 404;
+                }
+            } else {
+
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                    ->line('LINE-BOT ' . env('APP_NAME'))
+                    ->line('ไม่พบรายการโอนเงินในระบบ')
+                    ->line("amount = " . $request->amount)
+                    ->line("acc_no = " . $request->acc_no)
+                    ->send();
+                    return 404;
+            }
+
             return 404;
         }
     }
