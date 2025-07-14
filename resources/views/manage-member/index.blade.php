@@ -217,6 +217,15 @@
                                                 @case("TrueMoney Wallet")
                                                     <img src="{{ asset('images/bank/truemoney.png') }}" width="80" class="bank-logo">
                                                     @break
+                                                      @case("ธนาคารการค้า")
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('images/bank/bcel.jpg') }}"  width="80" class="bank-logo">
+                                                @break
+                                            @case("ธนาคารลาวพัฒนา")
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('images/bank/trust.jpg') }}"  width="80" class="bank-logo">
+                                                @break
+                                            @case("ธนาคารJDB")
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('images/bank/jdb.jpg') }}"  width="80" class="bank-logo">
+                                                @break
                                                 @default
                                                     <div style="width:40px;height:40px;background:#E3A941;"></div>
                                             @endswitch
