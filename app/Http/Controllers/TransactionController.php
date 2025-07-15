@@ -192,7 +192,7 @@ class TransactionController extends Controller
                             }else if($pro->bonus_type=='percent'){
                                 $bonus = ( $transfer->amount * $pro->bonus)/100;
                             }
-                            $bonus = $pro->bonus;
+
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
                             $transfer->promotion = $pro->name;
@@ -200,19 +200,20 @@ class TransactionController extends Controller
                             /// ฝากครั้งต่อไป
                             error_log("Not meeting new member conditions");
                             $message .= "Not meeting new member conditions, ";
-                            // $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
-                            // $amount_betflix = $transfer->amount;
-                            if ($member->created_at && $member->created_at->gt(Carbon::now()->subDays(7))) {
-                                // ผู้ใช้ถูกสร้างภายใน 7 วันที่ผ่านมา
-                                error_log("");
-                                $bonus = $transfer->amount*0.2;  //+ 20%
-                                $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
-                                $amount_betflix = $transfer->amount + $bonus;
-                                $transfer->promotion = $pro->name;
-                            }else{
-                                $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
-                                $amount_betflix = $transfer->amount;
-                            }
+                            $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+                            $amount_betflix = $transfer->amount;
+                            
+                            // if ($member->created_at && $member->created_at->gt(Carbon::now()->subDays(7))) {
+                            //     // ผู้ใช้ถูกสร้างภายใน 7 วันที่ผ่านมา
+                            //     error_log("");
+                            //     $bonus = $transfer->amount*0.2;  //+ 20%
+                            //     $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
+                            //     $amount_betflix = $transfer->amount + $bonus;
+                            //     $transfer->promotion = $pro->name;
+                            // }else{
+                            //     $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
+                            //     $amount_betflix = $transfer->amount;
+                            // }
                         }
                     } else { //โปร member ทุกคน
                         error_log("Promo all member");
