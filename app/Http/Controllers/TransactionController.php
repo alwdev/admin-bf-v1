@@ -187,11 +187,17 @@ class TransactionController extends Controller
                             /// ฝากครั้งแรก
                             error_log("New member conditions met");
                             $message .= "New member conditions met, ";
+                            if($pro->bonus_type=='amount'){
+                                $bonus = $pro->bonus;
+                            }else if($pro->bonus_type=='percent'){
+                                $bonus = ( $transfer->amount * $pro->bonus)/100;
+                            }
                             $bonus = $pro->bonus;
                             $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
                             $amount_betflix = $transfer->amount + $bonus;
                             $transfer->promotion = $pro->name;
                         } else {
+                            /// ฝากครั้งต่อไป
                             error_log("Not meeting new member conditions");
                             $message .= "Not meeting new member conditions, ";
                             // $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
