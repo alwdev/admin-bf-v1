@@ -184,7 +184,7 @@ class TransactionController extends Controller
                     if ($pro->is_newuser == 1) { //โปร member ใหม่
                         error_log("โปร member ใหม่");
                         if ($user_transfer_count == 0) {
-                            /// ฝากครั้งแรก
+                            /// ฝากครั้งแรก*********
                             error_log("New member conditions met");
                             $message .= "New member conditions met, ";
                             if($pro->bonus_type=='amount'){
