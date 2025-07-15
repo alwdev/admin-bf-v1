@@ -48,6 +48,18 @@
                         <x-input-error :messages="$errors->get('bonus')" class="mt-2" />
                     </div>
                     <div class="form-group">
+                        <label for="bonus">Bonus type</label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline mb-3">
+                        <input type="radio" class="custom-control-input" id="bonus_type_amount" name="bonus_type" value="amount">
+                        <label class="custom-control-label" for="bonus_type_amount">Amount</label>
+                    </div>
+
+                    <div class="custom-control custom-radio custom-control-inline mb-3">
+                        <input type="radio" class="custom-control-input" id="bonus_type_percent" name="bonus_type" value="percent">
+                        <label class="custom-control-label" for="bonus_type_percent">Percent</label>
+                    </div>
+                    <div class="form-group">
                         <label for="turnover">{{__('main.Turnover')}}</label>
                         <input class="form-control float-number"  type="text" id="turnover" name="turnover" required   value="{{ old('turnover') }}">
                         <x-input-error :messages="$errors->get('turnover')" class="mt-2" />

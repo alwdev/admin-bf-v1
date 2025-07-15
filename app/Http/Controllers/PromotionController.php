@@ -55,6 +55,7 @@ class PromotionController extends Controller
         }
         $pro->withdraw_limit = $request->withdraw_limit;
         $pro->active = 1;
+        $pro->bonus_type = $request->bonus_type;
         $pro->save();
         return redirect()->route('promotion.index')->with('status','200');
     }
@@ -106,6 +107,7 @@ class PromotionController extends Controller
         }
         $pro->withdraw_limit = $request->withdraw_limit;
         $pro->active = 1;
+        $pro->bonus_type = $request->bonus_type;
         $pro->save();
         return redirect()->route('promotion.index')->with('status','200');
     }
