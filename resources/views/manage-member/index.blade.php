@@ -275,6 +275,9 @@
                                                         {{-- <option code="014" value="ธนาคารไทยเครดิต" @if($member->bank_name == "ธนาคารไทยเครดิต") selected @endif>{{ trans('register.CREDIT') }}</option> --}}
                                                         <option code="bank-11" value="ธนาคารออมสิน" @if($member->bank_name == "ธนาคารออมสิน") selected @endif>ธนาคารออมสิน</option>
                                                         <option code="bank-15" value="ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร" @if($member->bank_name == "ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร") selected @endif>ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร</option>
+                                                        <option code="bank-16" value="ธนาคารการค้า" @if($member->bank_name == "ธนาคารการค้า") selected @endif>ธนาคารการค้า</option>
+                                                        <option code="bank-17" value="ธนาคารลาวพัฒนา" @if($member->bank_name == "ธนาคารลาวพัฒนา") selected @endif>ธนาคารลาวพัฒนา</option>
+                                                        <option code="bank-18" value="ธนาคารJDB" @if($member->bank_name == "ธนาคารJDB") selected @endif>ธนาคารJDB</option>
                                                     </select>
                                                 </div>
                                             </div>
