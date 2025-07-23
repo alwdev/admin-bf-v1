@@ -373,6 +373,8 @@ public function lineNotify_deposit($id)
             }
             $transfer->promotion_id = $promotion_id_used_for_transfer;
 
+            $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
+
         } else { // ไม่มีโปรโมชั่นใดๆ เข้าเงื่อนไข หรือไม่ถูกเลือก
             error_log("No applicable promotion found or selected. Only deposit amount will be added.");
             $message .= "No applicable promo, ";
