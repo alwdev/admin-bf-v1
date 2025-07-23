@@ -359,7 +359,7 @@ public function lineNotify_deposit($id)
             $amount_betflix = $transfer->amount + $bonus_to_apply;
             $transfer->promotion = $applied_promotion_name;
             // *** NEW: บันทึกยอด Turnover ที่ต้องทำจริง ***
-            $transfer->required_turnover_amount = $calculated_required_turnover; // สมมติว่ามี column นี้ในตาราง transfers
+            // $transfer->required_turnover_amount = $calculated_required_turnover; // สมมติว่ามี column นี้ในตาราง transfers
             $transfer->bonus_applied = $bonus_to_apply; // บันทึกโบนัสที่ให้ด้วย
 
             $transfer->turnover_on = 1;
@@ -379,7 +379,7 @@ public function lineNotify_deposit($id)
             $member->wallet_balance = (float) $member->wallet_balance + (float) $transfer->amount;
             $amount_betflix = $transfer->amount;
             $transfer->promotion = "ไม่มีโปรโมชั่น"; // หรือค่า default อื่นๆ
-            $transfer->required_turnover_amount = 0.0; // ไม่มีโปรโมชั่นก็ไม่มีเทิร์น
+            // $transfer->required_turnover_amount = 0.0; // ไม่มีโปรโมชั่นก็ไม่มีเทิร์น
             $transfer->bonus_applied = 0.0;
             $transfer->promotion_id = null; // ไม่มีโปรโมชั่นก็เป็น null
         }
