@@ -383,7 +383,7 @@ public function lineNotify_deposit($id)
             $transfer->promotion = "ไม่มีโปรโมชั่น"; // หรือค่า default อื่นๆ
             // $transfer->required_turnover_amount = 0.0; // ไม่มีโปรโมชั่นก็ไม่มีเทิร์น
             // $transfer->bonus_applied = 0.0;
-            $transfer->promotion_id = null; // ไม่มีโปรโมชั่นก็เป็น null
+            $transfer->promotion_id = 0; // ไม่มีโปรโมชั่นก็เป็น null
         }
 
         error_log("Bonus for Telegram = " . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
