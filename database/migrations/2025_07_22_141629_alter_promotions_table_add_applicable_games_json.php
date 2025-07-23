@@ -12,17 +12,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('promotion', function (Blueprint $table) {
-            // หาก applicable_games ยังคงเป็น VARCHAR หรือ TEXT
-            // ให้เปลี่ยนเป็น JSON โดยจัดการข้อมูลเก่าถ้ามี
-            if (DB::getDriverName() === 'mysql' && version_compare(DB::connection()->getPdo()->query('select version()')->fetchColumn(), '5.7.8', '>=')) {
-                // MySQL 5.7.8+ รองรับ JSON type
-                $table->longText('applicable_games')->change();
-            } else {
-                // สำหรับ MySQL รุ่นเก่า หรือ database อื่นๆ ที่ไม่มี JSON type โดยตรง
-                $table->text('applicable_games')->change();
-            }
-        });
+        // Schema::table('promotion', function (Blueprint $table) {
+        //     // หาก applicable_games ยังคงเป็น VARCHAR หรือ TEXT
+        //     // ให้เปลี่ยนเป็น JSON โดยจัดการข้อมูลเก่าถ้ามี
+        //     if (DB::getDriverName() === 'mysql' && version_compare(DB::connection()->getPdo()->query('select version()')->fetchColumn(), '5.7.8', '>=')) {
+        //         // MySQL 5.7.8+ รองรับ JSON type
+        //         $table->longText('applicable_games')->change();
+        //     } else {
+        //         // สำหรับ MySQL รุ่นเก่า หรือ database อื่นๆ ที่ไม่มี JSON type โดยตรง
+        //         $table->text('applicable_games')->change();
+        //     }
+        // });
     }
 
     /**
