@@ -334,6 +334,8 @@ class ManageMemberController extends Controller
                     return redirect()->back()->with('error', $bf_deposit);
                 }
 
+                $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
+
                 // แก้ไข Telegram message ให้ใช้ $applied_promotion_name และ $message จาก logic ด้านบน
                 TelegramMessage::create()
                     ->to(env('TELEGRAM_G_ID'))
