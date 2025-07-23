@@ -195,124 +195,342 @@ class TransactionController extends Controller
         }
     }
 
-    public function lineNotify_deposit($id)
+public function lineNotify_deposit($id)
     {
         error_log("lineNotify_deposit id = " . $id);
         $transfer = Transfer::where('id', $id)->first();
-        if ($transfer) {
-            error_log("lineNotify_deposit transfer found id = " . $transfer->id);
-            $member = Members::find($transfer->member_id);
-            $amount_betflix = 0;
-            $old_balance = $member->wallet_balance;
 
-            $transfer->status = 2;
-            $transfer->status_code = "BOT.อนุมัติ";
-            $transfer->old_balance = $old_balance;
+        if (!$transfer) {
+            error_log("lineNotify_deposit: Transfer not found for ID: " . $id);
+            return 404; // หรือ return response ที่เหมาะสม
+        }
 
-            $message = "";
-            $pro_name = "";
-            $bonus = 0;
+        error_log("lineNotify_deposit transfer found id = " . $transfer->id);
+        $member = Members::find($transfer->member_id);
 
+        if (!$member) {
+            error_log("lineNotify_deposit: Member not found for transfer ID: " . $transfer->id);
+            return 404; // หรือ return response ที่เหมาะสม
+        }
+
+        $amount_betflix = 0;
+        $old_balance = (float) $member->wallet_balance; // เก็บยอดเงินเก่าก่อนคำนวณ
+
+        // ตั้งค่าสถานะ Transfer เบื้องต้น (จะถูกบันทึกเมื่อ Betflix สำเร็จ)
+        $transfer->status = 2;
+        $transfer->status_code = "BOT.อนุมัติ";
+        $transfer->old_balance = $old_balance;
+
+        $message = ""; // ใช้สำหรับเก็บข้อความ log/แจ้งเตือน
+        $bonus = 0.0; // ตั้งค่าเริ่มต้นสำหรับ bonus ที่จะใช้ใน log/telegram (จะถูกอัปเดตภายหลัง)
+
+        // ** กำหนดค่าเริ่มต้นสำหรับผลลัพธ์การคำนวณโบนัสและ turnover **
+        $bonus_to_apply = 0.0;
+        $calculated_required_turnover = 0.0; // จะเก็บยอด turnover ที่ต้องทำจริง (บาท)
+        $applied_promotion_name = "ไม่มีโปรโมชั่น"; // Default value
+        $promotion_found_and_applied = false; // Flag เพื่อติดตามว่าได้มีการใช้โปรโมชั่นหรือไม่
+
+        // ดึงข้อมูลโปรโมชั่นต่อเนื่องทั้งหมดที่ active และเป็นของ store_id นี้
+        // และเป็นโปรโมชั่นสำหรับสมาชิกใหม่แบบต่อเนื่อง
+        $recurring_new_user_promotions = Promotion::where('enable', 1)
+            ->where('active', 1)
+            ->where('is_newuser', 1)
+            ->where('is_recurring_promotion', 1)
+            ->get();
+
+        // ตรวจสอบจำนวนการฝากของสมาชิก (เพื่อดูว่าเป็นการฝากครั้งแรกหรือไม่)
+        $user_transfer_count = Transfer::where('member_id', $member->id)
+                                        ->where('status', 2)
+                                        ->where('type', 'deposit')
+                                        ->count();
+        error_log("user transfer count = " . $user_transfer_count);
+
+
+        // --------------------------------------------------------------------------------------
+        // *** Logic สำหรับโบนัสต่อเนื่องสำหรับสมาชิกใหม่ (ไม่ต้องรับโปรเข้ามา) ***
+        // --------------------------------------------------------------------------------------
+        // เงื่อนไข: ต้องไม่ใช่การฝากครั้งแรก (user_transfer_count > 0) และมีวันที่สมัคร
+        if ($user_transfer_count > 0 && $member->created_at) {
+            $registrationDate = Carbon::parse($member->created_at);
+            $now = Carbon::now();
+
+            foreach ($recurring_new_user_promotions as $pro_recurring) {
+                $promotionEndDate = $registrationDate->copy()->addDays($pro_recurring->recurring_promotion_days);
+
+                // ถ้ายังอยู่ในช่วงเวลาโปรโมชั่นต่อเนื่อง
+                if ($now->lt($promotionEndDate)) {
+                    error_log("Auto-applying recurring new member promotion: " . $pro_recurring->name);
+                    $message .= "Auto recurring promo applied, ";
+
+                    // คำนวณโบนัสจาก recurring_bonus_percentage
+                    if ($pro_recurring->recurring_bonus_percentage !== null && $pro_recurring->recurring_bonus_percentage > 0) {
+                        $bonus_to_apply = $transfer->amount * ($pro_recurring->recurring_bonus_percentage / 100);
+                        error_log("Recurring Bonus Percentage: {$pro_recurring->recurring_bonus_percentage}%, Calculated Recurring Bonus: {$bonus_to_apply}");
+                    } else {
+                        error_log("Recurring bonus percentage is null or zero for auto-applied promo.");
+                        $bonus_to_apply = 0.0;
+                    }
+
+                    // กำหนด turnover สำหรับโปรต่อเนื่อง - ใช้แค่ recurring_turnover_percentage เท่านั้น
+                    $base_amount_for_turnover = $transfer->amount + $bonus_to_apply;
+
+                    if ($pro_recurring->recurring_turnover_percentage !== null && $pro_recurring->recurring_turnover_percentage > 0) {
+                        $calculated_required_turnover = $base_amount_for_turnover * ($pro_recurring->recurring_turnover_percentage / 100);
+                        error_log("Recurring Turnover (Percentage Only): {$pro_recurring->recurring_turnover_percentage}%, Calculated Turnover Amount: {$calculated_required_turnover}");
+                    } else {
+                        $calculated_required_turnover = 0.0;
+                        error_log("No recurring turnover percentage defined or is zero for auto-applied promo.");
+                    }
+
+                    $applied_promotion_name = $pro_recurring->name . " (Recurring)";
+                    $promotion_found_and_applied = true; // ตั้งค่า flag ว่าได้ใช้โปรโมชั่นแล้ว
+                    $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
+                    break; // เจอโปรต่อเนื่องที่เข้าเงื่อนไขแล้ว ออกจาก loop
+                }
+            }
+        }
+
+
+        // --------------------------------------------------------------------------------------
+        // *** Logic สำหรับโปรโมชั่นที่ลูกค้าเลือก (promotion_id != 0) หรือ โปรโมชั่นแรกของสมาชิกใหม่ ***
+        // *** จะทำงานก็ต่อเมื่อยังไม่มีโปรโมชั่นต่อเนื่องถูก apply อัตโนมัติ ***
+        // --------------------------------------------------------------------------------------
+        if (!$promotion_found_and_applied) { // ถ้ายังไม่มีโปรโมชั่นใดๆ ถูก apply
             if ($transfer->promotion_id != 0) {
                 error_log("promotion id = " . $transfer->promotion_id);
-                if ($transfer->turnover_on == 1) {
-                    error_log("turnover on = " . $transfer->turnover_on);
-                    $pro = Promotion::find($transfer->promotion_id);
-                    $pro_name = $pro->name;
-                    $user_transfer = Transfer::where('member_id', $member->id)->where('status', 2)->where('type', 'deposit')->get();  /// เช็คฝากครั้งแรก
-                    $user_transfer_count = $user_transfer->count();
-                    error_log("user transfer count = " . $user_transfer_count);
-                    error_log("Pro is_newuser = " . $pro->is_newuser);
-                    if ($pro->is_newuser == 1) { //โปร member ใหม่
-                        error_log("โปร member ใหม่");
-                        if ($user_transfer_count == 0) {
-                            /// ฝากครั้งแรก
-                            error_log("New member conditions met");
-                            $message .= "New member conditions met, ";
-                            $bonus = $pro->bonus;
-                            $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
-                            $amount_betflix = $transfer->amount + $bonus;
-                            $transfer->promotion = $pro->name;
-                        } else {
-                            error_log("Not meeting new member conditions");
-                            $message .= "Not meeting new member conditions, ";
-                            
-                            $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount;
-                            $amount_betflix = $transfer->amount;
-                        }
-                    } else { //โปร member ทุกคน
-                        error_log("Promo member new");
-                        $message .= "Promo member new, ";
-                        $bonus = $pro->bonus;
-                        $member->wallet_balance =  (float) $member->wallet_balance + $transfer->amount + $bonus;
-                        $amount_betflix = $transfer->amount + $bonus;
-                        $transfer->promotion = $pro->name;
-                    }
+                // ดึงโปรโมชั่นที่ผู้ใช้เลือก
+                $pro = Promotion::find($transfer->promotion_id);
+
+                if (!$pro) {
+                    error_log("Promotion not found for ID: " . $transfer->promotion_id);
+                    $message .= "Promotion not found, ";
+                    // ในกรณีนี้จะไม่มีโบนัสจากโปรโมชั่นที่เลือก
                 } else {
-                    $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
-                    $amount_betflix = $transfer->amount;
+                    error_log("Pro is_newuser = " . $pro->is_newuser);
+                    error_log("Pro is_percentage_based = " . $pro->is_percentage_based);
+                    error_log("turnover on = " . $transfer->turnover_on);
+
+                    if ($transfer->turnover_on == 1) {
+                        // *** คำนวณโบนัสและ turnover ตามประเภทโปรโมชั่นที่เลือก ***
+                        $current_calculated_bonus = 0.0;
+                        $current_turnover_value = 0.0; // เก็บค่าจากโปรโมชั่นก่อนคำนวณเป็นยอดจริง (จะเป็นเปอร์เซ็นต์หรือเท่า)
+
+                        if ($pro->is_percentage_based) { // ถ้าโปรโมชั่นนี้ใช้ระบบเปอร์เซ็นต์
+                            error_log("Calculating bonus based on percentage (selected promo).");
+                            if ($pro->bonus_percentage !== null && $pro->bonus_percentage > 0) {
+                                $current_calculated_bonus = $transfer->amount * ($pro->bonus_percentage / 100);
+                            }
+                            if ($pro->turnover_percentage !== null && $pro->turnover_percentage > 0) {
+                                $current_turnover_value = $pro->turnover_percentage;
+                            }
+                        } else { // ถ้าโปรโมชั่นนี้ใช้ระบบค่าคงที่ (จำนวนเงิน/เท่า)
+                            error_log("Calculating bonus based on fixed amount (selected promo).");
+                            $current_calculated_bonus = $pro->bonus;
+                            $current_turnover_value = $pro->turnover;
+                        }
+                        // *** จบการกำหนดค่าโบนัสและ turnover สำหรับโปรที่เลือก ***
+
+                        if ($pro->is_newuser == 1) { // โปรโมชั่นแรกสำหรับสมาชิกใหม่ที่เลือก
+                            error_log("เป็นโปรโมชั่นแรกสำหรับสมาชิกใหม่ (เลือก)");
+                            if ($user_transfer_count == 0) { // ต้องเป็นการฝากครั้งแรกจริงๆ
+                                error_log("Meet first-time new member conditions (selected promo)");
+                                $message .= "Meet first-time new member conditions, ";
+
+                                // กำหนดค่าโบนัสและเทิร์นโอเวอร์
+                                $bonus_to_apply = $current_calculated_bonus;
+                                $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
+
+                                $base_amount_for_turnover = $transfer->amount + $bonus_to_apply;
+                                if ($pro->is_percentage_based) {
+                                    $calculated_required_turnover = $base_amount_for_turnover * ($current_turnover_value / 100);
+                                } else {
+                                    $calculated_required_turnover = $base_amount_for_turnover * $current_turnover_value;
+                                }
+
+                                $applied_promotion_name = $pro->name;
+                                $promotion_found_and_applied = true;
+                            } else {
+                                error_log("Does not meet first-time new member requirements (already made first deposit), no bonus from selected promo.");
+                                $message .= "Does not meet first-time new member requirements, ";
+                                // ไม่เข้าเงื่อนไข (ไม่ใช่ครั้งแรก), ไม่มีโบนัสจากโปรนี้
+                                // $bonus_to_apply และ $calculated_required_turnover จะยังคงเป็น 0.0 ตามค่าเริ่มต้น
+                            }
+                        } else { // โปรโมชั่นสำหรับสมาชิกทุกคน (เลือก)
+                            error_log("All member promotions (selected promo)");
+                            $message .= "All member promotions, ";
+
+                            // กำหนดค่าโบนัสและเทิร์นโอเวอร์
+                            $bonus_to_apply = $current_calculated_bonus;
+                            $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
+
+                            $base_amount_for_turnover = $transfer->amount + $bonus_to_apply;
+                            if ($pro->is_percentage_based) {
+                                $calculated_required_turnover = $base_amount_for_turnover * ($current_turnover_value / 100);
+                            } else {
+                                $calculated_required_turnover = $base_amount_for_turnover * $current_turnover_value;
+                            }
+
+                            $applied_promotion_name = $pro->name;
+                            $promotion_found_and_applied = true;
+                        }
+                    } else { // turnover_on == 0 สำหรับโปรโมชั่นที่เลือก
+                        error_log("Turnover off for selected promotion. No bonus from this promo.");
+                        $message .= "Turnover off for selected promo, ";
+                        // ในกรณีนี้จะไม่มีโบนัสจากโปรโมชั่นที่เลือก แต่ยอดฝากจะยังเข้า
+                        // $bonus_to_apply และ $calculated_required_turnover จะยังคงเป็น 0.0 ตามค่าเริ่มต้น
+                    }
                 }
-            } else { //ไม่มีโปร
-                error_log("No promotion / Don't click to accept the promotion");
-                $message .= "No promotion / Don't click to accept the promotion, ";
-                $member->wallet_balance = (float) $member->wallet_balance +  (float) $transfer->amount;
-                $amount_betflix = $transfer->amount;
+            } else { // promotion_id == 0 (ไม่ได้เลือกโปรโมชั่น)
+                error_log("No promotion selected.");
+                $message .= "No promotion selected, ";
+                // ไม่มีโปรโมชั่นที่ถูกเลือก ไม่มีโบนัส ไม่มี turnover
+                // $bonus_to_apply และ $calculated_required_turnover จะยังคงเป็น 0.0 ตามค่าเริ่มต้น
             }
+        }
 
 
+        // --------------------------------------------------------------------------------------
+        // *** สรุปผลลัพธ์และอัปเดต Wallet / Transfer ***
+        // --------------------------------------------------------------------------------------
 
-            $bf_deposit =  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($amount_betflix));
-            Log::info('Deposit Betflix ' . $bf_deposit . ' ' . floor($amount_betflix) . ' User =  ' . $member->username);
+        // ถ้ามีโปรโมชั่นถูก apply (ไม่ว่าจะ auto หรือเลือก)
+        if ($promotion_found_and_applied) {
+            error_log("Applying bonus: {$bonus_to_apply} with total required turnover: {$calculated_required_turnover}");
+            $member->wallet_balance = (float) $member->wallet_balance + $transfer->amount + $bonus_to_apply;
+            $amount_betflix = $transfer->amount + $bonus_to_apply;
+            $transfer->promotion = $applied_promotion_name;
+            // *** NEW: บันทึกยอด Turnover ที่ต้องทำจริง ***
+            // $transfer->required_turnover_amount = $calculated_required_turnover; // สมมติว่ามี column นี้ในตาราง transfers
+            // $transfer->bonus_applied = $bonus_to_apply; // บันทึกโบนัสที่ให้ด้วย
 
-            if ($bf_deposit == "success") {
-                error_log("lineNotify_deposit bf_deposit success");
-                $wheel_setting = WheelSpin::first();
+            $transfer->turnover_on = 1;
+
+            // เพิ่มการบันทึก promotion_id ที่ถูกใช้ (ถ้ามีใน $pro)
+            $promotion_id_used_for_transfer = null;
+            if (isset($pro) && $pro instanceof Promotion) {
+                $promotion_id_used_for_transfer = $pro->id;
+            } elseif (isset($pro_recurring) && $pro_recurring instanceof Promotion) {
+                $promotion_id_used_for_transfer = $pro_recurring->id;
+            }
+            $transfer->promotion_id = $promotion_id_used_for_transfer;
+
+            $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
+
+        } else { // ไม่มีโปรโมชั่นใดๆ เข้าเงื่อนไข หรือไม่ถูกเลือก
+            error_log("No applicable promotion found or selected. Only deposit amount will be added.");
+            $message .= "No applicable promo, ";
+            $member->wallet_balance = (float) $member->wallet_balance + (float) $transfer->amount;
+            $amount_betflix = $transfer->amount;
+            $transfer->promotion = "ไม่มีโปรโมชั่น"; // หรือค่า default อื่นๆ
+            // $transfer->required_turnover_amount = 0.0; // ไม่มีโปรโมชั่นก็ไม่มีเทิร์น
+            // $transfer->bonus_applied = 0.0;
+            $transfer->promotion_id = 0; // ไม่มีโปรโมชั่นก็เป็น null
+        }
+
+        error_log("Bonus for Telegram = " . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
+
+        $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
+        Log::info('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
+        error_log('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
+// $bf_deposit = "success";
+        if ($bf_deposit == "success") {
+            error_log("lineNotify_deposit bf_deposit success");
+
+            $wheel_setting = WheelSpin::first();
+            if ($wheel_setting && $wheel_setting->ticket_condition > 0) {
                 if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
                     $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
                     $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
                 }
+            }
 
-                $member->save();
-                $transfer->new_balance = $member->wallet_balance;
-                $transfer->save();
+            $member->save();
+            $transfer->new_balance = $member->wallet_balance;
+            // $transfer->status และ $transfer->old_balance ถูกตั้งค่าไว้ด้านบนแล้ว
+            $transfer->save();
 
-                $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
-                if ($bank) {
-                    $bank->balance = (float) $bank->balance + (float) $transfer->amount;
-                    $bank->save();
+            // **หมายเหตุ:** ส่วนนี้ (`$bank->balance = ...`) ดูเหมือนจะซ้ำซ้อน
+            // หากยอดเงินเข้าบัญชีธนาคารถูกบันทึกไปแล้วเมื่อมีการรับเงิน
+            // แต่ถ้า Logic ของคุณคือการอัปเดตยอดเงินในบัญชีธนาคารของระบบเมื่อเงินถูกโอนไปให้ Betflix
+            // ก็สามารถเก็บไว้ได้ แต่ควรพิจารณาความถูกต้องของ Flow
+            $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
+            if ($bank) {
+                // หากคุณเคยเพิ่ม $transfer->amount เข้า bank->balance ในบล็อก success
+                // ก็ควรหักออกในบล็อก failure นี้
+                // $bank->balance = (float) $bank->balance + (float) $transfer->amount;
+                // $bank->save();
+            }
+
+            // บันทึก PromotionUsed ก็ต่อเมื่อมีการใช้โปรโมชั่นจริง
+            if ($promotion_found_and_applied) {
+                // ดึง promotion_id และ promotion_name ที่ถูกใช้จริง
+                $promotion_id_to_log = null;
+                $promotion_name_to_log = $applied_promotion_name;
+
+                if (isset($pro) && $pro instanceof Promotion) {
+                    $promotion_id_to_log = $pro->id;
+                } elseif (isset($pro_recurring) && $pro_recurring instanceof Promotion) {
+                    $promotion_id_to_log = $pro_recurring->id;
                 }
 
-                if ($transfer->promotion_id != 0) {
+                if ($promotion_id_to_log) { // ตรวจสอบว่ามี promotion_id ที่จะบันทึก
                     PromotionUsed::create([
                         'member_id' => $member->id,
-                        'promotion_id' => $transfer->promotion_id,
-                        'promotion_name' => $pro->name,
-                        'amount' => $bonus
+                        'promotion_id' => $promotion_id_to_log,
+                        'promotion_name' => $promotion_name_to_log,
+                        'amount' => $bonus_to_apply, // ใช้ $bonus_to_apply ที่คำนวณได้
                     ]);
                 }
-
-                try {
-                    TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                        // ->content('Choose an option:')
-                        ->line('BOT-LINE ' . env('APP_NAME'))
-                        ->line('Transaction completed, credit transferred ' . $member->username)
-                        ->line('Amount :' . $transfer->amount)
-                        ->line('Bonus :' . $bonus)
-                        ->line($pro_name . ': ' . $message)
-                        ->send();
-                } catch (\Exception $e) {
-                    error_log("Error sending Telegram message: " . $e->getMessage());
-                }
-                return  200;
-            } else {
-                error_log("lineNotify_deposit bf_deposit failed");
+            }
+            $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
+            try {
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                     ->line('BOT-LINE ' . env('APP_NAME'))
-                    ->line('Deposit Betflix failed for user ' . $member->username)
+                    ->line('Transaction completed, credit transferred ' . $member->username)
                     ->line('Amount :' . $transfer->amount)
+                    ->line('Bonus :' . $bonus) // ใช้ floor() กับ bonus ด้วย
+                    ->line('Promotion : ' . $applied_promotion_name) // แสดงชื่อโปรโมชั่นที่ถูกใช้
+                    ->line('Message : ' . $message) // แสดง message จาก logic
                     ->send();
-                return 500;
+            } catch (\Exception $e) {
+                error_log("Error sending Telegram message (success path): " . $e->getMessage());
             }
+            return 200;
+
+        } else {
+            error_log("lineNotify_deposit bf_deposit failed for user: " . $member->username . " with response: " . $bf_deposit);
+            // กรณี Betflix Deposit ไม่สำเร็จ ควร Rollback Bank Balance และ Member Wallet Balance ด้วย
+            // เนื่องจากยอดเงินถูกเพิ่มเข้า wallet_balance แล้ว
+            $member->wallet_balance = $old_balance; // คืนยอดเงินใน wallet ของสมาชิก
+            $member->save();
+
+            // **หมายเหตุ:** การคืนเงินเข้าบัญชีธนาคารของระบบ (Bank)
+            // ควรพิจารณาว่ายอดเงินนี้ถูกเพิ่มเข้าไปใน Bank Balance ตอนไหน
+            // หากถูกเพิ่มไปแล้วตอนรับเงิน (ก่อนเรียกฟังก์ชันนี้) ก็ไม่ควรเพิ่มซ้ำ
+            // หากถูกเพิ่มในฟังก์ชันนี้ (ซึ่งไม่น่าเป็นไปได้) ก็ต้องหักออก
+            // แต่จากโค้ดเดิมของคุณใน if($bf_deposit == "success") มีการเพิ่ม Bank Balance
+            // ดังนั้นในกรณีที่ล้มเหลว ก็ควรหักออก (หากคุณต้องการให้ Bank Balance สะท้อนยอดเงินที่โอนไป Betflix)
+            $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
+            if ($bank) {
+                // หากคุณเคยเพิ่ม $transfer->amount เข้า bank->balance ในบล็อก success
+                // ก็ควรหักออกในบล็อก failure นี้
+                // $bank->balance = (float) $bank->balance - (float) $transfer->amount;
+                // $bank->save();
+            }
+
+            // อัปเดตสถานะ Transfer เป็น Failed
+            $transfer->status = 3; // หรือสถานะสำหรับ Failed
+            $transfer->status_code = "BOT.ไม่สำเร็จ: " . $bf_deposit;
+            $transfer->new_balance = $member->wallet_balance; // ยอดเงินใหม่ควรเป็นยอดเงินเก่าที่ rollback แล้ว
+            $transfer->save();
+
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line('BOT-LINE ' . env('APP_NAME'))
+                ->line('Deposit Betflix failed for user ' . $member->username)
+                ->line('Amount :' . $transfer->amount)
+                ->line('Response :' . $bf_deposit)
+                ->send();
+            return 500;
         }
     }
 
