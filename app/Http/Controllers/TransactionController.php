@@ -194,7 +194,6 @@ public function lineNotify_deposit($id)
             ->where('active', 1)
             ->where('is_newuser', 1)
             ->where('is_recurring_promotion', 1)
-            ->where('store_id', $member->store_id) // สำคัญ: ดึงโปรโมชั่นของ store_id นี้
             ->get();
 
         // ตรวจสอบจำนวนการฝากของสมาชิก (เพื่อดูว่าเป็นการฝากครั้งแรกหรือไม่)
