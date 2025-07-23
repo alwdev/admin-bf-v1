@@ -36,7 +36,7 @@ Schema::table('promotion', function (Blueprint $table) {
             // all_games (ใช้ในหน้าเกมไหนได้บ้าง อยากให้มีค่าเริ่มต้นเป็น ทั้งหมด และมีเกมค่าอื่นคือ สล็อต คาสิโนสด ยิงปลา เกมส์ไพ่ หวย กีฬา)
             // แนะนำให้เก็บเป็น JSON หรือใช้ตาราง pivot ถ้ามีหลายเกมที่เลือกได้ (Many-to-Many)
             // ในที่นี้จะใช้ JSON สำหรับตัวเลือกง่ายๆ
-            $table->longText('applicable_games')->default(json_encode(['ทั้งหมด']))->after('description')->comment('ระบุเกมที่สามารถใช้โปรโมชั่นนี้ได้ (เช่น ทั้งหมด, สล็อต, คาสิโนสด)');
+            $table->longText('applicable_games')->nullable()->after('description')->comment('ระบุเกมที่สามารถใช้โปรโมชั่นนี้ได้ (เช่น ทั้งหมด, สล็อต, คาสิโนสด)');
         });
     }
 
