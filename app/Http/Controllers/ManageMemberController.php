@@ -283,9 +283,10 @@ class ManageMemberController extends Controller
 
                 error_log('Bonus = ' . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
 
-                $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($amount_betflix));
+                $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
                 Log::info('Deposit Betflix ' . $bf_deposit . ' ' . $amount_betflix . ' User =  ' . $member->username);
                 error_log('Deposit Betflix ' . $bf_deposit . ' ' . $amount_betflix . ' User =  ' . $member->username);
+                // $bf_deposit = 'success';
                 if ($bf_deposit == 'success') {
                     $wheel_setting = WheelSpin::first();
                     if ($wheel_setting && $wheel_setting->ticket_condition > 0) {
@@ -342,7 +343,7 @@ class ManageMemberController extends Controller
                     ->line(env('APP_NAME'))
                     ->line('Admin has approved the credit. ' . $member->username)
                     ->line('Amount :' . floor($transfer->amount))
-                    ->line('Bonus :' . floor($bonus)) // ใช้ floor() กับ bonus ด้วยเพื่อความสอดคล้อง
+                    ->line('Bonus :' .  $bonus) // ใช้ floor() กับ bonus ด้วยเพื่อความสอดคล้อง
                     ->line('Promotion : ' . $applied_promotion_name) // แสดงชื่อโปรโมชั่นที่ถูกใช้
                     ->line('Message : ' . $message) // แสดง message จาก logic
                     ->send();

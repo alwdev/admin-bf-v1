@@ -388,9 +388,9 @@ public function lineNotify_deposit($id)
 
         error_log("Bonus for Telegram = " . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
 
-        $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($amount_betflix));
-        Log::info('Deposit Betflix ' . $bf_deposit . ' ' . floor($amount_betflix) . ' User = ' . $member->username);
-        error_log('Deposit Betflix ' . $bf_deposit . ' ' . floor($amount_betflix) . ' User = ' . $member->username);
+        $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
+        Log::info('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
+        error_log('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
 // $bf_deposit = "success";
         if ($bf_deposit == "success") {
             error_log("lineNotify_deposit bf_deposit success");
@@ -447,7 +447,7 @@ public function lineNotify_deposit($id)
                     ->line('BOT-LINE ' . env('APP_NAME'))
                     ->line('Transaction completed, credit transferred ' . $member->username)
                     ->line('Amount :' . $transfer->amount)
-                    ->line('Bonus :' . floor($bonus)) // ใช้ floor() กับ bonus ด้วย
+                    ->line('Bonus :' . $bonus) // ใช้ floor() กับ bonus ด้วย
                     ->line('Promotion : ' . $applied_promotion_name) // แสดงชื่อโปรโมชั่นที่ถูกใช้
                     ->line('Message : ' . $message) // แสดง message จาก logic
                     ->send();
