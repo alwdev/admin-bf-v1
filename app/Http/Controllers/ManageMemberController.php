@@ -546,7 +546,7 @@ class ManageMemberController extends Controller
             $total_lose = 0;
             $cash_back=0;
             try{
-                $winlose= app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($member->username,-7,-1)->winloss;
+                $winlose= app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($member->username,-1,-1)->winloss;
 
                 if($winlose){
                     $total_lose =  $winlose;
