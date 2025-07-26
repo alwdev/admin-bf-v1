@@ -23,6 +23,9 @@
                     </ul> --}}
                 </li>
                 @endif
+                <li>
+                    <a href="{{ env('APP_LOTTO_ADMIN_URL') }}/signin/{{ env('APP_CODE') }}/{{ auth()->user()->lotto_login_token }}" target="_blank" class=" waves-effect"><i class="bx bx-purchase-tag-alt"></i><span>Manage Lotto</span></a>
+                </li>
                 @if( json_decode(auth()->user()->permissions)->transfer > 1  )
                 <li>
                     <a href="{{ route('managemember.transaction') }}" class="waves-effect"><i class='bx bx-bitcoin'></i><span>{{ __('main.transfer_list')}}</span></a>
