@@ -16,6 +16,9 @@
                     <a href="/" class="waves-effect"><i
                             class='bx bx-home'></i><span>{{ __('main.main_page') }}</span></a>
                 </li>
+                <li>
+                    <a href="{{ env('APP_LOTTO_ADMIN_URL') }}/signin/{{ env('APP_CODE') }}/{{ auth()->user()->lotto_login_token }}" target="_blank" class=" waves-effect"><i class="bx bx-purchase-tag-alt"></i><span>Manage Lotto</span></a>
+                </li>
                 @if (json_decode(auth()->user()->permissions)->member > 1)
                     <li>
                         <a href="{{ route('managemember.index') }}" class=" waves-effect"><i
