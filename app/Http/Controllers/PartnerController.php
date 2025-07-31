@@ -107,7 +107,13 @@ class PartnerController extends Controller
         foreach ($partners as $value) {
             sleep(2);
             $total_commission = 0;
-            Log::info("Member main : " . $value->contanct_name.'uder partner count = '.count(json_decode($value->members)));
+            // Check if $value->members is not null before attempting to decode and count
+            $membersCount = 0;
+            if ($value->members !== null) {
+                $membersCount = count(json_decode($value->members));
+            }
+
+            Log::info("Member main : " . $value->contanct_name . ' under partner count = ' . $membersCount);
             if(json_decode($value->ref_user)){
                 set_time_limit(3000000000);
                 foreach(json_decode($value->members) as $_member){
