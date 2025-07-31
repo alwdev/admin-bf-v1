@@ -107,8 +107,14 @@ class PartnerController extends Controller
         foreach ($partners as $value) {
             sleep(2);
             $total_commission = 0;
-            Log::info("Member main : " . $value->contanct_name.'uder partner count = '.count(json_decode($value->members)));
-            if(json_decode($value->ref_user)){
+            // Check if $value->members is not null before attempting to decode and count
+            $membersCount = 0;
+            if ($value->members !== null) {
+                $membersCount = count(json_decode($value->members));
+            }
+
+            Log::info("Member main : " . $value->contanct_name . ' under partner count = ' . $membersCount);
+            if(json_decode($value->members)){
                 set_time_limit(3000000000);
                 foreach(json_decode($value->members) as $_member){
                     sleep(3);
@@ -117,7 +123,7 @@ class PartnerController extends Controller
                     Log::info("Under of ".$value->contanct_name." member : " .$under_member->username);
 
                     try{
-                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-7,-1);
+                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1);
                         if($bf_total_bet){
                             $total_bet = $bf_total_bet->valid_amount;
                             $winlose = $bf_total_bet->winloss;
@@ -160,7 +166,7 @@ class PartnerController extends Controller
                     $value->total_profit = $value->total_profit + $total_commission;
                     $value->save();
 
-                    $start_date=date('Y-m-d',strtotime('-7 day'));
+                    $start_date=date('Y-m-d',strtotime('-1 day'));
                     $end_date=date('Y-m-d',strtotime('-1 day'));
                     PartnerCommission::create([
                         'partner_id' => $value->id,
@@ -168,7 +174,7 @@ class PartnerController extends Controller
                         'payment_type' => $value->payment_type,
                         'payment_status' => 'pending',
                         'transaction_id' =>'',
-                        'note' => $start_date+ '-' + $end_date
+                        'note' => $start_date . '-' . $end_date // Corrected line
                     ]);
                 }
 
@@ -180,10 +186,10 @@ class PartnerController extends Controller
 
         }
         Log::info('success Run ส่วนแบ่ง Partner');
-        TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-            ->line(env('APP_NAME'))
-            ->line('BOT สิ้นสุดการ Run ส่วนแบ่ง Partner ')
-            ->send();
+        // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+        //     ->line(env('APP_NAME'))
+        //     ->line('BOT สิ้นสุดการ Run ส่วนแบ่ง Partner ')
+        //     ->send();
         return 'success';
     }
 
