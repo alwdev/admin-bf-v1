@@ -170,7 +170,7 @@ class PartnerController extends Controller
                     $end_date=date('Y-m-d',strtotime('-1 day'));
                     PartnerCommission::create([
                         'partner_id' => $value->id,
-                        'amount' => $value->amount,
+                        'amount' => $total_commission,
                         'payment_type' => $value->payment_type,
                         'payment_status' => 'pending',
                         'transaction_id' =>'',
