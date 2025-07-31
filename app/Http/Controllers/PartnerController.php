@@ -171,7 +171,7 @@ class PartnerController extends Controller
                     PartnerCommission::create([
                         'partner_id' => $value->id,
                         'amount' => $total_commission,
-                        'payment_type' => $value->payment_type,
+                        'payment_type' => 'Commission',
                         'payment_status' => 'pending',
                         'transaction_id' =>'',
                         'note' => $start_date . '-' . $end_date // Corrected line
