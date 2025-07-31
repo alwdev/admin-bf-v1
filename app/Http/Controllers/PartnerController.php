@@ -166,7 +166,7 @@ class PartnerController extends Controller
                     $value->total_profit = $value->total_profit + $total_commission;
                     $value->save();
 
-                    $start_date=date('Y-m-d',strtotime('-7 day'));
+                    $start_date=date('Y-m-d',strtotime('-1 day'));
                     $end_date=date('Y-m-d',strtotime('-1 day'));
                     PartnerCommission::create([
                         'partner_id' => $value->id,
@@ -174,7 +174,7 @@ class PartnerController extends Controller
                         'payment_type' => $value->payment_type,
                         'payment_status' => 'pending',
                         'transaction_id' =>'',
-                        'note' => $start_date+ '-' + $end_date
+                        'note' => $start_date . '-' . $end_date // Corrected line
                     ]);
                 }
 
