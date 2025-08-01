@@ -9,4 +9,9 @@ class Partner extends Model
 {
     use HasFactory;
     protected $table = 'partner';
+
+    public function members()
+    {
+        return $this->hasMany(Member::class, 'partner_id');
+    }
 }
