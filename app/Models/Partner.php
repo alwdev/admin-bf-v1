@@ -9,9 +9,15 @@ class Partner extends Model
 {
     use HasFactory;
     protected $table = 'partner';
-
-    public function members()
+    protected $fillable = [
+        'slug_name',
+        'url',
+        'contact_name',
+        'contact_phonenumber',
+        'rate',
+    ];
+    public function commissions()
     {
-        return $this->hasMany(Member::class, 'partner_id');
+        return $this->hasMany(PartnerCommission::class, 'partner_id');
     }
 }
