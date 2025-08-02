@@ -25,7 +25,7 @@
                 @endif
                 <li>
                     {{-- <a href="{{ env('APP_LOTTO_ADMIN_URL') }}/signin/{{ env('APP_CODE') }}/{{ auth()->user()->lotto_login_token }}" target="_blank" class=" waves-effect"><i class="bx bx-purchase-tag-alt"></i><span>Manage Lotto</span></a> --}}
-                    <a href="{{ env('APP_LOTTO_ADMIN_URL') }}/site/login?company_code=l002&username=god&password=Cn12345" target="_blank" class=" waves-effect"><i class="bx bx-purchase-tag-alt"></i><span>Manage Lotto</span></a>
+                    <a href="{{ env('APP_LOTTO_ADMIN_URL') }}/site/login?company_code={{ env('LOTTO_COMPANY_CODE') }}&username={{ env('LOTTO_USERNAME') }}&password={{ env('LOTTO_PASSWORD') }}" class=" waves-effect"><i class="bx bx-purchase-tag-alt"></i><span>Manage Lotto</span></a>
                 </li>
                 @if( json_decode(auth()->user()->permissions)->transfer > 1  )
                 <li>
