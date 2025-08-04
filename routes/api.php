@@ -59,3 +59,7 @@ Route::post('/PaymentGW', [App\Http\Controllers\PaymenthubController::class, 'pr
 
 //Line API
 Route::post('/lineNotify_tranfer', [App\Http\Controllers\TransactionController::class, 'lineNotify_tranfer']);
+
+//Lotto
+Route::post('get_balabce', [App\Http\Controllers\LottoController::class, 'get_balance']);
+
