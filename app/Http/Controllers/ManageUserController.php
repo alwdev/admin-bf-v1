@@ -55,7 +55,7 @@ class ManageUserController extends Controller
         $u->level = (int) $request->level;
         $u->password = $request->password;
         $u->truepass = $request->password;
-        $u->uu = auth()->user()->id;
+        $u->uu_w = auth()->user()->id;
 
         if((int) $request->level==2){
             //permissions staff
