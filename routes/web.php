@@ -210,6 +210,8 @@ Route::get('/regenmember_idxxx', [App\Http\Controllers\SettingController::class,
 Route::get('/tmn_balance', [App\Http\Controllers\TMN_Controller::class, 'index']);
 
 Route::get('/pg_get_spin_summaryby_user/{username}/{start_day}/{end_day}', [App\Http\Controllers\PgHardController::class, 'pg_get_spin_summaryby_user']);
+Route::get('/get_spin_orderby_username/{username}/{start_day}/{end_day}', [App\Http\Controllers\PgHardController::class, 'get_spin_orderby_username']);
+
 Route::get('/Single_Member_Report_all_Provider/{username}/{start_day}/{end_day}', [BetflixController::class, 'Single_Member_Report_all_Provider']);
 
 
