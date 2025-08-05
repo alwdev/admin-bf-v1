@@ -99,11 +99,17 @@ class PartnerController extends Controller
         ->line(env('APP_NAME'))
         ->line('BOT เริ่มทำการ ส่วนแบ่ง Partner')
         ->send();
+        Logs::create([
+            'log' => 'BOT เริ่มทำการ ส่วนแบ่ง Partner'
+        ]);
 
 
 
         $partners = Partner::all();
         Log::info("Total Partner  : ".count($partners));
+        Logs::create([
+            'log' => 'Total Partner : '.count($partners)
+        ]);
         foreach ($partners as $value) {
             sleep(2);
             $total_commission = 0;
@@ -114,6 +120,9 @@ class PartnerController extends Controller
             }
 
             Log::info("Member main : " . $value->contanct_name . ' under partner count = ' . $membersCount);
+            Logs::create([
+                'log' => "Member main : " . $value->contanct_name . ' under partner count = ' . $membersCount
+            ]);
             if(json_decode($value->members)){
                 set_time_limit(3000000000);
                 foreach(json_decode($value->members) as $_member){
@@ -121,6 +130,9 @@ class PartnerController extends Controller
 
                     $under_member = Members::where('id',$_member)->first();
                     Log::info("Under of ".$value->contanct_name." member : " .$under_member->username);
+                    Logs::create([
+                        'log' => "Under of ".$value->contanct_name." member : " .$under_member->username
+                    ]);
 
                     try{
                         $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1);
@@ -153,12 +165,18 @@ class PartnerController extends Controller
                     }
 
                     Log::info("total_bet : ".$total_bet);
+                    Logs::create([
+                        'log' => "total_bet : ".$total_bet
+                    ]);
 
                     if($total_bet > 1){
 
                         $commission = abs($winlose) * ($value->rate/ 100);
                         $total_commission += $commission;
                         Log::info("commission ยอด winlose : ".$winlose." commission : ".$commission);
+                        Logs::create([
+                            'log' => "winlose : ".$winlose." commission : ".$commission
+                        ]);
 
                     }
                 }
