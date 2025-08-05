@@ -13,7 +13,7 @@ class PgHardController extends Controller
     public function pghard_report(){
         // ดึง members ที่มีข้อมูลใน PgHard
         $members = Members::whereIn('username', function($query) {
-            $query->select('username')->from('pg_hard');
+            $query->select('username')->from('pg_hards');
         })->get();
         $report = [];
         foreach ($members as $member) {
