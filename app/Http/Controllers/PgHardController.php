@@ -17,10 +17,11 @@ class PgHardController extends Controller
         $report = [];
         foreach ($members as $member) {
             $username = $member->username;
-            $date_start = Carbon::now()->subDays(30)->format('Y-m-d');
-            $date_end = Carbon::now()->format('Y-m-d');
-
+            $startDate=date('Y-m-d',strtotime($date_start.' day')).'T00:00:00Z';
+            $endDate=date('Y-m-d',strtotime($date_end.' day')).'T23:59:59Z';
+            $dateStr =date('Y/m/d',strtotime($date_start.' day')).'-'.date('Y/m/d',strtotime($date_end.' day'));
             $spin_summary = $this->pg_get_spin_summaryby_user($username, $date_start, $date_end);
+
             if (isset($spin_summary['data']) && count($spin_summary['data']) > 0) {
                 foreach ($spin_summary['data'] as $summary) {
                     $report[] = [
@@ -34,7 +35,15 @@ class PgHardController extends Controller
             }
         }
         // return $report;
-        return view('report.pghard_report', compact('report'));
+        return view('report.pghard_report', compact('report','dateStr','date_start','date_end'));
+    }
+    public function pghard_detail_report($username,$start_day,$end_day){
+
+        $dateStr =date('Y/m/d',strtotime($start_day.' day')).'-'.date('Y/m/d',strtotime($end_day.' day'));
+        $report_ = $this->get_spin_orderby_username($username, $start_day, $end_day);
+        $report = $report_['data'] ?? [];
+        // return $report['data'];
+        return view('report.pghard_detail_report', compact('report','username','dateStr'));
     }
     public function pg_get_spin_summaryby_user($username,$date_start,$date_end){
 

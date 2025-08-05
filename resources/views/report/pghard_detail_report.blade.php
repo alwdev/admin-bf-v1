@@ -35,27 +35,38 @@
                         data-url="">
                             <thead>
                                 <tr class="text-center">
-                                    <th>ชื่อผู้ใช้</th>
-                                    <th data-sortable="true">totalAmount</th>
-                                    <th data-sortable="true">totalPayoff</th>
-                                    <th data-sortable="true">totalSuccessSpin</th>
-                                    <th data-sortable="true">totalSuccessMainSpin</th>
                                     <th data-sortable="true">วันที่</th>
-                                    <th data-sortable="true">รายละเอียด</th>
+                                    <th data-sortable="true">gameName</th>
+                                    <th data-sortable="true">gameProvider</th>
+                                    <th data-sortable="true">amount</th>
+                                    <th data-sortable="true">payoff</th>
+                                    <th data-sortable="true">balanceAfterSpin</th>
+                                    <th data-sortable="true">status</th>
+                                    <th data-sortable="true">cumulatedPayoff</th>
+                                    <th data-sortable="true">cumulatedAmount</th>
+                                    <th data-sortable="true">cumulatedSuccessSpin</th>
+                                    <th data-sortable="true">isFirstSpin</th>
+                                    <th data-sortable="true">isFreeSpin</th>
+                                    <th data-sortable="true">isBuyFeature</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($report as $row)
                                 <tr>
-                                    <td>{{ $row['username'] }}</td>
-                                    <td class="text-center">{{ intval($row['totalAmount']) }}</td>
-                                    <td class="text-center">{{ intval($row['totalPayoff']) }}</td>
-                                    <td class="text-center">{{ intval($row['totalSuccessSpin']) }}</td>
-                                    <td class="text-center">{{ intval($row['totalSuccessMainSpin']) }}</td>
-                                    <td class="text-center">{{ $dateStr }}</td>
-                                    <td class="text-center">
-                                        <a href="/pghard_detail_report/{{$row['username']}}/{{ $date_start }}/{{ $date_end }}" class="btn btn-primary btn-sm">ดูรายละเอียด</a>
-                                    </td>
+                                    <td class="text-center">{{ $row['createdAt'] }}</td>
+                                    <td class="text-center">{{ $row['gameName'] }}</td>
+                                    <td class="text-center">{{ $row['gameProvider'] }}</td>
+                                    <td class="text-center">{{ intval($row['amount']) }}</td>
+                                    <td class="text-center">{{ intval($row['payoff']) }}</td>
+                                    <td class="text-center">{{ intval($row['balanceAfterSpin']) }}</td>
+                                    <td class="text-center">{{ $row['status'] }}</td>
+                                    <td class="text-center">{{ intval($row['cumulatedPayoff']) }}</td>
+                                    <td class="text-center">{{ intval($row['cumulatedAmount']) }}</td>
+                                    <td class="text-center">{{ intval($row['cumulatedSuccessSpin']) }}</td>
+                                    <td class="text-center">{{ $row['isFirstSpin'] ? 'Yes' : 'No' }}</td>
+                                    <td class="text-center">{{ $row['isFreeSpin'] ? 'Yes' : 'No' }}</td>
+                                    <td class="text-center">{{ $row['isBuyFeature'] ? 'Yes' : 'No' }}</td>
+
                                 </tr>
                                 @endforeach
                             </tbody>
