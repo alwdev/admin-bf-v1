@@ -10,8 +10,7 @@ use App\Models\PgHard;
 
 class PgHardController extends Controller
 {
-    public function pghard_report(){
-        // ดึง members ที่มีข้อมูลใน PgHard
+    public function pghard_report($date_start,$date_end){
         $members = Members::whereIn('username', function($query) {
             $query->select('username')->from('pg_hards');
         })->get();
@@ -21,42 +20,21 @@ class PgHardController extends Controller
             $date_start = Carbon::now()->subDays(30)->format('Y-m-d');
             $date_end = Carbon::now()->format('Y-m-d');
 
-            // ดึงข้อมูลสรุปการหมุนวงล้อ
             $spin_summary = $this->pg_get_spin_summaryby_user($username, $date_start, $date_end);
             if (isset($spin_summary['data']) && count($spin_summary['data']) > 0) {
                 foreach ($spin_summary['data'] as $summary) {
                     $report[] = [
                         'username' => $username,
-                        'gameId' => $summary['gameId'],
-                        'totalBet' => $summary['totalBet'],
-                        'totalWin' => $summary['totalWin'],
-                        'totalProfit' => $summary['totalProfit'],
-                        'date' => Carbon::parse($summary['createdAt'])->format('Y-m-d')
+                        'totalAmount' => $summary['totalAmount'],
+                        'totalPayoff' => $summary['totalPayoff'],
+                        'totalSuccessSpin' => $summary['totalSuccessSpin'],
+                        'totalSuccessMainSpin' => $summary['totalSuccessMainSpin']
                     ];
                 }
             }
-
-            // ดึงข้อมูลการหมุนวงล้อโดยละเอียด
-            $spin_orders = $this->get_spin_orderby_username($username, $date_start, $date_end);
-            if (isset($spin_orders['data']) && count($spin_orders['data']) > 0) {
-                foreach ($spin_orders['data'] as $order) {
-                    PgHard::updateOrCreate(
-                        ['transactionId' => $order['transactionId']],
-                        [
-                            'username' => $username,
-                            'payoff' => $order['payoff'],
-                            'betAmount' => $order['betAmount'],
-                            'userToken' => $order['userToken'],
-                            'roundId' => $order['roundId'],
-                            'gameId' => $order['gameId'],
-                            'gameStringId' => $order['gameStringId'],
-                            'gameName' => $order['gameName']
-                        ]
-                    );
-                }
-            }
         }
-        return $report;
+        // return $report;
+        return view('report.pghard_report', compact('report'));
     }
     public function pg_get_spin_summaryby_user($username,$date_start,$date_end){
 
