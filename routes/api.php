@@ -61,6 +61,7 @@ Route::post('/PaymentGW', [App\Http\Controllers\PaymenthubController::class, 'pr
 Route::post('/lineNotify_tranfer', [App\Http\Controllers\TransactionController::class, 'lineNotify_tranfer']);
 
 //Lotto
-Route::post('get_balabce', [App\Http\Controllers\LottoController::class, 'get_balance']);
-Route::post('update_balance', [App\Http\Controllers\LottoController::class, 'update_balance']);
+Route::post('/get_balabce', [App\Http\Controllers\LottoController::class, 'get_balance']);
+Route::post('/update_balance', [App\Http\Controllers\LottoController::class, 'update_balance']);
+Route::post('/lottobet', [App\Http\Controllers\LottoController::class, 'bet']);
 
