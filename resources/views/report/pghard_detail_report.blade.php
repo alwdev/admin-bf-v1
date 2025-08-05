@@ -51,7 +51,7 @@
                             <tbody>
                                 @foreach ($report as $row)
                                 <tr>
-                                    <td class="text-center">{{ $row['createdAt'] }}</td>
+                                    <td class="text-center">{{ \Carbon\Carbon::parse($row['createdAt'])->format('d/m/Y H:i') }}</td>
                                     <td class="text-center">{{ $row['gameName'] }}</td>
                                     <td class="text-center">{{ $row['amount'] }}</td>
                                     <td class="text-center">{{ $row['payoff'] }}</td>
