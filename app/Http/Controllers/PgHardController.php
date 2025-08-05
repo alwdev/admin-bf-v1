@@ -42,7 +42,7 @@ class PgHardController extends Controller
         $dateStr =date('Y/m/d',strtotime($start_day.' day')).'-'.date('Y/m/d',strtotime($end_day.' day'));
         $report_ = $this->get_spin_orderby_username($username, $start_day, $end_day);
         $report = $report_['data'] ?? [];
-        // return $report['data'];
+        // return $report;
         return view('report.pghard_detail_report', compact('report','username','dateStr'));
     }
     public function pg_get_spin_summaryby_user($username,$date_start,$date_end){

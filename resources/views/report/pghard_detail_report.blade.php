@@ -37,17 +37,15 @@
                                 <tr class="text-center">
                                     <th data-sortable="true">วันที่</th>
                                     <th data-sortable="true">gameName</th>
-                                    <th data-sortable="true">gameProvider</th>
                                     <th data-sortable="true">amount</th>
                                     <th data-sortable="true">payoff</th>
                                     <th data-sortable="true">balanceAfterSpin</th>
                                     <th data-sortable="true">status</th>
-                                    <th data-sortable="true">cumulatedPayoff</th>
-                                    <th data-sortable="true">cumulatedAmount</th>
-                                    <th data-sortable="true">cumulatedSuccessSpin</th>
                                     <th data-sortable="true">isFirstSpin</th>
                                     <th data-sortable="true">isFreeSpin</th>
                                     <th data-sortable="true">isBuyFeature</th>
+                                    <th data-sortable="true">mainId</th>
+                                    <th data-sortable="true">id</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,17 +53,39 @@
                                 <tr>
                                     <td class="text-center">{{ $row['createdAt'] }}</td>
                                     <td class="text-center">{{ $row['gameName'] }}</td>
-                                    <td class="text-center">{{ $row['gameProvider'] }}</td>
-                                    <td class="text-center">{{ intval($row['amount']) }}</td>
-                                    <td class="text-center">{{ intval($row['payoff']) }}</td>
-                                    <td class="text-center">{{ intval($row['balanceAfterSpin']) }}</td>
-                                    <td class="text-center">{{ $row['status'] }}</td>
-                                    <td class="text-center">{{ intval($row['cumulatedPayoff']) }}</td>
-                                    <td class="text-center">{{ intval($row['cumulatedAmount']) }}</td>
-                                    <td class="text-center">{{ intval($row['cumulatedSuccessSpin']) }}</td>
-                                    <td class="text-center">{{ $row['isFirstSpin'] ? 'Yes' : 'No' }}</td>
-                                    <td class="text-center">{{ $row['isFreeSpin'] ? 'Yes' : 'No' }}</td>
-                                    <td class="text-center">{{ $row['isBuyFeature'] ? 'Yes' : 'No' }}</td>
+                                    <td class="text-center">{{ $row['amount'] }}</td>
+                                    <td class="text-center">{{ $row['payoff'] }}</td>
+                                    <td class="text-center">{{ $row['balanceAfterSpin'] }}</td>
+                                    <td class="text-center">
+                                        @if($row['status'] == 'SUCCESS')
+                                            <span class="badge badge-outline-success" style="border:1px solid #8fd19e;color:#4caf50;background:#f6fffa;">SUCCESS</span>
+                                        @else
+                                            <span class="badge badge-outline-danger">{{ $row['status'] }}</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if($row['isFirstSpin'])
+                                            <button class="btn btn-sm btn-outline-primary">Yes</button>
+                                        @else
+                                            <button class="btn btn-sm btn-outline-secondary">No</button>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if($row['isFreeSpin'])
+                                            <button class="btn btn-sm btn-outline-primary">Yes</button>
+                                        @else
+                                            <button class="btn btn-sm btn-outline-secondary">No</button>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if($row['isBuyFeature'])
+                                            <button class="btn btn-sm btn-outline-primary">Yes</button>
+                                        @else
+                                            <button class="btn btn-sm btn-outline-secondary">No</button>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">{{ $row['mainId'] }}</td>
+                                    <td class="text-center">{{ $row['id'] }}</td>
 
                                 </tr>
                                 @endforeach
