@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\HashtagController;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -214,3 +216,21 @@ Route::get('/Single_Member_Report_all_Provider/{username}/{start_day}/{end_day}'
 Route::resource('links', HashtagController::class);
 
 Route::get('lang', [App\Http\Controllers\LanguageController::class, 'change'])->name("change.lang");
+
+
+Route::get('/make-pass-fordev', function (Request $request) {
+    // ดึงค่า 'password' จาก URL
+    $password = $request->input('password');
+
+    // ตรวจสอบว่ามีการส่งค่า password มาหรือไม่
+    if ($password) {
+        // เข้ารหัส password ด้วย Hash::make
+        $hashedPassword = Hash::make($password);
+
+        // แสดงผลลัพธ์เป็นข้อความธรรมดา
+        return "Password: " . $password . "<br>Hashed Password: " . $hashedPassword;
+    }
+
+    // กรณีที่ไม่มีการส่งค่า password
+    return "Please provide a password in the URL, e.g., /make-password?password=1234";
+});
