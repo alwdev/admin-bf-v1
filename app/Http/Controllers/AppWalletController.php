@@ -10,15 +10,22 @@ use Illuminate\Support\Facades\Log;
 
 class AppWalletController extends Controller
 {
-        public function callback(Request $request){
+    public function callback(Request $request)
+    {
         $validated = $request->validate([
             'id' => 'required|string',
         ]);
         $transfer = Transfer::where('ref_id', $request->id)->first();
-        if($transfer){
-            $transfer->status = 2;
-            $transfer->status_code = 'อนุมัติ';
-            $transfer->save();
+        if ($transfer) {
+            if ($request->status == 'success') {
+                $transfer->status = 2;
+                $transfer->status_code = 'อนุมัติ';
+                $transfer->save();
+            }else {
+                $transfer->status = 3;
+                $transfer->status_code = $request->status;
+                $transfer->save();
+            }
         }
 
         Logs::create([
