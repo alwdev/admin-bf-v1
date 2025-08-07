@@ -12,7 +12,6 @@ class AppWalletController extends Controller
 {
         public function callback(Request $request){
         $validated = $request->validate([
-            'txHash' => 'required|string',
             'id' => 'required|string',
         ]);
         $transfer = Transfer::where('ref_id', $request->id)->first();
