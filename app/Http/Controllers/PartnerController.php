@@ -204,10 +204,10 @@ class PartnerController extends Controller
 
         }
         Log::info('success Run ส่วนแบ่ง Partner');
-        // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-        //     ->line(env('APP_NAME'))
-        //     ->line('BOT สิ้นสุดการ Run ส่วนแบ่ง Partner ')
-        //     ->send();
+        TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+            ->line(env('APP_NAME'))
+            ->line('BOT สิ้นสุดการ Run ส่วนแบ่ง Partner ')
+            ->send();
         return 'success';
     }
 
