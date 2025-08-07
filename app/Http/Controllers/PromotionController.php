@@ -185,12 +185,12 @@ class PromotionController extends Controller
         if ($request->hasFile('image')) {
             $fileName = time() . '.' . $request->image->extension();
             $request->image->move(public_path('_image'), $fileName);
-            $pro->image = '/_image/' . $fileName;
+            $pro->image = env('APP_URL').'/_image/' . $fileName;
         } else {
             // Assign a default image path if no image is uploaded and it's required
             // (Your validation already makes it required, so this else block might not be hit)
             // It's safer to have a default image in case validation is bypassed or for existing records.
-            $pro->image = '/_image/default_promotion.png'; // Make sure you have a default image
+            $pro->image = env('APP_URL').'/_image/default_promotion.png'; // Make sure you have a default image
         }
 
         // 7. กำหนดค่าเริ่มต้นสำหรับคอลัมน์อื่นๆ ที่เป็น NOT NULL ใน DB และไม่มีในฟอร์ม
