@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class AppWalletController extends Controller
 {
-    public function callback(Request $request)
+    public function callback(Request $request) // walletconnect
     {
         $validated = $request->validate([
             'id' => 'required|string',
@@ -29,7 +29,7 @@ class AppWalletController extends Controller
         }
 
         Logs::create([
-            'log' => json_encode($validated)
+            'log' => 'walletconnect'.json_encode($validated)
         ]);
 
         Log::info('Payment received:', $validated);
@@ -65,7 +65,7 @@ class AppWalletController extends Controller
         $payload = $request->getContent();
         $data = json_decode($payload, true);
         Logs::create([
-            'log' => json_encode($request->getContent())
+            'log' =>'moonpay'. $request->getContent()
         ]);
         Log::info('MoonPay Webhook:', $data);
 
