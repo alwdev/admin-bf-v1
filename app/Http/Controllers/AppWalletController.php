@@ -65,9 +65,9 @@ class AppWalletController extends Controller
         $payload = $request->getContent();
         $data = json_decode($payload, true);
         Logs::create([
-            'log' =>'moonpay'. json_encode($request->getContent())
+            'log' =>'moonpay'. $data
         ]);
-   
+
 
         if ($data['type'] === 'transaction_updated' && $data['data']['status'] === 'completed') {
             $tx = $data['data'];
