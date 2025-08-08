@@ -43,7 +43,7 @@ class AppWalletController extends Controller
             'log' => json_encode($request->getContent())
         ]);
         Log::info('Payment received:', $request->getContent());
-        
+
         $transfer = Transfer::where('ref_id', $request->id)->first();
         if ($transfer) {
             if ($request->status == 'success') {
@@ -58,5 +58,65 @@ class AppWalletController extends Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+    public function moonpay_handle(Request $request)
+    {
+        $payload = $request->getContent();
+        $data = json_decode($payload, true);
+
+        Log::info('MoonPay Webhook:', $data);
+
+        if ($data['type'] === 'transaction_updated' && $data['data']['status'] === 'completed') {
+            $tx = $data['data'];
+            $externalCustomerId = strtolower($tx['externalCustomerId']);
+
+            // สมมุติผูก wallet กับ user
+            $user = \App\Models\Members::where('username', $externalCustomerId)->first();
+
+            if ($user) {
+                // update Transfers table
+                $transfer = Transfer::where('amount', $tx['amount'])
+                    ->where('member_id', $user->id)
+                    ->where('status', '1')
+                    ->where('type', 'deposit')
+                    ->where('ref_id', $tx['id'])
+                    ->first();
+                if (!$transfer) {
+                    Transfer::create([
+                        'member_id' => $user->id,
+                        'amount' => $tx['amount'],
+                        'status' => '2',
+                        'status_code' => 'completed',
+                        'type' => 'deposit',
+                        'ref_id' => $tx['id'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                } else {
+                    $transfer->update([
+                        'status' => '2',
+                        'status_code' => 'completed',
+                        'updated_at' => now(),
+                    ]);
+                }
+                $user->increment('wallet_balance', $tx['amount']);
+                $user->save();
+                Log::info('MoonPay deposit success', [
+                    'user_id' => $user->id,
+                    'amount' => $tx['amount'],
+                    'transaction_id' => $tx['id'],
+                ]);
+                return response()->json(['success' => true]);
+            } else {
+                Log::warning('MoonPay deposit failed: User not found', [
+                    'externalCustomerId' => $externalCustomerId,
+                    'transaction_id' => $tx['id'],
+                ]);
+                return response()->json(['error' => 'User not found'], 404);
+            }
+        } else {
+            return response()->json(['Unhandled MoonPay event type: ' . $data]);
+        }
     }
 }
