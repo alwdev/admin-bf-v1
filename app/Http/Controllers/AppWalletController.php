@@ -70,7 +70,7 @@ class AppWalletController extends Controller
         // Log::info('MoonPay type:', gettype($data));
 
 
-        if ($data->type === 'transaction_updated' && $data->data->status === 'completed') {
+        if ($data->type === 'transaction_updated') {
             $tx = $data->data;
             $externalCustomerId = strtolower($tx->externalCustomerId);
 
