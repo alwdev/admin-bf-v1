@@ -29,7 +29,7 @@ class AppWalletController extends Controller
         }
 
         Logs::create([
-            'log' => 'walletconnect'.json_encode($validated)
+            'log' => 'walletconnect' . json_encode($validated)
         ]);
 
         Log::info('Payment received:', $validated);
@@ -64,8 +64,14 @@ class AppWalletController extends Controller
     {
         $payload = $request->getContent();
         $data = json_decode($payload);
+        if (isset($data->data) && is_string($data->data)) {
+            $nested = json_decode($data->data);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $data->data = $nested;
+            }
+        }
         Logs::create([
-            'log' =>'moonpay'. json_encode($data)
+            'log' => 'moonpay' . json_encode($data)
         ]);
         // Log::info('MoonPay type:', gettype($data));
 
