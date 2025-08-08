@@ -65,7 +65,7 @@ class AppWalletController extends Controller
         $payload = $request->getContent();
         $data = json_decode($payload, true);
         Logs::create([
-            'log' =>'moonpay'. $request->getContent()
+            'log' =>'moonpay'. json_encode($request->getContent())
         ]);
         Log::info('MoonPay Webhook:', $data);
 
