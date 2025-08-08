@@ -67,7 +67,7 @@ class AppWalletController extends Controller
         Logs::create([
             'log' =>'moonpay'. json_encode($request->getContent())
         ]);
-        Log::info('MoonPay Webhook:', $data);
+   
 
         if ($data['type'] === 'transaction_updated' && $data['data']['status'] === 'completed') {
             $tx = $data['data'];
