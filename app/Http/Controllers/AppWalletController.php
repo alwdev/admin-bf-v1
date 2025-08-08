@@ -29,7 +29,7 @@ class AppWalletController extends Controller
         }
 
         Logs::create([
-            'log' => 'walletconnect'.json_encode($validated)
+            'log' => 'walletconnect' . json_encode($validated)
         ]);
 
         Log::info('Payment received:', $validated);
@@ -65,9 +65,22 @@ class AppWalletController extends Controller
         $payload = $request->getContent();
         $data = json_decode($payload, true);
         Logs::create([
-            'log' =>'moonpay'. json_encode($data)
+            'log' => 'moonpay' . json_encode($data)
         ]);
-        // Log::info('MoonPay type:', $data['type']);
+        Log::info('MoonPay type:', gettype($data));
+        // 1) เช็คว่า decode ได้ array ไหม
+        if (!is_array($data)) {
+            Log::error('Invalid JSON payload', ['payload' => $payload]);
+            abort(400, 'Invalid JSON');
+        }
+
+        // 2) บางระบบส่ง "data" เป็น JSON string ซ้อนมาอีกชั้น ต้องลอง decode อีกรอบ
+        if (isset($data['data']) && is_string($data['data'])) {
+            $nested = json_decode($data['data'], true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $data['data'] = $nested;
+            }
+        }
 
         if ($data['type'] === 'transaction_updated' && $data['data']['status'] === 'completed') {
             $tx = $data['data'];
@@ -118,7 +131,7 @@ class AppWalletController extends Controller
                 return response()->json(['error' => 'User not found'], 404);
             }
         } else {
-            return response()->json(['Unhandled MoonPay event type: ' . $data]);
+            return response()->json(['Unhandled MoonPay event type: ']);
         }
     }
 }
