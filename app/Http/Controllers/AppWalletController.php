@@ -29,7 +29,7 @@ class AppWalletController extends Controller
         }
 
         Logs::create([
-            'log' => 'walletconnect' . json_encode($validated)
+            'log' => 'walletconnect'.json_encode($validated)
         ]);
 
         Log::info('Payment received:', $validated);
@@ -63,48 +63,36 @@ class AppWalletController extends Controller
     public function moonpay_handle(Request $request)
     {
         $payload = $request->getContent();
-        $data = json_decode($payload, true);
+        $data = json_decode($payload);
         Logs::create([
-            'log' => 'moonpay' . json_encode($data)
+            'log' =>'moonpay'. json_encode($data)
         ]);
         Log::info('MoonPay type:', gettype($data));
-        // 1) เช็คว่า decode ได้ array ไหม
-        if (!is_array($data)) {
-            Log::error('Invalid JSON payload', ['payload' => $payload]);
-            abort(400, 'Invalid JSON');
-        }
 
-        // 2) บางระบบส่ง "data" เป็น JSON string ซ้อนมาอีกชั้น ต้องลอง decode อีกรอบ
-        if (isset($data['data']) && is_string($data['data'])) {
-            $nested = json_decode($data['data'], true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                $data['data'] = $nested;
-            }
-        }
 
-        if ($data['type'] === 'transaction_updated' && $data['data']['status'] === 'completed') {
-            $tx = $data['data'];
-            $externalCustomerId = strtolower($tx['externalCustomerId']);
+        if ($data->type === 'transaction_updated' && $data->data->status === 'completed') {
+            $tx = $data->data;
+            $externalCustomerId = strtolower($tx->externalCustomerId);
 
             // สมมุติผูก wallet กับ user
             $user = \App\Models\Members::where('username', $externalCustomerId)->first();
 
             if ($user) {
                 // update Transfers table
-                $transfer = Transfer::where('amount', $tx['amount'])
+                $transfer = Transfer::where('amount', $tx->amount)
                     ->where('member_id', $user->id)
                     ->where('status', '1')
                     ->where('type', 'deposit')
-                    ->where('ref_id', $tx['id'])
+                    ->where('ref_id', $tx->id)
                     ->first();
                 if (!$transfer) {
                     Transfer::create([
                         'member_id' => $user->id,
-                        'amount' => $tx['amount'],
+                        'amount' => $tx->amount,
                         'status' => '2',
                         'status_code' => 'completed',
                         'type' => 'deposit',
-                        'ref_id' => $tx['id'],
+                        'ref_id' => $tx->id,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
@@ -115,18 +103,18 @@ class AppWalletController extends Controller
                         'updated_at' => now(),
                     ]);
                 }
-                $user->increment('wallet_balance', $tx['amount']);
+                $user->increment('wallet_balance', $tx->amount);
                 $user->save();
                 Log::info('MoonPay deposit success', [
                     'user_id' => $user->id,
-                    'amount' => $tx['amount'],
-                    'transaction_id' => $tx['id'],
+                    'amount' => $tx->amount,
+                    'transaction_id' => $tx->id,
                 ]);
                 return response()->json(['success' => true]);
             } else {
                 Log::warning('MoonPay deposit failed: User not found', [
                     'externalCustomerId' => $externalCustomerId,
-                    'transaction_id' => $tx['id'],
+                    'transaction_id' => $tx->id,
                 ]);
                 return response()->json(['error' => 'User not found'], 404);
             }
