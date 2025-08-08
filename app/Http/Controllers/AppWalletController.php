@@ -65,7 +65,7 @@ class AppWalletController extends Controller
         $payload = $request->getContent();
         $data = json_decode($payload, true);
         Logs::create([
-            'log' =>'moonpay'. json_decode($data)
+            'log' =>'moonpay'. json_encode($data)
         ]);
 
 
