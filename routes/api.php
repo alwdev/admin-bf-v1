@@ -67,3 +67,4 @@ Route::post('/lottobet', [App\Http\Controllers\LottoController::class, 'bet']);
 
 //AppWalletController
 Route::post('/Wallet-callback', [App\Http\Controllers\AppWalletController::class, 'callback']);
+Route::post('/helio-callback', [App\Http\Controllers\AppWalletController::class, 'helio_callback']);

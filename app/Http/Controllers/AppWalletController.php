@@ -21,7 +21,7 @@ class AppWalletController extends Controller
                 $transfer->status = 2;
                 $transfer->status_code = 'อนุมัติ';
                 $transfer->save();
-            }else {
+            } else {
                 $transfer->status = 3;
                 $transfer->status_code = $request->status;
                 $transfer->save();
@@ -33,6 +33,29 @@ class AppWalletController extends Controller
         ]);
 
         Log::info('Payment received:', $validated);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function helio_callback(Request $request)
+    {
+        Logs::create([
+            'log' => json_encode($request->getContent())
+        ]);
+        Log::info('Payment received:', $request->getContent());
+        
+        $transfer = Transfer::where('ref_id', $request->id)->first();
+        if ($transfer) {
+            if ($request->status == 'success') {
+                $transfer->status = 2;
+                $transfer->status_code = 'อนุมัติ';
+                $transfer->save();
+            } else {
+                $transfer->status = 3;
+                $transfer->status_code = $request->status;
+                $transfer->save();
+            }
+        }
 
         return response()->json(['success' => true]);
     }
