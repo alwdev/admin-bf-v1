@@ -76,7 +76,7 @@ class AppWalletController extends Controller
         // Log::info('MoonPay type:', gettype($data));
 
 
-        if ($data->type === 'transaction_updated') {
+        if ($data->type === 'transaction_updated' && $data->data->status === 'completed') {
             $tx = $data->data;
             $externalCustomerId = strtolower($tx->externalCustomerId);
 
@@ -125,7 +125,7 @@ class AppWalletController extends Controller
                 return response()->json(['error' => 'User not found'], 404);
             }
         } else {
-            return response()->json(['Unhandled MoonPay event type: ']);
+            return response()->json(['Unhandled MoonPay event type: '], 400);
         }
     }
 }
