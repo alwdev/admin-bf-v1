@@ -29,7 +29,7 @@ class AppWalletController extends Controller
         }
 
         Logs::create([
-            'log' => 'walletconnect' . json_encode($validated)
+            'log' => 'walletconnect' . json_encode($request->getContent())
         ]);
 
         Log::info('Payment received:', $validated);
