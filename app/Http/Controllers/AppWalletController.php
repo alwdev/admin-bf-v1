@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Transfer;
 use App\Models\Logs;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 
 class AppWalletController extends Controller
@@ -15,9 +15,14 @@ class AppWalletController extends Controller
         $validated = $request->validate([
             'id' => 'required|string',
         ]);
+        Logs::create([
+            'log' => 'walletconnect callback' . json_encode($request->getContent())
+        ]);
+
         $transfer = Transfer::where('ref_id', $request->id)->first();
         if ($transfer) {
             if ($request->status == 'success') {
+                $transfer->amount = $this->cryptoToTHB($request->symbol, $request->amount);
                 $transfer->status = 2;
                 $transfer->status_code = 'อนุมัติ';
                 $transfer->save();
@@ -28,21 +33,38 @@ class AppWalletController extends Controller
             }
         }
 
-        Logs::create([
-            'log' => 'walletconnect' . json_encode($request->getContent())
-        ]);
-
-        Log::info('Payment received:', $validated);
-
         return response()->json(['success' => true]);
     }
 
+   function cryptoToTHB(string $symbol, float $amount = 1): ?float
+    {
+        $apiKey = env('CMC_API_KEY');
+        $url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest';
+
+        $response = Http::withHeaders([
+            'X-CMC_PRO_API_KEY' => $apiKey,
+            'Accept' => 'application/json'
+        ])->get($url, [
+            'symbol' => strtoupper($symbol),
+            'convert' => 'THB'
+        ]);
+
+        if ($response->successful()) {
+            $data = $response->json();
+            $price = $data['data'][strtoupper($symbol)]['quote']['THB']['price'] ?? null;
+
+            if ($price !== null) {
+                return $price * $amount;
+            }
+        }
+
+        return null; // ถ้าไม่เจอข้อมูล
+    }
     public function helio_callback(Request $request)
     {
         Logs::create([
             'log' => json_encode($request->getContent())
         ]);
-        Log::info('Payment received:', $request->getContent());
 
         $transfer = Transfer::where('ref_id', $request->id)->first();
         if ($transfer) {
@@ -111,17 +133,10 @@ class AppWalletController extends Controller
                 }
                 $user->increment('wallet_balance', $tx->amount);
                 $user->save();
-                Log::info('MoonPay deposit success', [
-                    'user_id' => $user->id,
-                    'amount' => $tx->amount,
-                    'transaction_id' => $tx->id,
-                ]);
+
                 return response()->json(['success' => true]);
             } else {
-                Log::warning('MoonPay deposit failed: User not found', [
-                    'externalCustomerId' => $externalCustomerId,
-                    'transaction_id' => $tx->id,
-                ]);
+
                 return response()->json(['error' => 'User not found'], 404);
             }
         } else {
