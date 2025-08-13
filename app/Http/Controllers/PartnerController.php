@@ -309,8 +309,12 @@ class PartnerController extends Controller
         if (!session()->has('user')) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+    // รับค่า partner_id ที่ส่งมาจาก AJAX request
+        $partnerId = $request->input('partner_id');
 
-        $partner = Partner::find(session('user')->id);
+        // ค้นหาพาร์ทเนอร์จาก ID ที่ได้รับมา
+        $partner = Partner::find($partnerId);
+
         $memberwinloss = $this->partner_call_winlose2($partner);
 
         return response()->json($memberwinloss);

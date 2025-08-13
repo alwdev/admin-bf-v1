@@ -108,6 +108,9 @@
             $.ajax({
                 url: "{{ route('partner.member.winloss.data') }}",
                 method: 'GET',
+                data: {
+                    partner_id: "{{ $partner->id }}" // ส่งค่า partner->id ไปกับ request
+                },
                 beforeSend: function() {
                     // แสดง Loading Spinner ก่อนเริ่มการโหลด
                     let tableBody = $('#table tbody');
