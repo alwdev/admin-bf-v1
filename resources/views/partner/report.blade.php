@@ -54,7 +54,7 @@
                             <tbody>
                                 @foreach ($data as $partner_com)
                                 <tr>
-                                    <td>{{ $partner->name }}</td>
+                                    <td>{{ $partner_com->partner->contact_name }}</td>
                                     <td class="text-center">{{ intval($partner_com->amount) }}</td>
                                     <td class="text-center">{{ Carbon\Carbon::parse($partner_com->created_at)->format('d/m/Y H:i:s') }}</td>
                                     <td></td>
