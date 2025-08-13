@@ -214,7 +214,7 @@ class PartnerController extends Controller
     function test_partner_call_winlose($id)
     {
         $partner = Partner::find($id);
-        $ss = partner_call_winlose2($partner);
+        $ss = $this->partner_call_winlose2($partner);
         dd($ss);
     }
 
