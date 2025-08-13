@@ -305,10 +305,7 @@ class PartnerController extends Controller
 
      public function getMemberWinlossData(Request $request)
     {
-        // ตรวจสอบสิทธิ์การเข้าถึง (ถ้าจำเป็น)
-        if (!session()->has('user')) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+
     // รับค่า partner_id ที่ส่งมาจาก AJAX request
         $partnerId = $request->input('partner_id');
 
