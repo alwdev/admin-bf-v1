@@ -111,6 +111,7 @@
                 url: "{{ route('partner.member.winloss.data') }}",
                 method: 'GET',
                 success: function(response) {
+                    console.log(response);
                     let tableBody = $('#table tbody');
                     tableBody.empty(); // เคลียร์ข้อมูลเก่าในตาราง (ถ้ามี)
 
