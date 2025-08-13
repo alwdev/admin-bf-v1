@@ -88,6 +88,8 @@ class PartnerController extends Controller
 
         $memberwinloss = $this->partner_call_winlose($partner);
 
+
+
         return view('partner.report', compact('data', 'partner','memberwinloss'));
     }
 

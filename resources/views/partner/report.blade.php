@@ -37,31 +37,38 @@
                 <div class="card-body p-0">
                     <div>
                         <table id="table" class="table m-10 table-bordered"
-                        data-filter-control="true"
-                        data-toggle="table"
-                        data-search="true"
-                        data-show-export="false"
-                        data-click-to-select="false"
-                        data-pagination="true"
-                        data-url="">
-                            <thead>
-                                <tr class="text-center">
-                                    <th>{{__('dashboard.name')}}</th>
-                                    <th data-sortable="true">{{__('dashboard.Total_Amount')}}</th>
-                                    <th data-sortable="true">{{__('dashboard.date')}}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($data as $partner_com)
-                                <tr>
-                                    <td>{{ $partner_com->partner->contact_name }}</td>
-                                    <td class="text-center">{{ intval($partner_com->amount) }}</td>
-                                    <td class="text-center">{{ Carbon\Carbon::parse($partner_com->created_at)->format('d/m/Y H:i:s') }}</td>
-                                    <td></td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+    data-filter-control="true"
+    data-toggle="table"
+    data-search="true"
+    data-show-export="false"
+    data-click-to-select="false"
+    data-pagination="true"
+    data-url="">
+    <thead>
+        <tr class="text-center">
+            {{-- Updated headers to match the data --}}
+            <th>{{__('dashboard.member')}}</th>
+            <th data-sortable="true">{{__('dashboard.total_bet')}}</th>
+            <th data-sortable="true">{{__('dashboard.winlose')}}</th>
+            <th data-sortable="true">{{__('dashboard.commission_rate')}}</th>
+            <th data-sortable="true">{{__('dashboard.commission')}}</th>
+            <th data-sortable="true">{{__('dashboard.date_range')}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{-- Loop through the $memberwinloss array --}}
+        @foreach ($memberwinloss as $member)
+        <tr>
+            <td>{{ $member['member_username'] }}</td>
+            <td class="text-center">{{ intval($member['total_bet']) }}</td>
+            <td class="text-center">{{ $member['winlose'] }}</td>
+            <td class="text-center">{{ $member['rate'] }}</td>
+            <td class="text-center">{{ $member['total_commission'] }}</td>
+            <td class="text-center">{{ Carbon\Carbon::parse($member['date1'])->format('d/m/Y') }} - {{ Carbon\Carbon::parse($member['date2'])->format('d/m/Y') }}</td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
                     </div>
                 </div>
 
