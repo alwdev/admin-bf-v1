@@ -112,12 +112,14 @@ class PartnerController extends Controller
             // --- การคำนวณสำหรับ $date1 ---
             // สร้าง Carbon object จาก $date1
             $targetDate1 = Carbon::parse($date1);
+            $targetDate1->addDay();
             // คำนวณส่วนต่างของวันโดยให้ผลลัพธ์เป็นค่าลบถ้าอยู่ในอดีต (false)
             $diff1 = $now->diffInDays($targetDate1, false);
 
             // --- การคำนวณสำหรับ $date2 ---
             // สร้าง Carbon object จาก $date2
             $targetDate2 = Carbon::parse($date2);
+            $targetDate2->addDay();
             // คำนวณส่วนต่างของวันโดยให้ผลลัพธ์เป็นค่าลบถ้าอยู่ในอดีต (false)
             $diff2 = $now->diffInDays($targetDate2, false);
 
