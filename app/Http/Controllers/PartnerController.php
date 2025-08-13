@@ -112,14 +112,12 @@ class PartnerController extends Controller
             // --- การคำนวณสำหรับ $date1 ---
             // สร้าง Carbon object จาก $date1
             $targetDate1 = Carbon::parse($date1);
-            $targetDate1->addDay();
             // คำนวณส่วนต่างของวันโดยให้ผลลัพธ์เป็นค่าลบถ้าอยู่ในอดีต (false)
             $diff1 = $now->diffInDays($targetDate1, false);
 
             // --- การคำนวณสำหรับ $date2 ---
             // สร้าง Carbon object จาก $date2
             $targetDate2 = Carbon::parse($date2);
-            $targetDate2->addDay();
             // คำนวณส่วนต่างของวันโดยให้ผลลัพธ์เป็นค่าลบถ้าอยู่ในอดีต (false)
             $diff2 = $now->diffInDays($targetDate2, false);
 
@@ -142,6 +140,8 @@ class PartnerController extends Controller
                         } else {
                         }
                     } catch (\Exception $e) {
+
+                        dd('Betflix API Error : '.$e->getMessage());
                         $total_bet = 0;
                         $winlose = 0;
                         continue;
@@ -151,25 +151,31 @@ class PartnerController extends Controller
                         $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, $diff1, $diff2);
 
                         if (count($pg_total_bet['data']) > 0) {
-                            Log::info('pg_total_bet : ' . $pg_total_bet['data'][0]['totalAmount']);
                             $total_bet = $total_bet + $pg_total_bet['data'][0]['totalAmount'];
                         } else {
-                            Log::info('PgHard API No have User Data ' . $under_member->username);
                         }
                     } catch (\Exception $e) {
+                        dd('PgHard API Error : '.$e->getMessage());
                         $pg_total_bet = 0;
                     }
-                        $members2 = [
-                            'total_bet' => $total_bet,
-                            'winlose' => $winlose,
-                            'rate' => $value->rate,
-                            'partner_id' => $partner->id,
-                            'member_id' => $under_member->id,
-                            'member_username' => $under_member->username,
-                            'date1' => $date1,
-                            'date2' => $date2,
-                        ];
-                        array_push($members, $members2);
+
+                    if($total_bet > 1){
+                    $commission = abs($winlose) * ($partner->rate/ 100);
+                    $total_commission += $commission;
+
+                    $members2 = [
+                        'total_bet' => $total_bet,
+                        'winlose' => $winlose,
+                        'rate' => $partner->rate,
+                        'partner_id' => $partner->id,
+                        'member_id' => $under_member->id,
+                        'member_username' => $under_member->username,
+                        'date1' => $date1,
+                        'date2' => $date2,
+                        'total_commission' => $total_commission,
+                    ];
+                    array_push($members, $members2);
+                }
                 }
             }
         }
