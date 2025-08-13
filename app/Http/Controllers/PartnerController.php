@@ -88,4 +88,78 @@ class PartnerController extends Controller
         $original_string = implode("", $original_string);
         return substr(str_shuffle($original_string), 0, $length);
     }
+
+    function partner_call_winlose($partner){
+        set_time_limit(3000000000);
+        $commissions = PartnerCommission::where('partner_id',$partner->id)->get();
+
+        $members = [];
+
+        foreach ($commissions as $value) {
+            sleep(2);
+            $total_commission = 0;
+
+            $dates = explode("-", $value->note, 4);
+            $date1 = $dates[0] . "-" . $dates[1] . "-" . $dates[2];
+            $date2 = $dates[3];
+
+            $membersCount = 0;
+            if ($partner->members !== null) {
+                $membersCount = count(json_decode($partner->members));
+            }
+
+            if(json_decode($partner->members)){
+                set_time_limit(3000000000);
+                foreach(json_decode($partner->members) as $_member){
+                    sleep(3);
+                    $under_member = Members::where('id',$_member)->first();
+
+                    try{
+                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1);
+                        if($bf_total_bet){
+                            $total_bet = $bf_total_bet->valid_amount;
+                            $winlose = $bf_total_bet->winloss;
+                        }else{
+                        }
+                    } catch (\Exception $e) {
+                        $total_bet =0;
+                        $winlose =0;
+                        continue;
+                    }
+
+                    try{
+                        $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username,-1,-1);
+
+                        if(count($pg_total_bet['data']) > 0){
+                            Log::info("pg_total_bet : " . $pg_total_bet['data'][0]['totalAmount']);
+                            $total_bet = $total_bet + $pg_total_bet['data'][0]['totalAmount'];
+                        }else{
+                            Log::info('PgHard API No have User Data '.$under_member->username);
+                        }
+                    } catch (\Exception $e) {
+                        $pg_total_bet =0;
+                    }
+
+
+
+                    if($total_bet > 1){
+                        $members2[
+                            'total_bet' => $total_bet,
+                            'winlose' => $winlose,
+                            'rate' => $value->rate,
+                            'partner_id' => $partner->id,
+                            'member_id' => $under_member->id,
+                            'member_username' => $under_member->username,
+                    ];
+                        array_push($members, $members2);
+
+                    }
+                }
+
+            }
+
+        }
+
+        return $members;
+    }
 }
