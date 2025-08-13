@@ -31,44 +31,48 @@
     <div class="col-12">
         <div class="card-body">
             <h4 class="card-title"></h4>
-            <p class="card-subtitle mb-4">
-            </p>
+            <p class="card-subtitle mb-4"></p>
             <div class="card">
                 <div class="card-body p-0">
                     <div>
                         <table id="table" class="table m-10 table-bordered"
-    data-filter-control="true"
-    data-toggle="table"
-    data-search="true"
-    data-show-export="false"
-    data-click-to-select="false"
-    data-pagination="true"
-    data-url="">
-    <thead>
-        <tr class="text-center">
-            <th>{{__('dashboard.member')}}</th>
-            <th data-sortable="true">{{__('dashboard.total_bet')}}</th>
-            <th data-sortable="true">{{__('dashboard.winlose')}}</th>
-            <th data-sortable="true">{{__('dashboard.commission_rate')}}</th>
-            <th data-sortable="true">{{__('dashboard.commission')}}</th>
-            <th data-sortable="true">{{__('dashboard.date_range')}}</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{-- ข้อมูลจะถูกโหลดด้วย JavaScript --}}
-    </tbody>
-</table>
+                            data-filter-control="true"
+                            data-toggle="table"
+                            data-search="true"
+                            data-show-export="false"
+                            data-click-to-select="false"
+                            data-pagination="true"
+                            data-url="">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>{{__('dashboard.member')}}</th>
+                                    <th data-sortable="true">{{__('dashboard.total_bet')}}</th>
+                                    <th data-sortable="true">{{__('dashboard.winlose')}}</th>
+                                    <th data-sortable="true">{{__('dashboard.commission_rate')}}</th>
+                                    <th data-sortable="true">{{__('dashboard.commission')}}</th>
+                                    <th data-sortable="true">{{__('dashboard.date_range')}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{-- โหลดข้อมูลด้วย JavaScript --}}
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        กำลังโหลดข้อมูล...
+                                        {{-- เพิ่ม spinner (ถ้ามีใน theme ของคุณ) --}}
+                                        {{-- <div class="spinner-border text-primary" role="status">
+                                            <span class="sr-only">Loading...</span>
+                                        </div> --}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-
-
             </div>
-
-
-            </div> <!-- end card body-->
-        </div> <!-- end card -->
-    </div><!-- end col-->
+        </div>
+    </div>
 </div>
+
 <!-- end row-->
 @endsection
 @section('scripts')
@@ -105,15 +109,28 @@
     <script src="https://unpkg.com/bootstrap-table@1.21.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script>
- $(document).ready(function() {
+        $(document).ready(function() {
             // โหลดข้อมูลด้วย AJAX
             $.ajax({
                 url: "{{ route('partner.member.winloss.data') }}",
                 method: 'GET',
+                beforeSend: function() {
+                    // แสดง Loading Spinner ก่อนเริ่มการโหลด
+                    let tableBody = $('#table tbody');
+                    tableBody.empty();
+                    tableBody.append(`<tr>
+                                        <td colspan="6" class="text-center">
+                                            กำลังโหลดข้อมูล...
+                                            <div class="spinner-border text-primary spinner-border-sm" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                        </td>
+                                      </tr>`);
+                },
                 success: function(response) {
                     console.log(response);
                     let tableBody = $('#table tbody');
-                    tableBody.empty(); // เคลียร์ข้อมูลเก่าในตาราง (ถ้ามี)
+                    tableBody.empty(); // เคลียร์ loading spinner
 
                     if (response.length > 0) {
                         $.each(response, function(index, member) {
