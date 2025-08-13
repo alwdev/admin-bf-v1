@@ -8,6 +8,8 @@ Route::get('/login',function(){
 
 });
 Route::post('/partnerlogin', [App\Http\Controllers\PartnerController::class, 'store'])->name('partner.login');
+Route::get('/partner/member-winloss', [PartnerController::class, 'getMemberWinlossData'])->name('partner.member.winloss.data');
+
 Route::get('/', [App\Http\Controllers\PartnerController::class, 'index'])->name('home');
 
 require __DIR__.'/auth.php';

@@ -77,20 +77,22 @@ class PartnerController extends Controller
         return substr(str_shuffle($original_string), 0, $length);
     }
 
-    public function index()
+public function index()
     {
+        // ตรวจสอบ session เหมือนเดิม
         if (!session()->has('user')) {
             return redirect()->route('login')->with('error', 'กรุณาเข้าสู่ระบบ');
         }
 
+        // ดึงข้อมูลพื้นฐานที่ใช้แสดงผลในหน้าเว็บ
         $partner = Partner::find(session('user')->id);
         $data = PartnerCommission::where('partner_id', session('user')->id)->get();
 
-        $memberwinloss = $this->partner_call_winlose($partner);
+        // **ไม่ต้องเรียก method partner_call_winlose() ตรงนี้**
+        // เราจะไปเรียกข้อมูลนี้ด้วย AJAX ในภายหลัง
 
-
-
-        return view('partner.report', compact('data', 'partner','memberwinloss'));
+        // ส่งเฉพาะข้อมูลพื้นฐานไปยัง View
+        return view('partner.report', compact('data', 'partner'));
     }
 
     function partner_call_winlose($partner)
@@ -183,5 +185,18 @@ class PartnerController extends Controller
         }
 
         return $members;
+    }
+
+     public function getMemberWinlossData(Request $request)
+    {
+        // ตรวจสอบสิทธิ์การเข้าถึง (ถ้าจำเป็น)
+        if (!session()->has('user')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $partner = Partner::find(session('user')->id);
+        $memberwinloss = $this->partner_call_winlose($partner);
+
+        return response()->json($memberwinloss);
     }
 }

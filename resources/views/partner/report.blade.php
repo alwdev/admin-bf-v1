@@ -46,7 +46,6 @@
     data-url="">
     <thead>
         <tr class="text-center">
-            {{-- Updated headers to match the data --}}
             <th>{{__('dashboard.member')}}</th>
             <th data-sortable="true">{{__('dashboard.total_bet')}}</th>
             <th data-sortable="true">{{__('dashboard.winlose')}}</th>
@@ -56,17 +55,7 @@
         </tr>
     </thead>
     <tbody>
-        {{-- Loop through the $memberwinloss array --}}
-        @foreach ($memberwinloss as $member)
-        <tr>
-            <td>{{ $member['member_username'] }}</td>
-            <td class="text-center">{{ intval($member['total_bet']) }}</td>
-            <td class="text-center">{{ $member['winlose'] }}</td>
-            <td class="text-center">{{ $member['rate'] }}</td>
-            <td class="text-center">{{ $member['total_commission'] }}</td>
-            <td class="text-center">{{ Carbon\Carbon::parse($member['date1'])->format('d/m/Y') }} - {{ Carbon\Carbon::parse($member['date2'])->format('d/m/Y') }}</td>
-        </tr>
-        @endforeach
+        {{-- ข้อมูลจะถูกโหลดด้วย JavaScript --}}
     </tbody>
 </table>
                     </div>
@@ -116,6 +105,40 @@
     <script src="https://unpkg.com/bootstrap-table@1.21.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
 
     <script>
+ $(document).ready(function() {
+            // โหลดข้อมูลด้วย AJAX
+            $.ajax({
+                url: "{{ route('partner.member.winloss.data') }}",
+                method: 'GET',
+                success: function(response) {
+                    let tableBody = $('#table tbody');
+                    tableBody.empty(); // เคลียร์ข้อมูลเก่าในตาราง (ถ้ามี)
 
+                    if (response.length > 0) {
+                        $.each(response, function(index, member) {
+                            let dateRange = `${moment(member.date1).format('DD/MM/YYYY')} - ${moment(member.date2).format('DD/MM/YYYY')}`;
+
+                            let row = `<tr>
+                                <td>${member.member_username}</td>
+                                <td class="text-center">${parseInt(member.total_bet)}</td>
+                                <td class="text-center">${member.winlose}</td>
+                                <td class="text-center">${member.rate}</td>
+                                <td class="text-center">${member.total_commission}</td>
+                                <td class="text-center">${dateRange}</td>
+                            </tr>`;
+                            tableBody.append(row);
+                        });
+                    } else {
+                        tableBody.append('<tr><td colspan="6" class="text-center">ไม่พบข้อมูล</td></tr>');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error fetching data:', xhr.responseText);
+                    let tableBody = $('#table tbody');
+                    tableBody.empty();
+                    tableBody.append('<tr><td colspan="6" class="text-center">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>');
+                }
+            });
+        });
     </script>
 @endsection
