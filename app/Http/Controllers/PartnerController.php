@@ -214,11 +214,11 @@ class PartnerController extends Controller
     function test_partner_call_winlose()
     {
         $partner = Partner::find($id);
-        $ss = partner_call_winlose($partner);
+        $ss = partner_call_winlose2($partner);
         dd($ss);
     }
 
-    function partner_call_winlose($partner)
+    function partner_call_winlose2($partner)
     {
         set_time_limit(3000000000);
         $commissions = PartnerCommission::where('partner_id', $partner->id)->get();
