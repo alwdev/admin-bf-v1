@@ -52,7 +52,14 @@ class PartnerController extends Controller
 
     public function index()
     {
+        // ตรวจสอบว่า session 'user' มีค่าอยู่หรือไม่
+        if (!session()->has('user')) {
+            // ถ้า session 'user' ไม่มีค่า (เป็น null หรือไม่ถูกตั้งค่า)
+            // คุณสามารถเลือกที่จะ redirect ไปหน้า login หรือแสดงข้อความ error ได้
+            return redirect()->route('login')->with('error', 'กรุณาเข้าสู่ระบบ');
+        }
 
+        // ถ้า session 'user' มีค่าอยู่
         $partner = Partner::find(session('user')->id);
         $data = PartnerCommission::where('partner_id', session('user')->id)->get();
         return view('partner.report', compact('data', 'partner'));
