@@ -155,7 +155,7 @@
                                             @break
 
                                             @case('Crypto Wallet')
-                                                <img src="{{ env('APP_LOGO ') }}" width="25" class="bank-logo">
+                                                <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
                                             @break
 
                                             @default
@@ -263,7 +263,7 @@
                                             @break
 
                                             @case('Crypto Wallet')
-                                                <img src="{{ env('APP_LOGO ') }}" width="25" class="bank-logo">
+                                                <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
                                             @break
 
                                             @default
