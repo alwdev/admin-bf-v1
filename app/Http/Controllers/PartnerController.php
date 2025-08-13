@@ -150,14 +150,16 @@ class PartnerController extends Controller
 
 
                     if($total_bet > 1){
-                        $members2[
-                            'total_bet' => $total_bet,
-                            'winlose' => $winlose,
-                            'rate' => $value->rate,
-                            'partner_id' => $partner->id,
-                            'member_id' => $under_member->id,
-                            'member_username' => $under_member->username,
-                    ];
+                        $members2 = [
+
+                                'total_bet' => 1500,
+                                'winlose' => 500,
+                                'rate' => 0.05,
+                                'partner_id' => 123,
+                                'member_id' => 456,
+                                'member_username' => 'john_doe',
+
+                        ];
                         array_push($members, $members2);
 
                     }
