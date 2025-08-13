@@ -211,7 +211,7 @@ class PartnerController extends Controller
         return 'success';
     }
 
-    function test_partner_call_winlose()
+    function test_partner_call_winlose($id)
     {
         $partner = Partner::find($id);
         $ss = partner_call_winlose2($partner);
