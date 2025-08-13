@@ -27,5 +27,10 @@ return [
     'approval' => 'Phê duyệt',
     'bot_approval' => 'BOT.Phê duyệt',
     'refuse' => 'Từ chối',
-    'In_progress' => 'Đang xử lý'
+    'In_progress' => 'Đang xử lý',
+            'total_bet'=>'Tổng tiền cược',
+    'winlose'=>'Thắng/Thua',
+    'commission_rate'=>'Tỷ lệ hoa hồng',
+    'commission'=>'Hoa hồng',
+    'date_range'=>'Phạm vi ngày',
 ];

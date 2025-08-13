@@ -27,5 +27,10 @@ return [
     'approval'=>'承認',
     'bot_approval'=>'BOTによる承認',
     'refuse'=>'拒否',
-    'In_progress'=>'処理中'
+    'In_progress'=>'処理中',
+        'total_bet'=>'合計ベット額',
+    'winlose'=>'勝敗',
+    'commission_rate'=>'コミッション率',
+    'commission'=>'コミッション',
+    'date_range'=>'日付範囲',
 ];

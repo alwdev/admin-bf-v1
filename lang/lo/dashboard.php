@@ -27,5 +27,10 @@ return [
     'approval' => 'ອະນຸມັດ',
     'bot_approval' => 'BOT ອະນຸມັດ',
     'refuse' => 'ປະຕິເສດ',
-    'In_progress' => 'ກໍາລັງດໍາເນີນການ'
+    'In_progress' => 'ກໍາລັງດໍາເນີນການ',
+    'total_bet'=>'ຍອດເດີມພັນທັງໝົດ',
+    'winlose'=>'ຍອດໄດ້-ເສຍ',
+    'commission_rate'=>'ອັດຕາຄອມມິຊັນ',
+    'commission'=>'ຄ່າຄອມມິຊັນ',
+    'date_range'=>'ຊ່ວງວັນທີ',
 ];

@@ -27,5 +27,10 @@ return [
     'approval' => '승인',
     'bot_approval' => '봇 승인',
     'refuse' => '거부',
-    'In_progress' => '처리 중'
+    'In_progress' => '처리 중',
+    'total_bet'=>'총 베팅 금액',
+    'winlose'=>'승패',
+    'commission_rate'=>'커미션 비율',
+    'commission'=>'커미션',
+    'date_range'=>'날짜 범위',
 ];

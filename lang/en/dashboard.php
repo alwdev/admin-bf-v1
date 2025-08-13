@@ -27,5 +27,10 @@ return [
     'approval'=>'Approval',
     'bot_approval'=>'BOT.Approval',
     'refuse'=>'Refuse',
-    'In_progress'=>'In progress'
+    'In_progress'=>'In progress',
+    'total_bet'=>'Total Bet',
+    'winlose'=>'Win/Lose',
+    'commission_rate'=>'Commission Rate',
+    'commission'=>'Commission',
+    'date_range'=>'Date Range',
 ];

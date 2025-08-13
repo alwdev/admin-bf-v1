@@ -133,22 +133,25 @@
                     tableBody.empty(); // เคลียร์ loading spinner
 
                     if (response.length > 0) {
-                        $.each(response, function(index, member) {
-                            let dateRange = `${moment(member.date1).format('DD/MM/YYYY')} - ${moment(member.date2).format('DD/MM/YYYY')}`;
+                    $.each(response, function(index, member) {
+                        let dateRange = `${moment(member.date1).format('DD/MM/YYYY')} - ${moment(member.date2).format('DD/MM/YYYY')}`;
 
-                            let row = `<tr>
-                                <td>${member.member_username}</td>
-                                <td class="text-center">${parseInt(member.total_bet)}</td>
-                                <td class="text-center">${member.winlose}</td>
-                                <td class="text-center">${member.rate}</td>
-                                <td class="text-center">${member.total_commission}</td>
-                                <td class="text-center">${dateRange}</td>
-                            </tr>`;
-                            tableBody.append(row);
-                        });
-                    } else {
-                        tableBody.append('<tr><td colspan="6" class="text-center">ไม่พบข้อมูล</td></tr>');
-                    }
+                        // Check the winlose value to determine the text color class
+                        let winloseColorClass = member.winlose < 0 ? 'text-danger' : 'text-success';
+
+                        let row = `<tr>
+                            <td>${member.member_username}</td>
+                            <td class="text-center">${parseInt(member.total_bet)}</td>
+                            <td class="text-center ${winloseColorClass}">${member.winlose}</td>
+                            <td class="text-center">${member.rate}</td>
+                            <td class="text-center">${member.total_commission}</td>
+                            <td class="text-center">${dateRange}</td>
+                        </tr>`;
+                        tableBody.append(row);
+                    });
+                } else {
+                    tableBody.append('<tr><td colspan="6" class="text-center">ไม่พบข้อมูล</td></tr>');
+                }
                 },
                 error: function(xhr) {
                     console.error('Error fetching data:', xhr.responseText);
