@@ -154,6 +154,10 @@
                                                     class="bank-logo">
                                             @break
 
+                                            @case('Crypto Wallet')
+                                                <img src="{{ env('APP_LOGO ') }}" width="25" class="bank-logo">
+                                            @break
+
                                             @default
                                                 <div style="width:40px;height:40px;background:#E3A941;"></div>
                                         @endswitch
@@ -237,18 +241,29 @@
                                                 <img src="{{ asset('images/bank/askmepay.png') }}" width="25"
                                                     class="bank-logo">
                                             @break
-  @case("ธนาคารการค้า")
-                                                <img id="member_deposit_img_bank_logo" src="{{ asset('images/bank/bcel.jpg') }}" width="25" class="bank-logo">
-                                                @break
-                                            @case("ธนาคารลาวพัฒนา")
-                                                <img id="member_deposit_img_bank_logo" src="{{ asset('images/bank/trust.jpg') }}" width="25" class="bank-logo">
-                                                @break
-                                            @case("ธนาคารJDB")
-                                                <img id="member_deposit_img_bank_logo" src="{{ asset('images/bank/jdb.jpg') }}" width="25" class="bank-logo">
-                                                @break
+
+                                            @case('ธนาคารการค้า')
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('images/bank/bcel.jpg') }}"
+                                                    width="25" class="bank-logo">
+                                            @break
+
+                                            @case('ธนาคารลาวพัฒนา')
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('images/bank/trust.jpg') }}"
+                                                    width="25" class="bank-logo">
+                                            @break
+
+                                            @case('ธนาคารJDB')
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('images/bank/jdb.jpg') }}"
+                                                    width="25" class="bank-logo">
+                                            @break
+
                                             @case('TrueMoney Wallet')
                                                 <img src="{{ asset('images/bank/truemoney.png') }}" width="25"
                                                     class="bank-logo">
+                                            @break
+
+                                            @case('Crypto Wallet')
+                                                <img src="{{ env('APP_LOGO ') }}" width="25" class="bank-logo">
                                             @break
 
                                             @default
@@ -310,16 +325,23 @@
 
                                             @case('ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร')
                                                 <img src="{{ asset('images/bank/baac.png') }}" width="25" class="bank-logo">
-                                                @break
-                                            @case("ธนาคารการค้า")
-                                                <img id="member_deposit_img_bank_logo" src="{{ asset('image/bank/bcel.jpg') }}" width="25" class="bank-logo">
-                                                @break
-                                            @case("ธนาคารลาวพัฒนา")
-                                                <img id="member_deposit_img_bank_logo" src="{{ asset('image/bank/trust.jpg') }}" width="25" class="bank-logo">
-                                                @break
-                                            @case("ธนาคารJDB")
-                                                <img id="member_deposit_img_bank_logo" src="{{ asset('image/bank/jdb.jpg') }}" width="25" class="bank-logo">
-                                                @break
+                                            @break
+
+                                            @case('ธนาคารการค้า')
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('image/bank/bcel.jpg') }}"
+                                                    width="25" class="bank-logo">
+                                            @break
+
+                                            @case('ธนาคารลาวพัฒนา')
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('image/bank/trust.jpg') }}"
+                                                    width="25" class="bank-logo">
+                                            @break
+
+                                            @case('ธนาคารJDB')
+                                                <img id="member_deposit_img_bank_logo" src="{{ asset('image/bank/jdb.jpg') }}"
+                                                    width="25" class="bank-logo">
+                                            @break
+
                                             @case('TrueMoney Wallet')
                                                 <img src="{{ asset('images/bank/truemoney.png') }}" width="25"
                                                     class="bank-logo">
@@ -390,6 +412,8 @@
                                             $status = __('dashboard.bot_approval');
                                         } elseif ($item->status_code == 'กำลังดำเนินการ') {
                                             $status = __('dashboard.In_progress');
+                                        }else {
+                                            $status = $item->status_code;
                                         }
                                     @endphp
                                     @if ($item->status == 1)
@@ -438,7 +462,8 @@
                                                 id="frmrejectdeposit{{ $item->id }}" style="display: none;">
                                                 @csrf
                                                 <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
-                                                <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
+                                                <input type="hidden" name="member_id"
+                                                    value="{{ $item->member_id }}" />
                                                 <input type="hidden" name="status" value="reject" />
                                                 <input type="hidden" name="type" value="{{ $item->type }}" />
                                             </form>
@@ -554,7 +579,7 @@
 
         function approveDeposit(form) {
             Swal.fire({
-                title: '{{__('main.Do you want to change your status?')}}',
+                title: '{{ __('main.Do you want to change your status?') }}',
                 text: "**{{ __('main.Warningthe admin must transfer') }}**",
                 type: 'warning',
                 showCancelButton: true,
@@ -572,7 +597,7 @@
 
         function confirm_turonver_on(form) {
             Swal.fire({
-                title: '{{__('main.Do you want to change your status?')}}',
+                title: '{{ __('main.Do you want to change your status?') }}',
                 text: "",
                 type: 'warning',
                 showCancelButton: true,
