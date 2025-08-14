@@ -167,6 +167,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/partner/edit/{id}', [App\Http\Controllers\PartnerController::class, 'edit'])->name('partner.edit')->middleware('CheckPermissionUser:manageuser,edit');
     Route::post('/partner/update', [App\Http\Controllers\PartnerController::class, 'update'])->name('partner.update')->middleware('CheckPermissionUser:manageuser,edit');
     Route::get('/partner/report/{id}', [App\Http\Controllers\PartnerController::class, 'report'])->name('partner.report')->middleware('CheckPermissionUser:manageuser,edit');
+    Route::get('/partner/member-winloss', [App\Http\Controllers\PartnerController::class, 'getMemberWinlossData'])->name('partner.member.winloss.data');
 
     Route::get('/article', [App\Http\Controllers\ArticleController::class,'index'])->name('article.index');
     Route::get('/articleCreate', [App\Http\Controllers\ArticleController::class,'create'])->name('article.create');
@@ -202,6 +203,7 @@ Route::get('/get_affiliate', [ManageMemberController::class, 'affiliate']);
 Route::get('/affiliate_fixdate/{date_start}/{date_end}', [ManageMemberController::class, 'affiliate_fixdate']);
 
 Route::get('/partner_call_winlose', [App\Http\Controllers\PartnerController::class, 'partner_call_winlose']);
+Route::get('/test_partner_call_winlose/{id}', [App\Http\Controllers\PartnerController::class, 'test_partner_call_winlose']);
 
 Route::get('/QueryBetRecordsV2', [ReportController::class, 'QueryBetRecordsV2']);
 

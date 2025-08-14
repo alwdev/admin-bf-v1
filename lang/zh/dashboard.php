@@ -27,5 +27,9 @@ return [
     'approval' => '审核通过',
     'bot_approval' => '机器人审核',
     'refuse' => '拒绝',
-    'In_progress' => '进行中'
+    'In_progress' => '进行中','total_bet'=>'总投注金额',
+    'winlose'=>'输赢',
+    'commission_rate'=>'佣金比率',
+    'commission'=>'佣金',
+    'date_range'=>'日期范围',
 ];

@@ -27,5 +27,10 @@ return[
     'approval'=>'อนุมัติ',
     'bot_approval'=>'BOT.อนุมัติ',
     'refuse'=>'ปฏิเสธ',
-    'In_progress'=>'กำลังดำเนินการ',
+    'In_progress'=>'กำลังดำเนินการ','total_bet'=>'ยอดเดิมพันทั้งหมด',
+    'winlose'=>'ยอดได้-เสีย',
+    'commission_rate'=>'อัตราคอมมิชชั่น',
+    'commission'=>'ค่าคอมมิชชั่น',
+    'date_range'=>'ช่วงวันที่',
+
 ];
