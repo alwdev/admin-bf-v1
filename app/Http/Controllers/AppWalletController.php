@@ -36,7 +36,7 @@ class AppWalletController extends Controller
         return response()->json(['success' => true]);
     }
 
-   function cryptoToTHB(string $symbol, float $amount = 1): ?float
+   function cryptoToTHB(string $symbol, float $amount): ?float
     {
         $apiKey = env('CMC_API_KEY');
         $url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest';
