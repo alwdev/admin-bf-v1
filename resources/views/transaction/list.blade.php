@@ -89,14 +89,14 @@
                                 <td>
                                     @if ($item->type == 'deposit')
                                         <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
-                                        {{ $item->deposit_to_bank_no }} <br>
+                                        {{ $item->deposit_from_bank_no }} <br>
                                         {{ $item->deposit_to_bank_name }} {{ $item->deposit_from_bank_type }}
                                     @elseif($item->type == 'withdraw')
                                         <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
-                                        {{ $item->bank_number }} <br>
-                                        {{ $item->account_name }}
+                                        {{ $item->withdraw_bank_no }} <br>
+                                        {{ $item->withdraw_bank_name }}
                                     @else
-                                        -
+                                        {{ $item->type}}
                                     @endif
                                 </td>
                                 <td>
@@ -178,7 +178,6 @@
                                     @endif
                                 </td>
                                 @if (json_decode(auth()->user()->permissions)->transfer > 2)
-
 
                                     <td>
                                         @if ($item->status == 1)
