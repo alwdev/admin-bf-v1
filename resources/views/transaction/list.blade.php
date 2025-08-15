@@ -81,22 +81,23 @@
                                         <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
                                         {{ $item->deposit_from_bank_no }} <br>
                                         {{ $item->deposit_from_bank_name }}
-                                    @else
-                                        {{ $item->order_id }}
-                                    @endif
-                                </td>
-                                <td>
-                                     {{ $item->type}}
-                                    @if ($item->type == 'deposit')
-                                        <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
-                                        {{ $item->deposit_from_bank_no }} <br>
-                                        {{ $item->deposit_to_bank_name }} {{ $item->deposit_from_bank_type }}
                                     @elseif($item->type == 'withdraw')
                                         <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
                                         {{ $item->withdraw_bank_no }} <br>
                                         {{ $item->withdraw_bank_name }}
                                     @else
-                                        {{ $item->type}}
+                                        {{ $item->order_id }}
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($item->type == 'deposit')
+                                        <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
+                                        {{ $item->deposit_to_bank_no }} <br>
+                                        {{ $item->deposit_to_bank_name }} {{ $item->deposit_to_bank_type }}
+                                    @elseif($item->type == 'withdraw')
+                                        <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
+                                        {{ $item->withdraw_bank_no }} <br>
+                                        {{ $item->withdraw_bank_name }}
                                     @endif
                                 </td>
                                 <td>
@@ -148,7 +149,7 @@
                                             $status = __('dashboard.bot_approval');
                                         } elseif ($item->status_code == 'กำลังดำเนินการ') {
                                             $status = __('dashboard.In_progress');
-                                        }else {
+                                        } else {
                                             $status = $item->status_code;
                                         }
                                     @endphp
@@ -197,8 +198,7 @@
                                                 id="frmrejectdeposit{{ $item->id }}" style="display: none;">
                                                 @csrf
                                                 <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
-                                                <input type="hidden" name="member_id"
-                                                    value="{{ $item->member_id }}" />
+                                                <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
                                                 <input type="hidden" name="status" value="reject" />
                                                 <input type="hidden" name="type" value="{{ $item->type }}" />
                                             </form>
@@ -213,8 +213,7 @@
                                                 id="frmdeposit{{ $item->id }}" style="display: none;">
                                                 @csrf
                                                 <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
-                                                <input type="hidden" name="member_id"
-                                                    value="{{ $item->member_id }}" />
+                                                <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
                                                 <input type="hidden" name="status" value="approve" />
                                                 <input type="hidden" name="type" value="{{ $item->type }}" />
                                             </form>
@@ -226,8 +225,7 @@
                                                 id="frmrependingdeposit{{ $item->id }}" style="display: none;">
                                                 @csrf
                                                 <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
-                                                <input type="hidden" name="member_id"
-                                                    value="{{ $item->member_id }}" />
+                                                <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
                                                 <input type="hidden" name="status" value="pending" />
                                                 <input type="hidden" name="type" value="{{ $item->type }}" />
                                             </form>
@@ -239,8 +237,7 @@
                                                 id="frmrejectdeposit{{ $item->id }}" style="display: none;">
                                                 @csrf
                                                 <input type="hidden" name="transfer_id" value="{{ $item->id }}" />
-                                                <input type="hidden" name="member_id"
-                                                    value="{{ $item->member_id }}" />
+                                                <input type="hidden" name="member_id" value="{{ $item->member_id }}" />
                                                 <input type="hidden" name="status" value="reject" />
                                                 <input type="hidden" name="type" value="{{ $item->type }}" />
                                             </form>
