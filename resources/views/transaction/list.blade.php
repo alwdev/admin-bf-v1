@@ -83,7 +83,7 @@
                                         <a class="hash-pill"
                                             href="https://bscscan.com/address/{{ $item->deposit_from_bank_no }}"
                                             target="_blank" rel="noopener">
-                                            {{ short_middle($item->deposit_from_bank_no, 10, 8) }}
+                                            {{ short_middle($item->deposit_from_bank_no, 5, 5) }}
                                         </a> <br>
 
                                     @elseif($item->type == 'withdraw')
@@ -91,7 +91,7 @@
                                         <a class="hash-pill"
                                             href="https://bscscan.com/address/{{ $item->deposit_from_bank_no }}"
                                             target="_blank" rel="noopener">
-                                            {{ short_middle($item->deposit_from_bank_no, 10, 8) }}
+                                            {{ short_middle($item->deposit_from_bank_no, 5, 5) }}
                                         </a> <br>
                                     @else
                                         {{ $item->order_id }}
@@ -103,7 +103,7 @@
                                         <a class="hash-pill"
                                             href="https://bscscan.com/address/{{ $item->deposit_to_bank_no }}"
                                             target="_blank" rel="noopener">
-                                            {{ short_middle($item->deposit_to_bank_no, 10, 8) }}
+                                            {{ short_middle($item->deposit_to_bank_no, 5, 5) }}
                                         </a>
                                         <br>
                                         {{ $item->deposit_to_bank_name }} {{ $item->deposit_to_bank_type }}
@@ -112,7 +112,7 @@
                                         <a class="hash-pill"
                                             href="https://bscscan.com/address/{{ $item->withdraw_bank_no }}"
                                             target="_blank" rel="noopener">
-                                            {{ short_middle($item->withdraw_bank_no, 10, 8) }}
+                                            {{ short_middle($item->withdraw_bank_no, 5, 5) }}
                                         </a> <br>
                                     @endif
                                 </td>
