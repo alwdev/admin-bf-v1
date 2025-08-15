@@ -55,7 +55,6 @@
                             <th data-sortable="true">{{ __('managemember.from') }}</th>
                             <th data-sortable="true">{{ __('managemember.to') }}</th>
                             <th data-sortable="true">{{ __('main.promotion') }}</th>
-                            <th data-sortable="true">{{ __('managemember.evidence') }}</th>
                             <th data-sortable="true">{{ __('dashboard.status') }}</th>
                             @if (json_decode(auth()->user()->permissions)->transfer > 2)
                                 <th data-sortable="true"></th>
@@ -87,6 +86,7 @@
                                     @endif
                                 </td>
                                 <td>
+                                     {{ $item->type}}
                                     @if ($item->type == 'deposit')
                                         <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
                                         {{ $item->deposit_from_bank_no }} <br>
@@ -137,13 +137,6 @@
                                         cashback
                                     @endif
                                 </td>
-                                <td>
-                                    @if ($item->type == 'deposit' && $item->deposit_type != 'askmepay-qrcode')
-                                        <button type="button" class="btn btn-primary btn-sm"
-                                            onclick="showEvidence('{{ env('APP_URL_IMAGE_EVIDENCE') . $item->deposit_slip }}')">{{ __('managemember.evidence') }}</button>
-                                    @endif
-                                </td>
-
                                 <td>
                                     @php
                                         $status = '';
