@@ -1672,8 +1672,9 @@ class TransactionController extends Controller
         $thb_usd_price = 33;
         $crypto_price = Cypto::where('symbol', $request->symbol)->first();
         error_log($request->symbol . " crypto price = " . $crypto_price->price);
-        $transfer->amount = (float) $request->amount * (float) $crypto_price->price * (float) $thb_usd_price; // แปลงเป็น float เพื่อความถูกต้อง
-        error_log("new transfer amount = " . $transfer->amount);
+        $update_amount = $request->amount * (float) $crypto_price->price * (float) $thb_usd_price; // แปลงเป็น float เพื่อความถูกต้อง
+        $transfer->amount = (float) $update_amount; // แปลงเป็น float เพื่อความถูกต้อง
+        error_log("new transfer amount = " . $update_amount);
         $message = ""; // ใช้สำหรับเก็บข้อความ log/แจ้งเตือน
         $bonus = 0.0; // ตั้งค่าเริ่มต้นสำหรับ bonus ที่จะใช้ใน log/telegram (จะถูกอัปเดตภายหลัง)
 
@@ -1717,7 +1718,7 @@ class TransactionController extends Controller
 
                     // คำนวณโบนัสจาก recurring_bonus_percentage
                     if ($pro_recurring->recurring_bonus_percentage !== null && $pro_recurring->recurring_bonus_percentage > 0) {
-                        $bonus_to_apply = $request->amount * ($pro_recurring->recurring_bonus_percentage / 100);
+                        $bonus_to_apply = $update_amount * ($pro_recurring->recurring_bonus_percentage / 100);
                         error_log("Recurring Bonus Percentage: {$pro_recurring->recurring_bonus_percentage}%, Calculated Recurring Bonus: {$bonus_to_apply}");
                     } else {
                         error_log("Recurring bonus percentage is null or zero for auto-applied promo.");
@@ -1725,7 +1726,7 @@ class TransactionController extends Controller
                     }
 
                     // กำหนด turnover สำหรับโปรต่อเนื่อง - ใช้แค่ recurring_turnover_percentage เท่านั้น
-                    $base_amount_for_turnover = $request->amount + $bonus_to_apply;
+                    $base_amount_for_turnover = $update_amount + $bonus_to_apply;
 
                     if ($pro_recurring->recurring_turnover_percentage !== null && $pro_recurring->recurring_turnover_percentage > 0) {
                         $calculated_required_turnover = $base_amount_for_turnover * ($pro_recurring->recurring_turnover_percentage / 100);
@@ -1771,7 +1772,7 @@ class TransactionController extends Controller
                         if ($pro->is_percentage_based) { // ถ้าโปรโมชั่นนี้ใช้ระบบเปอร์เซ็นต์
                             error_log("Calculating bonus based on percentage (selected promo).");
                             if ($pro->bonus_percentage !== null && $pro->bonus_percentage > 0) {
-                                $current_calculated_bonus = $request->amount * ($pro->bonus_percentage / 100);
+                                $current_calculated_bonus = $update_amount * ($pro->bonus_percentage / 100);
                             }
                             if ($pro->turnover_percentage !== null && $pro->turnover_percentage > 0) {
                                 $current_turnover_value = $pro->turnover_percentage;
@@ -1793,7 +1794,7 @@ class TransactionController extends Controller
                                 $bonus_to_apply = $current_calculated_bonus;
                                 $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
 
-                                $base_amount_for_turnover = $request->amount + $bonus_to_apply;
+                                $base_amount_for_turnover = $update_amount + $bonus_to_apply;
                                 if ($pro->is_percentage_based) {
                                     $calculated_required_turnover = $base_amount_for_turnover * ($current_turnover_value / 100);
                                 } else {
@@ -1816,7 +1817,7 @@ class TransactionController extends Controller
                             $bonus_to_apply = $current_calculated_bonus;
                             $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
 
-                            $base_amount_for_turnover = $request->amount + $bonus_to_apply;
+                            $base_amount_for_turnover = $update_amount + $bonus_to_apply;
                             if ($pro->is_percentage_based) {
                                 $calculated_required_turnover = $base_amount_for_turnover * ($current_turnover_value / 100);
                             } else {
@@ -1849,8 +1850,8 @@ class TransactionController extends Controller
         // ถ้ามีโปรโมชั่นถูก apply (ไม่ว่าจะ auto หรือเลือก)
         if ($promotion_found_and_applied) {
             error_log("Applying bonus: {$bonus_to_apply} with total required turnover: {$calculated_required_turnover}");
-            $member->wallet_balance = (float) $member->wallet_balance + $request->amount + $bonus_to_apply;
-            $amount_betflix = $request->amount + $bonus_to_apply;
+            $member->wallet_balance = (float) $member->wallet_balance + $update_amount + $bonus_to_apply;
+            $amount_betflix = $update_amount + $bonus_to_apply;
             $transfer->promotion = $applied_promotion_name;
             // *** NEW: บันทึกยอด Turnover ที่ต้องทำจริง ***
             // $transfer->required_turnover_amount = $calculated_required_turnover; // สมมติว่ามี column นี้ในตาราง transfers
@@ -1872,8 +1873,8 @@ class TransactionController extends Controller
         } else { // ไม่มีโปรโมชั่นใดๆ เข้าเงื่อนไข หรือไม่ถูกเลือก
             error_log("No applicable promotion found or selected. Only deposit amount will be added.");
             $message .= "No applicable promo, ";
-            $member->wallet_balance = (float) $member->wallet_balance + (float) $request->amount;
-            $amount_betflix = $request->amount;
+            $member->wallet_balance = (float) $member->wallet_balance + (float) $update_amount;
+            $amount_betflix = $update_amount;
             $transfer->promotion = "ไม่มีโปรโมชั่น"; // หรือค่า default อื่นๆ
             // $transfer->required_turnover_amount = 0.0; // ไม่มีโปรโมชั่นก็ไม่มีเทิร์น
             // $transfer->bonus_applied = 0.0;
@@ -1891,8 +1892,8 @@ class TransactionController extends Controller
 
             $wheel_setting = WheelSpin::first();
             if ($wheel_setting && $wheel_setting->ticket_condition > 0) {
-                if ((float) $request->amount >= (float) $wheel_setting->ticket_condition) {
-                    $total_spin = floor((float) $request->amount / (float) $wheel_setting->ticket_condition);
+                if ((float) $update_amount >= (float) $wheel_setting->ticket_condition) {
+                    $total_spin = floor((float) $update_amount / (float) $wheel_setting->ticket_condition);
                     $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
                 }
             }
@@ -1940,7 +1941,7 @@ class TransactionController extends Controller
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                     ->line('BOT ' . env('APP_NAME'))
                     ->line('Transaction completed, credit transferred ' . $member->username)
-                    ->line('Amount :' . $request->amount)
+                    ->line('Amount :' . $update_amount)
                     ->line('Bonus :' . $bonus) // ใช้ floor() กับ bonus ด้วย
                     ->line('Promotion : ' . $applied_promotion_name) // แสดงชื่อโปรโมชั่นที่ถูกใช้
                     ->line('Message : ' . $message) // แสดง message จาก logic
@@ -1979,7 +1980,7 @@ class TransactionController extends Controller
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT ' . env('APP_NAME'))
                 ->line('Deposit Betflix failed for user ' . $member->username)
-                ->line('Amount :' . $request->amount)
+                ->line('Amount :' . $update_amount)
                 ->line('Response :' . $bf_deposit)
                 ->send();
             return 500;
