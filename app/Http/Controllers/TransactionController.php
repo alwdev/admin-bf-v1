@@ -1672,7 +1672,13 @@ class TransactionController extends Controller
         $thb_usd_price = 33;
         $crypto_price = Cypto::where('symbol', $request->symbol)->first();
         error_log($request->symbol . " crypto price = " . $crypto_price->price);
-        $update_amount = $request->amount * (float) $crypto_price->price * (float) $thb_usd_price; // แปลงเป็น float เพื่อความถูกต้อง
+        
+        if($request->symbol == 'ABC'){
+            $update_amount = $request->amount;
+        }else{
+            $update_amount = $request->amount * (float) $crypto_price->price * (float) $thb_usd_price; // แปลงเป็น float เพื่อความถูกต้อง
+        }
+
         $transfer->amount = (float) $update_amount; // แปลงเป็น float เพื่อความถูกต้อง
         error_log("new transfer amount = " . $update_amount);
         $message = ""; // ใช้สำหรับเก็บข้อความ log/แจ้งเตือน
