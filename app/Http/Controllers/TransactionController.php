@@ -415,8 +415,8 @@ public function lineNotify_deposit($id)
             if ($bank) {
                 // หากคุณเคยเพิ่ม $transfer->amount เข้า bank->balance ในบล็อก success
                 // ก็ควรหักออกในบล็อก failure นี้
-                // $bank->balance = (float) $bank->balance + (float) $transfer->amount;
-                // $bank->save();
+                $bank->balance = (float) $bank->balance + (float) $transfer->amount;
+                $bank->save();
             }
 
             // บันทึก PromotionUsed ก็ต่อเมื่อมีการใช้โปรโมชั่นจริง
