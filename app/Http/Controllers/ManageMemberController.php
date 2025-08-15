@@ -29,8 +29,8 @@ class ManageMemberController extends Controller
     public function index()
     {
         //
-        $memberlist = Members::where('active',1)->orderBy('id', 'DESC')->get();
-        return view('manage-member.index',compact('memberlist'));
+        $memberlist = Members::where('active', 1)->orderBy('id', 'DESC')->get();
+        return view('manage-member.index', compact('memberlist'));
     }
 
     /**
@@ -39,12 +39,12 @@ class ManageMemberController extends Controller
     public function historyTransfer($id)
     {
         //
-        $transfer = Transfer::join('members',function($join){
-            $join->on('members.id','=','transfer.member_id');
+        $transfer = Transfer::join('members', function ($join) {
+            $join->on('members.id', '=', 'transfer.member_id');
         })
-        ->select(\DB::raw('transfer.*,members.bank_number,members.account_name,members.bank_name,members.username'))
-        ->where('transfer.member_id', $id)->get();
-        return view('manage-member.historyTransfer',compact('transfer'));
+            ->select(\DB::raw('transfer.*,members.bank_number,members.account_name,members.bank_name,members.username'))
+            ->where('transfer.member_id', $id)->get();
+        return view('manage-member.historyTransfer', compact('transfer'));
     }
 
     /**
@@ -301,7 +301,7 @@ class ManageMemberController extends Controller
                     $transfer->status = 2;
                     $transfer->status_code = 'อนุมัติ';
                     $transfer->old_balance = $old_balance; // ใช้ $old_balance ที่เก็บไว้ตอนต้น
-                    if($promotion_found_and_applied){
+                    if ($promotion_found_and_applied) {
                         $transfer->turnover_on = 1;
                     }
                     $transfer->save();
@@ -390,12 +390,13 @@ class ManageMemberController extends Controller
         return redirect()->back()->with('status', '200');
     }
 
-    function changePassword(Request $request){
+    function changePassword(Request $request)
+    {
         $member = Members::find($request->id);
         // $random_pass = $this->strRandom(8);
         $member->password = Hash::make($request->password);
         $member->save();
-        return redirect()->back()->with('status','success');
+        return redirect()->back()->with('status', 'success');
     }
 
     public static function strRandom($length)
@@ -407,10 +408,10 @@ class ManageMemberController extends Controller
     public function memberlock(Request $request)
     {
         $status = 0;
-        if($request->status == 1){
-            $status =0;
-        }else if($request->status ==0){
-            $status =1;
+        if ($request->status == 1) {
+            $status = 0;
+        } else if ($request->status == 0) {
+            $status = 1;
         }
         $member = Members::find($request->member_id);
         $member->enable = $status;
@@ -431,62 +432,68 @@ class ManageMemberController extends Controller
     public function memberEditBalance(Request $request)
     {
 
-        error_log("request->balance =".$request->balance);
+        Log::info("edit balance =" . $request->balance . "user_id =" . $request->user_id . " member_id =" . $request->member_id . " type = " . $request->type);
 
         $update_balance = 0;
         $member = Members::find($request->member_id);
-        if($member){
-        $old_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
+        if ($member) {
+            $old_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
 
-        if ($old_balance < $request->balance) {
-            $update_balance = $request->balance - $old_balance;
-            Log::info(" + Deposit update_balance =".$update_balance);
-            $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,$update_balance);
-            Log::info("Betflix Deposit ".$bf.' '.$update_balance.' User =  '.$member->username);
-        }else if ($old_balance > $request->balance) {
-            if($request->type == "แก้เครดิต"){
-                $update_balance = $old_balance - $request->balance;
+            if ($old_balance < $request->balance) {
+                $update_balance = $request->balance - $old_balance;
+                Log::info(" + Deposit update_balance =" . $update_balance);
+                $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, $update_balance);
+                Log::info("Betflix Deposit " . $bf . ' ' . $update_balance . ' User =  ' . $member->username);
+            } else if ($old_balance > $request->balance) {
+                if ($request->type == "แก้เครดิต") {
+                    $update_balance = $old_balance - $request->balance;
 
-                Log::info(" - Withdraw update_balance =".$update_balance);
-                $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,$update_balance);
-                Log::info("Betflix Withdraw ".$bf.' '.$update_balance.' User =  '.$member->username);
+                    Log::info(" - Withdraw update_balance =" . $update_balance);
+                    $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username, $update_balance);
+                    Log::info("Betflix Withdraw " . $bf . ' ' . $update_balance . ' User =  ' . $member->username);
+                }
             }
+
+            $new_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
+
+            // $new_balance = 2;
+            $currentBalance = $member->wallet_balance;
+
+            $amount2 = ((float) $request->balance - (float) $currentBalance);
+
+            $member->wallet_balance = $new_balance;
+            $member->update_by = $request->user_id;
+            $member->save();
+
+            $d = new MemberEditBalance;
+            $d->user_id = $request->user_id;
+            $d->member_id = $request->member_id;
+            $d->amount = $amount2;
+            $d->type = $request->type;
+            $d->balance = $currentBalance;
+            $d->edit_balance = $new_balance;
+            $d->save();
+
+            // MemberEditBalance::create([
+            //     'user_id' => $request->user_id,
+            //     'member_id' => $request->member_id,
+            //     'amount' => $amount2,
+            //     'type' => $request->type,
+            //     'balance' => $currentBalance,
+            //     'edit_balance' => $new_balance,
+            // ]);
+            Log::info("MemberEditBalance created for user_id = " . $request->user_id . " member_id = " . $request->member_id . " amount = " . $amount2 . " type = " . $request->type);
+            return redirect()->route('managemember.index')->with('success', 'success');
+        }else {
+            Log::error("Member not found for member_id = " . $request->member_id);
+            return redirect()->route('managemember.index')->with('error', 'Member not found');
         }
 
-        $new_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
 
-        // $new_balance = 2;
-        $currentBalance = $member->wallet_balance;
-
-        $amount2 = ((float) $request->balance - (float) $currentBalance);
-
-        $member->wallet_balance = $new_balance;
-        $member->update_by = $request->user_id;
-        $member->save();
-
-        $d = new MemberEditBalance;
-		$d->user_id = $request->user_id;
- 		$d->member_id = $request->member_id;
-		$d->amount = $amount2;
- 		$d->type = $request->type;
- 		$d->balance = $currentBalance;
-		$d->edit_balance = $new_balance;
-		$d->save();
-
-        // MemberEditBalance::create([
-        //     'user_id' => $request->user_id,
-        //     'member_id' => $request->member_id,
-        //     'amount' => $amount2,
-        //     'type' => $request->type,
-        //     'balance' => $currentBalance,
-        //     'edit_balance' => $new_balance,
-        // ]);
     }
 
-        return redirect()->route('managemember.index')->with('success', 'success');
-    }
-
-    function memberupdateBankAccount(Request $request){
+    function memberupdateBankAccount(Request $request)
+    {
         // dd($request);
         $member_ = Members::find($request->member_id);
         $member_->bank_name = $request->bank_name;
@@ -500,187 +507,185 @@ class ManageMemberController extends Controller
     public static function staff_detail($id)
     {
         $name = 'System';
-        $user = User::where('id',$id)->first();
-        if($user){
+        $user = User::where('id', $id)->first();
+        if ($user) {
             $name = $user->name;
         }
         return $name;
     }
 
-    public function cash_back(){
+    public function cash_back()
+    {
         set_time_limit(300000000);
         Log::info("Run cash_back");
         TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-        ->line(env('APP_NAME'))
-        ->line('BOT เริ่มทำการ Cashback ')
-        ->send();
+            ->line(env('APP_NAME'))
+            ->line('BOT เริ่มทำการ Cashback ')
+            ->send();
 
         $members = Members::get();
 
         foreach ($members as $member) {
             sleep(1);
-            $last_deposit = Transfer::where('member_id',$member->id)
-            ->where('status',2)->where('promotion_id','>',0)
-            ->where('type','deposit')
-            ->whereDate('created_at', Carbon::now()->subDays(7))->get();
+            $last_deposit = Transfer::where('member_id', $member->id)
+                ->where('status', 2)->where('promotion_id', '>', 0)
+                ->where('type', 'deposit')
+                ->whereDate('created_at', Carbon::now()->subDays(7))->get();
 
-            if($last_deposit){
-                Log::info("Cashback !! member  = ".$member->username." มียอดฝากก่อนหน้ารับโปร");
+            if ($last_deposit) {
+                Log::info("Cashback !! member  = " . $member->username . " มียอดฝากก่อนหน้ารับโปร");
                 continue;
             }
 
-            $last_withdraw = Transfer::where('member_id',$member->id)
-            ->where('status',2)
-            ->where('type','withdraw')
-            ->whereDate('created_at', Carbon::now()->subDays(7))->get();
-            if($last_withdraw){
-                Log::info("Cashback !! member  = ".$member->username." มียอดถอนก่อนหน้า");
+            $last_withdraw = Transfer::where('member_id', $member->id)
+                ->where('status', 2)
+                ->where('type', 'withdraw')
+                ->whereDate('created_at', Carbon::now()->subDays(7))->get();
+            if ($last_withdraw) {
+                Log::info("Cashback !! member  = " . $member->username . " มียอดถอนก่อนหน้า");
                 continue;
             }
 
-            if($member->wallet_balance >= 1){
-                Log::info("Cashback !! member  = ".$member->username." มียอดคงเหลือมากกว่า 1");
+            if ($member->wallet_balance >= 1) {
+                Log::info("Cashback !! member  = " . $member->username . " มียอดคงเหลือมากกว่า 1");
                 continue;
             }
 
             $total_lose = 0;
-            $cash_back=0;
-            try{
-                $winlose= app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($member->username,-1,-1)->winloss;
+            $cash_back = 0;
+            try {
+                $winlose = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($member->username, -1, -1)->winloss;
 
-                if($winlose){
+                if ($winlose) {
                     $total_lose =  $winlose;
-                }else{
+                } else {
                     $total_lose = 0;
                 }
             } catch (\Exception $e) {
-                Log::error('Error Betflix API : '.$e->getMessage());
+                Log::error('Error Betflix API : ' . $e->getMessage());
                 $winlose = 0;
             }
 
 
-                if(abs($total_lose) > 0){
-                    $setting = Setting::get();
-                    if($setting){
-                        $cash_back = (float) (abs($total_lose) * ($setting->cashback_percent/100));
-                    } else {
-                        $cash_back = 0;
-                    }
+            if (abs($total_lose) > 0) {
+                $setting = Setting::get();
+                if ($setting) {
+                    $cash_back = (float) (abs($total_lose) * ($setting->cashback_percent / 100));
+                } else {
+                    $cash_back = 0;
                 }
+            }
 
 
-                if($cash_back > 20000){
-                    $cash_back = 20000;
-                }
-                $logs = new Logs;
-                $logs->username = $member->username;
-                $logs->log = 'total_lose: ' . number_format($total_lose,2).' cash back: ' . number_format($cash_back,2);
-                $logs->save();
+            if ($cash_back > 20000) {
+                $cash_back = 20000;
+            }
+            $logs = new Logs;
+            $logs->username = $member->username;
+            $logs->log = 'total_lose: ' . number_format($total_lose, 2) . ' cash back: ' . number_format($cash_back, 2);
+            $logs->save();
 
-                if($cash_back > 0 ){
-                    Log::info('Cashback ++ Username : '.$member->username.' total_lose: ' . number_format($total_lose,2).' cash back: ' . number_format($cash_back,2));
-                    Transfer::create([
-                        'member_id' => $member->id,
-                        'amount' => $cash_back,
-                        'status' => 1,
-                        'status_code' => 'รออนุมัติ',
-                        'type' => 'cashback',
-                        'promotion' => 'cashback',
-                        'old_balance' => $member->wallet_balance,
-                        'new_balance' => $member->wallet_balance + $cash_back,
-                        'transfer_date' => strtotime(now()),
-                    ]);
-                    // $member->wallet_balance = (float) ($member->wallet_balance + $cash_back);
-                    // $member->save();
+            if ($cash_back > 0) {
+                Log::info('Cashback ++ Username : ' . $member->username . ' total_lose: ' . number_format($total_lose, 2) . ' cash back: ' . number_format($cash_back, 2));
+                Transfer::create([
+                    'member_id' => $member->id,
+                    'amount' => $cash_back,
+                    'status' => 1,
+                    'status_code' => 'รออนุมัติ',
+                    'type' => 'cashback',
+                    'promotion' => 'cashback',
+                    'old_balance' => $member->wallet_balance,
+                    'new_balance' => $member->wallet_balance + $cash_back,
+                    'transfer_date' => strtotime(now()),
+                ]);
+                // $member->wallet_balance = (float) ($member->wallet_balance + $cash_back);
+                // $member->save();
 
-                    // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($cash_back));
-                    // Log::info('Betflix CashBack '.$bf_deposit.' '.floor($cash_back).' User =  '.$member->username);
-                }
-
+                // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($cash_back));
+                // Log::info('Betflix CashBack '.$bf_deposit.' '.floor($cash_back).' User =  '.$member->username);
+            }
         }
 
         TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-        ->line(env('APP_NAME'))
-        ->line('BOT สิ้นสุดการ Cashback ')
-        ->send();
+            ->line(env('APP_NAME'))
+            ->line('BOT สิ้นสุดการ Cashback ')
+            ->send();
         Log::info("End Cashback");
         return 'success';
-
     }
-    function affiliate(){
+    function affiliate()
+    {
         set_time_limit(3000000000);
         Log::info("Run affiliate");
         TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-        ->line(env('APP_NAME'))
-        ->line('BOT เริ่มทำการ affiliate')
-        ->send();
+            ->line(env('APP_NAME'))
+            ->line('BOT เริ่มทำการ affiliate')
+            ->send();
 
-        $members = Members::where('ref_user','!=',null)->get();
-        Log::info("Total Members affiliate : ".count($members));
+        $members = Members::where('ref_user', '!=', null)->get();
+        Log::info("Total Members affiliate : " . count($members));
         foreach ($members as $main_member) {
             sleep(2);
             $total_commission = 0;
-            Log::info("Member main : " . $main_member->username.'uder member count = '.count(json_decode($main_member->ref_user)));
-            if(json_decode($main_member->ref_user)){
+            Log::info("Member main : " . $main_member->username . 'uder member count = ' . count(json_decode($main_member->ref_user)));
+            if (json_decode($main_member->ref_user)) {
                 set_time_limit(3000000000);
-                foreach(json_decode($main_member->ref_user) as $_member){
+                foreach (json_decode($main_member->ref_user) as $_member) {
                     sleep(3);
 
-                    $under_member = Members::where('id',$_member)->first();
-                    Log::info("Under of ".$main_member->username." member : " .$under_member->username);
+                    $under_member = Members::where('id', $_member)->first();
+                    Log::info("Under of " . $main_member->username . " member : " . $under_member->username);
 
-                    try{
-                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,-1,-1);
-                        if($bf_total_bet){
+                    try {
+                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, -1, -1);
+                        if ($bf_total_bet) {
                             $total_bet = $bf_total_bet->valid_amount;
                             $winlose = $bf_total_bet->winloss;
                             Log::info("bf_total_bet : " . $bf_total_bet->valid_amount);
-                        }else{
+                        } else {
                             Log::info("bf_total_bet : " . $bf_total_bet->msg);
                         }
                     } catch (\Exception $e) {
-                        Log::info('Betflix API Error : '.$e->getMessage());
-                        $total_bet =0;
-                        $winlose =0;
+                        Log::info('Betflix API Error : ' . $e->getMessage());
+                        $total_bet = 0;
+                        $winlose = 0;
                         continue;
                     }
 
-                    try{
-                        $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username,-1,-1);
+                    try {
+                        $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, -1, -1);
 
-                        if(count($pg_total_bet['data']) > 0){
+                        if (count($pg_total_bet['data']) > 0) {
                             Log::info("pg_total_bet : " . $pg_total_bet['data'][0]['totalAmount']);
                             $total_bet = $total_bet + $pg_total_bet['data'][0]['totalAmount'];
-                        }else{
-                            Log::info('PgHard API No have User Data '.$under_member->username);
+                        } else {
+                            Log::info('PgHard API No have User Data ' . $under_member->username);
                         }
                     } catch (\Exception $e) {
-                        Log::info('PgHard API Error : '.$e->getMessage());
-                        $pg_total_bet =0;
+                        Log::info('PgHard API Error : ' . $e->getMessage());
+                        $pg_total_bet = 0;
                     }
 
-                    Log::info("total_bet : ".$total_bet);
+                    Log::info("total_bet : " . $total_bet);
 
                     $affiliate = Affiliate::first();
-                    if($affiliate->is_enable_af_winlose == 1){
+                    if ($affiliate->is_enable_af_winlose == 1) {
                         // Log::info("is_enable_af_winlose = ".$affiliate->is_enable_af_winlose);
-                        if($total_bet > 1){
+                        if ($total_bet > 1) {
 
-                            if($affiliate->af_receive_percent_winlose_1 == "ยอดเดิมพัน"){
+                            if ($affiliate->af_receive_percent_winlose_1 == "ยอดเดิมพัน") {
                                 $commission = $total_bet * ($affiliate->af_receive_percent_winlose_2 / 100);
                                 $total_commission += $commission;
-                                Log::info("commission ยอดเดิมพัน total_bet : ".$total_bet." commission : ".$commission);
-                            }else if($affiliate->af_receive_percent_winlose_1 == "ยอดเสีย" && $winlose < 0){
+                                Log::info("commission ยอดเดิมพัน total_bet : " . $total_bet . " commission : " . $commission);
+                            } else if ($affiliate->af_receive_percent_winlose_1 == "ยอดเสีย" && $winlose < 0) {
                                 $commission = abs($winlose) * ($affiliate->af_receive_percent_winlose_2 / 100);
                                 $total_commission += $commission;
-                                Log::info("commission ยอด winlose : ".$winlose." commission : ".$commission);
+                                Log::info("commission ยอด winlose : " . $winlose . " commission : " . $commission);
                             }
-
-
                         }
                     }
                 }
-                if($total_commission > 0){
+                if ($total_commission > 0) {
                     Transfer::create([
                         'member_id' => $main_member->id,
                         'amount' => $total_commission,
@@ -699,7 +704,6 @@ class ManageMemberController extends Controller
                 // $main_member->wallet_balance = (float) ($main_member->wallet_balance + $commission);
                 // $main_member->save();
             }
-
         }
         Log::info('success Run affiliate');
         TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
@@ -709,82 +713,82 @@ class ManageMemberController extends Controller
         return 'success';
     }
 
-    function affiliate_fixdate($date_start,$date_end){
-        $startDate=date('Y-m-d',strtotime($date_start.' day')).'T00:00:00Z';
-        $endDate=date('Y-m-d',strtotime($date_end.' day')).'T23:59:59Z';
+    function affiliate_fixdate($date_start, $date_end)
+    {
+        $startDate = date('Y-m-d', strtotime($date_start . ' day')) . 'T00:00:00Z';
+        $endDate = date('Y-m-d', strtotime($date_end . ' day')) . 'T23:59:59Z';
 
         set_time_limit(3000000000);
-        Log::info("Run affiliate ย้อนหลัง จากวันที่ : ".$startDate." ถึง ".$endDate);
+        Log::info("Run affiliate ย้อนหลัง จากวันที่ : " . $startDate . " ถึง " . $endDate);
         TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-        ->line(env('APP_NAME'))
-        ->line('BOT เริ่มทำการ affiliate ย้อนหลัง จากวันที่ : '.$startDate.' - '.$endDate)
-        ->send();
+            ->line(env('APP_NAME'))
+            ->line('BOT เริ่มทำการ affiliate ย้อนหลัง จากวันที่ : ' . $startDate . ' - ' . $endDate)
+            ->send();
 
-        $members = Members::where('ref_user','!=',null)->get();
-        Log::info("Total Members affiliate : ".count($members));
+        $members = Members::where('ref_user', '!=', null)->get();
+        Log::info("Total Members affiliate : " . count($members));
         foreach ($members as $main_member) {
             sleep(1);
             $total_commission = 0;
-            Log::info("Member main : " . $main_member->username.'uder member count = '.count(json_decode($main_member->ref_user)));
-            if(json_decode($main_member->ref_user)){
+            Log::info("Member main : " . $main_member->username . 'uder member count = ' . count(json_decode($main_member->ref_user)));
+            if (json_decode($main_member->ref_user)) {
                 set_time_limit(3000000000);
-                foreach(json_decode($main_member->ref_user) as $_member){
+                foreach (json_decode($main_member->ref_user) as $_member) {
                     sleep(2);
 
-                    $under_member = Members::where('id',$_member)->first();
-                    Log::info("Under of ".$main_member->username." member : " .$under_member->username);
+                    $under_member = Members::where('id', $_member)->first();
+                    Log::info("Under of " . $main_member->username . " member : " . $under_member->username);
 
-                    try{
-                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username,$date_start,$date_end);
-                        if($bf_total_bet){
+                    try {
+                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, $date_start, $date_end);
+                        if ($bf_total_bet) {
                             $total_bet = $bf_total_bet->valid_amount;
                             $winlose = $bf_total_bet->winloss;
                             Log::info("bf_total_bet : " . $bf_total_bet->valid_amount);
-                        }else{
+                        } else {
                             Log::info("bf_total_bet : " . $bf_total_bet->msg);
                         }
                     } catch (\Exception $e) {
-                        Log::info('Betflix API Error : '.$e->getMessage());
-                        $total_bet =0;
-                        $winlose =0;
+                        Log::info('Betflix API Error : ' . $e->getMessage());
+                        $total_bet = 0;
+                        $winlose = 0;
                         continue;
                     }
 
-                    try{
-                        $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username,$date_start,$date_end);
+                    try {
+                        $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, $date_start, $date_end);
 
-                        if(count($pg_total_bet['data']) > 0){
+                        if (count($pg_total_bet['data']) > 0) {
                             Log::info("pg_total_bet : " . $pg_total_bet['data'][0]['totalAmount']);
                             $total_bet = $total_bet + $pg_total_bet['data'][0]['totalAmount'];
-                        }else{
-                            Log::info('PgHard API No have User Data '.$under_member->username);
+                        } else {
+                            Log::info('PgHard API No have User Data ' . $under_member->username);
                         }
                     } catch (\Exception $e) {
-                        Log::info('PgHard API Error : '.$e->getMessage());
-                        $pg_total_bet =0;
+                        Log::info('PgHard API Error : ' . $e->getMessage());
+                        $pg_total_bet = 0;
                     }
 
-                    Log::info("total_bet : ".$total_bet);
+                    Log::info("total_bet : " . $total_bet);
 
                     $affiliate = Affiliate::first();
-                    if($affiliate->is_enable_af_winlose == 1){
-                        Log::info("is_enable_af_winlose = ".$affiliate->is_enable_af_winlose);
-                        if($total_bet > 1){
+                    if ($affiliate->is_enable_af_winlose == 1) {
+                        Log::info("is_enable_af_winlose = " . $affiliate->is_enable_af_winlose);
+                        if ($total_bet > 1) {
 
-                            if($affiliate->af_receive_percent_winlose_1 == "ยอดเดิมพัน"){
+                            if ($affiliate->af_receive_percent_winlose_1 == "ยอดเดิมพัน") {
                                 $commission = $total_bet * ($affiliate->af_receive_percent_winlose_2 / 100);
                                 $total_commission += $commission;
-                                Log::info("commission ยอดเดิมพัน total_bet : ".$total_bet." commission : ".$commission);
-                            }else if($affiliate->af_receive_percent_winlose_1 == "ยอดเสีย" && $winlose < 0){
+                                Log::info("commission ยอดเดิมพัน total_bet : " . $total_bet . " commission : " . $commission);
+                            } else if ($affiliate->af_receive_percent_winlose_1 == "ยอดเสีย" && $winlose < 0) {
                                 $commission = abs($winlose) * ($affiliate->af_receive_percent_winlose_2 / 100);
                                 $total_commission += $commission;
-                                Log::info("commission ยอด winlose : ".$winlose." commission : ".$commission);
+                                Log::info("commission ยอด winlose : " . $winlose . " commission : " . $commission);
                             }
-
                         }
                     }
                 }
-                if($total_commission > 0){
+                if ($total_commission > 0) {
                     Transfer::create([
                         'member_id' => $main_member->id,
                         'amount' => $total_commission,
@@ -803,7 +807,6 @@ class ManageMemberController extends Controller
                 // $main_member->wallet_balance = (float) ($main_member->wallet_balance + $to);
                 // $main_member->save();
             }
-
         }
         Log::info('success Run affiliate Fixdete');
         TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
@@ -813,7 +816,8 @@ class ManageMemberController extends Controller
         return 'success';
     }
 
-    public function check_token(Request $request){
+    public function check_token(Request $request)
+    {
 
         $user = Members::where('token', $request->token)->first();
         if ($user) {
