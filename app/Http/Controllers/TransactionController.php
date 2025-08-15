@@ -1643,7 +1643,7 @@ class TransactionController extends Controller
     {
         error_log("crypto_deposit = " . $request->id);
         error_log("crypto_deposit amount = " . $request->amount);
-        
+
         $transfer = Transfer::where('id', $request->id)->first();
 
         if (!$transfer) {
@@ -1666,6 +1666,7 @@ class TransactionController extends Controller
         $transfer->status = 2;
         $transfer->status_code = "BOT.อนุมัติ";
         $transfer->old_balance = $old_balance;
+        $transfer->amount = (float) $request->amount; // แปลงเป็น float เพื่อความถูกต้อง
 
         $message = ""; // ใช้สำหรับเก็บข้อความ log/แจ้งเตือน
         $bonus = 0.0; // ตั้งค่าเริ่มต้นสำหรับ bonus ที่จะใช้ใน log/telegram (จะถูกอัปเดตภายหลัง)
