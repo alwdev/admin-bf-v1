@@ -432,13 +432,13 @@ class ManageMemberController extends Controller
     public function memberEditBalance(Request $request)
     {
 
-        Log::info("edit balance =" . $request->balance . "user_id =" . $request->user_id . " member_id =" . $request->member_id . " type = " . $request->type);
+        Log::info("edit balance =" . $request->balance . " member_id =" . $request->member_id . " type = " . $request->type." Balance = " . $request->balance);
 
         $update_balance = 0;
         $member = Members::find($request->member_id);
         if ($member) {
             $old_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
-
+            Log::info("Old Balance = " . $old_balance . " Member = " . $member->username);
             if ($old_balance < $request->balance) {
                 $update_balance = $request->balance - $old_balance;
                 Log::info(" + Deposit update_balance =" . $update_balance);
@@ -482,7 +482,7 @@ class ManageMemberController extends Controller
             //     'balance' => $currentBalance,
             //     'edit_balance' => $new_balance,
             // ]);
-            Log::info("MemberEditBalance created for user_id = " . $request->user_id . " member_id = " . $request->member_id . " amount = " . $amount2 . " type = " . $request->type);
+            Log::info("MemberEditBalance created for  member_id = " . $request->member_id . " amount = " . $amount2 . " type = " . $request->type);
             return redirect()->route('managemember.index')->with('success', 'success');
         }else {
             Log::error("Member not found for member_id = " . $request->member_id);
