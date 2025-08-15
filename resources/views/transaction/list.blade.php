@@ -114,6 +114,7 @@
                                             target="_blank" rel="noopener">
                                             {{ short_middle($item->withdraw_bank_no, 5, 5) }}
                                         </a> <br>
+                                        {{ $item->withdraw_bank_name }}
                                     @endif
                                 </td>
                                 <td>
