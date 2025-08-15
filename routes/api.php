@@ -70,3 +70,6 @@ Route::post('/Wallet-callback', [App\Http\Controllers\AppWalletController::class
 Route::post('/helio-callback', [App\Http\Controllers\AppWalletController::class, 'helio_callback']);
 //Moonpay
 Route::post('/moonpay_handle', [App\Http\Controllers\AppWalletController::class, 'moonpay_handle']);
+
+//crypto_deposit
+Route::post('/crypto_deposit', [App\Http\Controllers\TransactionController::class, 'crypto_deposit']);
