@@ -59,6 +59,7 @@
                             @if (json_decode(auth()->user()->permissions)->transfer > 2)
                                 <th data-sortable="true"></th>
                             @endif
+                            <th>Transaction Hash</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -79,12 +80,19 @@
                                 <td>
                                     @if ($item->type == 'deposit')
                                         <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
-                                        {{ $item->deposit_from_bank_no }} <br>
-                                        {{ $item->deposit_from_bank_name }}
+                                        <a class="hash-pill"
+                                            href="https://bscscan.com/address/{{ $item->deposit_from_bank_no }}"
+                                            target="_blank" rel="noopener">
+                                            {{ short_middle($item->deposit_from_bank_no, 10, 8) }}
+                                        </a> <br>
+
                                     @elseif($item->type == 'withdraw')
                                         <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
-                                        {{ $item->deposit_from_bank_no }} <br>
-                                        {{ $item->withdraw_bank_name }}
+                                        <a class="hash-pill"
+                                            href="https://bscscan.com/address/{{ $item->deposit_from_bank_no }}"
+                                            target="_blank" rel="noopener">
+                                            {{ short_middle($item->deposit_from_bank_no, 10, 8) }}
+                                        </a> <br>
                                     @else
                                         {{ $item->order_id }}
                                     @endif
@@ -92,12 +100,20 @@
                                 <td>
                                     @if ($item->type == 'deposit')
                                         <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
-                                        {{ $item->deposit_to_bank_no }} <br>
+                                        <a class="hash-pill"
+                                            href="https://bscscan.com/address/{{ $item->deposit_to_bank_no }}"
+                                            target="_blank" rel="noopener">
+                                            {{ short_middle($item->deposit_to_bank_no, 10, 8) }}
+                                        </a>
+                                        <br>
                                         {{ $item->deposit_to_bank_name }} {{ $item->deposit_to_bank_type }}
                                     @elseif($item->type == 'withdraw')
                                         <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
-                                        {{ $item->withdraw_bank_no }} <br>
-                                        {{ $item->withdraw_bank_name }}
+                                        <a class="hash-pill"
+                                            href="https://bscscan.com/address/{{ $item->withdraw_bank_no }}"
+                                            target="_blank" rel="noopener">
+                                            {{ short_middle($item->withdraw_bank_no, 10, 8) }}
+                                        </a> <br>
                                     @endif
                                 </td>
                                 <td>
@@ -248,8 +264,14 @@
                                 <a href="#" type="button" class="btn btn-outline-primary    btn-sm  waves-effect waves-light"><i class="bx bx-undo"></i></a> --}}
                                     </td>
                                 @endif
+                                <td><a class="hash-pill"
+                                            href="https://bscscan.com/tx/{{$item->ref_id}}"
+                                            target="_blank" rel="noopener">
+                                            {{ short_middle($item->ref_id, 10, 8) }}
+                                        </a></td>
                             </tr>
                         @endforeach
+
                     </tbody>
                 </table>
 
