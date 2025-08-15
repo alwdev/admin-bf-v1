@@ -47,6 +47,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Coin Name</th>
+                                    <th>Coin Symbol</th>
                                     <th>Price $USD</th>
                                     <th>Edit</th>
                                 </tr>
@@ -56,6 +57,7 @@
                                     <tr data-id="{{ $coin->id }}">
                                         <td>{{ $coin->id }}</td>
                                         <td class="coin-name">{{ $coin->name }}</td>
+                                        <td class="coin-symbol">{{ $coin->symbol }}</td>
                                         <td>
                                             <span class="coin-price">{{ $coin->price }}</span>
                                         </td>
