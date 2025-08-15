@@ -48,7 +48,7 @@
                 @endif
                 <li class="menu-title">{{__('main.setting')}}</li>
                 <li>
-                    <a href="{{ route('bankaccount.index') }}" class="waves-effect"><i class='bx bxs-bank'></i><span>{{ __('main.book_bank')}}</span></a>
+                    <a href="{{ route('crypto.index') }}" class="waves-effect"><i class='bx bx-bitcoin'></i><span>Coin setting</span></a>
                 </li>
                 <li>
                     <a href="{{ route('provider.index') }}" class="waves-effect"><i class='bx bx-joystick'></i><span>{{__('main.game_cate')}}</span></a>

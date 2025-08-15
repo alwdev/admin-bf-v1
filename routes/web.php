@@ -177,6 +177,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/article/{id}', [App\Http\Controllers\ArticleController::class, 'destroy'])->name('article.destroy');
     Route::post('upload-image', [App\Http\Controllers\ArticleController::class, 'upload']);
 
+    Route::get('/crypto', [App\Http\Controllers\CyptoController::class, 'index'])->name('crypto.index');
+    Route::post('/crypto/store', [App\Http\Controllers\CyptoController::class, 'store'])->name('crypto.store');
+    Route::post('/crypto/update/', [App\Http\Controllers\CyptoController::class, 'update'])->name('crypto.update');
+
     // Route::get('/download', function () {
     //     $file="{{ asset('document.pdf')}}";
     //     return Response::download($file);

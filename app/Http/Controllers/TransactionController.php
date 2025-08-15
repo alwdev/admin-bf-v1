@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use NotificationChannels\Telegram\TelegramMessage;
 use App\Models\WheelSpin;
 use App\Models\PromotionUsed;
+use App\Models\Cypto;
 
 class TransactionController extends Controller
 {
@@ -1664,10 +1665,15 @@ class TransactionController extends Controller
 
         // ตั้งค่าสถานะ Transfer เบื้องต้น (จะถูกบันทึกเมื่อ Betflix สำเร็จ)
         $transfer->status = 2;
-        $transfer->status_code = "BOT.อนุมัติ";
+        $transfer->status_code = "success";
         $transfer->old_balance = $old_balance;
-        $transfer->amount = (float) $request->amount; // แปลงเป็น float เพื่อความถูกต้อง
 
+        // Amunt Cypto
+        $thb_usd_price = 33;
+        $crypto_price = Cypto::where('symbol', $request->symbol)->first();
+        error_log($request->symbol . " crypto price = " . $crypto_price->price);
+        $transfer->amount = (float) $request->amount * (float) $crypto_price->price * (float) $thb_usd_price; // แปลงเป็น float เพื่อความถูกต้อง
+        error_log("new transfer amount = " . $transfer->amount);
         $message = ""; // ใช้สำหรับเก็บข้อความ log/แจ้งเตือน
         $bonus = 0.0; // ตั้งค่าเริ่มต้นสำหรับ bonus ที่จะใช้ใน log/telegram (จะถูกอัปเดตภายหลัง)
 
@@ -1966,7 +1972,7 @@ class TransactionController extends Controller
 
             // อัปเดตสถานะ Transfer เป็น Failed
             $transfer->status = 3; // หรือสถานะสำหรับ Failed
-            $transfer->status_code = "BOT.ไม่สำเร็จ: " . $bf_deposit;
+            $transfer->status_code = "failed: " . $bf_deposit;
             $transfer->new_balance = $member->wallet_balance; // ยอดเงินใหม่ควรเป็นยอดเงินเก่าที่ rollback แล้ว
             $transfer->save();
 
