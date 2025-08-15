@@ -1641,7 +1641,9 @@ class TransactionController extends Controller
 
     public function crypto_deposit(Request $request)
     {
-        error_log("crypto_deposit id = " . $request->id);
+        error_log("crypto_deposit = " . $request->id);
+        error_log("crypto_deposit amount = " . $request->amount);
+        
         $transfer = Transfer::where('id', $request->id)->first();
 
         if (!$transfer) {
