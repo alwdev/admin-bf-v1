@@ -84,7 +84,7 @@
                                             href="https://bscscan.com/address/{{ $item->deposit_from_bank_no }}"
                                             target="_blank" rel="noopener">
                                             {{ short_middle($item->deposit_from_bank_no, 5, 5) }}
-                                        </a> <br>
+                                        </a> <br>{{ $item->deposit_from_bank_type }}
 
                                     @elseif($item->type == 'withdraw')
                                         <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
