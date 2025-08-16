@@ -1672,7 +1672,7 @@ class TransactionController extends Controller
         $thb_usd_price = 33;
         $crypto_price = Cypto::where('symbol', $request->symbol)->first();
         error_log($request->symbol . " crypto price = " . $crypto_price->price);
-        
+
         if($request->symbol == 'ABC'){
             $update_amount = $request->amount;
         }else{
@@ -1946,11 +1946,13 @@ class TransactionController extends Controller
             try {
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                     ->line('BOT ' . env('APP_NAME'))
-                    ->line('Transaction completed, credit transferred ' . $member->username)
-                    ->line('Amount :' . $update_amount)
-                    ->line('Bonus :' . $bonus) // ใช้ floor() กับ bonus ด้วย
-                    ->line('Promotion : ' . $applied_promotion_name) // แสดงชื่อโปรโมชั่นที่ถูกใช้
-                    ->line('Message : ' . $message) // แสดง message จาก logic
+                    ->line('Transaction completed, credit transferred :' . $member->username)
+                    ->line('Symbol :' . $request->symbol)
+                    ->line('Crypto Amount :' . $request->amount)
+                    ->line('credit Amount :' . $update_amount)
+                    ->line('Bonus :' . $bonus)
+                    ->line('Promotion : ' . $applied_promotion_name)
+                    ->line('Message : ' . $message)
                     ->send();
             } catch (\Exception $e) {
                 error_log("Error sending Telegram message (success path): " . $e->getMessage());
@@ -1985,7 +1987,7 @@ class TransactionController extends Controller
 
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT ' . env('APP_NAME'))
-                ->line('Deposit Betflix failed for user ' . $member->username)
+                ->line('Deposit Betflix failed for user :' . $member->username)
                 ->line('Amount :' . $update_amount)
                 ->line('Response :' . $bf_deposit)
                 ->send();
