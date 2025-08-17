@@ -161,7 +161,8 @@
                                 @endif
                             </td>
                             <td>
-                                <button href="่javascript:void(0);" data-toggle="modal" data-target="#exampleModal{{ $key }}" type="button" class="btn btn-secondary  btn-sm waves-effect waves-light">{{__('managemember.BankAccount')}}</button>
+                                <button href="่javascript:void(0);" data-toggle="modal" data-target="#exampleModal{{ $key }}"
+                                type="button" class="btn btn-secondary  btn-sm waves-effect waves-light">wallet address</button>
                                 <!-- Modal -->
                                 <div class="modal fade" id="exampleModal{{ $key }}" tabindex="-1" aria-labelledby="exampleModal{{ $key }}Label" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -173,68 +174,10 @@
                                           </button>
                                         </div>
                                         <div class="modal-body text-center">
-                                            @switch($member->bank_name)
-                                            @case("ธนาคารกรุงเทพ")
-                                                    <img src="{{ asset('images/bank/bbl.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                @case("ธนาคารกสิกรไทย")
-                                                    <img src="{{ asset('images/bank/kbank.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                @case("ธนาคารกรุงไทย")
-                                                    <img src="{{ asset('images/bank/ktb.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                @case("ธนาคารทหารไทยธนชาต")
-                                                    <img src="{{ asset('images/bank/ttb.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                @case("ธนาคารไทยพาณิชย์")
-                                                    <img src="{{ asset('images/bank/scb.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                @case("ธนาคารกรุงศรีอยุธยา")
-                                                    <img src="{{ asset('images/bank/bay.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                @case("ธนาคารเกียรตินาคินภัทร")
-                                                    <img src="{{ asset('images/bank/kk.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                @case("ธนาคารซีไอเอ็มบีไทย")
-                                                    <img src="{{ asset('images/bank/cimb.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                @case("ธนาคารทิสโก้")
-                                                    <img src="{{ asset('images/bank/tisco.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                @case("ธนาคารยูโอบี")
-                                                    <img src="{{ asset('images/bank/uob.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                @case("ธนาคารไทยเครดิต")
-                                                    <img src="{{ asset('images/bank/tcrb.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                @case("ธนาคารออมสิน")
-                                                    <img src="{{ asset('images/bank/gsb.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                @case("ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร")
-                                                    <img src="{{ asset('images/bank/baac.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                @case("askmepay")
-                                                    <img src="{{ asset('images/bank/askmepay.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                @case("TrueMoney Wallet")
-                                                    <img src="{{ asset('images/bank/truemoney.png') }}" width="80" class="bank-logo">
-                                                    @break
-                                                      @case("ธนาคารการค้า")
-                                                <img id="member_deposit_img_bank_logo" src="{{ asset('images/bank/bcel.jpg') }}"  width="80" class="bank-logo">
-                                                @break
-                                            @case("ธนาคารลาวพัฒนา")
-                                                <img id="member_deposit_img_bank_logo" src="{{ asset('images/bank/trust.jpg') }}"  width="80" class="bank-logo">
-                                                @break
-                                            @case("ธนาคารJDB")
-                                                <img id="member_deposit_img_bank_logo" src="{{ asset('images/bank/jdb.jpg') }}"  width="80" class="bank-logo">
-                                                @break
-                                                @default
-                                                    <div style="width:40px;height:40px;background:#E3A941;"></div>
-                                            @endswitch
-                                            <br/>
-                                            <h3>{{ $member->bank_name }}</h3>
-                                            <h3>{{ $member->account_name }}</h3>
-                                            <h3>{{ $member->bank_number }}</h3>
+
+                                            <p>{{ $member->wallet_address }}</p>
+                                            {{-- <h3>{{ $member->account_name }}</h3>
+                                            <h3>{{ $member->bank_number }}</h3> --}}
                                         </div>
                                         <div class="modal-footer">
                                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -248,7 +191,7 @@
                                     <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="updateBankAccount{{ $key }}Label">{{__('managemember.Edit_bank_account')}}</h5>
+                                          <h5 class="modal-title" id="updateBankAccount{{ $key }}Label">Edit wallet address</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
@@ -258,38 +201,14 @@
                                             @csrf
                                             <input type="hidden" name="member_id" value="{{ $member->id }}" required>
                                             <input type="hidden" name="user_id" value="{{ Auth::user()->id }}" required>
+
                                             <div class="col-12  mb-3">
                                                 <div class="form-group">
-                                                    <input type="hidden" value="" name="bank_logo" id="bank_logo">
-                                                    <select name="bank_name" id="bank_name" required class="form-control" onchange="$('#bank_code{{ $key }}').val(this.options[this.selectedIndex].getAttribute('code'))">
-                                                        <option value="">{{__('managemember.Select_a_bank')}}</option>
-                                                        <option code="true-wallet" value="TrueMoney Wallet" @if($member->bank_name == "TrueMoney Wallet") selected @endif>TrueMoney Wallet</option>
-                                                        <option code="bank-1" value="ธนาคารกรุงเทพ" @if($member->bank_name == "ธนาคารกรุงเทพ") selected @endif>ธนาคารกรุงเทพ</option>
-                                                        <option code="bank-0" value="ธนาคารกสิกรไทย" @if($member->bank_name == "ธนาคารกสิกรไทย") selected @endif>ธนาคารกสิกรไทย</option>
-                                                        <option code="bank-2" value="ธนาคารกรุงไทย" @if($member->bank_name == "ธนาคารกรุงไทย") selected @endif>ธนาคารกรุงไทย</option>
-                                                        <option code="bank-3" value="ธนาคารทหารไทยธนชาต" @if($member->bank_name == "ธนาคารทหารไทยธนชาต") selected @endif>ธนาคารทหารไทยธนชาต</option>
-                                                        <option code="bank-4" value="ธนาคารไทยพาณิชย์" @if($member->bank_name == "ธนาคารไทยพาณิชย์") selected @endif>ธนาคารไทยพาณิชย์</option>
-                                                        <option code="bank-10" value="ธนาคารกรุงศรีอยุธยา" @if($member->bank_name == "ธนาคารกรุงศรีอยุธยา") selected @endif>ธนาคารกรุงศรีอยุธยา</option>
-                                                        <option code="bank-25" value="ธนาคารเกียรตินาคินภัทร" @if($member->bank_name == "ธนาคารเกียรตินาคินภัทร") selected @endif>ธนาคารเกียรตินาคินภัทร</option>
-                                                        <option code="bank-8" value="ธนาคารซีไอเอ็มบีไทย" @if($member->bank_name == "ธนาคารซีไอเอ็มบีไทย") selected @endif>ธนาคารซีไอเอ็มบีไทย</option>
-                                                        <option code="bank-24" value="ธนาคารทิสโก้" @if($member->bank_name == "ธนาคารทิสโก้") selected @endif>ธนาคารทิสโก้</option>
-                                                        <option code="bank-9" value="ธนาคารยูโอบี" @if($member->bank_name == "ธนาคารยูโอบี") selected @endif>ธนาคารยูโอบี</option>
-                                                        {{-- <option code="014" value="ธนาคารไทยเครดิต" @if($member->bank_name == "ธนาคารไทยเครดิต") selected @endif>{{ trans('register.CREDIT') }}</option> --}}
-                                                        <option code="bank-11" value="ธนาคารออมสิน" @if($member->bank_name == "ธนาคารออมสิน") selected @endif>ธนาคารออมสิน</option>
-                                                        <option code="bank-15" value="ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร" @if($member->bank_name == "ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร") selected @endif>ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร</option>
-                                                        <option code="bank-16" value="ธนาคารการค้า" @if($member->bank_name == "ธนาคารการค้า") selected @endif>ธนาคารการค้า</option>
-                                                        <option code="bank-17" value="ธนาคารลาวพัฒนา" @if($member->bank_name == "ธนาคารลาวพัฒนา") selected @endif>ธนาคารลาวพัฒนา</option>
-                                                        <option code="bank-18" value="ธนาคารJDB" @if($member->bank_name == "ธนาคารJDB") selected @endif>ธนาคารJDB</option>
-                                                    </select>
+                                                    <label for="">wallet address</label>
+                                                    <input type="text" class="form-control w-100" id="wallet_address{{ $key }}" name="wallet_address" value="{{ $member->wallet_address }}"  autofocus autocomplete="wallet_address" required>
                                                 </div>
                                             </div>
-                                            <div class="col-12  mb-3">
-                                                <div class="form-group">
-                                                    <label for="">{{__('managemember.Bank_Code')}}</label>
-                                                    <input type="text" class="form-control w-100" id="bank_code{{ $key }}" name="bank_code" value="{{ $member->bank_code }}" readonly autofocus autocomplete="bank_code" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-12  mb-3">
+                                            {{-- <div class="col-12  mb-3">
                                                 <div class="form-group">
                                                     <label for="">{{__('managemember.Account_number')}}</label>
                                                     <input type="text" class="form-control w-100" name="bank_number" value="{{ $member->bank_number }}"  onkeypress="return isNumber(event)" autofocus autocomplete="bank_number" required>
@@ -300,7 +219,7 @@
                                                     <label for="">{{__('managemember.BankAccount')}}</label>
                                                     <input type="text" class="form-control w-100" name="account_name"  value="{{ $member->account_name }}" autofocus autocomplete="account_name" required>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <div class="modal-footer">
                                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

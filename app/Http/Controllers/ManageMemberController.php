@@ -497,10 +497,11 @@ class ManageMemberController extends Controller
     {
         // dd($request);
         $member_ = Members::find($request->member_id);
-        $member_->bank_name = $request->bank_name;
-        $member_->bank_number = $request->bank_number;
-        $member_->account_name = $request->account_name;
-        $member_->bank_code = $request->bank_code;
+        // $member_->bank_name = $request->bank_name;
+        // $member_->bank_number = $request->bank_number;
+        // $member_->account_name = $request->account_name;
+        // $member_->bank_code = $request->bank_code;
+        $member_->wallet_address = $request->wallet_address;
         $member_->save();
         return redirect()->route('managemember.index')->with('success', 'success');
     }
