@@ -1888,7 +1888,7 @@ class TransactionController extends Controller
         }
 
         error_log("Bonus for Telegram = " . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
-        
+
         $key = "deposit_lock:{$member->username}:{$amount_betflix}";
         if (Cache::has($key)) {
             Log::info('!!! Duplicate request detected for user: ' . $member->username . ' with amount: ' . $amount_betflix);
@@ -1952,6 +1952,8 @@ class TransactionController extends Controller
             }
             $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
             try {
+                $url = "https://bscscan.com/address/".$transfer->ref_id;
+                Log::info("bscscan url = " . $url);
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                     ->line('BOT ' . env('APP_NAME'))
                     ->line('Transaction completed, credit transferred :' . $member->username)
@@ -1961,9 +1963,11 @@ class TransactionController extends Controller
                     ->line('Bonus :' . $bonus)
                     ->line('Promotion : ' . $applied_promotion_name)
                     ->line('Message : ' . $message)
+                    //  ->button('BSCSCAN', $url)
                     ->send();
             } catch (\Exception $e) {
                 error_log("Error sending Telegram message (success path): " . $e->getMessage());
+                Log::error("Error sending Telegram message (success path): " . $e->getMessage());
             }
             return 200;
         } else {
