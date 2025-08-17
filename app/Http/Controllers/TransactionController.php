@@ -22,6 +22,7 @@ use NotificationChannels\Telegram\TelegramMessage;
 use App\Models\WheelSpin;
 use App\Models\PromotionUsed;
 use App\Models\Cypto;
+use Illuminate\Support\Facades\Cache;
 
 class TransactionController extends Controller
 {
@@ -1669,14 +1670,13 @@ class TransactionController extends Controller
         $transfer->old_balance = $old_balance;
 
         // Amunt Cypto
-        $thb_usd_price = 33;
-        $crypto_price = Cypto::where('symbol', $request->symbol)->first();
-        error_log($request->symbol . " crypto price = " . $crypto_price->price);
+        $thb_usd_price = 33; ///Thai Bath
+        $crypto_price = Cypto::where('symbol', $request->symbol)->first();  // เช็คราคา crypto price/Dolla from Database
 
-        if($request->symbol == 'ABC'){
+        if ($request->symbol == 'ABC') {    ////  ABC
             $update_amount = $request->amount;
-        }else{
-            $update_amount = $request->amount * (float) $crypto_price->price * (float) $thb_usd_price; // แปลงเป็น float เพื่อความถูกต้อง
+        } else {
+            $update_amount = $request->amount * (float) $crypto_price->price * (float) $thb_usd_price; // USDT FNX
         }
 
         $transfer->amount = (float) $update_amount; // แปลงเป็น float เพื่อความถูกต้อง
@@ -1888,10 +1888,18 @@ class TransactionController extends Controller
         }
 
         error_log("Bonus for Telegram = " . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
-
+        
+        $key = "deposit_lock:{$member->username}:{$amount_betflix}";
+        if (Cache::has($key)) {
+            Log::info('!!! Duplicate request detected for user: ' . $member->username . ' with amount: ' . $amount_betflix);
+            return 400; // ถ้ามีการล็อกอยู่ แสดงว่ามีการเรียกซ้ำ
+        }
+        Cache::put($key, true, 1); // ล็อก 1 วินาที
         $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
         Log::info('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
         error_log('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
+        Cache::forget($key);
+
         // $bf_deposit = "success";
         if ($bf_deposit == "success") {
             error_log("crypto_deposit bf_deposit success");
