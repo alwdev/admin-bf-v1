@@ -48,6 +48,7 @@
                         <tr>
                             <th data-field="member_id" data-filter-control="input" data-sortable="true">{{__('managemember.user_code')}}</th>
                             <th data-field="username" data-filter-control="input" data-sortable="true">{{__('managemember.user_name')}}</th>
+                            <th data-field="email" data-filter-control="input" data-sortable="true">email</th>
                             @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
                             <th>{{__('managemember.password')}}</th>
                             @endif
@@ -72,6 +73,7 @@
 
                             <td>{{ $member->member_id }}</td>
                             <td>{{ $member->username }}</td>
+                            <td>{{ $member->email }}</td>
                             @if( json_decode(auth()->user()->permissions)->manageuser > 2  )
                             {{-- <td><button type="button" class="btn btn-primary btn-sm waves-effect waves-light" onclick="changePass('{{ $member->id }}')"><i class="bx bx-edit-alt"></i>เปลียน</button>
                             </td> --}}
