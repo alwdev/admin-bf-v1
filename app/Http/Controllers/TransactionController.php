@@ -1954,7 +1954,7 @@ class TransactionController extends Controller
             try {
                 $url ="";
                 if($transfer->ref_id != null && $transfer->ref_id != ""){
-                    $url = "https://bscscan.com/address/".$transfer->ref_id;
+                    $url = "https://bscscan.com/tx/".$transfer->ref_id;
                 }
                 Log::info("bscscan url = " . $url);
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
