@@ -114,7 +114,7 @@
                     {{-- <h3 class="my-3 @if ((float) $total_withdraw - (float) $total_withdraw > 0) text-success @elseif((float) $total_withdraw - (float) $total_withdraw < 0) text-danger @endif">{{ number_format((float) $total_withdraw - (float) $total_withdraw,2) }} ฿</h3> --}}
                     <h3 class="my-3">{{ number_format((float) $total_profit, 2) }} <span
                             style="font-size: 14px;color:rgb(145, 143, 143);">ABC</span></h3>
-                     <div class="row text-center mt-4">
+                    <div class="row text-center mt-4">
                         <div class="col-4">
                             <h5 class="mb-0 text-danger">{{ number_format((float) $amount__, 2) }}</h5>
                             <p class="text-muted font-size-14 mb-0">ABC</p>
@@ -237,13 +237,33 @@
                     <h6 class="text-muted text-uppercase mt-0">{{ __('dashboard.Balance') }} <span
                             class="badge rounded-pill text-bg-primary"
                             style="font-weight: 300;background: green;color: white;">{{ __('dashboard.Bankquantity') }}
-                            {{ $banks->count() }} {{ __('dashboard.BankAccount') }}</span></h6>
-                    <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $banks->sum('balance'), 2) }}
-                    </h3>
+                            0xF7259643d1913878CEB3...</span></h6>
+                    {{-- <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $banks->sum('balance'), 2) }}
+                    </h3> --}}
+                    <div class="row text-center mt-4">
+                        <div class="col-4">
+                            <h5 class="mb-0 text-danger">
+                                {{ number_format((float) $amount__ > 0 ? (float) $amount__ : 0, 2) }}
+                            </h5>
+                            <p class="text-muted font-size-14 mb-0">ABC</p>
+                        </div>
+                        <div class="col-4">
+                            <h5 class="mb-0 text-primary">
+                                {{ number_format((float) $total__ > 0 ? (float) $total__ : 0, 2) }}
+                            </h5>
+                            <p class="text-muted font-size-14 mb-0">USDF</p>
+                        </div>
+                        <div class="col-4">
+                            <h5 class="mb-0 text-success">
+                                {{ number_format((float) $total__ > 0 ? (float) $total__ : 0, 2) }}
+                            </h5>
+                            <p class="text-muted font-size-14 mb-0">USDT</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        @php
+        {{-- @php
             $all_bank = \App\Models\Bank::where('enable', 1)->get();
         @endphp
         @foreach ($all_bank as $a_bank)
@@ -252,7 +272,6 @@
                     <div class="card-body">
                         <div class="avatar-sm float-right">
                             <span class="avatar-title bg-soft-primary rounded-circle">
-                                {{-- <i class="bx bx-dollar-circle m-0 h3 text-primary"></i> --}}
                                 <img src="{{ asset('images/dashboard_icon/bank.png') }}" alt="" width="32">
                             </span>
                         </div>
@@ -264,7 +283,7 @@
                     </div>
                 </div>
             </div>
-        @endforeach
+        @endforeach --}}
 
 
 
