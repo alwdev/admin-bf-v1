@@ -346,11 +346,9 @@ class PartnerController extends Controller
                     // การเรียก API ภายนอกควรถูกย้ายไปทำใน Background Job หากมีจำนวนมาก
                     $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, $diff1, $diff2);
                     if ($bf_total_bet) {
-                        if($bf_total_bet->valid_amount > 0){
-                            $total_bet += $bf_total_bet->valid_amount;
-                        $winlose += $bf_total_bet->winloss;
-                        }
 
+                        $total_bet += $bf_total_bet->valid_amount;
+                        $winlose += $bf_total_bet->winloss;
                     }
                 } catch (\Exception $e) {
                     // ไม่ควรใช้ dd() ในโค้ดจริง

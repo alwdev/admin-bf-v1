@@ -125,7 +125,7 @@
                                       </tr>`);
                 },
                 success: function(response) {
-                    console.log(response);
+                    // console.log(response);
                     let tableBody = $('#table tbody');
                     tableBody.empty(); // เคลียร์ loading spinner
                     if (response.length > 0) {
