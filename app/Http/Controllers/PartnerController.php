@@ -334,55 +334,62 @@ class PartnerController extends Controller
         $targetDate2 = Carbon::parse($date2);
         $diff2 = $now->diffInDays($targetDate2, false);
 
-        if ($underMembers->count() > 0) {
-            // ลบ set_time_limit(3000000000); ออก
-            foreach ($underMembers as $under_member) {
-                // ลบคำสั่ง sleep(3); ออก
+if ($underMembers->count() > 0) {
+    // ลบ set_time_limit(3000000000); ออก
+    foreach ($underMembers as $under_member) {
+        // ลบคำสั่ง sleep(3); ออก
 
-                $total_bet = 0;
-                $winlose = 0;
+        $total_bet = 0;
+        $winlose = 0;
 
-                try {
-                    // การเรียก API ภายนอกควรถูกย้ายไปทำใน Background Job หากมีจำนวนมาก
-                    $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, $diff1, $diff2);
-                    if ($bf_total_bet) {
+        try {
+            // การเรียก API ภายนอกควรถูกย้ายไปทำใน Background Job หากมีจำนวนมาก
+            $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, $diff1, $diff2);
+            if ($bf_total_bet) {
 
-                        $total_bet += $bf_total_bet->valid_amount;
-                        $winlose += $bf_total_bet->winloss;
-                    }
-                } catch (\Exception $e) {
-                    // ไม่ควรใช้ dd() ในโค้ดจริง
-                    // ควรใช้การบันทึก Log แทน เช่น Log::error('Betflix API Error: ' . $e->getMessage());
-                    continue;
-                }
-
-                try {
-                    $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, $diff1, $diff2);
-                    if (!empty($pg_total_bet['data']) && count($pg_total_bet['data']) > 0) {
-                        $total_bet += $pg_total_bet['data'][0]['totalAmount'];
-                    }
-                } catch (\Exception $e) {
-                    // ไม่ควรใช้ dd() ในโค้ดจริง
-                    // ควรใช้การบันทึก Log แทน
-                }
-
-                if ($total_bet > 1) {
-                    $commission = abs($winlose) * ($partner->rate / 100);
-                    $total_commission = $commission; // แก้ไขให้คำนวณคอมมิชชั่นของสมาชิกแต่ละคน
-                    $membersData[] = [
-                        'total_bet' => $total_bet,
-                        'winlose' => $winlose,
-                        'rate' => $partner->rate,
-                        'partner_id' => $partner->id,
-                        'member_id' => $under_member->id,
-                        'member_username' => $under_member->username,
-                        'date1' => $date1,
-                        'date2' => $date2,
-                        'total_commission' => $total_commission,
-                    ];
+                $total_bet += $bf_total_bet->valid_amount;
+                // เพิ่มเงื่อนไขใหม่: ถ้า winloss ไม่ใช่ค่าบวก (คือน้อยกว่าหรือเท่ากับ 0) ค่อยนำมาบวก
+                if ($bf_total_bet->winloss <= 0) {
+                    $winlose += $bf_total_bet->winloss;
                 }
             }
+        } catch (\Exception $e) {
+            // ไม่ควรใช้ dd() ในโค้ดจริง
+            // ควรใช้การบันทึก Log แทน เช่น Log::error('Betflix API Error: ' . $e->getMessage());
+            continue;
         }
+
+        try {
+            $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, $diff1, $diff2);
+            if (!empty($pg_total_bet['data']) && count($pg_total_bet['data']) > 0) {
+                $total_bet += $pg_total_bet['data'][0]['totalAmount'];
+                // สำหรับ PG: เพิ่มเงื่อนไข ถ้า winlose ไม่ใช่ค่าบวก
+                if ($pg_total_bet['data'][0]['winloss'] <= 0) {
+                    $winlose += $pg_total_bet['data'][0]['winloss'];
+                }
+            }
+        } catch (\Exception $e) {
+            // ไม่ควรใช้ dd() ในโค้ดจริง
+            // ควรใช้การบันทึก Log แทน
+        }
+
+        if ($total_bet > 1) {
+            $commission = abs($winlose) * ($partner->rate / 100);
+            $total_commission = $commission; // แก้ไขให้คำนวณคอมมิชชั่นของสมาชิกแต่ละคน
+            $membersData[] = [
+                'total_bet' => $total_bet,
+                'winlose' => $winlose,
+                'rate' => $partner->rate,
+                'partner_id' => $partner->id,
+                'member_id' => $under_member->id,
+                'member_username' => $under_member->username,
+                'date1' => $date1,
+                'date2' => $date2,
+                'total_commission' => $total_commission,
+            ];
+        }
+    }
+}
     }
     return $membersData;
 }
