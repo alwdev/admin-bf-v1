@@ -48,7 +48,7 @@
                     data-pagination="true" data-url="">
                     <thead class="table-light">
                         <tr>
-                            <th data-field="SMS" data-sortable="true">SMS</th>
+                            <th data-field="SMS" data-sortable="true">Logs</th>
                             <th data-field="time" data-sortable="true">TIME</th>
                         </tr>
                     </thead>
@@ -60,7 +60,7 @@
                     <tbody>
                         @foreach ($data as $item)
                             <tr>
-                                <td>{{ $item->sms }}</td>
+                                <td>{{ $item->log }}</td>
                                 <td>{{ $item->created_at }}</td>
                             </tr>
                         @endforeach
