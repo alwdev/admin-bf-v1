@@ -160,6 +160,8 @@ class DashboardController extends Controller
                         $total_deposit_fnx += $t->amount;
                     } elseif ($t->deposit_from_bank_type == 'USDT') {
                         $total_deposit_usdt += $t->amount;
+                    }else if ($t->deposit_from_bank_type == 'KTX') {
+                        $total_deposit_ktx += $t->amount;
                     }
                     $total_deposit += $t->amount;
                 } else {
