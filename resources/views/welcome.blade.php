@@ -53,6 +53,11 @@
                             <h5 class="mb-0 text-success">{{ number_format((float) $total_deposit_usdt, 2) }}</h5>
                             <p class="text-muted font-size-14 mb-0">USDT</p>
                         </div>
+                        <div class="col-4">
+                            <h5 class="mb-0 text-warning">{{ number_format((float) $total_deposit_ktx, 2) }}</h5>
+                            <p class="text-muted font-size-14 mb-0">KTX</p>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -83,6 +88,10 @@
                         <div class="col-4">
                             <h5 class="mb-0 text-success">{{ number_format((float) $total_withdraw_usdt, 2) }}</h5>
                             <p class="text-muted font-size-14 mb-0">USDT</p>
+                        </div>
+                        <div class="col-4">
+                            <h5 class="mb-0 text-warning">{{ number_format((float) $total_withdraw_ktx, 2) }}</h5>
+                            <p class="text-muted font-size-14 mb-0">KTX</p>
                         </div>
                     </div>
                 </div>
