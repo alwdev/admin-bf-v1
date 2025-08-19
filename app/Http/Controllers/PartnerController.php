@@ -169,16 +169,24 @@ class PartnerController extends Controller
                         'log' => "total_bet : ".$total_bet
                     ]);
 
-                    if($total_bet > 1){
+                    if ($total_bet > 1) {
 
-                        $commission = abs($winlose) * ($value->rate/ 100);
-                        $total_commission += $commission;
-                        Log::info("commission ยอด winlose : ".$winlose." commission : ".$commission);
+                        $commission = 0;
+
+                        // คิดคอมเฉพาะตอนที่ winlose เป็นค่าติดลบ
+                        if ($winlose < 0) {
+                            $commission = abs($winlose) * ($value->rate / 100);
+                            $total_commission += $commission;
+                        }
+
+                        // เก็บ log เพื่อเช็คค่าจริง
+                        Log::info("commission ยอด winlose : " . $winlose . " commission : " . $commission);
+
                         Logs::create([
-                            'log' => "winlose : ".$winlose." commission : ".$commission
+                            'log' => "winlose : " . $winlose . " commission : " . $commission
                         ]);
-
                     }
+
                 }
                 if($total_commission > 0){
                     $value->total_profit = $value->total_profit + $total_commission;
@@ -365,21 +373,27 @@ class PartnerController extends Controller
                     // ควรใช้การบันทึก Log แทน
                 }
 
-                if ($total_bet > 1) {
-                    $commission = abs($winlose) * ($partner->rate / 100);
-                    $total_commission = $commission; // แก้ไขให้คำนวณคอมมิชชั่นของสมาชิกแต่ละคน
-                    $membersData[] = [
-                        'total_bet' => $total_bet,
-                        'winlose' => $winlose,
-                        'rate' => $partner->rate,
-                        'partner_id' => $partner->id,
-                        'member_id' => $under_member->id,
-                        'member_username' => $under_member->username,
-                        'date1' => $date1,
-                        'date2' => $date2,
-                        'total_commission' => $total_commission,
-                    ];
+              if ($total_bet > 1) {
+                                $commission = 0;
+
+                                // คำนวณเฉพาะกรณีที่ winlose เป็นค่าติดลบ
+                                if ($winlose < 0) {
+                                    $commission = abs($winlose) * ($partner->rate / 100);
+                                }
+
+                                $membersData[] = [
+                                    'total_bet' => $total_bet,
+                                    'winlose' => $winlose,
+                                    'rate' => $partner->rate,
+                                    'partner_id' => $partner->id,
+                                    'member_id' => $under_member->id,
+                                    'member_username' => $under_member->username,
+                                    'date1' => $date1,
+                                    'date2' => $date2,
+                                    'total_commission' => $commission,
+                                ];
                 }
+
             }
         }
     }
