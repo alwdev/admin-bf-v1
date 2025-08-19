@@ -53,7 +53,7 @@
                         </tr>
                     </thead>
                     @php
-                        $data = \App\Models\Logs::where('sms', '!=', null)
+                        $data = \App\Models\Logs::where('log', '!=', null)
                             ->orderBy('created_at', 'desc')
                             ->get();
                     @endphp
