@@ -113,7 +113,7 @@ class DashboardController extends Controller
         $manual_cashback = MemberEditBalance::whereDate('created_at', Carbon::today())->where('type', 'คืนลูกค้า')->sum('amount');
 
         $banks = Bank::where('enable', 1)->where('active', 1)->get();
-        return view('welcome', compact('total_deposit_abc','total_deposit_ktx', 'total_deposit_fnx', 'total_deposit_usdt', 'total_withdraw_usdt', 'total_withdraw_usdf', 'total_withdraw_abc', 'manual_topup', 'manual_cashback', 'banks', 'total_deposit', 'total_withdraw', 'new_member', 'total_member', 'players', 'total_online', 'topgame', 'transfer', 'member_new', 'total_bonus'));
+        return view('welcome', compact('total_deposit_abc','total_deposit_ktx','total_withdraw_ktx', 'total_deposit_fnx', 'total_deposit_usdt', 'total_withdraw_usdt', 'total_withdraw_usdf', 'total_withdraw_abc', 'manual_topup', 'manual_cashback', 'banks', 'total_deposit', 'total_withdraw', 'new_member', 'total_member', 'players', 'total_online', 'topgame', 'transfer', 'member_new', 'total_bonus'));
     }
 
     public function dashboard_date(Request $request)
