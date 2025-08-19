@@ -47,8 +47,6 @@ class PartnerController extends Controller
         return view('partner.edit', compact('data'));
     }
 
-
-
     public function update(Request $request)
     {
         $request->validate([
@@ -77,7 +75,7 @@ class PartnerController extends Controller
         return substr(str_shuffle($original_string), 0, $length);
     }
 
-public function index()
+    public function index()
     {
         // ตรวจสอบ session เหมือนเดิม
         if (!session()->has('user')) {
@@ -96,88 +94,92 @@ public function index()
     }
 
     function partner_call_winlose($partner)
-{
-    // ไม่จำเป็นต้อง set_time_limit() หรือ sleep() หากโค้ดมีประสิทธิภาพ
-    // ลบ set_time_limit(3000000000); ออก
+    {
+        // ไม่จำเป็นต้อง set_time_limit() หรือ sleep() หากโค้ดมีประสิทธิภาพ
+        // ลบ set_time_limit(3000000000); ออก
 
-    $commissions = PartnerCommission::where('partner_id', $partner->id)->get();
-    $membersData = [];
+        $commissions = PartnerCommission::where('partner_id', $partner->id)->get();
+        $membersData = [];
 
-    // ดึงข้อมูลสมาชิกทั้งหมดของ Partner มาเก็บไว้ก่อน
-    $underMembers = [];
-    if ($partner->members !== null) {
-        $memberIds = json_decode($partner->members);
-        // ใช้ in_where เพื่อดึงข้อมูลสมาชิกทั้งหมดในครั้งเดียว
-        $underMembers = Members::whereIn('id', $memberIds)->get()->keyBy('id');
-    }
+        // ดึงข้อมูลสมาชิกทั้งหมดของ Partner มาเก็บไว้ก่อน
+        $underMembers = [];
+        if ($partner->members !== null) {
+            $memberIds = json_decode($partner->members);
+            // ใช้ in_where เพื่อดึงข้อมูลสมาชิกทั้งหมดในครั้งเดียว
+            $underMembers = Members::whereIn('id', $memberIds)->get()->keyBy('id');
+        }
 
-    foreach ($commissions as $commission) {
-        // ลบคำสั่ง sleep(2); ออก
+        foreach ($commissions as $commission) {
+            // ลบคำสั่ง sleep(2); ออก
 
-        $dates = explode('-', $commission->note, 4);
-        $date1 = $dates[0] . '-' . $dates[1] . '-' . $dates[2];
-        $date2 = $dates[3];
+            $dates = explode('-', $commission->note, 4);
+            $date1 = $dates[0] . '-' . $dates[1] . '-' . $dates[2];
+            $date2 = $dates[3];
 
-        $now = Carbon::now();
-        $targetDate1 = Carbon::parse($date1);
-        $diff1 = $now->diffInDays($targetDate1, false);
+            $now = Carbon::now();
+            $targetDate1 = Carbon::parse($date1);
+            $diff1 = $now->diffInDays($targetDate1, false);
 
-        $targetDate2 = Carbon::parse($date2);
-        $diff2 = $now->diffInDays($targetDate2, false);
+            $targetDate2 = Carbon::parse($date2);
+            $diff2 = $now->diffInDays($targetDate2, false);
 
-        if ($underMembers->count() > 0) {
-            // ลบ set_time_limit(3000000000); ออก
-            foreach ($underMembers as $under_member) {
-                // ลบคำสั่ง sleep(3); ออก
+            if ($underMembers->count() > 0) {
+                // ลบ set_time_limit(3000000000); ออก
+                foreach ($underMembers as $under_member) {
+                    // ลบคำสั่ง sleep(3); ออก
 
-                $total_bet = 0;
-                $winlose = 0;
+                    $total_bet = 0;
+                    $winlose = 0;
 
-                try {
-                    // การเรียก API ภายนอกควรถูกย้ายไปทำใน Background Job หากมีจำนวนมาก
-                    $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, $diff1, $diff2);
-                    if ($bf_total_bet) {
-
-                        $total_bet += $bf_total_bet->valid_amount;
-                        $winlose += $bf_total_bet->winloss;
+                    try {
+                        // การเรียก API ภายนอกควรถูกย้ายไปทำใน Background Job หากมีจำนวนมาก
+                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, $diff1, $diff2);
+                        if ($bf_total_bet) {
+                            $total_bet += $bf_total_bet->valid_amount;
+                            $winlose += $bf_total_bet->winloss;
+                        }
+                    } catch (\Exception $e) {
+                        // ไม่ควรใช้ dd() ในโค้ดจริง
+                        // ควรใช้การบันทึก Log แทน เช่น Log::error('Betflix API Error: ' . $e->getMessage());
+                        continue;
                     }
-                } catch (\Exception $e) {
-                    // ไม่ควรใช้ dd() ในโค้ดจริง
-                    // ควรใช้การบันทึก Log แทน เช่น Log::error('Betflix API Error: ' . $e->getMessage());
-                    continue;
-                }
 
-                try {
-                    $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, $diff1, $diff2);
-                    if (!empty($pg_total_bet['data']) && count($pg_total_bet['data']) > 0) {
-                        $total_bet += $pg_total_bet['data'][0]['totalAmount'];
+                    try {
+                        $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, $diff1, $diff2);
+                        if (!empty($pg_total_bet['data']) && count($pg_total_bet['data']) > 0) {
+                            $total_bet += $pg_total_bet['data'][0]['totalAmount'];
+                        }
+                    } catch (\Exception $e) {
+                        // ไม่ควรใช้ dd() ในโค้ดจริง
+                        // ควรใช้การบันทึก Log แทน
                     }
-                } catch (\Exception $e) {
-                    // ไม่ควรใช้ dd() ในโค้ดจริง
-                    // ควรใช้การบันทึก Log แทน
-                }
 
-                if ($total_bet > 1) {
-                    $commission = abs($winlose) * ($partner->rate / 100);
-                    $total_commission = $commission; // แก้ไขให้คำนวณคอมมิชชั่นของสมาชิกแต่ละคน
-                    $membersData[] = [
-                        'total_bet' => $total_bet,
-                        'winlose' => $winlose,
-                        'rate' => $partner->rate,
-                        'partner_id' => $partner->id,
-                        'member_id' => $under_member->id,
-                        'member_username' => $under_member->username,
-                        'date1' => $date1,
-                        'date2' => $date2,
-                        'total_commission' => $total_commission,
-                    ];
+                    if ($total_bet > 1) {
+                        $commission = 0;
+
+                        // คำนวณเฉพาะกรณีที่ winlose เป็นค่าติดลบ
+                        if ($winlose < 0) {
+                            $commission = abs($winlose) * ($partner->rate / 100);
+                        }
+
+                        $membersData[] = [
+                            'total_bet' => $total_bet,
+                            'winlose' => $winlose,
+                            'rate' => $partner->rate,
+                            'partner_id' => $partner->id,
+                            'member_id' => $under_member->id,
+                            'member_username' => $under_member->username,
+                            'date1' => $date1,
+                            'date2' => $date2,
+                            'total_commission' => $commission,
+                        ];
+                    }
                 }
             }
         }
+        return $membersData;
     }
-    return $membersData;
-}
-     public function getMemberWinlossData(Request $request)
+    public function getMemberWinlossData(Request $request)
     {
         // ตรวจสอบสิทธิ์การเข้าถึง (ถ้าจำเป็น)
         if (!session()->has('user')) {
