@@ -41,19 +41,19 @@
                     <h3 class="my-3">{{ number_format((float) $total_deposit, 2) }}</h3>
 
                     <div class="row text-center mt-4">
-                        <div class="col-4">
+                        <div class="col-3">
                             <h5 class="mb-0 text-primary">{{ number_format((float) $total_deposit_abc, 2) }}</h5>
                             <p class="text-muted font-size-14 mb-0">ABC</p>
                         </div>
-                        <div class="col-4">
+                        <div class="col-3">
                             <h5 class="mb-0 text-info">{{ number_format((float) $total_deposit_fnx, 2) }}</h5>
                             <p class="text-muted font-size-14 mb-0">FNX</p>
                         </div>
-                        <div class="col-4">
+                        <div class="col-3">
                             <h5 class="mb-0 text-success">{{ number_format((float) $total_deposit_usdt, 2) }}</h5>
                             <p class="text-muted font-size-14 mb-0">USDT</p>
                         </div>
-                        <div class="col-4">
+                        <div class="col-3">
                             <h5 class="mb-0 text-warning">{{ number_format((float) $total_deposit_ktx, 2) }}</h5>
                             <p class="text-muted font-size-14 mb-0">KTX</p>
                         </div>
