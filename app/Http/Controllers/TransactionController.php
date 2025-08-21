@@ -102,7 +102,7 @@ class TransactionController extends Controller
         error_log("lineNotify_tranfer acc_no = " . $request->acc_no);
 
 
-        $transfer = Transfer::where('amount', $request->amount)
+        $transfer = Transfer::where('amount',  str_replace(',', '', $request->amount))
             ->where('deposit_from_bank_no', 'like', '%' . $request->acc_no)
             ->where('type', 'deposit')
             ->where('status', 1)->first();
@@ -388,8 +388,11 @@ public function lineNotify_deposit($id)
         error_log("Bonus for Telegram = " . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
 
         $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
-        Log::info('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
-        error_log('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
+        // Log::info('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
+        // error_log('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
+        Logs::create([
+            'log' => 'Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username,
+        ]);
 // $bf_deposit = "success";
         if ($bf_deposit == "success") {
             error_log("lineNotify_deposit bf_deposit success");
@@ -484,7 +487,7 @@ public function lineNotify_deposit($id)
 
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT-LINE ' . env('APP_NAME'))
-                ->line('Deposit Betflix failed for user ' . $member->username)
+                ->line('Deposit VTEC failed for user ' . $member->username)
                 ->line('Amount :' . $transfer->amount)
                 ->line('Response :' . $bf_deposit)
                 ->send();
@@ -1171,6 +1174,9 @@ public function lineNotify_deposit($id)
         $member = Members::find($request->member_id);
         $transfer = Transfer::find($request->id);
         error_log($request->type . ' approve ' . $member->username . ' Balance =  ' . $member->wallet_balance . ' transfer amount =' . $transfer->amount);
+        Logs::create([
+            'log' => $request->type . ' approve ' . $member->username . ' Balance =  ' . $member->wallet_balance . ' transfer amount =' . $transfer->amount,
+        ]);
 
         if ($transfer->status == 2 || $transfer->status == 3) {
             return response()->json(['message' => 'Transfer approved !!!'], 401);
@@ -1595,8 +1601,10 @@ public function lineNotify_deposit($id)
 
 
         $bf_deposit =  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($amount_betflix));
-        Log::info('Deposit Betflix ' . $bf_deposit . ' amount : ' . floor($amount_betflix) . ' User =  ' . $member->username);
-
+        // Log::info('Deposit Betflix ' . $bf_deposit . ' amount : ' . floor($amount_betflix) . ' User =  ' . $member->username);
+        Logs::create([
+            'log' => 'Deposit Betflix ' . $bf_deposit . ' amount : ' . floor($amount_betflix) . ' User =  ' . $member->username,
+        ]);
         if ($bf_deposit == "success") {
 
             $wheel_setting = WheelSpin::first();
@@ -1633,6 +1641,12 @@ public function lineNotify_deposit($id)
 
             return 'success';
         } else {
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+            ->line('BOT ' . env('APP_NAME'))
+                ->line('VTEC Deposit failed for ' . $member->username)
+                ->line('จำนวน :' . $transfer->amount)
+                ->line('error :' . $bf_deposit)
+                ->send();
             return 'error';
         }
     }
