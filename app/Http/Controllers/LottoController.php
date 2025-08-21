@@ -9,9 +9,9 @@ class LottoController extends Controller
 {
     public function get_balance(Request $request)
     {
-        $log = new \App\Models\Logs;
-        $log->log = "Lotto Get Balance updated for {$request->username}";
-        $log->save();
+        // $log = new \App\Models\Logs;
+        // $log->log = "Lotto Get Balance updated for {$request->username}";
+        // $log->save();
         $member = Members::where('username', $request->username)->first();
         if (!$member) {
             return response()->json(['status' => 'error', 'message' => 'Member not found.'], 404);
