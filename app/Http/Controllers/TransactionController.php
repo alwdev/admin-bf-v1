@@ -355,7 +355,7 @@ public function lineNotify_deposit($id)
         if ($promotion_found_and_applied) {
             error_log("Applying bonus: {$bonus_to_apply} with total required turnover: {$calculated_required_turnover}");
             $member->wallet_balance = (float) $member->wallet_balance + $transfer->amount + $bonus_to_apply;
-            $amount_betflix = $transfer->amount + $bonus_to_apply;
+            $amount_betflix =(float) $transfer->amount + $bonus_to_apply;
             $transfer->promotion = $applied_promotion_name;
             // *** NEW: บันทึกยอด Turnover ที่ต้องทำจริง ***
             // $transfer->required_turnover_amount = $calculated_required_turnover; // สมมติว่ามี column นี้ในตาราง transfers
@@ -386,12 +386,10 @@ public function lineNotify_deposit($id)
         }
 
         error_log("Bonus for Telegram = " . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
-
-        $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
-        // Log::info('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
-        // error_log('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
+        $amount_betflix = floor($amount_betflix); // ปัดเศษลงเพื่อให้เป็นจำนวนเต็ม
+        $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, $amount_betflix);
         Logs::create([
-            'log' => 'Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username,
+            'log' => 'Deposit Betflix ' . $bf_deposit . ' ' . $amount_betflix . ' User = ' . $member->username .' amount: ' . $transfer->amount.'bonus '. $bonus_to_apply,
         ]);
 // $bf_deposit = "success";
         if ($bf_deposit == "success") {
