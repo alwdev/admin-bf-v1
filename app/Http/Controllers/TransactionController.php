@@ -2002,7 +2002,7 @@ class TransactionController extends Controller
 
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT ' . env('APP_NAME'))
-                ->line('Deposit Betflix failed for user :' . $member->username)
+                ->line('Deposit V-TECH failed for user :' . $member->username)
                 ->line('Amount :' . $update_amount)
                 ->line('Response :' . $bf_deposit)
                 ->send();

@@ -65,6 +65,7 @@ Route::post('/get_balabce', [App\Http\Controllers\LottoController::class, 'get_b
 Route::post('/update_balance', [App\Http\Controllers\LottoController::class, 'update_balance']);
 Route::post('/lottobet', [App\Http\Controllers\LottoController::class, 'bet']);
 Route::post('/lottowin', [App\Http\Controllers\LottoController::class, 'win']);
+Route::post('/lottorefun', [App\Http\Controllers\LottoController::class, 'refun']);
 
 //AppWalletController
 Route::post('/Wallet-callback', [App\Http\Controllers\AppWalletController::class, 'callback']);
