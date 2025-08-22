@@ -13,8 +13,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->call('App\Http\Controllers\ManageMemberController@cash_back');
+        // $schedule->call('App\Http\Controllers\ManageMemberController@cash_back');
         // $schedule->call('App\Http\Controllers\HistoryController@get_supergame');
+        // $schedule->command('partner:commission')->dailyAt('23:55');
+         $schedule->command('partner:commission')->everyMinute();
     }
 
     /**
