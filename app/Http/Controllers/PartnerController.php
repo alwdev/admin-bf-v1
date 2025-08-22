@@ -101,6 +101,17 @@ class PartnerController extends Controller
 
         Log::info("Run Check Partner Commission");
         Logs::create(['log' => 'BOT เริ่มทำการ ส่วนแบ่ง Partner']);
+        try {
+            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line(env('APP_NAME'))
+                ->line('BOT เริ่มทำการ ส่วนแบ่ง Partner')
+                ->send();
+        } catch (\Exception $e) {
+            Log::error('Telegram error: '.$e->getMessage());
+        }
+        Logs::create([
+            'log' => 'BOT เริ่มทำการ ส่วนแบ่ง Partner'
+        ]);
 
         $partners = Partner::all();
         Log::info("Total Partner: ".count($partners));
@@ -112,6 +123,10 @@ class PartnerController extends Controller
         Log::info('Dispatched all partner commissions');
         Logs::create(['log' => 'Dispatched all partner commissions']);
 
+        TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+            ->line(env('APP_NAME'))
+            ->line('BOT สิ้นสุดการ Run ส่วนแบ่ง Partner ')
+            ->send();
         return 'Dispatched to Queue';
     }
 
