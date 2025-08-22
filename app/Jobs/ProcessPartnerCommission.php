@@ -90,7 +90,7 @@ class ProcessPartnerCommission implements ShouldQueue
 
         if ($total_commission > 0) {
             $partner->total_profit += $total_commission;
-            // $partner->save();
+            $partner->save();
 
             $start_date = date('Y-m-d', strtotime('-1 day'));
             $end_date   = date('Y-m-d', strtotime('-1 day'));
