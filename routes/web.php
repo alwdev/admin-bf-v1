@@ -203,6 +203,7 @@ Route::get('/get_affiliate', [ManageMemberController::class, 'affiliate']);
 Route::get('/affiliate_fixdate/{date_start}/{date_end}', [ManageMemberController::class, 'affiliate_fixdate']);
 
 Route::get('/partner_call_winlose', [App\Http\Controllers\PartnerController::class, 'partner_call_winlose']);
+Route::get('/partner_call_winlose3', [App\Http\Controllers\PartnerController::class, 'partner_call_winlose3']);
 
 Route::get('/QueryBetRecordsV2', [ReportController::class, 'QueryBetRecordsV2']);
 
