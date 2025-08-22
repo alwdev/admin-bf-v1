@@ -15,6 +15,8 @@ use App\Models\Members;
 use App\Models\PartnerCommission;
 use NotificationChannels\Telegram\TelegramMessage;
 use Carbon\Carbon;
+use App\Jobs\PartnerCallWinloseJob;
+
 
 use App\Jobs\ProcessPartnerCommission;
 
@@ -544,94 +546,18 @@ class PartnerController extends Controller
         return response()->json($memberwinloss);
     }
 
-  function partner_call_winlose_by_id($partner_id = null)
-{
-    set_time_limit(3000000000);
+    function partner_call_winlose_by_id($partner_id = null)
+    {
+        // ส่ง Job ไป queue รัน background
+        PartnerCallWinloseJob::dispatch($partner_id);
 
-    // เก็บข้อมูลสมาชิกทั้งหมด
-    $membersData = [];
-
-    if ($partner_id) {
-        $partners = Partner::where('id', $partner_id)->get();
-    } else {
-        $partners = Partner::all();
+        // คืนค่าให้รู้ว่า job ถูกส่งแล้ว (optional)
+        return [
+            'status' => 'queued',
+            'partner_id' => $partner_id,
+            'message' => 'Partner commission calculation job has been dispatched.'
+        ];
     }
-
-    foreach ($partners as $value) {
-        sleep(2);
-        $total_commission = 0;
-
-        if ($value->members !== null) {
-            foreach (json_decode($value->members) as $_member) {
-                sleep(3);
-
-                $under_member = Members::where('id', $_member)->first();
-                if (!$under_member) {
-                    continue;
-                }
-
-                $total_bet = 0;
-                $winlose   = 0;
-
-                try {
-                    $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)
-                        ->Single_Member_Report_all_Provider($under_member->username, -1, -1);
-                    if ($bf_total_bet) {
-                        $total_bet = $bf_total_bet->valid_amount;
-                        $winlose   = $bf_total_bet->winloss;
-                    }
-                } catch (\Exception $e) {
-                    $total_bet = 0;
-                    $winlose   = 0;
-                    continue;
-                }
-
-                try {
-                    $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)
-                        ->pg_get_spin_summaryby_user($under_member->username, -1, -1);
-
-                    if (isset($pg_total_bet['data']) && count($pg_total_bet['data']) > 0) {
-                        $total_bet += $pg_total_bet['data'][0]['totalAmount'];
-                    }
-                } catch (\Exception $e) {
-                    // skip
-                }
-
-                if ($total_bet > 1 && $winlose < 0) {
-                    $commission = abs($winlose) * ($value->rate / 100);
-                    $total_commission += $commission;
-
-                    $start_date = date('Y-m-d', strtotime('-1 day'));
-                    $end_date   = date('Y-m-d', strtotime('-1 day'));
-
-                    $membersData[] = [
-                        'total_bet'        => $total_bet,
-                        'winlose'          => $winlose,
-                        'rate'             => $value->rate,
-                        'partner_id'       => $value->id,
-                        'member_id'        => $under_member->id,
-                        'member_username'  => $under_member->username,
-                        'date1'            => $start_date,
-                        'date2'            => $end_date,
-                        'commission'       => $commission,
-                        'total_commission' => $total_commission,
-                    ];
-
-                     PartnerCommission::create([
-                        'partner_id' => $value->id,
-                        'amount' => $total_commission,
-                        'payment_type' => 'Commission',
-                        'payment_status' => 'pending',
-                        'transaction_id' =>'',
-                        'note' => $start_date . '-' . $end_date // Corrected line
-                    ]);
-                }
-            }
-        }
-    }
-
-    return $membersData;
-}
 
 
 }
