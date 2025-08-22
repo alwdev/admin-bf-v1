@@ -20,6 +20,7 @@ use App\Models\Affiliate;
 use App\Models\WheelSpin;
 use App\Models\Setting;
 use NotificationChannels\Telegram\TelegramMessage;
+use App\Jobs\RunAffiliate;
 
 class ManageMemberController extends Controller
 {
@@ -607,148 +608,150 @@ class ManageMemberController extends Controller
         Log::info('End Cashback');
         return 'success';
     }
-
-    function affiliate()
-    {
-        // เพิ่มเวลาการทำงานของสคริปต์ เพื่อป้องกันการ Timeout
-        set_time_limit(3000000000);
-
-        // บันทึก Log และส่งข้อความ Telegram เพื่อแจ้งการเริ่มต้น
-        Log::info('Run affiliate');
-        TelegramMessage::create()->to(env('TELEGRAM_G_ID'))->line(env('APP_NAME'))->line('BOT เริ่มทำการ affiliate')->send();
-
-        // ดึงข้อมูลสมาชิกทั้งหมดที่มีผู้แนะนำ
-        $members = Members::where('ref_user', '!=', null)->get();
-        Log::info('Total Members affiliate : ' . count($members));
-
-        // วนลูปเพื่อคำนวณค่าคอมมิชชั่นสำหรับสมาชิกแต่ละคน (Member1)
-        foreach ($members as $main_member) {
-            sleep(2);
-            $total_commission = 0; // ยอดคอมมิชชั่นรวมสำหรับ main_member
-
-            Log::info('Member main (Level 1): ' . $main_member->username . ' under member count = ' . count(json_decode($main_member->ref_user)));
-
-            // ตรวจสอบว่า main_member มีผู้แนะนำหรือไม่
-            if (json_decode($main_member->ref_user)) {
-                set_time_limit(3000000000);
-
-                // วนลูปคำนวณคอมมิชชั่นจากผู้แนะนำตรง (Level 2 หรือ Member2)
-                foreach (json_decode($main_member->ref_user) as $_member_level2_id) {
-                    sleep(3);
-
-                    $under_member = Members::where('id', $_member_level2_id)->first();
-                    if (!$under_member) {
-                        continue;
-                    }
-
-                    Log::info('Under member (Level 2): ' . $under_member->username);
-
-                    // ตรวจสอบยอดเล่น/ยอดเสียของ under_member (Member2)
-                    try {
-                        $bf_total_bet_level2 = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, -1, -1);
-                        $total_bet_level2 = $bf_total_bet_level2->valid_amount ?? 0;
-                        $winlose_level2 = $bf_total_bet_level2->winloss ?? 0;
-
-                        $pg_total_bet_level2 = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, -1, -1);
-                        if (isset($pg_total_bet_level2['data'][0]['totalAmount'])) {
-                            $total_bet_level2 += $pg_total_bet_level2['data'][0]['totalAmount'];
-                        }
-                    } catch (\Exception $e) {
-                        Log::info('API Error for Level 2 member: ' . $e->getMessage());
-                        $total_bet_level2 = 0;
-                        $winlose_level2 = 0;
-                    }
-
-                    // คำนวณคอมมิชชั่นสำหรับ under_member (Member2) ที่แนะนำมาโดยตรง (Level 1 สำหรับ main_member)
-                    $affiliate = Affiliate::first();
-                    if ($affiliate->is_enable_af_winlose == 1) {
-                        if ($total_bet_level2 > 1) {
-                            if ($affiliate->af_receive_percent_winlose_1 == 'ยอดเดิมพัน') {
-                                $commission_level1 = $total_bet_level2 * ($affiliate->af_receive_percent_winlose_2 / 100);
-                                $total_commission += $commission_level1;
-                                Log::info('Commission from bet (Level 2): ' . $commission_level1);
-                            } elseif ($affiliate->af_receive_percent_winlose_1 == 'ยอดเสีย' && $winlose_level2 < 0) {
-                                $commission_level1 = abs($winlose_level2) * ($affiliate->af_receive_percent_winlose_2 / 100);
-                                $total_commission += $commission_level1;
-                                Log::info('Commission from win/lose (Level 2): ' . $commission_level1);
-                            }
-                        }
-                    }
-
-                    // ---- เริ่มการคำนวณคอมมิชชั่นสำหรับชั้นที่ 2 (Tier 3 หรือ Member3) ----
-                    // ตรวจสอบว่า under_member (Member2) มีผู้แนะนำต่อหรือไม่
-                    if (json_decode($under_member->ref_user)) {
-                        Log::info('Under member (Level 2) has Level 3 members: ' . count(json_decode($under_member->ref_user)));
-
-                        foreach (json_decode($under_member->ref_user) as $_member_level3_id) {
-                            sleep(3);
-                            $sub_member = Members::where('id', $_member_level3_id)->first();
-                            if (!$sub_member) {
-                                continue;
-                            }
-
-                            Log::info('Sub member (Level 3): ' . $sub_member->username);
-
-                            // ตรวจสอบยอดเล่น/ยอดเสียของ sub_member (Member3)
-                            try {
-                                $bf_total_bet_level3 = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($sub_member->username, -1, -1);
-                                $total_bet_level3 = $bf_total_bet_level3->valid_amount ?? 0;
-                                $winlose_level3 = $bf_total_bet_level3->winloss ?? 0;
-
-                                $pg_total_bet_level3 = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($sub_member->username, -1, -1);
-                                if (isset($pg_total_bet_level3['data'][0]['totalAmount'])) {
-                                    $total_bet_level3 += $pg_total_bet_level3['data'][0]['totalAmount'];
-                                }
-                            } catch (\Exception $e) {
-                                Log::info('API Error for Level 3 member: ' . $e->getMessage());
-                                $total_bet_level3 = 0;
-                                $winlose_level3 = 0;
-                            }
-
-                            Log::info('Total bet (Level 3): ' . $total_bet_level3);
-
-                            // คำนวณคอมมิชชั่นสำหรับ main_member (Member1) จาก under_member (Member2) ที่แนะนำ sub_member (Member3)
-                            // ใช้ af_receive_percent_winlose_3 สำหรับการคำนวณชั้นที่ 2
-                            if ($affiliate->is_enable_af_winlose == 1) {
-                                if ($total_bet_level3 > 1) {
-                                    if ($affiliate->af_receive_percent_winlose_1 == 'ยอดเดิมพัน') {
-                                        $commission_level2 = $total_bet_level3 * ($affiliate->af_receive_percent_winlose_3 / 100);
-                                        $total_commission += $commission_level2;
-                                        Log::info('Commission from bet (Level 3): ' . $commission_level2);
-                                    } elseif ($affiliate->af_receive_percent_winlose_1 == 'ยอดเสีย' && $winlose_level3 < 0) {
-                                        $commission_level2 = abs($winlose_level3) * ($affiliate->af_receive_percent_winlose_3 / 100);
-                                        $total_commission += $commission_level2;
-                                        Log::info('Commission from win/lose (Level 3): ' . $commission_level2);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // บันทึกยอดคอมมิชชั่นรวมสำหรับ main_member (ทั้งจาก Tier 2 และ Tier 3)
-                if ($total_commission > 0) {
-                    Transfer::create([
-                        'member_id' => $main_member->id,
-                        'amount' => $total_commission,
-                        'status' => 1,
-                        'status_code' => 'รออนุมัติ',
-                        'type' => 'commission',
-                        'promotion' => 'commission',
-                        'old_balance' => $main_member->wallet_balance,
-                        'new_balance' => $main_member->wallet_balance + $total_commission,
-                        'transfer_date' => strtotime(now()),
-                    ]);
-                }
-            }
-        }
-
-        // บันทึก Log และส่งข้อความ Telegram เพื่อแจ้งการสิ้นสุด
-        Log::info('success Run affiliate');
-        TelegramMessage::create()->to(env('TELEGRAM_G_ID'))->line(env('APP_NAME'))->line('BOT สิ้นสุดการ Run affiliate')->send();
-
-        return 'success';
+    function affiliate(){
+        RunAffiliate::dispatch();
     }
+    // function affiliate()
+    // {
+    //     // เพิ่มเวลาการทำงานของสคริปต์ เพื่อป้องกันการ Timeout
+    //     set_time_limit(3000000000);
+
+    //     // บันทึก Log และส่งข้อความ Telegram เพื่อแจ้งการเริ่มต้น
+    //     Log::info('Run affiliate');
+    //     TelegramMessage::create()->to(env('TELEGRAM_G_ID'))->line(env('APP_NAME'))->line('BOT เริ่มทำการ affiliate')->send();
+
+    //     // ดึงข้อมูลสมาชิกทั้งหมดที่มีผู้แนะนำ
+    //     $members = Members::where('ref_user', '!=', null)->get();
+    //     Log::info('Total Members affiliate : ' . count($members));
+
+    //     // วนลูปเพื่อคำนวณค่าคอมมิชชั่นสำหรับสมาชิกแต่ละคน (Member1)
+    //     foreach ($members as $main_member) {
+    //         sleep(2);
+    //         $total_commission = 0; // ยอดคอมมิชชั่นรวมสำหรับ main_member
+
+    //         Log::info('Member main (Level 1): ' . $main_member->username . ' under member count = ' . count(json_decode($main_member->ref_user)));
+
+    //         // ตรวจสอบว่า main_member มีผู้แนะนำหรือไม่
+    //         if (json_decode($main_member->ref_user)) {
+    //             set_time_limit(3000000000);
+
+    //             // วนลูปคำนวณคอมมิชชั่นจากผู้แนะนำตรง (Level 2 หรือ Member2)
+    //             foreach (json_decode($main_member->ref_user) as $_member_level2_id) {
+    //                 sleep(3);
+
+    //                 $under_member = Members::where('id', $_member_level2_id)->first();
+    //                 if (!$under_member) {
+    //                     continue;
+    //                 }
+
+    //                 Log::info('Under member (Level 2): ' . $under_member->username);
+
+    //                 // ตรวจสอบยอดเล่น/ยอดเสียของ under_member (Member2)
+    //                 try {
+    //                     $bf_total_bet_level2 = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, -1, -1);
+    //                     $total_bet_level2 = $bf_total_bet_level2->valid_amount ?? 0;
+    //                     $winlose_level2 = $bf_total_bet_level2->winloss ?? 0;
+
+    //                     $pg_total_bet_level2 = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, -1, -1);
+    //                     if (isset($pg_total_bet_level2['data'][0]['totalAmount'])) {
+    //                         $total_bet_level2 += $pg_total_bet_level2['data'][0]['totalAmount'];
+    //                     }
+    //                 } catch (\Exception $e) {
+    //                     Log::info('API Error for Level 2 member: ' . $e->getMessage());
+    //                     $total_bet_level2 = 0;
+    //                     $winlose_level2 = 0;
+    //                 }
+
+    //                 // คำนวณคอมมิชชั่นสำหรับ under_member (Member2) ที่แนะนำมาโดยตรง (Level 1 สำหรับ main_member)
+    //                 $affiliate = Affiliate::first();
+    //                 if ($affiliate->is_enable_af_winlose == 1) {
+    //                     if ($total_bet_level2 > 1) {
+    //                         if ($affiliate->af_receive_percent_winlose_1 == 'ยอดเดิมพัน') {
+    //                             $commission_level1 = $total_bet_level2 * ($affiliate->af_receive_percent_winlose_2 / 100);
+    //                             $total_commission += $commission_level1;
+    //                             Log::info('Commission from bet (Level 2): ' . $commission_level1);
+    //                         } elseif ($affiliate->af_receive_percent_winlose_1 == 'ยอดเสีย' && $winlose_level2 < 0) {
+    //                             $commission_level1 = abs($winlose_level2) * ($affiliate->af_receive_percent_winlose_2 / 100);
+    //                             $total_commission += $commission_level1;
+    //                             Log::info('Commission from win/lose (Level 2): ' . $commission_level1);
+    //                         }
+    //                     }
+    //                 }
+
+    //                 // ---- เริ่มการคำนวณคอมมิชชั่นสำหรับชั้นที่ 2 (Tier 3 หรือ Member3) ----
+    //                 // ตรวจสอบว่า under_member (Member2) มีผู้แนะนำต่อหรือไม่
+    //                 if (json_decode($under_member->ref_user)) {
+    //                     Log::info('Under member (Level 2) has Level 3 members: ' . count(json_decode($under_member->ref_user)));
+
+    //                     foreach (json_decode($under_member->ref_user) as $_member_level3_id) {
+    //                         sleep(3);
+    //                         $sub_member = Members::where('id', $_member_level3_id)->first();
+    //                         if (!$sub_member) {
+    //                             continue;
+    //                         }
+
+    //                         Log::info('Sub member (Level 3): ' . $sub_member->username);
+
+    //                         // ตรวจสอบยอดเล่น/ยอดเสียของ sub_member (Member3)
+    //                         try {
+    //                             $bf_total_bet_level3 = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($sub_member->username, -1, -1);
+    //                             $total_bet_level3 = $bf_total_bet_level3->valid_amount ?? 0;
+    //                             $winlose_level3 = $bf_total_bet_level3->winloss ?? 0;
+
+    //                             $pg_total_bet_level3 = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($sub_member->username, -1, -1);
+    //                             if (isset($pg_total_bet_level3['data'][0]['totalAmount'])) {
+    //                                 $total_bet_level3 += $pg_total_bet_level3['data'][0]['totalAmount'];
+    //                             }
+    //                         } catch (\Exception $e) {
+    //                             Log::info('API Error for Level 3 member: ' . $e->getMessage());
+    //                             $total_bet_level3 = 0;
+    //                             $winlose_level3 = 0;
+    //                         }
+
+    //                         Log::info('Total bet (Level 3): ' . $total_bet_level3);
+
+    //                         // คำนวณคอมมิชชั่นสำหรับ main_member (Member1) จาก under_member (Member2) ที่แนะนำ sub_member (Member3)
+    //                         // ใช้ af_receive_percent_winlose_3 สำหรับการคำนวณชั้นที่ 2
+    //                         if ($affiliate->is_enable_af_winlose == 1) {
+    //                             if ($total_bet_level3 > 1) {
+    //                                 if ($affiliate->af_receive_percent_winlose_1 == 'ยอดเดิมพัน') {
+    //                                     $commission_level2 = $total_bet_level3 * ($affiliate->af_receive_percent_winlose_3 / 100);
+    //                                     $total_commission += $commission_level2;
+    //                                     Log::info('Commission from bet (Level 3): ' . $commission_level2);
+    //                                 } elseif ($affiliate->af_receive_percent_winlose_1 == 'ยอดเสีย' && $winlose_level3 < 0) {
+    //                                     $commission_level2 = abs($winlose_level3) * ($affiliate->af_receive_percent_winlose_3 / 100);
+    //                                     $total_commission += $commission_level2;
+    //                                     Log::info('Commission from win/lose (Level 3): ' . $commission_level2);
+    //                                 }
+    //                             }
+    //                         }
+    //                     }
+    //                 }
+    //             }
+
+    //             // บันทึกยอดคอมมิชชั่นรวมสำหรับ main_member (ทั้งจาก Tier 2 และ Tier 3)
+    //             if ($total_commission > 0) {
+    //                 Transfer::create([
+    //                     'member_id' => $main_member->id,
+    //                     'amount' => $total_commission,
+    //                     'status' => 1,
+    //                     'status_code' => 'รออนุมัติ',
+    //                     'type' => 'commission',
+    //                     'promotion' => 'commission',
+    //                     'old_balance' => $main_member->wallet_balance,
+    //                     'new_balance' => $main_member->wallet_balance + $total_commission,
+    //                     'transfer_date' => strtotime(now()),
+    //                 ]);
+    //             }
+    //         }
+    //     }
+
+    //     // บันทึก Log และส่งข้อความ Telegram เพื่อแจ้งการสิ้นสุด
+    //     Log::info('success Run affiliate');
+    //     TelegramMessage::create()->to(env('TELEGRAM_G_ID'))->line(env('APP_NAME'))->line('BOT สิ้นสุดการ Run affiliate')->send();
+
+    //     return 'success';
+    // }
 
     function affiliate_fixdate($date_start, $date_end)
     {
