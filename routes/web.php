@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\HashtagController;
+use App\Models\Members;
 use App\Http\Controllers\ChatPageController;
 use App\Http\Controllers\MessageController;
 /*
@@ -234,3 +235,8 @@ Route::get('/Single_Member_Report_all_Provider/{username}/{start_day}/{end_day}'
 Route::resource('links', HashtagController::class);
 
 Route::get('lang', [App\Http\Controllers\LanguageController::class, 'change'])->name("change.lang");
+
+Route::get('whereHasChild', function () {
+    $parents = Members::whereHasChild(101)->get();
+    dd($parents);
+})->name('whereHasChild');
