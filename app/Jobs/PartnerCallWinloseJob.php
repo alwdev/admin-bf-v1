@@ -45,25 +45,25 @@ class PartnerCallWinloseJob implements ShouldQueue
                 $commissions = [];
                 foreach (json_decode($partner->members) as $_member) {
                     $under_member = Members::where('id', $_member)->first();
-                    if (!$under_member) continue;
+                    if (!$under_member) {
+                        continue;
+                    }
 
                     $total_bet = 0;
-                    $winlose   = 0;
+                    $winlose = 0;
 
                     try {
-                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)
-                            ->Single_Member_Report_all_Provider($under_member->username, -1, -1);
+                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, -1, -1);
                         if ($bf_total_bet) {
                             $total_bet = $bf_total_bet->valid_amount;
-                            $winlose   = $bf_total_bet->winloss;
+                            $winlose = $bf_total_bet->winloss;
                         }
                     } catch (\Exception $e) {
                         continue;
                     }
 
                     try {
-                        $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)
-                            ->pg_get_spin_summaryby_user($under_member->username, -1, -1);
+                        $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, -1, -1);
                         if (isset($pg_total_bet['data']) && count($pg_total_bet['data']) > 0) {
                             $total_bet += $pg_total_bet['data'][0]['totalAmount'];
                         }
@@ -76,18 +76,18 @@ class PartnerCallWinloseJob implements ShouldQueue
                         $total_commission += $commission;
 
                         $start_date = date('Y-m-d', strtotime('-1 day'));
-                        $end_date   = date('Y-m-d', strtotime('-1 day'));
+                        $end_date = date('Y-m-d', strtotime('-1 day'));
 
                         $membersData[] = [
-                            'total_bet'        => $total_bet,
-                            'winlose'          => $winlose,
-                            'rate'             => $partner->rate,
-                            'partner_id'       => $partner->id,
-                            'member_id'        => $under_member->id,
-                            'member_username'  => $under_member->username,
-                            'date1'            => $start_date,
-                            'date2'            => $end_date,
-                            'commission'       => $commission,
+                            'total_bet' => $total_bet,
+                            'winlose' => $winlose,
+                            'rate' => $partner->rate,
+                            'partner_id' => $partner->id,
+                            'member_id' => $under_member->id,
+                            'member_username' => $under_member->username,
+                            'date1' => $start_date,
+                            'date2' => $end_date,
+                            'commission' => $commission,
                             'total_commission' => $total_commission,
                         ];
 
@@ -100,13 +100,15 @@ class PartnerCallWinloseJob implements ShouldQueue
                             'transaction_id' => '',
                             'note' => $start_date . '-' . $end_date,
                             'created_at' => now(),
-                            'updated_at' => now()
+                            'updated_at' => now(),
                         ];
                     }
                 }
 
                 // batch insert
                 if (!empty($commissions)) {
+                    $partner->total_profit = ($partner->total_profit ?? 0) + $total_commission;
+                    $partner->save();
                     PartnerCommission::insert($commissions);
                 }
             }
