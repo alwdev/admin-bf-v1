@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +16,12 @@ use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
+});
+
+
+Broadcast::channel('conversations.{id}', function ($member, $id) {
+    return DB::table('conversation_member')
+        ->where('conversation_id', $id)
+        ->where('member_id', $member->id)
+        ->exists();
 });

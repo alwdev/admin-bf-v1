@@ -45,6 +45,9 @@
                 <li>
                     <a href="{{ route('report.wrongdeposit') }}" class="waves-effect"><i class='bx bx-bitcoin'></i><span>{{__("main.report_error_transfert")}}</span></a>
                 </li>
+                <li>
+                    <a href="{{ route('chat.index') }}" class="waves-effect"><i class='bx bx-chat'></i><span>Chat List</span></a>
+                </li>
                 @endif
                 <li class="menu-title">{{__('main.setting')}}</li>
                 <li>

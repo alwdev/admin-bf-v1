@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Members  extends Authenticatable
 {
@@ -35,4 +37,12 @@ class Members  extends Authenticatable
         'active',
         'update_by',
     ];
+
+    public function conversations(): BelongsToMany {
+        return $this->belongsToMany(Conversation::class, 'conversation_member', 'member_id', 'conversation_id')
+            ->withPivot('joined_at');
+    }
+    public function messages(): HasMany {
+        return $this->hasMany(Message::class, 'member_id');
+    }
 }

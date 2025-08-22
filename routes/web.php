@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\HashtagController;
+use App\Http\Controllers\ChatPageController;
+use App\Http\Controllers\MessageController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -189,6 +191,12 @@ Route::middleware('auth')->group(function () {
         return view('SMS.list');
     })->name('smsLog.index');
 
+    //Chat
+    Route::get('/chat', [ChatPageController::class,'index'])->name('chat.index');
+    Route::get('/chat/{conversation}', [ChatPageController::class,'show'])->name('chat.show');
+
+    Route::get('/conversations/{conversation}/messages', [MessageController::class,'index'])->name('chat.messages.index');
+    Route::post('/conversations/{conversation}/messages', [MessageController::class,'store'])->name('chat.messages.store');
 
 });
 
