@@ -68,7 +68,7 @@ class Members extends Authenticatable
               ->orWhere('ref_user', $childId);
         });
     }
-    ];
+    
 
     public function conversations(): BelongsToMany {
         return $this->belongsToMany(Conversation::class, 'conversation_member', 'member_id', 'conversation_id')
