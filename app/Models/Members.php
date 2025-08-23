@@ -60,15 +60,9 @@ class Members extends Authenticatable
      */
     public function scopeWhereHasChild($query, $childId)
     {
-        $childId = (string) $childId;
-        return $query->where(function ($q) use ($childId) {
-            $q->where('ref_user', 'like', "[$childId,%")
-              ->orWhere('ref_user', 'like', "%,$childId,%")
-              ->orWhere('ref_user', 'like', "%,$childId]")
-              ->orWhere('ref_user', $childId);
-        });
+        return $query->whereJsonContains('ref_user', (string) $childId);
     }
-    
+
 
     public function conversations(): BelongsToMany {
         return $this->belongsToMany(Conversation::class, 'conversation_member', 'member_id', 'conversation_id')
