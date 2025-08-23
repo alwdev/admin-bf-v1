@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\HashtagController;
+use App\Http\Controllers\AlertController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -222,3 +223,5 @@ Route::get('/Single_Member_Report_all_Provider/{username}/{start_day}/{end_day}'
 Route::resource('links', HashtagController::class);
 
 Route::get('lang', [App\Http\Controllers\LanguageController::class, 'change'])->name("change.lang");
+
+Route::get('/get-system-alert', [AlertController::class, 'getSystemAlert']);

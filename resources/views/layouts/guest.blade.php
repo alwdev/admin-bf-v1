@@ -20,7 +20,7 @@
         <link href="{{ asset('css/icons.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('css/theme.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('css/style.css') }}" rel="stylesheet" type="text/css" />
-        
+
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -106,7 +106,8 @@
         <script src="{{ asset('plugins/raphael/raphael.min.js') }}"></script>
 
         <!-- Morris Custom Js-->
-        <script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+        {{-- <script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}"></script> --}}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="{{ asset('pages/dashboard-demo.js') }}"></script>
 
         <!-- App js -->
@@ -126,13 +127,53 @@
             function isNumberKey(evt)
             {
                 var charCode = (evt.which) ? evt.which : evt.keyCode;
-                if (charCode != 46 && charCode > 31 
+                if (charCode != 46 && charCode > 31
                     && (charCode < 48 || charCode > 57))
                     return false;
 
                 return true;
             }
         </script>
+<script>
+function checkSystemAlerts() {
+    fetch('/get-system-alert')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                showAlertsSequentially(data.messages);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching alert data:', error);
+        });
+}
+
+// ฟังก์ชันสำหรับแสดง SweetAlert ทีละข้อความ
+function showAlertsSequentially(messages, index = 0) {
+    if (index >= messages.length) {
+        return; // จบ loop ถ้าแสดงครบแล้ว
+    }
+
+    Swal.fire({
+        icon: 'warning',
+        title: 'แจ้งเตือนระบบ',
+        text: messages[index],
+        showConfirmButton: true
+    }).then(() => {
+        // เมื่อปิด alert อันนี้แล้ว แสดงอันถัดไป
+        showAlertsSequentially(messages, index + 1);
+    });
+}
+
+// เรียกใช้ฟังก์ชันทันทีเมื่อหน้าเว็บโหลด
+document.addEventListener('DOMContentLoaded', () => {
+    checkSystemAlerts();
+});
+
+// เรียกใช้ฟังก์ชันทุก 1 ชั่วโมง (3600000 ms)
+setInterval(checkSystemAlerts, 3600000);
+</script>
+
         @yield('scripts')
     </body>
 </html>
