@@ -70,6 +70,7 @@ class Members extends Authenticatable
     }
 
 
+
     public function conversations(): BelongsToMany {
         return $this->belongsToMany(Conversation::class, 'conversation_member', 'member_id', 'conversation_id')
             ->withPivot('joined_at');
