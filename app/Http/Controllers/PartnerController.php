@@ -546,12 +546,11 @@ class PartnerController extends Controller
         return response()->json($memberwinloss);
     }
 
-    function partner_call_winlose_by_id($partner_id = null)
+    public function partner_call_winlose_by_id($partner_id, $date_start, $date_end)
     {
         // ส่ง Job ไป queue รัน background
-        PartnerCallWinloseJob::dispatch($partner_id);
+        PartnerCallWinloseJob::dispatch($partner_id, $date_start, $date_end);
 
-        // คืนค่าให้รู้ว่า job ถูกส่งแล้ว (optional)
         return [
             'status' => 'queued',
             'partner_id' => $partner_id,

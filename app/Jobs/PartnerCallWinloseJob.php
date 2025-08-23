@@ -16,13 +16,14 @@ class PartnerCallWinloseJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $partner_id;
+    protected $date_start;
+    protected $date_end;
 
-    /**
-     * Create a new job instance.
-     */
-    public function __construct($partner_id = null)
+    public function __construct($partner_id = null, $date_start = -1, $date_end = -1)
     {
         $this->partner_id = $partner_id;
+        $this->date_start = $date_start;
+        $this->date_end = $date_end;
     }
 
     /**
@@ -53,7 +54,7 @@ class PartnerCallWinloseJob implements ShouldQueue
                     $winlose = 0;
 
                     try {
-                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, -1, -1);
+                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, $this->date_start, $this->date_end);
                         if ($bf_total_bet) {
                             $total_bet = $bf_total_bet->valid_amount;
                             $winlose = $bf_total_bet->winloss;
@@ -63,7 +64,7 @@ class PartnerCallWinloseJob implements ShouldQueue
                     }
 
                     try {
-                        $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, -1, -1);
+                        $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, $this->date_start, $this->date_end);
                         if (isset($pg_total_bet['data']) && count($pg_total_bet['data']) > 0) {
                             $total_bet += $pg_total_bet['data'][0]['totalAmount'];
                         }
