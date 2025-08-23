@@ -18,7 +18,8 @@ class MessageController extends Controller
                 'id'=>$m->id,'conversation_id'=>$m->conversation_id,'member_id'=>$m->member_id,
                 'body'=>$m->body,'attachments'=>$m->attachments,
                 'created_at'=>$m->created_at?->toISOString(),
-                'member'=>['id'=>$m->member_id,'name'=>$m->member->nickname ?: ($m->member->fullname ?: $m->member->username)],
+                'member'=>['id'=>$m->member_id,'name'=>$m->member->nickname ?: ($m->member->fullname ?: $m->member->username),
+                           'username'=>$m->member->username],
             ];
         }));
     }

@@ -11,7 +11,9 @@
 @section('content')
     <!-- start page title -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+@php
+                $meId = auth()->id();
+            @endphp
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-flex align-items-center justify-content-between">
@@ -30,21 +32,20 @@
     <div id="chat-app" data-thread-id="{{ $thread->id }}" data-me-id="{{ auth()->id() }}"
         data-fetch-url="{{ route('chat.messages.index', $thread) }}"
         data-send-url="{{ route('chat.messages.store', $thread) }}">
-        {{-- เหมือนตัวอย่าง UI ที่ผมให้ก่อนหน้าได้เลย --}}
         <div class="card shadow-sm border-0">
                     {{-- Header --}}
-                    <div class="card-header bg-white d-flex align-items-center justify-content-between">
+                    <div class="card-header d-flex align-items-center justify-content-between" style="background-color: #818181;color: #ffffff">
                         <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                            {{-- <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
                                 style="width:36px;height:36px;font-weight:600;">
                                 {{ strtoupper(substr($thread->title ?? 'A', 0, 1)) }}
-                            </div>
+                            </div> --}}
                             <div>
-                                <div class="fw-semibold">{{ $thread->title ?? 'สนทนาลูกค้า' }}</div>
+                                <div class="fw-semibold" style="color: #ffffff">{{ $thread->title ?? 'สนทนาลูกค้า' }}</div>
                                 <div id="presence" class="small text-muted">กำลังเชื่อมต่อ…</div>
                             </div>
                         </div>
-                        <div class="small text-muted d-none d-md-block">
+                        <div class="d-none d-md-block" style="color: #ffffff">
                             หมายเลขห้อง #{{ $thread->id }}
                         </div>
                     </div>
@@ -53,12 +54,12 @@
                     <div class="card-body p-0">
                         <div id="chatMessages" class="p-3" style="height: calc(100vh - 270px); overflow-y:auto;">
                             @forelse($messages as $m)
-                                @php $mine = $m->user_id === 1; @endphp
+                                @php $mine = $m->member_id === $meId; @endphp
                                 <div class="d-flex mb-2 {{ $mine ? 'justify-content-end' : 'justify-content-start' }}">
                                     @unless ($mine)
-                                        <div class="me-2 rounded-circle bg-light d-none d-md-flex align-items-center justify-content-center"
-                                            style="width:28px;height:28px;">
-                                            <span class="small">{{ strtoupper(substr($m->user->name ?? 'A', 0, 1)) }}</span>
+                                        <div class="me-2  d-none d-md-flex align-items-center justify-content-center"
+                                            style="width:100px;height:28px;">
+                                            <span class="small">{{ $m->member->username  }}</span>
                                         </div>
                                     @endunless
                                     <div class="px-3 py-2 rounded-3 {{ $mine ? 'bg-primary text-white' : 'bg-light' }}"
@@ -85,7 +86,7 @@
                                 placeholder="พิมพ์ข้อความ…" maxlength="5000">
                             <button class="btn btn-primary px-4" type="submit">ส่ง</button>
                         </form>
-                        <div id="typing" class="small text-muted mt-1 d-none">แอดมินกำลังพิมพ์…</div>
+                        <div id="typing" class="small text-muted mt-1 d-none">ลูกค้ากำลังพิมพ์…</div>
                     </div>
                 </div>
     </div>
@@ -122,14 +123,15 @@
             scrollToBottom(false);
 
             const renderMsg = (m) => {
-                const mine = Number(m.user_id) === meId;
+                console.log(m);
+                const mine = Number(m.member_id) === meId;
                 const wrap = document.createElement('div');
                 wrap.className = `d-flex mb-2 ${mine ? 'justify-content-end' : 'justify-content-start'}`;
                 wrap.setAttribute('data-message-id', m.id);
                 wrap.innerHTML = `
       ${mine ? '' : `
-                        <div class="me-2 rounded-circle bg-light d-none d-md-flex align-items-center justify-content-center" style="width:28px;height:28px;">
-                          <span class="small">${(m.user?.name || 'A').substring(0,1).toUpperCase()}</span>
+                        <div class="me-2  d-none d-md-flex align-items-center justify-content-center" style="width:100px;height:28px;">
+                          <span class="small">${(m.member?.username || 'Customer')}</span>
                         </div>`}
       <div class="px-3 py-2 rounded-3 ${mine ? 'bg-primary text-white' : 'bg-light'}" style="max-width:70%;">
         ${m.body ? `<div class="white-space-prewrap">${escapeHtml(m.body)}</div>` : ''}
@@ -232,7 +234,7 @@
 
             } else {
                 // Fallback polling
-                elPresence.textContent = 'โหมดสำรอง (กำลังรีเฟรชทุก 5 วินาที)';
+                elPresence.textContent = '';
                 polling = setInterval(async () => {
                     try {
                         const res = await fetch(`${fetchUrl}?after=${lastId}`, {
@@ -249,7 +251,7 @@
                         });
                         if (data.length) scrollToBottom();
                     } catch (e) {}
-                }, 5000);
+                }, 1000);
             }
         })();
     </script>

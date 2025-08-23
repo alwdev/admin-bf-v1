@@ -23,6 +23,7 @@ class ChatMessageSent implements ShouldBroadcast
             'member'=>[
                 'id'=>$this->message->member->id,
                 'name'=>$this->message->member->nickname ?: ($this->message->member->fullname ?: $this->message->member->username),
+                'username'=>$this->message->member->username,
             ],
         ];
     }
