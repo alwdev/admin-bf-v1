@@ -218,6 +218,8 @@ Route::get('/affiliate_fixdate/{date_start}/{date_end}', [ManageMemberController
 Route::get('/partner_call_winlose', [App\Http\Controllers\PartnerController::class, 'partner_call_winlose']);
 Route::get('/partner_call_winlose_by_id/{id}', [App\Http\Controllers\PartnerController::class, 'partner_call_winlose_by_id']);
 
+Route::get('/runAffiliateDryRun/{id}', [App\Http\Controllers\AffiliateController::class, 'runAffiliateDryRun']);
+
 Route::get('/QueryBetRecordsV2', [ReportController::class, 'QueryBetRecordsV2']);
 
 Route::get('/regenmember_idxxx', [App\Http\Controllers\SettingController::class, 'regenmember_idxxx']);
