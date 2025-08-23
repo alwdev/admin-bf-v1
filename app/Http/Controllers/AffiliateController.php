@@ -17,6 +17,7 @@ class AffiliateController extends Controller
     {
         set_time_limit(3600);
         $transfers = [];
+        $parents = [];
 
         $affiliate = Affiliate::first();
         $member = Members::find($memberId);
@@ -43,8 +44,13 @@ class AffiliateController extends Controller
                 }
 
                 // --- ตรวจสอบว่า member เป็น ref_user ของใครอีก (ผู้แนะนำชั้นบน) ---
-                $parents = Members::whereHasChild($member->id)->get();
-                foreach ($parents as $parent) {
+                $foundParents = Members::whereHasChild($member->id)->get();
+                foreach ($foundParents as $parent) {
+                    $parents[] = [
+                        'id' => $parent->id,
+                        'username' => $parent->username
+                    ];
+
                     if ($affiliate->is_enable_af_winlose == 1 && $winlose < 0) {
                         $commission_level3 = abs($winlose) * ($affiliate->af_receive_percent_winlose_3 / 100);
                         $transfers[] = $this->createTransferData($parent, $commission_level3, 'Level 3 commission');
@@ -57,6 +63,7 @@ class AffiliateController extends Controller
             'status' => 'success',
             'message' => 'Affiliate data calculated without saving or logging.',
             'transfers' => $transfers,
+            'parents' => $parents
         ], 200);
     }
 
