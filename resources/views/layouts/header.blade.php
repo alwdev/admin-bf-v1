@@ -187,7 +187,7 @@
             }
         });
 
-    }, 2000);
+    }, 3000);
 
     setInterval(function() {
         console.log("count_chat ", count_chat);
@@ -224,5 +224,5 @@
             }
         });
 
-    }, 2000);
+    }, 5000);
 </script>
