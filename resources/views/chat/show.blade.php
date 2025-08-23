@@ -124,14 +124,14 @@
 
             const renderMsg = (m) => {
                 console.log(m);
-                const mine = Number(m.member_id) === meId;
+                const mine = Number(m.user_id) === meId;
                 const wrap = document.createElement('div');
                 wrap.className = `d-flex mb-2 ${mine ? 'justify-content-end' : 'justify-content-start'}`;
                 wrap.setAttribute('data-message-id', m.id);
                 wrap.innerHTML = `
       ${mine ? '' : `
                         <div class="me-2  d-none d-md-flex align-items-center justify-content-center" style="width:100px;height:28px;">
-                          <span class="small">${(m.member?.username || 'Customer')}</span>
+                          <span class="small">${m.member?.username || 'Customer'}</span>
                         </div>`}
       <div class="px-3 py-2 rounded-3 ${mine ? 'bg-primary text-white' : 'bg-light'}" style="max-width:70%;">
         ${m.body ? `<div class="white-space-prewrap">${escapeHtml(m.body)}</div>` : ''}
@@ -251,7 +251,7 @@
                         });
                         if (data.length) scrollToBottom();
                     } catch (e) {}
-                }, 1000);
+                }, 2000);
             }
         })();
     </script>
