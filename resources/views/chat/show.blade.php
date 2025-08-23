@@ -48,6 +48,14 @@
                         <div class="d-none d-md-block" style="color: #ffffff">
                             หมายเลขห้อง #{{ $thread->id }}
                         </div>
+                        {{-- Button end chat--}}
+                        <div>
+                            <form method="POST" action="{{ route('chat.conversations.close', $thread) }}">
+                                @csrf
+                                <button class="btn btn-sm btn-outline-light" type="submit"
+                                    onclick="return confirm('ยืนยันปิดการสนทนา?');">จบการสนทนา</button>
+                            </form>
+                        </div>
                     </div>
 
                     {{-- Messages --}}
@@ -123,8 +131,8 @@
             scrollToBottom(false);
 
             const renderMsg = (m) => {
-                console.log(m);
-                const mine = Number(m.user_id) === meId;
+                console.log(m, meId);
+                const mine = Number(m.member_id) === meId;
                 const wrap = document.createElement('div');
                 wrap.className = `d-flex mb-2 ${mine ? 'justify-content-end' : 'justify-content-start'}`;
                 wrap.setAttribute('data-message-id', m.id);
@@ -172,7 +180,7 @@
                 // optimistic UI
                 const temp = {
                     id: ++lastId,
-                    user_id: meId,
+                    member_id: meId,
                     body,
                     created_at: new Date().toISOString(),
                     user: {

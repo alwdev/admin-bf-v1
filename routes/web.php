@@ -198,6 +198,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/conversations/{conversation}/messages', [MessageController::class,'index'])->name('chat.messages.index');
     Route::post('/conversations/{conversation}/messages', [MessageController::class,'store'])->name('chat.messages.store');
+    Route::post('/chat/conversations/{conversation}/close', [App\Http\Controllers\ChatPageController::class, 'closeConversation'])->name('chat.conversations.close');
 
 });
 
