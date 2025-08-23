@@ -28,13 +28,12 @@ class ChatPageController extends Controller
         $messages = $conversation->messages()
             ->with(['member:id,username,nickname,fullname'])
             ->orderBy('id','asc')->take(200)->get();
-        // return [
-        //     'thread' => $conversation,
-        //     'messages' => $messages
-        // ];
+        $member = $conversation->members()->whereKeyNot($me->id)->first();
+        // return ($member);
         return view('chat.show', [
             'thread'=>$conversation,
-            'messages'=>$messages
+            'messages'=>$messages,
+            'member'=>$member,
         ]);
     }
 

@@ -41,7 +41,7 @@
                                 {{ strtoupper(substr($thread->title ?? 'A', 0, 1)) }}
                             </div> --}}
                             <div>
-                                <div class="fw-semibold" style="color: #ffffff">{{ $thread->title ?? 'สนทนาลูกค้า' }}</div>
+                                <div class="fw-semibold" style="color: #ffffff">ลูกค้า :{{ $member->fullname  }} | {{ $member->username  }} | email : {{ $member->email }}</div>
                                 <div id="presence" class="small text-muted">กำลังเชื่อมต่อ…</div>
                             </div>
                         </div>
