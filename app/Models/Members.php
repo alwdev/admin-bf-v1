@@ -63,12 +63,13 @@ class Members extends Authenticatable
         $childId = (string) $childId;
         return $query->where(function ($q) use ($childId) {
             $q->where('ref_user', 'like', "[$childId,%")
-              ->orWhere('ref_user', 'like', "%,$childId,%")
-              ->orWhere('ref_user', 'like', "%,$childId]")
-              ->orWhere('ref_user', $childId);
+                ->orWhere('ref_user', 'like', "%,$childId,%")
+                ->orWhere('ref_user', 'like', "%,$childId]")
+                ->orWhere('ref_user', "[$childId]"); // แก้ไขตรงนี้
         });
     }
-    
+
+
 
     public function conversations(): BelongsToMany {
         return $this->belongsToMany(Conversation::class, 'conversation_member', 'member_id', 'conversation_id')

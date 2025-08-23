@@ -125,7 +125,7 @@ class RunAffiliate implements ShouldQueue
         ]);
 
         // อัพเดต wallet balance ของสมาชิก
-        $member->wallet_balance += $amount;
-        $member->save();
+        // $member->wallet_balance += $amount;
+        // $member->save();
     }
 }
