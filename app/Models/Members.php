@@ -60,7 +60,13 @@ class Members extends Authenticatable
      */
     public function scopeWhereHasChild($query, $childId)
     {
-        return $query->whereJsonContains('ref_user', (string) $childId);
+        $childId = (string) $childId;
+        return $query->where(function ($q) use ($childId) {
+            $q->where('ref_user', 'like', "[$childId,%")
+                ->orWhere('ref_user', 'like', "%,$childId,%")
+                ->orWhere('ref_user', 'like', "%,$childId]")
+                ->orWhere('ref_user', "[$childId]"); // แก้ไขตรงนี้
+        });
     }
 
 
