@@ -60,6 +60,7 @@
                                 <td>{{ $item->created_at }}</td>
                                 <td>
                                     <a href="{{ route('chat.show', $item->id) }}">
+                                        <i class="bx bx-chat"></i>
                                         @if ($item->members->count() > 0)
                                             {{ $item->members[0]->username }}
                                         @else

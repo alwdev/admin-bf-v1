@@ -27,6 +27,9 @@
             <div class="dropdown d-inline-block">
 
             </div>
+            <a href="/chat">
+                <span id="chat_count" style="color: rgb(13, 110, 253); font-weight: 600; margin:12px;"></span>
+            </a>
             <span style="color: rgb(20, 179, 5);" id="tran_count">--</span>
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
@@ -141,6 +144,12 @@
     } else {
         count_event_lose = sessionStorage.getItem("count_event");
     }
+    var count_chat = 0;
+    if (sessionStorage.getItem("count_chat") === null) {
+        sessionStorage.setItem("count_chat", 0);
+    } else {
+        count_chat = sessionStorage.getItem("count_chat");
+    }
 
     setInterval(function() {
         $.ajax({
@@ -155,7 +164,7 @@
                     // console.log(count_event_lose);
                     if (parseInt(data) != 0) {
                         if (parseInt(data) != count_event_lose && count_event < parseInt(data)) {
-                             $('#tran_count').text('{{ __('dashboard.AwaitingApproval') }}');
+                            $('#tran_count').text('{{ __('dashboard.AwaitingApproval') }}');
                             var alarm = new Howl({
                                 src: ["{{ asset('noti.mp3?002') }}"],
                                 autoplay: false,
@@ -171,6 +180,43 @@
                         sessionStorage.setItem("count_event", 0);
                         count_event_lose = 0;
                         count_event = 0;
+                    }
+                } else {
+                    console.log('error');
+                }
+            }
+        });
+
+    }, 2000);
+
+    setInterval(function() {
+        console.log("count_chat ", count_chat);
+        $.ajax({
+            type: 'get',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: '{{ route('chat.conversations.count') }}',
+            success: function(data) {
+                if (data) {
+                    console.log("data ",data)
+                    if (parseInt(data) != 0) {
+                        if (parseInt(data) != count_chat) {
+                            var alarm = new Howl({
+                                src: ["{{ asset('noti.mp3?002') }}"],
+                                autoplay: false,
+                                loop: false,
+                                // volume: 0.5,
+                            });
+                            alarm.play();
+                            count_chat = parseInt(data);
+
+                            $('#chat_count').text('You have ' + parseInt(data) + ' new chats');
+                            sessionStorage.setItem("count_chat", parseInt(data));
+
+                        }
+                    } else {
+                        $('#chat_count').text('');
                     }
                 } else {
                     console.log('error');

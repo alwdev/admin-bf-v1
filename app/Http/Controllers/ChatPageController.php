@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Members;
@@ -11,31 +12,33 @@ use Illuminate\Support\Facades\Storage;
 class ChatPageController extends Controller
 {
     // รายการห้องที่แอดมินอยู่ (ล่าสุด)
-    public function index(Request $req) {
+    public function index(Request $req)
+    {
         $me = $req->user();
-        $convs = Conversation::whereHas('members', fn($q)=>$q->whereKey(1))
-                 ->with(['members:id,username,nickname,fullname'])
-                 ->latest('updated_at')
-                 ->get();
-                //  return $convs;
+        $convs = Conversation::whereHas('members', fn($q) => $q->whereKey(1))
+            ->with(['members:id,username,nickname,fullname'])
+            ->latest('updated_at')
+            ->get();
+        //  return $convs;
         return view('chat.index', compact('convs'));
     }
 
     // เปิดห้อง
-    public function show(Request $req, Conversation $conversation) {
+    public function show(Request $req, Conversation $conversation)
+    {
         $me = $req->user();
         // แนบตัวเองเข้าห้องถ้ายังไม่ได้แนบ (กัน 403)
         $conversation->members()->syncWithoutDetaching([$me->id]);
 
         $messages = $conversation->messages()
             ->with(['member:id,username,nickname,fullname'])
-            ->orderBy('id','asc')->take(200)->get();
+            ->orderBy('id', 'asc')->take(200)->get();
         $member = $conversation->members()->whereKeyNot($me->id)->first();
         // return ($member);
         return view('chat.show', [
-            'thread'=>$conversation,
-            'messages'=>$messages,
-            'member'=>$member,
+            'thread' => $conversation,
+            'messages' => $messages,
+            'member' => $member,
         ]);
     }
     // ปิดห้อง (แอดมิน)
@@ -65,18 +68,40 @@ class ChatPageController extends Controller
 
         // ลบไฟล์แนบใน storage (ถ้าเก็บใน 'public' หรือปรับ disk ตามจริง)
         foreach ($attachments as $path) {
-            try { Storage::disk('public')->delete($path); } catch (\Throwable $e) {}
+            try {
+                Storage::disk('public')->delete($path);
+            } catch (\Throwable $e) {
+            }
         }
 
         // แจ้งให้ client ปิดห้อง/รีเฟรช (ยิงทันที ไม่ต้องคิว)
-        try { broadcast(new \App\Events\ChatMessageSent($conversationId))->toOthers(); } catch (\Throwable $e) {}
+        try {
+            broadcast(new \App\Events\ChatMessageSent($conversationId))->toOthers();
+        } catch (\Throwable $e) {
+        }
 
         return redirect()->route('chat.index')->with('status', 'ปิดการสนทนาเรียบร้อยแล้ว');
     }
 
     // (ออปชัน) สร้างห้องแชตตรงกับสมาชิก
-    public function directWithMember(Request $req, Members $member) {
+    public function directWithMember(Request $req, Members $member)
+    {
         $thread = Conversation::firstOrCreateDirectBetween($req->user()->id, $member->id);
+
+        $me = $req->user(); // Members
+        $admin = \App\Models\User::where('role', 'admin')->whereKeyNot($member->id)->firstOrFail();
+        if ($thread->wasRecentlyCreated) {
+            broadcast(new \App\Events\ConversationCreated($thread, [
+                'id'   => $me->id,
+                'name' => $me->nickname ?: ($me->fullname ?: $me->username),
+            ]));
+        }
         return redirect()->route('chat.show', $thread);
+    }
+
+    public function conversations_count(Request $req)
+    {
+        $count = Conversation::count();
+        return $count;
     }
 }

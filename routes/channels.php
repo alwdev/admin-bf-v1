@@ -25,3 +25,8 @@ Broadcast::channel('conversations.{id}', function ($member, $id) {
         ->where('member_id', $member->id)
         ->exists();
 });
+
+
+Broadcast::channel('admins', function ($user) {
+    return ($user->isActive ?? null) === 1;
+});
