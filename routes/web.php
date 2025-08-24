@@ -240,7 +240,7 @@ Route::resource('links', HashtagController::class);
 
 Route::get('lang', [App\Http\Controllers\LanguageController::class, 'change'])->name("change.lang");
 
-Route::get('whereHasChild', function () {
-    $parents = Members::whereHasChild(101)->get();
+Route::get('whereHasChild/{id}', function ($id) {
+    $parents = Members::whereHasChild($id)->get();
     dd($parents);
 })->name('whereHasChild');
