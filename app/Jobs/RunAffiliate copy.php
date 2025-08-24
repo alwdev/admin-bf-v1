@@ -17,45 +17,68 @@ class RunAffiliate implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $memberId;
-    public $timeout = 3600;
+    public $timeout = 3600; // 1 ชั่วโมง
     public $tries = 3;
 
-    public function __construct($memberId)
+    public function __construct()
     {
-        $this->memberId = $memberId;
+        // ไม่มี parameter
     }
 
     public function handle()
     {
-        $member = Members::find($this->memberId);
-        if (!$member) return;
-
         set_time_limit(3600);
 
+        // แจ้งเริ่มงาน
+        Log::info('Run affiliate Job started');
+        TelegramMessage::create()
+            ->to(env('TELEGRAM_G_ID'))
+            ->line(env('APP_NAME'))
+            ->line('BOT เริ่มทำการ affiliate')
+            ->send();
+
         $affiliate = Affiliate::first();
-        $child_ids = json_decode($member->ref_user);
-        if (!$child_ids) return;
+        $members = Members::where('ref_user', '!=', null)->get();
+        Log::info('Total Members with ref_user: ' . count($members));
 
-        foreach ($child_ids as $child_id) {
-            $child = Members::find($child_id);
-            if (!$child) continue;
+        foreach ($members as $member) {
 
-            $winlose = $this->getWinLose($child);
+            $child_ids = json_decode($member->ref_user);
+            if (!$child_ids) continue;
 
-            if ($affiliate->is_enable_af_winlose == 1 && $winlose < 0) {
-                $commission_level2 = abs($winlose) * ($affiliate->af_receive_percent_winlose_2 / 100);
-                $this->createTransfer($member, $commission_level2);
-            }
+            foreach ($child_ids as $child_id) {
+                $child = Members::find($child_id);
+                if (!$child) continue;
 
-            $parents = Members::whereHasChild($member->id)->get();
-            foreach ($parents as $parent) {
+                // --- คำนวณยอดเล่น/เสียของ child ---
+                $winlose = $this->getWinLose($child);
+
+                // --- member ได้ commission level2 ถ้า child เล่นเสีย ---
                 if ($affiliate->is_enable_af_winlose == 1 && $winlose < 0) {
-                    $commission_level3 = abs($winlose) * ($affiliate->af_receive_percent_winlose_3 / 100);
-                    $this->createTransfer($parent, $commission_level3);
+                    $commission_level2 = abs($winlose) * ($affiliate->af_receive_percent_winlose_2 / 100);
+                    $this->createTransfer($member, $commission_level2);
+                    Log::info("Level2 commission for member {$member->username} from child {$child->username}: {$commission_level2}");
+                }
+
+                // --- ตรวจสอบว่า member เป็น ref_user ของใครอีก (ผู้แนะนำชั้นบน) ---
+                $parents = Members::whereHasChild($member->id)->get();
+                foreach ($parents as $parent) {
+                    if ($affiliate->is_enable_af_winlose == 1 && $winlose < 0) {
+                        $commission_level3 = abs($winlose) * ($affiliate->af_receive_percent_winlose_3 / 100);
+                        $this->createTransfer($parent, $commission_level3);
+                        Log::info("Level3 commission for parent {$parent->username} from member {$member->username}: {$commission_level3}");
+                    }
                 }
             }
         }
+
+        // แจ้งสิ้นสุด
+        Log::info('Run affiliate Job finished');
+        TelegramMessage::create()
+            ->to(env('TELEGRAM_G_ID'))
+            ->line(env('APP_NAME'))
+            ->line('BOT สิ้นสุดการ Run affiliate')
+            ->send();
     }
 
     /**
