@@ -14,6 +14,14 @@ class AffiliateCommand extends Command
     public function handle()
     {
         // แบ่งสมาชิกเป็น batch 100 คน
+            // แจ้งเริ่มงาน
+        Log::info('Run affiliate Job started');
+        TelegramMessage::create()
+            ->to(env('TELEGRAM_G_ID'))
+            ->line(env('APP_NAME'))
+            ->line('BOT เริ่มทำการ affiliate')
+            ->send();
+
         Members::whereNotNull('ref_user')->chunk(100, function ($members) {
             foreach ($members as $member) {
                 RunAffiliate::dispatch($member->id);
@@ -21,5 +29,13 @@ class AffiliateCommand extends Command
         });
 
         $this->info('Affiliate Jobs dispatched for all members!');
+
+                // แจ้งสิ้นสุด
+        Log::info('Run affiliate Job finished');
+        TelegramMessage::create()
+            ->to(env('TELEGRAM_G_ID'))
+            ->line(env('APP_NAME'))
+            ->line('BOT สิ้นสุดการ Run affiliate')
+            ->send();
     }
 }
