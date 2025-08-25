@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Message;
@@ -9,13 +10,13 @@ use Illuminate\Support\Facades\Storage;
 
 class MessageController extends Controller
 {
-     public function index(Request $req, Conversation $conversation)
+    public function index(Request $req, Conversation $conversation)
     {
         abort_unless($conversation->members()->whereKey($req->user()->id)->exists(), 403);
 
         $after = (int) $req->query('after', 0);
-        $q = $conversation->messages()->with(['member:id,username,nickname,fullname'])->orderBy('id','asc');
-        if ($after > 0) $q->where('id','>', $after);
+        $q = $conversation->messages()->with(['member:id,username,nickname,fullname'])->orderBy('id', 'asc');
+        if ($after > 0) $q->where('id', '>', $after);
 
         return response()->json(
             $q->take(100)->get()->map(function ($m) {
@@ -53,13 +54,14 @@ class MessageController extends Controller
             foreach ($req->file('attachments') as $file) {
                 $paths[] = $file->store('chat', 'public'); // storage/app/public/chat/...
             }
+            $paths[0] = env('APP_URL') . '/storage/' . $paths[0];
         }
 
         // if (!($data['body'] ?? null) && empty($paths)) {
         //     return response()->json(['ok' => false, 'msg' => 'empty'], 422);
         // }
         // error_log($paths[0]);
-        $paths[0] = env('APP_URL').'/storage/'.$paths[0];
+
         $msg = Message::create([
             'conversation_id' => $conversation->id,
             'member_id'       => $req->user()->id,
@@ -68,7 +70,10 @@ class MessageController extends Controller
         ]);
 
         // broadcast ทันที
-        try { broadcast(new \App\Events\ChatMessageSent($msg))->toOthers(); } catch (\Throwable $e) {}
+        try {
+            broadcast(new \App\Events\ChatMessageSent($msg))->toOthers();
+        } catch (\Throwable $e) {
+        }
 
         return response()->json([
             'ok'          => true,
@@ -76,5 +81,42 @@ class MessageController extends Controller
             'created_at'  => $msg->created_at?->toISOString(),
             'attachments' => $paths,
         ], 201);
+    }
+    public function destroy(Request $req, Message $message)
+    {
+        abort_unless($message->member_id == $req->user()->id, 403);
+
+        $message->delete();
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function update_attachments(Request $req)
+    {
+        $data = $req->validate([
+            'message_id' => 'required|integer|exists:messages,id',
+            'attachments.*' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
+        ]);
+
+        $message = \App\Models\Message::findOrFail($data['message_id']);
+        $paths = [];
+        if ($req->hasFile('attachments')) {
+            foreach ($req->file('attachments') as $file) {
+                $paths[] = $file->store('chat', 'public');
+            }
+        }
+        $paths[0] = env('APP_URL') . '/storage/' . $paths[0];
+        $message->attachments = $paths;
+        $message->save();
+
+        $urls = array_map(fn($p) => Storage::url($p), $paths);
+
+        // (ออปชัน) บรอดแคสต์ “อัปเดตรูป” อีกที ถ้าข้อความถูกสร้างก่อนหน้านี้
+        try {
+            broadcast(new \App\Events\ChatMessageSent($message))->toOthers();
+        } catch (\Throwable $e) {
+        }
+
+        return response()->json(['ok' => true, 'paths' => $paths, 'urls' => $urls]);
     }
 }

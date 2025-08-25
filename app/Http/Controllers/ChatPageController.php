@@ -60,17 +60,17 @@ class ChatPageController extends Controller
             })->values()->all();
 
         DB::transaction(function () use ($conversation) {
-            // ด้วย schema ที่ใช้ constrained()->cascadeOnDelete():
-            // ลบ conversation จะ cascade ลบ conversation_member, messages
-            // และจาก messages จะ cascade ต่อไปยัง message_readers
             $conversation->delete();
         });
 
         // ลบไฟล์แนบใน storage (ถ้าเก็บใน 'public' หรือปรับ disk ตามจริง)
         foreach ($attachments as $path) {
             try {
-                Storage::disk('public')->delete($path);
-            } catch (\Throwable $e) {
+
+                $delpath = explode('storage',$path);
+                Storage::disk('public')->delete($delpath[1]);
+            } catch (\Exception $e) {
+                error_log($e->getMessage());
             }
         }
 

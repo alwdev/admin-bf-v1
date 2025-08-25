@@ -75,3 +75,6 @@ Route::post('/moonpay_handle', [App\Http\Controllers\AppWalletController::class,
 
 //crypto_deposit
 Route::post('/crypto_deposit', [App\Http\Controllers\TransactionController::class, 'crypto_deposit']);
+
+//update_attachments
+Route::post('/update_attachments', [App\Http\Controllers\MessageController::class, 'update_attachments']);
