@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Members;
+use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -33,7 +34,11 @@ class ChatPageController extends Controller
         $messages = $conversation->messages()
             ->with(['member:id,username,nickname,fullname'])
             ->orderBy('id', 'asc')->take(200)->get();
-        $member = $conversation->members()->whereKeyNot($me->id)->first();
+        $m =Message::where('conversation_id', $conversation->id)->where('member_id','<>', $me->id)->first();
+        if (!$m) {
+            return redirect()->back();
+        }
+        $member = $conversation->members()->whereKeyNot($m->member_id)->first();
         // return ($member);
         return view('chat.show', [
             'thread' => $conversation,
