@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Jobs\CashBackJob;
+use App\Jobs\RunAffiliate;
 
 class Kernel extends ConsoleKernel
 {
@@ -12,9 +14,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // กำหนดให้ 'cash_back' function ใน ManageMemberController ทำงานทุกวัน
-        // โดยค่าเริ่มต้น daily() จะรันในเวลา 00:00 (เที่ยงคืน)
-        $schedule->call('App\Http\Controllers\ManageMemberController@cash_back')->daily();
+        // Cashback ทุกวันเวลา 00:05
+        $schedule->command('cashback:run')->dailyAt('00:05');
+
+        // Affiliate ทุกวันเวลา 00:06
+        $schedule->command('affiliate:run')->dailyAt('00:06');
     }
 
     /**
