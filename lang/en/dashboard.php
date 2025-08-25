@@ -29,7 +29,7 @@ return [
     'refuse'=>'Refuse',
     'In_progress'=>'In progress',
         'total_bet'=>'Total Bet',
-    'winlose'=>'Win/Lose',
+    'winlose'=>'Win/Loss',
     'commission_rate'=>'Commission Rate',
     'commission'=>'Commission',
     'date_range'=>'Date Range',
