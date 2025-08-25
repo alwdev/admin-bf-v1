@@ -16,12 +16,12 @@ class ChatPageController extends Controller
     public function index(Request $req)
     {
         $me = $req->user();
-        // $convs = Conversation::whereHas('members', fn($q) => $q->whereKey(1))
-        //     ->with(['members:id,username,nickname,fullname'])
-        //     ->latest('updated_at')
-        //     ->get();
-        $convs = Conversation::latest('updated_at')
+        $convs = Conversation::whereHas('members', fn($q) => $q->whereKey(1))
+            ->with(['members:id,username,nickname,fullname'])
+            ->latest('updated_at')
             ->get();
+        // $convs = Conversation::latest('updated_at')
+        //     ->get();
         //  return $convs;
         return view('chat.index', compact('convs'));
     }
