@@ -89,7 +89,7 @@
                                         @endforeach
                                     </div>
                                 @endif
-                                <div class="small opacity-75 text-end mt-1">{{ $m->created_at->format('H:i') }}</div>
+                                <div class="small opacity-75 text-end mt-1">{{ $m->created_at->format('d/m/y H:i') }}</div>
                             </div>
                         </div>
                     @empty
