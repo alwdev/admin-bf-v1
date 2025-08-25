@@ -93,7 +93,7 @@ class LottoController extends Controller
     public function refun(Request $request)
     {
         $member = Members::where('username', $request->username)->first();
-        $amount = $member->wallet_balance - $request->balance;
+        $amount = $member->wallet_balance + $request->balance;
         if ($member) {
 
             $bf = app(\App\Http\Controllers\BetflixController::class)
