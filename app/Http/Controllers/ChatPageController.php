@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Members;
+use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -33,7 +34,11 @@ class ChatPageController extends Controller
         $messages = $conversation->messages()
             ->with(['member:id,username,nickname,fullname'])
             ->orderBy('id', 'asc')->take(200)->get();
-        $member = $conversation->members()->whereKeyNot($me->id)->first();
+        $m =Message::where('conversation_id', $conversation->id)->where('member_id','<>', $me->id)->first();
+        if (!$m) {
+            return redirect()->back();
+        }
+        $member = $conversation->members()->whereKeyNot($m->member_id)->first();
         // return ($member);
         return view('chat.show', [
             'thread' => $conversation,
@@ -60,17 +65,17 @@ class ChatPageController extends Controller
             })->values()->all();
 
         DB::transaction(function () use ($conversation) {
-            // ด้วย schema ที่ใช้ constrained()->cascadeOnDelete():
-            // ลบ conversation จะ cascade ลบ conversation_member, messages
-            // และจาก messages จะ cascade ต่อไปยัง message_readers
             $conversation->delete();
         });
 
         // ลบไฟล์แนบใน storage (ถ้าเก็บใน 'public' หรือปรับ disk ตามจริง)
         foreach ($attachments as $path) {
             try {
-                Storage::disk('public')->delete($path);
-            } catch (\Throwable $e) {
+
+                $delpath = explode('storage',$path);
+                Storage::disk('public')->delete($delpath[1]);
+            } catch (\Exception $e) {
+                error_log($e->getMessage());
             }
         }
 

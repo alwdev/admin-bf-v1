@@ -89,7 +89,7 @@
                                         @endforeach
                                     </div>
                                 @endif
-                                <div class="small opacity-75 text-end mt-1">{{ $m->created_at->format('H:i') }}</div>
+                                <div class="small opacity-75 text-end mt-1">{{ $m->created_at->format('d/m/Y H:i') }}</div>
                             </div>
                         </div>
                     @empty
@@ -167,24 +167,60 @@
             };
             scrollToBottom(false);
 
+            function norm(u) {
+                if (!u) return '';
+                if (u.startsWith('http://') || u.startsWith('https://') || u.startsWith('/') || u.startsWith('blob:')) {
+                    return u;
+                }
+                // เป็นพาธจาก DB เช่น "chat/xxx.png"
+                return '/storage/' + u.replace(/^\/+/, '');
+            }
+
+            function normalizeAttachments(att) {
+                if (!att) return [];
+                if (typeof att === 'string') {
+                    try {
+                        const parsed = JSON.parse(att);
+                        att = Array.isArray(parsed) ? parsed : [att];
+                    } catch {
+                        att = [att]; // เป็นสตริงพาธเดี่ยว
+                    }
+                }
+                if (!Array.isArray(att)) return [];
+                return att.map(norm);
+            }
+
             const renderMsg = (m) => {
-                console.log(m, meId);
+                if (!m) return;
                 const mine = Number(m.member_id) === meId;
                 const wrap = document.createElement('div');
                 wrap.className = `d-flex mb-2 ${mine ? 'justify-content-end' : 'justify-content-start'}`;
                 wrap.setAttribute('data-message-id', m.id);
+
+                const atts = normalizeAttachments(m.attachments);
+                const imgs = atts.length ?
+                    `<div class="mt-2 d-flex gap-2 flex-wrap">
+         ${atts.map(u => `
+               <a href="${u}" target="_blank" class="d-inline-block">
+                 <img src="${u}" class="img-thumbnail" style="max-width:160px; max-height:160px; object-fit:cover;">
+               </a>`).join('')}
+       </div>` :
+                    '';
+
                 wrap.innerHTML = `
-      ${mine ? '' : `
-                                                <div class="me-2  d-none d-md-flex align-items-center justify-content-center" style="width:100px;height:28px;">
-                                                  <span class="small">${m.member?.username || 'Customer'}</span>
-                                                </div>`}
-      <div class="px-3 py-2 rounded-3 ${mine ? 'bg-primary text-white' : 'bg-light'}" style="max-width:70%;">
-        ${m.body ? `<div class="white-space-prewrap">${escapeHtml(m.body)}</div>` : ''}
-        <div class="small ${mine ? 'opacity-75' : 'text-muted'} text-end mt-1">${formatTime(m.created_at)}</div>
-      </div>
-    `;
+    ${mine ? '' : `
+          <div class="me-2 d-none d-md-flex align-items-center justify-content-center" style="width:100px;height:28px;">
+            <span class="small">${m.member?.username || 'Customer'}</span>
+          </div>`}
+    <div class="px-3 py-2 rounded-3 ${mine ? 'bg-primary text-white' : 'bg-light'}" style="max-width:70%;">
+      ${m.body ? `<div class="white-space-prewrap">${escapeHtml(m.body)}</div>` : ''}
+      ${imgs}  <!-- ✅ แทรกรูปเข้ามาที่นี่ -->
+      <div class="small ${mine ? 'opacity-75' : 'text-muted'} text-end mt-1">${formatTime(m.created_at)}</div>
+    </div>
+  `;
                 elBox.appendChild(wrap);
             };
+
 
             function escapeHtml(s) {
                 return s.replace(/[&<>"']/g, m => ({
@@ -332,7 +368,7 @@
                         });
                         if (data.length) scrollToBottom();
                     } catch (e) {}
-                }, 2000);
+                }, 4000);
             }
         })();
     </script>
