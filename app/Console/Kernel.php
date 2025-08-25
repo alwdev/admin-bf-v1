@@ -14,11 +14,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // Cashback ทุกวันเวลา 00:05
-        $schedule->command('cashback:run')->dailyAt('00:05');
+        // // Cashback ทุกวันเวลา 00:05
+        // $schedule->command('cashback:run')->dailyAt('00:05');
 
-        // Affiliate ทุกวันเวลา 00:06
-        $schedule->command('affiliate:run')->dailyAt('00:06');
+        // // Affiliate ทุกวันเวลา 00:06
+        // $schedule->command('affiliate:run')->dailyAt('00:06');
     }
 
     /**
