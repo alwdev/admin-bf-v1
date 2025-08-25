@@ -274,7 +274,7 @@ public function update(Request $request, string $id)
         if ($request->boolean('is_percentage_based')) {
             $rules['bonus_percentage'] = 'required|numeric|min:0|max:100';
             $rules['turnover_percentage'] = 'required|numeric|min:0';
-            $rules['withdraw_limit_percentage'] = 'required|numeric|min:0|max:100';
+            $rules['withdraw_limit_percentage'] = 'required|numeric|min:0';
 
             $rules['bonus'] = 'nullable'; // ทำให้ช่อง Amount เป็น nullable หากใช้ Percentage
             $rules['turnover'] = 'nullable';
