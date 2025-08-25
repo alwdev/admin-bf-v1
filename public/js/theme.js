@@ -26,21 +26,34 @@
         });
     }
 
+    // function initActiveMenu() {
+    //     // === following js will activate the menu in left side bar based on url ====
+    //     $("#sidebar-menu a").each(function () {
+    //         var pageUrl = window.location.href.split(/[?#]/)[0];
+    //         if (this.href == pageUrl) {
+    //             $(this).addClass("active");
+    //             $(this).parent().addClass("mm-active"); // add active to li of the current link
+    //             $(this).parent().parent().addClass("mm-show");
+    //             $(this).parent().parent().prev().addClass("mm-active"); // add active class to an anchor
+    //             $(this).parent().parent().parent().addClass("mm-active");
+    //             $(this).parent().parent().parent().parent().addClass("mm-show"); // add active to li of the current link
+    //             $(this).parent().parent().parent().parent().parent().addClass("mm-active");
+    //         }
+    //     });
+    // }
     function initActiveMenu() {
-        // === following js will activate the menu in left side bar based on url ====
-        $("#sidebar-menu a").each(function () {
-            var pageUrl = window.location.href.split(/[?#]/)[0];
-            if (this.href == pageUrl) {
-                $(this).addClass("active");
-                $(this).parent().addClass("mm-active"); // add active to li of the current link
-                $(this).parent().parent().addClass("mm-show");
-                $(this).parent().parent().prev().addClass("mm-active"); // add active class to an anchor
-                $(this).parent().parent().parent().addClass("mm-active");
-                $(this).parent().parent().parent().parent().addClass("mm-show"); // add active to li of the current link
-                $(this).parent().parent().parent().parent().parent().addClass("mm-active");
-            }
-        });
-    }
+    $("#sidebar-menu a").each(function () {
+        var pageUrl = window.location.href.split(/[?#]/)[0];
+        if (this.href === pageUrl) {
+            $(this).addClass("active");
+            $(this).closest("li").addClass("mm-active");          // li ของลิงก์
+            $(this).closest("ul").addClass("mm-show");           // ul ของ submenu
+            $(this).closest("ul").prev("a").addClass("mm-active"); // anchor ก่อนหน้า ul
+            $(this).parents("li").addClass("mm-active");         // parent li
+        }
+    });
+}
+
 
     function initComponents() {
         $(function () {

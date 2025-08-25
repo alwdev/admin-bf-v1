@@ -21,7 +21,7 @@ File: App Css
 14. Select2
 15. Datepicker
 16. Daterange
-17. Waves 
+17. Waves
 18. Auth
 19. Pricing
 */
@@ -39,20 +39,6 @@ File: App Css
 .metismenu li.mm-active{
   background-color: #ffa9a9a1 !important;
 
-}
-
-#sidebar_report.mm-active{
-  background-color: unset !important;
-  ul{
-    /* background: #812020; */
-    li a{
-      background-color: white !important;
-    };
-    li.mm-active a{
-      background-color: #ffa9a9a1 !important;
-    }
-    
-  };
 }
 
 
@@ -200,15 +186,6 @@ File: App Css
   font-weight: 700;
 }
 
-.mm-active .active {
-      --tw-text-opacity: 1;
-  color: rgb(127 29 29/var(--tw-text-opacity)) !important;
-}
-
-li.mm-active > a {
-      --tw-text-opacity: 1;
-  color: rgb(127 29 29/var(--tw-text-opacity)) !important;
-}
 
 @media (max-width: 992px) {
   .vertical-menu {
@@ -1147,7 +1124,7 @@ div.dt-button-info h2 {
 }
 
 /* 14. Maps */
-/* 
+/*
 ============
     Maps
 ============
@@ -1434,10 +1411,10 @@ div.dt-button-info h2 {
 /* 18. Waves */
 /*!
  * Waves v0.7.6
- * http://fian.my.id/Waves 
- * 
- * Copyright 2014-2018 Alfiana E. Sibuea and other contributors 
- * Released under the MIT license 
+ * http://fian.my.id/Waves
+ *
+ * Copyright 2014-2018 Alfiana E. Sibuea and other contributors
+ * Released under the MIT license
  * https://github.com/fians/Waves/blob/master/LICENSE */
 .waves-effect {
   position: relative;

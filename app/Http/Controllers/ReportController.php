@@ -468,4 +468,58 @@ class ReportController extends Controller
         $banks = Bank::where('enable',1)->where('active',1)->get();
         return view('report.report_wrong',compact('transfer','members','banks'));
     }
+
+     public function memberWinlose(Request $request)
+    {
+        // ถ้าไม่ส่งวันที่มา ใช้วันที่ปัจจุบัน
+         $range = $request->input('range', 0); // ค่ามาจาก select
+    $now = Carbon::now('Asia/Bangkok');
+
+    switch ($range) {
+        case 1: // Yesterday
+            $start_date = $now->copy()->subDay()->format('Y-m-d');
+            break;
+        case 2: // Last 7 days
+            $start_date = $now->copy()->subDays(7)->format('Y-m-d');
+            break;
+        case 3: // Last 30 days
+            $start_date = $now->copy()->subDays(30)->format('Y-m-d');
+            break;
+        default: // Today
+            $start_date = $now->format('Y-m-d');
+            break;
+    }
+        $headers = [
+            'Content-Type: application/x-www-form-urlencoded',
+            'x-api-cat: ' . env('API_CAT'),
+            'x-api-key: ' . env('API_KEY'),
+        ];
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, 'https://api.bfx.fail/v4/report/summariez?date=' . $start_date . '&page=1&upline=' . env('BF_AGENT'));
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+
+        $response = curl_exec($curl);
+        $error = curl_errno($curl);
+        curl_close($curl);
+
+        $data = [];
+
+        if (!$error && $response) {
+            $status_response = json_decode($response);
+            if ($status_response && $status_response->status == 'success') {
+                $data = $status_response->data;
+            }
+        }
+
+        return view('report.member_winlose', [
+            'data' => $data,
+            'date_id' => $range
+        ]);
+    }
 }
