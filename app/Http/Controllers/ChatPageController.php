@@ -40,7 +40,7 @@ class ChatPageController extends Controller
         // if (!$m) {
         //     return redirect()->back()->with('error', 'ไม่มีข้อความในห้องนี้');
         // }
-        $member = $conversation->members()->whereKeyNot($m->member_id)->first();
+        $member = $conversation->members()->whereKey($m->member_id)->first();
         // return ($member);
         return view('chat.show', [
             'thread' => $conversation,
