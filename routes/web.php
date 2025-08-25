@@ -223,6 +223,7 @@ Route::get('/partner_call_winlose_by_id/{id}', [App\Http\Controllers\PartnerCont
 Route::get('/runAffiliateDryRun/{id}', [App\Http\Controllers\AffiliateController::class, 'runAffiliateDryRun']);
 
 Route::get('/QueryBetRecordsV2', [ReportController::class, 'QueryBetRecordsV2']);
+Route::get('/report/member-winlose', [ReportController::class, 'memberWinlose'])->name('report.member-winlose');
 
 Route::get('/regenmember_idxxx', [App\Http\Controllers\SettingController::class, 'regenmember_idxxx']);
 

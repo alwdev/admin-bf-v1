@@ -39,7 +39,7 @@
                         <li class=""><a href="https://bo.psg777.com/bo/simpleReport" class="active">{{__('main.report')}}</a></li>
                         <li class=""><a href="/member_transfer/0" class="active">{{__('main.report_transfer')}}</a></li>
                         <li class=""><a href="{{ route('report.edit_balance') }}" class="active">{{__('main.report_edit_credit')}}</a></li>
-                        {{-- <li class=""><a href="{{ '/pghard_report/0/0' }}" class="active">PG HARD eport</a></li> --}}
+                        <li class=""><a href="{{ route('report.member-winlose') }}" class="active">Member Win/Lose</a></li>
                     </ul>
                 </li>
                 <li>
