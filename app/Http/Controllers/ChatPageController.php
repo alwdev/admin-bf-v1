@@ -37,9 +37,9 @@ class ChatPageController extends Controller
             ->with(['member:id,username,nickname,fullname'])
             ->orderBy('id', 'asc')->take(200)->get();
         $m =Message::where('conversation_id', $conversation->id)->where('member_id','<>', $me->id)->first();
-        if (!$m) {
-            return redirect()->back();
-        }
+        // if (!$m) {
+        //     return redirect()->back()->with('error', 'ไม่มีข้อความในห้องนี้');
+        // }
         $member = $conversation->members()->whereKeyNot($m->member_id)->first();
         // return ($member);
         return view('chat.show', [
