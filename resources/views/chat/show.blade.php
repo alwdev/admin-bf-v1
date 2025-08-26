@@ -201,17 +201,17 @@
                 const imgs = atts.length ?
                     `<div class="mt-2 d-flex gap-2 flex-wrap">
          ${atts.map(u => `
-               <a href="${u}" target="_blank" class="d-inline-block">
-                 <img src="${u}" class="img-thumbnail" style="max-width:160px; max-height:160px; object-fit:cover;">
-               </a>`).join('')}
+                   <a href="${u}" target="_blank" class="d-inline-block">
+                     <img src="${u}" class="img-thumbnail" style="max-width:160px; max-height:160px; object-fit:cover;">
+                   </a>`).join('')}
        </div>` :
                     '';
 
                 wrap.innerHTML = `
     ${mine ? '' : `
-          <div class="me-2 d-none d-md-flex align-items-center justify-content-center" style="width:100px;height:28px;">
-            <span class="small">${m.member?.username || 'Customer'}</span>
-          </div>`}
+              <div class="me-2 d-none d-md-flex align-items-center justify-content-center" style="width:100px;height:28px;">
+                <span class="small">${m.member?.username || 'Customer'}</span>
+              </div>`}
     <div class="px-3 py-2 rounded-3 ${mine ? 'bg-primary text-white' : 'bg-light'}" style="max-width:70%;">
       ${m.body ? `<div class="white-space-prewrap">${escapeHtml(m.body)}</div>` : ''}
       ${imgs}  <!-- ✅ แทรกรูปเข้ามาที่นี่ -->
