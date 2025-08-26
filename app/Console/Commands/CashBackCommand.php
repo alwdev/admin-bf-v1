@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Jobs\CashBackJob;
+use App\Models\Members;
 
 class CashBackCommand extends Command
 {
