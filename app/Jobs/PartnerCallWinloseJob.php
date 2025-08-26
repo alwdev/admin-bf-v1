@@ -76,8 +76,8 @@ class PartnerCallWinloseJob implements ShouldQueue
                         $commission = abs($winlose) * ($partner->rate / 100);
                         $total_commission += $commission;
 
-                        $start_date = date('Y-m-d', strtotime('-1 day'));
-                        $end_date = date('Y-m-d', strtotime('-1 day'));
+                        $start_date = date('Y-m-d', strtotime($this->date_start.' day'));
+                        $end_date = date('Y-m-d', strtotime($this->date_end.' day'));
 
                         $membersData[] = [
                             'total_bet' => $total_bet,
