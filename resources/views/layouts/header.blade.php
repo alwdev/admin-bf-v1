@@ -190,7 +190,7 @@
     }, 3000);
 
     setInterval(function() {
-        console.log("count_chat ", count_chat);
+        // console.log("count_chat ", count_chat);
         $.ajax({
             type: 'get',
             headers: {
@@ -199,7 +199,7 @@
             url: '{{ route('chat.conversations.count') }}',
             success: function(data) {
                 if (data) {
-                    console.log("data ",data)
+                    // console.log("data ",data)
                     if (parseInt(data) != 0) {
                         if (parseInt(data) != count_chat) {
                             var alarm = new Howl({
