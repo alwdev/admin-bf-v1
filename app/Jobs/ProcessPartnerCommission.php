@@ -95,14 +95,14 @@ class ProcessPartnerCommission implements ShouldQueue
             $start_date = date('Y-m-d', strtotime('-1 day'));
             $end_date   = date('Y-m-d', strtotime('-1 day'));
 
-            // PartnerCommission::create([
-            //     'partner_id'     => $partner->id,
-            //     'amount'         => $total_commission,
-            //     'payment_type'   => 'Commission',
-            //     'payment_status' => 'pending',
-            //     'transaction_id' => '',
-            //     'note'           => $start_date . '-' . $end_date
-            // ]);
+            PartnerCommission::create([
+                'partner_id'     => $partner->id,
+                'amount'         => $total_commission,
+                'payment_type'   => 'Commission',
+                'payment_status' => 'pending',
+                'transaction_id' => '',
+                'note'           => $start_date . '-' . $end_date
+            ]);
 
             Logs::create([
                 'log' => "Partner {$partner->contanct_name} ได้ commission {$total_commission}"
