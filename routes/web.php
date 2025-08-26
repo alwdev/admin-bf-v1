@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\HashtagController;
+use App\Http\Controllers\AlertController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 /*
@@ -203,7 +204,7 @@ Route::get('/get_affiliate', [ManageMemberController::class, 'affiliate']);
 Route::get('/affiliate_fixdate/{date_start}/{date_end}', [ManageMemberController::class, 'affiliate_fixdate']);
 
 Route::get('/partner_call_winlose', [App\Http\Controllers\PartnerController::class, 'partner_call_winlose']);
-Route::get('/partner_call_winlose_by_id/{id}', [App\Http\Controllers\PartnerController::class, 'partner_call_winlose_by_id']);
+Route::get('/partner_call_winlose_by_id/{id}/{s}/{e}', [App\Http\Controllers\PartnerController::class, 'partner_call_winlose_by_id']);
 
 Route::get('/QueryBetRecordsV2', [ReportController::class, 'QueryBetRecordsV2']);
 
@@ -218,7 +219,7 @@ Route::get('/Single_Member_Report_all_Provider/{username}/{start_day}/{end_day}'
 Route::resource('links', HashtagController::class);
 
 Route::get('lang', [App\Http\Controllers\LanguageController::class, 'change'])->name("change.lang");
-
+Route::get('/get-system-alert', [AlertController::class, 'getSystemAlert']);
 
 Route::get('/make-pass-fordev', function (Request $request) {
     // ดึงค่า 'password' จาก URL

@@ -85,7 +85,7 @@ class PromotionController extends Controller
         if ($request->boolean('is_percentage_based')) {
             $rules['bonus_percentage'] = 'required|numeric|min:0|max:100';
             $rules['turnover_percentage'] = 'required|numeric|min:0'; // อนุญาตให้เกิน 100 เช่น 500 สำหรับ 5 เท่า
-            $rules['withdraw_limit_percentage'] = 'required|numeric|min:0|max:100';
+            $rules['withdraw_limit_percentage'] = 'required|numeric|min:0';
 
             // Make fixed amount fields nullable if percentage based
             $rules['bonus'] = 'nullable';
@@ -274,7 +274,7 @@ public function update(Request $request, string $id)
         if ($request->boolean('is_percentage_based')) {
             $rules['bonus_percentage'] = 'required|numeric|min:0|max:100';
             $rules['turnover_percentage'] = 'required|numeric|min:0';
-            $rules['withdraw_limit_percentage'] = 'required|numeric|min:0|max:100';
+            $rules['withdraw_limit_percentage'] = 'required|numeric|min:0';
 
             $rules['bonus'] = 'nullable'; // ทำให้ช่อง Amount เป็น nullable หากใช้ Percentage
             $rules['turnover'] = 'nullable';
