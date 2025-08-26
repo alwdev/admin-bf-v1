@@ -64,31 +64,47 @@
             <div class="card-body p-0">
                 <div id="chatMessages" class="p-3" style="height: calc(100vh - 270px); overflow-y:auto;">
                     @forelse($messages as $m)
-                        @php $mine = $m->member_id === $meId; @endphp
-                        <div class="d-flex mb-2 {{ $mine ? 'justify-content-end' : 'justify-content-start' }}"
+                        @php
+                            $mine = $m->member_id === $meId;
+                            $isBot = ($m->is_bot ?? false) || ($m->member->role ?? null) === 'bot';
+                            $isRight = $mine || $isBot; // ✅ ขวาถ้าเป็นของเรา "หรือ" เป็นของบอท
+                            $displayName = $isBot ? 'Support Bot' : $m->member->username ?? 'Customer';
+                            $atts = is_array($m->attachments)
+                                ? $m->attachments
+                                : (is_string($m->attachments)
+                                    ? (json_decode($m->attachments, true) ?:
+                                    [])
+                                    : []);
+                        @endphp
+
+                        <div class="d-flex mb-2 {{ $isRight ? 'justify-content-end' : 'justify-content-start' }}"
                             data-message-id="{{ $m->id }}">
-                            @unless ($mine)
-                                <div class="me-2  d-none d-md-flex align-items-center justify-content-center"
+                            @unless ($isRight)
+                                <div class="me-2 d-none d-md-flex align-items-center justify-content-center"
                                     style="width:100px;height:28px;">
-                                    <span class="small">{{ $m->member->username }}</span>
+                                    <span class="small">{{ $displayName }}</span>
                                 </div>
                             @endunless
-                            <div class="px-3 py-2 rounded-3 {{ $mine ? 'bg-primary text-white' : 'bg-light' }}"
+
+                            <div class="px-3 py-2 rounded-3 {{ $isRight ? 'bg-primary text-white' : 'bg-light' }}"
                                 style="max-width: 70%;">
                                 @if (!empty($m->body))
                                     <div class="white-space-prewrap">{{ $m->body }}</div>
                                 @endif
-                                @if ($m->attachments && is_array($m->attachments) && count($m->attachments))
+
+                                @if (!empty($atts))
                                     <div class="mt-2 d-flex gap-2 flex-wrap">
-                                        @foreach ($m->attachments as $path)
-                                            @php $url = $path; @endphp
+                                        @foreach ($atts as $path)
+                                            @php $url = \Illuminate\Support\Str::startsWith($path, ['http://','https://','/']) ? $path : \Storage::url($path); @endphp
                                             <a href="{{ $url }}" target="_blank" class="d-inline-block">
                                                 <img src="{{ $url }}" class="img-thumbnail"
-                                                    style="max-width:160px; max-height:160px; object-fit:cover;">
+                                                    style="max-width:160px; max-height:160px; object-fit:cover;"
+                                                    loading="lazy">
                                             </a>
                                         @endforeach
                                     </div>
                                 @endif
+
                                 <div class="small opacity-50 text-end mt-1">{{ $m->created_at->format('d/m/Y H:i') }}</div>
                             </div>
                         </div>
@@ -96,6 +112,7 @@
                         <div class="text-center text-muted py-5">เริ่มบทสนทนาได้เลย</div>
                     @endforelse
                 </div>
+
             </div>
 
             {{-- Composer: ปุ่มแนบ + input file + preview --}}
@@ -191,31 +208,37 @@
             }
 
             const renderMsg = (m) => {
-                if (!m) return;
+                if (!m || m.id == null) return;
+                if (document.querySelector(`[data-message-id="${m.id}"]`)) return;
+
+                const isBot = !!m.is_bot || (m.member?.role === 'bot');
                 const mine = Number(m.member_id) === meId;
+                const right = mine || isBot; // ✅
+
+                const name = isBot ? 'Support Bot' : (m.member?.username || 'Customer');
+
                 const wrap = document.createElement('div');
-                wrap.className = `d-flex mb-2 ${mine ? 'justify-content-end' : 'justify-content-start'}`;
+                wrap.className = `d-flex mb-2 ${right ? 'justify-content-end' : 'justify-content-start'}`;
                 wrap.setAttribute('data-message-id', m.id);
 
-                const atts = normalizeAttachments(m.attachments);
+                const atts = Array.isArray(m.attachments) ? m.attachments : [];
                 const imgs = atts.length ?
                     `<div class="mt-2 d-flex gap-2 flex-wrap">
-         ${atts.map(u => `
-                   <a href="${u}" target="_blank" class="d-inline-block">
-                     <img src="${u}" class="img-thumbnail" style="max-width:160px; max-height:160px; object-fit:cover;">
-                   </a>`).join('')}
+         ${atts.map(u => `<a href="${u}" target="_blank" class="d-inline-block">
+                   <img src="${u}" class="img-thumbnail" style="max-width:160px; max-height:160px; object-fit:cover;">
+                 </a>`).join('')}
        </div>` :
                     '';
 
                 wrap.innerHTML = `
-    ${mine ? '' : `
+    ${right ? '' : `
               <div class="me-2 d-none d-md-flex align-items-center justify-content-center" style="width:100px;height:28px;">
-                <span class="small">${m.member?.username || 'Customer'}</span>
+                <span class="small">${name}</span>
               </div>`}
-    <div class="px-3 py-2 rounded-3 ${mine ? 'bg-primary text-white' : 'bg-light'}" style="max-width:70%;">
+    <div class="px-3 py-2 rounded-3 ${right ? 'bg-primary text-white' : 'bg-light'}" style="max-width:70%;">
       ${m.body ? `<div class="white-space-prewrap">${escapeHtml(m.body)}</div>` : ''}
-      ${imgs}  <!-- ✅ แทรกรูปเข้ามาที่นี่ -->
-      <div class="small ${mine ? 'opacity-75' : 'text-muted'} text-end mt-1">${formatTime(m.created_at)}</div>
+      ${imgs}
+      <div class="small ${right ? 'opacity-75' : 'text-muted'} text-end mt-1">${formatTime(m.created_at)}</div>
     </div>
   `;
                 elBox.appendChild(wrap);
@@ -363,12 +386,13 @@
                         if (!res.ok) return;
                         const data = await res.json(); // [{id, user_id, body, created_at, user:{name}}]
                         data.forEach(m => {
+                            console.log("Fallback polling ",m)
                             renderMsg(m);
                             lastId = Math.max(lastId, Number(m.id));
                         });
                         if (data.length) scrollToBottom();
                     } catch (e) {}
-                }, 4000);
+                }, 9000);
             }
         })();
     </script>

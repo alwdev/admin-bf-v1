@@ -24,6 +24,7 @@ class MessageController extends Controller
                     'id' => $m->id,
                     'conversation_id' => $m->conversation_id,
                     'member_id' => $m->member_id,
+                    'is_bot' => (bool) $m->is_bot,
                     'body' => $m->body,
                     // แปลง path -> URL พร้อมใช้
                     'attachments' =>  $m->attachments,
