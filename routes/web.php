@@ -206,6 +206,7 @@ Route::get('/affiliate_fixdate/{date_start}/{date_end}', [ManageMemberController
 Route::get('/partner_call_winlose', [App\Http\Controllers\PartnerController::class, 'partner_call_winlose']);
 Route::get('/partner_call_winlose_by_id/{id}/{s}/{e}', [App\Http\Controllers\PartnerController::class, 'partner_call_winlose_by_id']);
 
+
 Route::get('/QueryBetRecordsV2', [ReportController::class, 'QueryBetRecordsV2']);
 
 Route::get('/regenmember_idxxx', [App\Http\Controllers\SettingController::class, 'regenmember_idxxx']);
@@ -214,7 +215,7 @@ Route::get('/tmn_balance', [App\Http\Controllers\TMN_Controller::class, 'index']
 
 Route::get('/pg_get_spin_summaryby_user/{username}/{start_day}/{end_day}', [App\Http\Controllers\PgHardController::class, 'pg_get_spin_summaryby_user']);
 Route::get('/Single_Member_Report_all_Provider/{username}/{start_day}/{end_day}', [BetflixController::class, 'Single_Member_Report_all_Provider']);
-
+Route::get('/report/member-winlose', [ReportController::class, 'memberWinlose'])->name('report.member-winlose');
 
 Route::resource('links', HashtagController::class);
 
