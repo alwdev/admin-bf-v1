@@ -108,8 +108,8 @@ class PartnerCallWinloseJob implements ShouldQueue
 
                 // batch insert
                 if (!empty($commissions)) {
-                    // $partner->total_profit = ($partner->total_profit ?? 0) + $total_commission;
-                    // $partner->save();
+                    $partner->total_profit = ($partner->total_profit ?? 0) + $total_commission;
+                    $partner->save();
                     PartnerCommission::insert($commissions);
                 }
             }
