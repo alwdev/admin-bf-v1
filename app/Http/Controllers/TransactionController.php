@@ -317,24 +317,62 @@ class TransactionController extends Controller
 
                         if ($pro->is_percentage_based) { // ถ้าโปรโมชั่นนี้ใช้ระบบเปอร์เซ็นต์
                             error_log("Calculating bonus based on percentage (selected promo).");
-                            if ($pro->bonus_percentage !== null && $pro->bonus_percentage > 0) {
-                                $current_calculated_bonus = $transfer->amount * ($pro->bonus_percentage / 100);
-                            }
-                            if ($pro->turnover_percentage !== null && $pro->turnover_percentage > 0) {
-                                $current_turnover_value = $pro->turnover_percentage;
+                            if($transfer->amount >= $pro->deposit){
+                                if ($pro->bonus_percentage !== null && $pro->bonus_percentage > 0) {
+                                    $current_calculated_bonus = $transfer->amount * ($pro->bonus_percentage / 100);
+                                }
+                                if ($pro->turnover_percentage !== null && $pro->turnover_percentage > 0) {
+                                    $current_turnover_value = $pro->turnover_percentage;
+                                }
+                            }else{
+                                $message .= "Does not meet Deposit amount requirements, ";
+
                             }
                         } else { // ถ้าโปรโมชั่นนี้ใช้ระบบค่าคงที่ (จำนวนเงิน/เท่า)
                             error_log("Calculating bonus based on fixed amount (selected promo).");
-                            $current_calculated_bonus = $pro->bonus;
-                            $current_turnover_value = $pro->turnover;
+                            if($transfer->amount >= $pro->deposit){
+                                $current_calculated_bonus = $pro->bonus;
+                                $current_turnover_value = $pro->turnover;
+                            }else{
+                                $message .= "Does not meet Deposit amount requirements, ";
+                            }
                         }
                         // *** จบการกำหนดค่าโบนัสและ turnover สำหรับโปรที่เลือก ***
 
                         if ($pro->is_newuser == 1) { // โปรโมชั่นแรกสำหรับสมาชิกใหม่ที่เลือก
                             error_log("เป็นโปรโมชั่นแรกสำหรับสมาชิกใหม่ (เลือก)");
                             if ($user_transfer_count == 0) { // ต้องเป็นการฝากครั้งแรกจริงๆ
-                                error_log("Meet first-time new member conditions (selected promo)");
-                                $message .= "Meet first-time new member conditions, ";
+                                if($transfer->amount >= $pro->deposit){
+                                    error_log("Meet first-time new member conditions (selected promo)");
+                                    $message .= "Meet first-time new member conditions, ";
+
+                                    // กำหนดค่าโบนัสและเทิร์นโอเวอร์
+
+                                    $bonus_to_apply = $current_calculated_bonus;
+                                    $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
+
+                                    $base_amount_for_turnover = $transfer->amount + $bonus_to_apply;
+                                    if ($pro->is_percentage_based) {
+                                        $calculated_required_turnover = $base_amount_for_turnover * ($current_turnover_value / 100);
+                                    } else {
+                                        $calculated_required_turnover = $base_amount_for_turnover * $current_turnover_value;
+                                    }
+
+                                    $applied_promotion_name = $pro->name;
+                                    $promotion_found_and_applied = true;
+                                }else{
+                                    $message .= "Does not meet Deposit amount requirements, ";
+                                }
+                            } else {
+                                error_log("Does not meet first-time new member requirements (already made first deposit), no bonus from selected promo.");
+                                $message .= "Does not meet first-time new member requirements, ";
+                                // ไม่เข้าเงื่อนไข (ไม่ใช่ครั้งแรก), ไม่มีโบนัสจากโปรนี้
+                                // $bonus_to_apply และ $calculated_required_turnover จะยังคงเป็น 0.0 ตามค่าเริ่มต้น
+                            }
+                        } else { // โปรโมชั่นสำหรับสมาชิกทุกคน (เลือก)
+                            if($transfer->amount >= $pro->deposit){
+                                error_log("All member promotions (selected promo)");
+                                $message .= "All member promotions, ";
 
                                 // กำหนดค่าโบนัสและเทิร์นโอเวอร์
                                 $bonus_to_apply = $current_calculated_bonus;
@@ -349,29 +387,9 @@ class TransactionController extends Controller
 
                                 $applied_promotion_name = $pro->name;
                                 $promotion_found_and_applied = true;
-                            } else {
-                                error_log("Does not meet first-time new member requirements (already made first deposit), no bonus from selected promo.");
-                                $message .= "Does not meet first-time new member requirements, ";
-                                // ไม่เข้าเงื่อนไข (ไม่ใช่ครั้งแรก), ไม่มีโบนัสจากโปรนี้
-                                // $bonus_to_apply และ $calculated_required_turnover จะยังคงเป็น 0.0 ตามค่าเริ่มต้น
+                            }else{
+                                $message .= "Does not meet Deposit amount requirements, ";
                             }
-                        } else { // โปรโมชั่นสำหรับสมาชิกทุกคน (เลือก)
-                            error_log("All member promotions (selected promo)");
-                            $message .= "All member promotions, ";
-
-                            // กำหนดค่าโบนัสและเทิร์นโอเวอร์
-                            $bonus_to_apply = $current_calculated_bonus;
-                            $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
-
-                            $base_amount_for_turnover = $transfer->amount + $bonus_to_apply;
-                            if ($pro->is_percentage_based) {
-                                $calculated_required_turnover = $base_amount_for_turnover * ($current_turnover_value / 100);
-                            } else {
-                                $calculated_required_turnover = $base_amount_for_turnover * $current_turnover_value;
-                            }
-
-                            $applied_promotion_name = $pro->name;
-                            $promotion_found_and_applied = true;
                         }
                     } else { // turnover_on == 0 สำหรับโปรโมชั่นที่เลือก
                         error_log("Turnover off for selected promotion. No bonus from this promo.");
@@ -430,8 +448,9 @@ class TransactionController extends Controller
         error_log("Bonus for Telegram = " . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
 
         $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
-        Log::info('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
-        error_log('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
+        Logs::create([
+            'log' => 'Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username
+        ]);
         // $bf_deposit = "success";
         if ($bf_deposit == "success") {
             error_log("lineNotify_deposit bf_deposit success");
