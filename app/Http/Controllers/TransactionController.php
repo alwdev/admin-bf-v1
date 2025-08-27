@@ -317,23 +317,22 @@ class TransactionController extends Controller
 
                         if ($pro->is_percentage_based) { // ถ้าโปรโมชั่นนี้ใช้ระบบเปอร์เซ็นต์
                             error_log("Calculating bonus based on percentage (selected promo).");
-                            if($transfer->amount >= $pro->deposit){
+                            if ($transfer->amount >= $pro->deposit) {
                                 if ($pro->bonus_percentage !== null && $pro->bonus_percentage > 0) {
                                     $current_calculated_bonus = $transfer->amount * ($pro->bonus_percentage / 100);
                                 }
                                 if ($pro->turnover_percentage !== null && $pro->turnover_percentage > 0) {
                                     $current_turnover_value = $pro->turnover_percentage;
                                 }
-                            }else{
+                            } else {
                                 $message .= "Does not meet Deposit amount requirements, ";
-
                             }
                         } else { // ถ้าโปรโมชั่นนี้ใช้ระบบค่าคงที่ (จำนวนเงิน/เท่า)
                             error_log("Calculating bonus based on fixed amount (selected promo).");
-                            if($transfer->amount >= $pro->deposit){
+                            if ($transfer->amount >= $pro->deposit) {
                                 $current_calculated_bonus = $pro->bonus;
                                 $current_turnover_value = $pro->turnover;
-                            }else{
+                            } else {
                                 $message .= "Does not meet Deposit amount requirements, ";
                             }
                         }
@@ -342,7 +341,7 @@ class TransactionController extends Controller
                         if ($pro->is_newuser == 1) { // โปรโมชั่นแรกสำหรับสมาชิกใหม่ที่เลือก
                             error_log("เป็นโปรโมชั่นแรกสำหรับสมาชิกใหม่ (เลือก)");
                             if ($user_transfer_count == 0) { // ต้องเป็นการฝากครั้งแรกจริงๆ
-                                if($transfer->amount >= $pro->deposit){
+                                if ($transfer->amount >= $pro->deposit) {
                                     error_log("Meet first-time new member conditions (selected promo)");
                                     $message .= "Meet first-time new member conditions, ";
 
@@ -360,7 +359,7 @@ class TransactionController extends Controller
 
                                     $applied_promotion_name = $pro->name;
                                     $promotion_found_and_applied = true;
-                                }else{
+                                } else {
                                     $message .= "Does not meet Deposit amount requirements, ";
                                 }
                             } else {
@@ -370,7 +369,7 @@ class TransactionController extends Controller
                                 // $bonus_to_apply และ $calculated_required_turnover จะยังคงเป็น 0.0 ตามค่าเริ่มต้น
                             }
                         } else { // โปรโมชั่นสำหรับสมาชิกทุกคน (เลือก)
-                            if($transfer->amount >= $pro->deposit){
+                            if ($transfer->amount >= $pro->deposit) {
                                 error_log("All member promotions (selected promo)");
                                 $message .= "All member promotions, ";
 
@@ -387,7 +386,7 @@ class TransactionController extends Controller
 
                                 $applied_promotion_name = $pro->name;
                                 $promotion_found_and_applied = true;
-                            }else{
+                            } else {
                                 $message .= "Does not meet Deposit amount requirements, ";
                             }
                         }
@@ -448,9 +447,11 @@ class TransactionController extends Controller
         error_log("Bonus for Telegram = " . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
 
         $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
-        Logs::create([
-            'log' => 'Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username.' Bonus ='.$bonus
-        ]);
+
+        $log = new \App\Models\Logs;
+        $log->log = 'Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username . ' Bonus =' . $bonus;
+        $log->save();
+        
         // $bf_deposit = "success";
         if ($bf_deposit == "success") {
             error_log("lineNotify_deposit bf_deposit success");
@@ -1658,7 +1659,7 @@ class TransactionController extends Controller
         return substr($phone, 0, 3) . "-" . substr($phone, 3, 3) . "-" . substr($phone, 6, 4);
     }
 
-    public function crypto_deposit($id,$cryptoAmount)
+    public function crypto_deposit($id, $cryptoAmount)
     {
         error_log("crypto_deposit id = " . $id);
         $transfer = Transfer::where('id', $id)->first();
