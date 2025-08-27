@@ -449,7 +449,7 @@ class TransactionController extends Controller
 
         $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
         Logs::create([
-            'log' => 'Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username
+            'log' => 'Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username.' Bonus ='.$bonus
         ]);
         // $bf_deposit = "success";
         if ($bf_deposit == "success") {
@@ -1611,7 +1611,7 @@ class TransactionController extends Controller
 
 
         $bf_deposit =  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($amount_betflix));
-        Log::info('Deposit Betflix ' . $bf_deposit . ' amount : ' . floor($amount_betflix) . ' User =  ' . $member->username);
+        // Log::info('Deposit Betflix ' . $bf_deposit . ' amount : ' . floor($amount_betflix) . ' User =  ' . $member->username);
 
         if ($bf_deposit == "success") {
 
