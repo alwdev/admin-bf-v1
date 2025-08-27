@@ -1891,12 +1891,12 @@ class TransactionController extends Controller
 
         $key = "deposit_lock:{$member->username}:{$amount_betflix}";
         if (Cache::has($key)) {
-            Log::info('!!! Duplicate request detected for user: ' . $member->username . ' with amount: ' . $amount_betflix);
+            // Log::info('!!! Duplicate request detected for user: ' . $member->username . ' with amount: ' . $amount_betflix);
             return 400; // ถ้ามีการล็อกอยู่ แสดงว่ามีการเรียกซ้ำ
         }
         Cache::put($key, true, 1); // ล็อก 1 วินาที
         $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
-        Log::info('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
+        // Log::info('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
         error_log('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
         Cache::forget($key);
 
@@ -1956,7 +1956,7 @@ class TransactionController extends Controller
                 if($transfer->ref_id != null && $transfer->ref_id != ""){
                     $url = "https://bscscan.com/tx/".$transfer->ref_id;
                 }
-                Log::info("bscscan url = " . $url);
+                // Log::info("bscscan url = " . $url);
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                     ->line('BOT ' . env('APP_NAME'))
                     ->line('Transaction completed, credit transferred :' . $member->username)
