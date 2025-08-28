@@ -31,6 +31,7 @@ class CashBackJob implements ShouldQueue
     {
         $member = Members::find($this->memberId);
         if (!$member) {
+            Log::info("cashback member not found id ".$this->memberId);
             return;
         }
 
