@@ -18,7 +18,7 @@ class PartnerCommissionCommand extends Command
     {
         set_time_limit(0);
 
-        Log::info("Run Check Partner Commission");
+        // Log::info("Run Check Partner Commission");
         Logs::create(['log' => 'BOT เริ่มทำการ ส่วนแบ่ง Partner']);
 
         try {
@@ -35,11 +35,12 @@ class PartnerCommissionCommand extends Command
         Partner::chunk(100, function ($partners) {
             foreach ($partners as $partner) {
                 ProcessPartnerCommission::dispatch($partner); // ส่งไป queue ทีละ partner
-                Log::info("Dispatched Partner ID: {$partner->id}");
+                // Log::info("Dispatched Partner ID: {$partner->id}");
+                Logs::create(['log' => 'Dispatched Partner ID: '.$partner->id]);
             }
         });
 
-        Log::info('Dispatched all partner commissions');
+        // Log::info('Dispatched all partner commissions');
         Logs::create(['log' => 'Dispatched all partner commissions']);
 
         try {
