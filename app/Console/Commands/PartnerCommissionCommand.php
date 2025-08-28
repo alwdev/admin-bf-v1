@@ -18,7 +18,7 @@ class PartnerCommissionCommand extends Command
     {
         set_time_limit(0);
 
-        Log::info("Run Check Partner Commission");
+        // Log::info("Run Check Partner Commission");
         Logs::create(['log' => 'BOT เริ่มทำการ ส่วนแบ่ง Partner']);
 
         try {
@@ -39,7 +39,7 @@ class PartnerCommissionCommand extends Command
             }
         });
 
-        Log::info('Dispatched all partner commissions');
+        // Log::info('Dispatched all partner commissions');
         Logs::create(['log' => 'Dispatched all partner commissions']);
 
         try {

@@ -5,7 +5,9 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Jobs\CashBackJob;
 use App\Models\Members;
-
+use Illuminate\Support\Facades\Log;
+use NotificationChannels\Telegram\TelegramMessage;
+use App\Models\Logs;
 class CashBackCommand extends Command
 {
     protected $signature = 'cashback:run';
@@ -14,6 +16,7 @@ class CashBackCommand extends Command
     public function handle()
     {
         // ตัวสั่งงาน (Command/Controller)
+        Logs::create(['log' => 'BOT เริ่มทำการ Cashback']);
         TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
             ->line(env('APP_NAME'))
             ->line('BOT เริ่มทำการ Cashback')
@@ -25,6 +28,7 @@ class CashBackCommand extends Command
             }
         });
 
+        Logs::create(['log' => 'BOT สิ้นสุดการ Cashback']);
         TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
             ->line(env('APP_NAME'))
             ->line('BOT สิ้นสุดการ Cashback')
