@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Members;
 use App\Models\Affiliate;
 use App\Models\Transfer;
+use App\Models\Logs;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -99,6 +100,11 @@ class RunAffiliate implements ShouldQueue
             'old_balance' => $member->wallet_balance,
             'new_balance' => $member->wallet_balance + $amount,
             'transfer_date' => strtotime(now()),
+        ]);
+
+        Logs::create([
+            'username' => $member->username,
+            'log' => 'commission: ' . number_format($amount, 2)
         ]);
 
         // อัพเดต wallet balance ของสมาชิก
