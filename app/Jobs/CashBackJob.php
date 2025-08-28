@@ -35,7 +35,7 @@ class CashBackJob implements ShouldQueue
             return;
         }
 
-        Log::info("Run cashback for member: {$member->username}");
+        // Log::info("Run cashback for member: {$member->username}");
 
         $last_deposit = Transfer::where('member_id', $member->id)
             ->where('status', 2)
