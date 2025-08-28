@@ -18,22 +18,23 @@ class CashBackCommand extends Command
     {
         // ตัวสั่งงาน (Command/Controller)
         Logs::create(['log' => 'Run Cashback Job started']);
-        TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-            ->line(env('APP_NAME'))
-            ->line('BOT เริ่มทำการ Cashback')
-            ->send();
+        // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+        //     ->line(env('APP_NAME'))
+        //     ->line('BOT เริ่มทำการ Cashback')
+        //     ->send();
 
         Members::chunk(100, function ($members) {
             foreach ($members as $member) {
+                Log::info("Cashback check user : ".$member->username);
                 CashBackJob::dispatch($member->id);
             }
         });
 
         Logs::create(['log' => 'Run Cashback Job finished']);
-        TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-            ->line(env('APP_NAME'))
-            ->line('BOT สิ้นสุดการ Cashback')
-            ->send();
+        // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+        //     ->line(env('APP_NAME'))
+        //     ->line('BOT สิ้นสุดการ Cashback')
+        //     ->send();
 
         $this->info('Cashback Job dispatched to queue!');
     }
