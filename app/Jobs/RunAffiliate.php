@@ -11,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use App\Models\Logs;
 use NotificationChannels\Telegram\TelegramMessage;
 
 class RunAffiliate implements ShouldQueue
@@ -99,6 +100,11 @@ class RunAffiliate implements ShouldQueue
             'old_balance' => $member->wallet_balance,
             'new_balance' => $member->wallet_balance + $amount,
             'transfer_date' => strtotime(now()),
+        ]);
+
+         Logs::create([
+            'username' => $member->username,
+            'log' => 'commission: ' . number_format($amount, 2)
         ]);
 
         // อัพเดต wallet balance ของสมาชิก
