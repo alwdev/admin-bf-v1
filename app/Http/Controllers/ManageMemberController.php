@@ -853,4 +853,71 @@ class ManageMemberController extends Controller
     {
         //
     }
+
+    public function showAffiliates($id)
+{
+    $member = Members::find($id);
+
+    if (!$member) {
+        // จัดการกรณีไม่พบสมาชิก เช่น redirect หรือแสดงข้อผิดพลาด
+        return redirect()->route('managemember.index')->with('error', 'Member not found.');
+    }
+
+    // 1. ดึงข้อมูลผู้ถูกแนะนำ Level 1
+    $level1Ids = json_decode($member->ref_user, true) ?? [];
+    $level1Users = Members::whereIn('id', $level1Ids)->get(['id', 'username', 'ref_user']);
+
+    // 2. ดึงข้อมูลผู้ถูกแนะนำ Level 2 จากผู้แนะนำ Level 1
+    $level2Users = [];
+    $level1Users->each(function ($level1User) use (&$level2Users) {
+        $level2Ids = json_decode($level1User->ref_user, true) ?? [];
+        if (!empty($level2Ids)) {
+            $referredByLevel1 = Members::whereIn('id', $level2Ids)->get(['id', 'username']);
+            $level2Users[$level1User->id] = $referredByLevel1;
+        }
+    });
+
+    // 3. จัดโครงสร้างข้อมูลสำหรับส่งไป View
+    $formattedData = [
+        'master' => [
+            'id' => $member->id,
+            'username' => $member->username,
+        ],
+        'levels' => []
+    ];
+
+    foreach ($level1Users as $level1User) {
+        $level1Data = [
+            'id' => $level1User->id,
+            'username' => $level1User->username,
+            'children' => []
+        ];
+        if (isset($level2Users[$level1User->id])) {
+            foreach ($level2Users[$level1User->id] as $level2User) {
+                $level1Data['children'][] = [
+                    'id' => $level2User->id,
+                    'username' => $level2User->username,
+                ];
+            }
+        }
+        $formattedData['levels'][] = $level1Data;
+    }
+
+    $commissions = Transfer::where('member_id', $member->id)
+        ->where('type', 'commission')
+        ->get();
+// คำนวณยอดรวมคอมมิชชั่นทั้งหมด
+$totalCommission = $commissions->sum('amount');
+
+// คำนวณยอดรวมคอมมิชชั่นที่มีสถานะ "สำเร็จ" (status = 2)
+$paidCommission = $commissions->where('status', 2)->sum('amount');
+
+// ส่งข้อมูลที่จัดรูปแบบแล้วไปยัง View
+return view('manage-member.affiliate_tree', [
+    'affiliateData' => $formattedData,
+    'commissions' => $commissions,
+    'totalCommission' => $totalCommission,
+    'paidCommission' => $paidCommission // เพิ่มตัวแปรนี้เข้ามา
+]);
+}
 }

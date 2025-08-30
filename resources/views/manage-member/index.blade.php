@@ -56,6 +56,7 @@
                             <th>{{__('managemember.BankAccount')}}</th>
                             <th data-sortable="true">{{__('managemember.Registration_date')}}</th>
                             <th></th>
+                             <th>{{ __('Affiliate') }}</th>
                             @if( json_decode(auth()->user()->permissions)->member > 2  )
                             <th>{{__('managemember.manage')}}</th>
                             @endif
@@ -311,6 +312,13 @@
                             </td>
                             <td>{{ $member->created_at->format('d/m/Y H:i:s') }}</td>
                             <td><a href="{{ route('managemember.historyTransfer',$member->id) }}" type="button" class="btn btn-success  btn-sm waves-effect waves-light"><i class="bx bx-bitcoin"></i> {{__('managemember.finance')}}</a></td>
+                             <td>
+                                    <a href="{{ route('managemember.affiliates', ['id' => $member->id]) }}"
+                                        class="btn btn-primary btn-sm waves-effect waves-light">
+                                        <i class="bx bx-group"></i>
+                                        {{ is_null(json_decode($member->ref_user, true)) ? 0 : count(json_decode($member->ref_user, true)) }}
+                                    </a>
+                                </td>
                             @if( json_decode(auth()->user()->permissions)->member > 2  )
                             <td>
                                 <button type="button" class="btn btn-warning btn-sm waves-effect waves-light" onclick="lock('{{ $member->id }}','{{ Auth::user()->id }}','{{ $member->username }}','{{ $member->enable }}')" style="width: 80px;"><i class="bx bx-edit-alt" ></i>{{ $member->enable == 1 ? __('managemember.lock') : __('managemember.unlock')  }}</button>
