@@ -79,4 +79,6 @@ class Members extends Authenticatable
     public function messages(): HasMany {
         return $this->hasMany(Message::class, 'member_id');
     }
+
+
 }

@@ -76,99 +76,6 @@
             padding-right: 0.75rem;
         }
     </style>
-    <style>
-   /* --- Tree View Styles --- */
-.tree-view {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-}
-
-/* Base Styles for all nodes */
-.tree-node {
-    position: relative;
-    margin-bottom: 20px;
-}
-
-.tree-node:last-child {
-    margin-bottom: 0;
-}
-
-/* Container for all child nodes */
-.tree-children {
-    list-style: none;
-    padding-left: 20px;
-    position: relative;
-    margin-top: 10px;
-}
-
-/* Vertical dotted line */
-.tree-children:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 10px;
-    height: 100%;
-    border-left: 2px dotted #ced4da;
-}
-
-/* Horizontal dotted line */
-.tree-children > .tree-node:before {
-    content: '';
-    position: absolute;
-    top: 25px; /* Adjust to match node content center */
-    left: 10px;
-    width: 10px;
-    height: 1px;
-    border-top: 2px dotted #ced4da;
-}
-
-/* Adjustments for the last child node's vertical line */
-.tree-children > .tree-node:last-child:after {
-    content: '';
-    position: absolute;
-    top: 25px;
-    left: 10px;
-    width: 2px;
-    height: 100%;
-    background-color: white; /* Match background color */
-    z-index: 1;
-}
-
-/* Node content styling */
-.node-content {
-    display: flex;
-    align-items: center;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 10px 15px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-
-.node-icon {
-    width: 35px;
-    height: 35px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: 14px;
-    border-radius: 50%;
-    margin-right: 15px;
-}
-
-.node-label {
-    flex-grow: 1;
-    font-size: 16px;
-    color: #343a40;
-}
-
-.no-affiliate {
-    padding: 10px 15px;
-    color: #6c757d;
-}
-    </style>
 @endsection
 @section('content')
     <!-- start page title -->
@@ -233,14 +140,12 @@
                                         {{ __('managemember.finance') }}
                                     </a>
                                 </td>
-                                <td class="text-center">
-                                    <button type="button"
-                                        class="btn btn-primary btn-sm waves-effect waves-light btn-affiliate-modal"
-                                        data-toggle="modal" data-target="#affiliateModal"
-                                        data-member-id="{{ $member->id }}">
+                                <td>
+                                    <a href="{{ route('managemember.affiliates', ['id' => $member->id]) }}"
+                                        class="btn btn-primary btn-sm waves-effect waves-light">
                                         <i class="bx bx-group"></i>
                                         {{ is_null(json_decode($member->ref_user, true)) ? 0 : count(json_decode($member->ref_user, true)) }}
-                                    </button>
+                                    </a>
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-info btn-sm btn-info-modal" data-toggle="modal"
@@ -830,53 +735,58 @@
             });
 
             // JavaScript สำหรับ Affiliate Modal
-           // JavaScript สำหรับ Affiliate Modal
-// JavaScript สำหรับ Affiliate Modal
-$('#basic-datatable').on('click', '.btn-affiliate-modal', function() {
-    const memberId = $(this).data('member-id');
-    const container = $('#affiliate-tree-container');
+            // JavaScript สำหรับ Affiliate Modal
+            // JavaScript สำหรับ Affiliate Modal
+            $('#basic-datatable').on('click', '.btn-affiliate-modal', function() {
+                const memberId = $(this).data('member-id');
+                const container = $('#affiliate-tree-container');
 
-    // แสดงสถานะ Loading
-    container.html('<div class="text-center p-5"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>');
+                // แสดงสถานะ Loading
+                container.html(
+                    '<div class="text-center p-5"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>'
+                    );
 
-    $.ajax({
-        url: `/api/members/${memberId}/affiliates`,
-        method: 'GET',
-        success: function(response) {
-            let htmlTree = `<ul class="tree-view">`;
+                $.ajax({
+                    url: `/api/members/${memberId}/affiliates`,
+                    method: 'GET',
+                    success: function(response) {
+                        let htmlTree = `<ul class="tree-view">`;
 
-            // สมาชิกหลัก (Root Member)
-            htmlTree += `<li class="tree-node tree-root">
+                        // สมาชิกหลัก (Root Member)
+                        htmlTree += `<li class="tree-node tree-root">
                             <div class="node-content">
                                 <span class="node-icon bg-info text-white">M</span>
                                 <span class="node-label"><strong>${response.member_username}</strong></span>
                             </div>`;
 
-            // ผู้ถูกแนะนำ (Children)
-            if (response.referred_users.length > 0) {
-                htmlTree += `<ul class="tree-children">`;
-                response.referred_users.forEach(user => {
-                    htmlTree += `<li class="tree-node">
+                        // ผู้ถูกแนะนำ (Children)
+                        if (response.referred_users.length > 0) {
+                            htmlTree += `<ul class="tree-children">`;
+                            response.referred_users.forEach(user => {
+                                htmlTree += `<li class="tree-node">
                                     <div class="node-content">
                                         <span class="node-icon bg-success text-white">L1</span>
                                         <span class="node-label">${user.username}</span>
                                     </div>
                                 </li>`;
-                });
-                htmlTree += `</ul>`;
-            } else {
-                htmlTree += `<ul class="tree-children"><li class="no-affiliate">ไม่มีผู้ถูกแนะนำ</li></ul>`;
-            }
+                            });
+                            htmlTree += `</ul>`;
+                        } else {
+                            htmlTree +=
+                                `<ul class="tree-children"><li class="no-affiliate">ไม่มีผู้ถูกแนะนำ</li></ul>`;
+                        }
 
-            htmlTree += `</li></ul>`;
-            container.html(htmlTree);
-        },
-        error: function(xhr, status, error) {
-            container.html('<div class="alert alert-danger">เกิดข้อผิดพลาดในการโหลดข้อมูล.</div>');
-            console.error(error);
-        }
-    });
-});
+                        htmlTree += `</li></ul>`;
+                        container.html(htmlTree);
+                    },
+                    error: function(xhr, status, error) {
+                        container.html(
+                            '<div class="alert alert-danger">เกิดข้อผิดพลาดในการโหลดข้อมูล.</div>'
+                            );
+                        console.error(error);
+                    }
+                });
+            });
 
         });
     </script>
