@@ -862,6 +862,33 @@ class ManageMemberController extends Controller
             return 0;
         }
     }
+
+    public function getAffiliates($memberId)
+    {
+        $member = Members::find($memberId);
+
+        if (!$member) {
+            return response()->json(['error' => 'Member not found'], 404);
+        }
+
+        $refUsersIds = json_decode($member->ref_user, true);
+
+        // ตรวจสอบว่ามีผู้ถูกแนะนำหรือไม่
+        if (empty($refUsersIds)) {
+            return response()->json([
+                'member_username' => $member->username,
+                'referred_users' => [],
+            ]);
+        }
+
+        // ดึงข้อมูล username ของผู้ถูกแนะนำ
+        $referredUsers = Members::whereIn('id', $refUsersIds)->get(['id', 'username']);
+
+        return response()->json([
+            'member_username' => $member->username,
+            'referred_users' => $referredUsers,
+        ]);
+    }
     /**
      * Display the specified resource.
      */

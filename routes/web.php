@@ -46,7 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/memberEditBalance', [ManageMemberController::class, 'memberEditBalance'])->name('managemember.memberEditBalance')->middleware('CheckPermissionUser:member,edit');
     Route::post('/memberupdateBankAccount', [ManageMemberController::class, 'memberupdateBankAccount'])->name('managemember.memberupdateBankAccount')->middleware('CheckPermissionUser:member,edit');
     Route::get('/getcashback', [ManageMemberController::class, 'cash_back'])->name('managemember.getcashback')->middleware('CheckPermissionUser:member,view');
-
+    Route::get('/api/members/{memberId}/affiliates', [ManageMemberController::class, 'getAffiliates']);
 
     //Transaction
     Route::get('/transaction', [TransactionController::class, 'index'])->name('managemember.transaction')->middleware('CheckPermissionUser:transfer,view');

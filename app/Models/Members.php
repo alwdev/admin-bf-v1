@@ -55,6 +55,7 @@ class Members extends Authenticatable
         'remember_token',
     ];
 
+
     /**
      * Scope หา parent ของสมาชิกที่มี $childId อยู่ใน ref_user
      */
