@@ -131,6 +131,9 @@
                     @endif
 
                 </li>
+                <li>
+                    <a href="Document_Lotto.pdf" target="_blank" class="waves-effect"><i class='bx bx-copy'></i><span>{{__('Lotto manual')}}</span></a>
+                </li>
                 {{-- <li>
                     <a href="{{ route('smsLog.index') }}" class="waves-effect"><i
                             class='bx bx-copy'></i><span>SMS Logs</span></a>
