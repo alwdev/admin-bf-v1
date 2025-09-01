@@ -37,33 +37,30 @@ class CashBackJob implements ShouldQueue
 
         // Log::info("Run cashback for member: {$member->username}");
 
-        $last_deposit = Transfer::where('member_id', $member->id)
-            ->where('status', 2)
-            ->where('promotion_id', '>', 0)
-            ->where('type', 'deposit')
-            ->whereDate('created_at', Carbon::now()->subDays(7))
-            ->exists();
+       $last_transfer = Transfer::where('member_id', $member->id)
+            ->where('status', 2) // เฉพาะรายการอนุมัติ
+            ->latest('created_at')
+            ->first();
 
-        if ($last_deposit) {
-            Log::info("Cashback !! {$member->username} มียอดฝากก่อนหน้ารับโปร");
-            return;
-        }
-
-        $last_withdraw = Transfer::where('member_id', $member->id)
-            ->where('status', 2)
-            ->where('type', 'withdraw')
-            ->whereDate('created_at', Carbon::now()->subDays(7))
-            ->exists();
-
-        if ($last_withdraw) {
-            Log::info("Cashback !! {$member->username} มียอดถอนก่อนหน้า");
-            return;
+        if ($last_transfer) {
+            if ($last_transfer->type === 'deposit') {
+                // ถ้า deposit แต่มีโปรโมชั่น applied
+                if ($last_transfer->promotion_id > 0) {
+                    Log::info("Cashback !! {$member->username} มียอดฝากก่อนหน้ารับโปร");
+                    return;
+                }
+            } elseif ($last_transfer->type === 'withdraw') {
+                // ถ้า withdraw ให้ return เลย
+                Log::info("Cashback !! {$member->username} มียอดถอนก่อนหน้า");
+                return;
+            }
         }
 
         if ($member->wallet_balance > 100) {
             Log::info("Cashback !! {$member->username} มียอดคงเหลือมากกว่า 1");
             return;
         }
+
 
         $total_lose = 0;
         try {
@@ -82,7 +79,7 @@ class CashBackJob implements ShouldQueue
             $cash_back = $setting ? (abs($total_lose) * ($setting->cashback_percent / 100)) : 0;
         }
 
-        $cash_back = min($cash_back, 20000);
+        // $cash_back = min($cash_back, 20000);
 
         Logs::create([
             'username' => $member->username,
