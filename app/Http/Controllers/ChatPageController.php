@@ -18,11 +18,10 @@ class ChatPageController extends Controller
         $me = $req->user();
         $convs = Conversation::whereHas('members', fn($q) => $q->whereKey(1))
             ->with(['members:id,username,nickname,fullname'])
+            ->has('messages')
             ->latest('updated_at')
             ->get();
-        // $convs = Conversation::latest('updated_at')
-        //     ->get();
-        //  return $convs;
+
         return view('chat.index', compact('convs'));
     }
 
