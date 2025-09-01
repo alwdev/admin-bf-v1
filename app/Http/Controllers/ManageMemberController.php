@@ -1021,7 +1021,7 @@ class ManageMemberController extends Controller
                 return response()->json(['success' => true, 'message' => 'รับคอมมิชชั่นสำเร็จ', 'new_balance' => $member->wallet_balance]);
             } else {
                 DB::rollBack(); // เกิดข้อผิดพลาด, ย้อนกลับการเปลี่ยนแปลง
-                return response()->json(['success' => false, 'message' => 'ฝากเงินเข้า Betflix ล้มเหลว', 'reason' => $bf_deposit], 500);
+                return response()->json(['success' => false, 'message' => $bf_deposit, 'reason' => $bf_deposit], 500);
             }
 
         } catch (Exception $e) {

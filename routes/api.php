@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+
 Route::post('/smsRequest', [App\Http\Controllers\TransactionController::class, 'smsRequest']);
 Route::post('/smsRequest2', [App\Http\Controllers\TransactionController::class, 'smsRequest2']);
 

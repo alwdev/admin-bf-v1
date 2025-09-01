@@ -247,5 +247,4 @@ Route::get('whereHasChild/{id}', function ($id) {
     dd($parents);
 })->name('whereHasChild');
 
-Route::post('/receive-commission', [App\Http\Controllers\CommissionController::class, 'receive_commission'])
-    ->middleware('auth:sanctum');
+Route::post('/receive-commission', [App\Http\Controllers\ManageMemberController::class, 'receive_commission']);
