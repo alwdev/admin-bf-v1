@@ -602,6 +602,14 @@
                 $('#modal-member-id').val(memberId);
                 $('#modal-wallet-address').val(walletAddress);
             });
+
+            $('#basic-datatable').on('click', '.btn-edit-balance', function() {
+                let memberId = $(this).data('member-id');
+                let username = $(this).data('member-username');
+
+                $('#modal-member-id').val(memberId);
+                $('#modal-member-username').val(username);
+            });
         });
     </script>
 
