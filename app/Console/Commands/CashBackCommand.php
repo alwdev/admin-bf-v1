@@ -5,7 +5,9 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Jobs\CashBackJob;
 use App\Models\Members;
-
+use Illuminate\Support\Facades\Log;
+use NotificationChannels\Telegram\TelegramMessage;
+use App\Models\Logs;
 class CashBackCommand extends Command
 {
     protected $signature = 'cashback:run';

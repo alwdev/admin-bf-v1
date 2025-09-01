@@ -55,6 +55,7 @@ class Members extends Authenticatable
         'remember_token',
     ];
 
+
     /**
      * Scope หา parent ของสมาชิกที่มี $childId อยู่ใน ref_user
      */
@@ -78,4 +79,6 @@ class Members extends Authenticatable
     public function messages(): HasMany {
         return $this->hasMany(Message::class, 'member_id');
     }
+
+
 }
