@@ -68,6 +68,7 @@ class MessageController extends Controller
             'member_id'       => $req->user()->id,
             'body'            => $data['body'] ?? null,
             'attachments'     => $paths,
+            'is_admin'        => 1,
         ]);
 
         // broadcast ทันที
@@ -81,6 +82,7 @@ class MessageController extends Controller
             'id'          => $msg->id,
             'created_at'  => $msg->created_at?->toISOString(),
             'attachments' => $paths,
+            'is_admin'    => $msg->is_admin
         ], 201);
     }
     public function destroy(Request $req, Message $message)

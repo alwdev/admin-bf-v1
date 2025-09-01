@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Message extends Model
 {
-    protected $fillable = ['conversation_id','member_id','body','attachments'];
+    protected $fillable = ['conversation_id','member_id','is_bot','is_admin','metadata','body','attachments'];
     protected $casts = ['attachments' => 'array'];
 
     public function conversation(): BelongsTo { return $this->belongsTo(Conversation::class); }
