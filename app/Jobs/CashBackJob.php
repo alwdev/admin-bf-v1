@@ -60,7 +60,7 @@ class CashBackJob implements ShouldQueue
             return;
         }
 
-        if ($member->wallet_balance >= 1) {
+        if ($member->wallet_balance > 100) {
             Log::info("Cashback !! {$member->username} มียอดคงเหลือมากกว่า 1");
             return;
         }
