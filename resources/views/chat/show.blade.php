@@ -67,7 +67,9 @@
                         @php
                             $mine = $m->member_id === $meId;
                             $isBot = ($m->is_bot ?? false) || ($m->member->role ?? null) === 'bot';
-                            $isRight = $mine || $isBot; // ✅ ขวาถ้าเป็นของเรา "หรือ" เป็นของบอท
+                            $isAdmin = $m->is_admin ?? false;
+                            $isRight = $mine || $isBot || $isAdmin; // ✅ ขวาถ้าเป็นของเรา "หรือ" เป็นของบอท
+                            $admin = App\Models\User::where('id',$m->member_id)->first();
                             $displayName = $isBot ? 'Support Bot' : $m->member->username ?? 'Customer';
                             $atts = is_array($m->attachments)
                                 ? $m->attachments
@@ -213,7 +215,8 @@
 
                 const isBot = !!m.is_bot || (m.member?.role === 'bot');
                 const mine = Number(m.member_id) === meId;
-                const right = mine || isBot; // ✅
+                const isAdmin = m.is_admin;
+                const right = mine || isBot || isAdmin; // ✅
 
                 const name = isBot ? 'Support Bot' : (m.member?.username || 'Customer');
 
