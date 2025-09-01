@@ -35,12 +35,11 @@ class ChatPageController extends Controller
         $messages = $conversation->messages()
             ->with(['member:id,username,nickname,fullname'])
             ->orderBy('id', 'asc')->take(200)->get();
-        $m =Message::where('conversation_id', $conversation->id)->where('member_id','<>', $me->id)->first();
-        if (!$m) {
-            return redirect()->back()->with('error', 'ไม่มีข้อความในห้องนี้');
-        }
-        $member = $conversation->members()->whereKey($m->member_id)->first();
-        // return ($member);
+        $m_member =Message::where('conversation_id', $conversation->id)->first();
+
+        $member = $conversation->members()->whereKey($m_member->member_id)->first();
+        // return [$messages,$member];
+
         return view('chat.show', [
             'thread' => $conversation,
             'messages' => $messages,
