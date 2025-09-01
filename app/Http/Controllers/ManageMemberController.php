@@ -21,6 +21,7 @@ use App\Models\WheelSpin;
 use App\Models\Setting;
 use NotificationChannels\Telegram\TelegramMessage;
 use App\Jobs\RunAffiliate;
+use Illuminate\Support\Facades\DB;
 
 class ManageMemberController extends Controller
 {
@@ -609,7 +610,8 @@ class ManageMemberController extends Controller
         Log::info('End Cashback');
         return 'success';
     }
-    function affiliate(){
+    function affiliate()
+    {
         RunAffiliate::dispatch();
     }
     // function affiliate()
@@ -864,74 +866,72 @@ class ManageMemberController extends Controller
         }
     }
 
-// ในไฟล์ MemberController.php
+    // ในไฟล์ MemberController.php
 
-public function showAffiliates($id)
-{
-    $member = Members::find($id);
+    public function showAffiliates($id)
+    {
+        $member = Members::find($id);
 
-    if (!$member) {
-        // จัดการกรณีไม่พบสมาชิก เช่น redirect หรือแสดงข้อผิดพลาด
-        return redirect()->route('managemember.index')->with('error', 'Member not found.');
-    }
-
-    // 1. ดึงข้อมูลผู้ถูกแนะนำ Level 1
-    $level1Ids = json_decode($member->ref_user, true) ?? [];
-    $level1Users = Members::whereIn('id', $level1Ids)->get(['id', 'username', 'ref_user']);
-
-    // 2. ดึงข้อมูลผู้ถูกแนะนำ Level 2 จากผู้แนะนำ Level 1
-    $level2Users = [];
-    $level1Users->each(function ($level1User) use (&$level2Users) {
-        $level2Ids = json_decode($level1User->ref_user, true) ?? [];
-        if (!empty($level2Ids)) {
-            $referredByLevel1 = Members::whereIn('id', $level2Ids)->get(['id', 'username']);
-            $level2Users[$level1User->id] = $referredByLevel1;
+        if (!$member) {
+            // จัดการกรณีไม่พบสมาชิก เช่น redirect หรือแสดงข้อผิดพลาด
+            return redirect()->route('managemember.index')->with('error', 'Member not found.');
         }
-    });
 
-    // 3. จัดโครงสร้างข้อมูลสำหรับส่งไป View
-    $formattedData = [
-        'master' => [
-            'id' => $member->id,
-            'username' => $member->username,
-        ],
-        'levels' => []
-    ];
+        // 1. ดึงข้อมูลผู้ถูกแนะนำ Level 1
+        $level1Ids = json_decode($member->ref_user, true) ?? [];
+        $level1Users = Members::whereIn('id', $level1Ids)->get(['id', 'username', 'ref_user']);
 
-    foreach ($level1Users as $level1User) {
-        $level1Data = [
-            'id' => $level1User->id,
-            'username' => $level1User->username,
-            'children' => []
-        ];
-        if (isset($level2Users[$level1User->id])) {
-            foreach ($level2Users[$level1User->id] as $level2User) {
-                $level1Data['children'][] = [
-                    'id' => $level2User->id,
-                    'username' => $level2User->username,
-                ];
+        // 2. ดึงข้อมูลผู้ถูกแนะนำ Level 2 จากผู้แนะนำ Level 1
+        $level2Users = [];
+        $level1Users->each(function ($level1User) use (&$level2Users) {
+            $level2Ids = json_decode($level1User->ref_user, true) ?? [];
+            if (!empty($level2Ids)) {
+                $referredByLevel1 = Members::whereIn('id', $level2Ids)->get(['id', 'username']);
+                $level2Users[$level1User->id] = $referredByLevel1;
             }
+        });
+
+        // 3. จัดโครงสร้างข้อมูลสำหรับส่งไป View
+        $formattedData = [
+            'master' => [
+                'id' => $member->id,
+                'username' => $member->username,
+            ],
+            'levels' => [],
+        ];
+
+        foreach ($level1Users as $level1User) {
+            $level1Data = [
+                'id' => $level1User->id,
+                'username' => $level1User->username,
+                'children' => [],
+            ];
+            if (isset($level2Users[$level1User->id])) {
+                foreach ($level2Users[$level1User->id] as $level2User) {
+                    $level1Data['children'][] = [
+                        'id' => $level2User->id,
+                        'username' => $level2User->username,
+                    ];
+                }
+            }
+            $formattedData['levels'][] = $level1Data;
         }
-        $formattedData['levels'][] = $level1Data;
+
+        $commissions = Transfer::where('member_id', $member->id)->where('type', 'commission')->get();
+        // คำนวณยอดรวมคอมมิชชั่นทั้งหมด
+        $totalCommission = $commissions->sum('amount');
+
+        // คำนวณยอดรวมคอมมิชชั่นที่มีสถานะ "สำเร็จ" (status = 2)
+        $paidCommission = $commissions->where('status', 2)->sum('amount');
+
+        // ส่งข้อมูลที่จัดรูปแบบแล้วไปยัง View
+        return view('manage-member.affiliate_tree', [
+            'affiliateData' => $formattedData,
+            'commissions' => $commissions,
+            'totalCommission' => $totalCommission,
+            'paidCommission' => $paidCommission, // เพิ่มตัวแปรนี้เข้ามา
+        ]);
     }
-
-    $commissions = Transfer::where('member_id', $member->id)
-        ->where('type', 'commission')
-        ->get();
-// คำนวณยอดรวมคอมมิชชั่นทั้งหมด
-$totalCommission = $commissions->sum('amount');
-
-// คำนวณยอดรวมคอมมิชชั่นที่มีสถานะ "สำเร็จ" (status = 2)
-$paidCommission = $commissions->where('status', 2)->sum('amount');
-
-// ส่งข้อมูลที่จัดรูปแบบแล้วไปยัง View
-return view('manage-member.affiliate_tree', [
-    'affiliateData' => $formattedData,
-    'commissions' => $commissions,
-    'totalCommission' => $totalCommission,
-    'paidCommission' => $paidCommission // เพิ่มตัวแปรนี้เข้ามา
-]);
-}
     /**
      * Display the specified resource.
      */
@@ -962,5 +962,72 @@ return view('manage-member.affiliate_tree', [
     public function destroy(string $id)
     {
         //
+    }
+
+    /////////////////////////////////////////////////////////////// API
+     public function receive_commission(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            Log::info("receive_commission called with request transfer_id: " . $request->transfer_id . " and member_id: " . $request->member_id);
+
+            // ตรวจสอบว่ามี member_id ใน request หรือไม่
+            if (!$request->has('member_id')) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'ไม่พบข้อมูล member_id'], 400);
+            }
+
+            // ค้นหาข้อมูลการโอนจาก transfer_id
+            $transfer = Transfer::find($request->transfer_id);
+            if (!$transfer) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'ไม่พบข้อมูลการโอน'], 404);
+            }
+
+            // ตรวจสอบว่าคอมมิชชั่นถูกรับไปแล้วหรือยัง
+            if ($transfer->status === 2) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'คอมมิชชั่นนี้ถูกรับไปแล้ว'], 409);
+            }
+
+            $commission = $transfer->amount;
+
+            // ใช้ member_id ที่ส่งมาจาก request
+            $member = Members::find($request->member_id);
+
+            if (!$member) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'ไม่พบข้อมูลสมาชิก'], 404);
+            }
+
+            // บันทึกยอดเงินเก่า
+            $transfer->old_balance = (float) $member->wallet_balance;
+
+            // เพิ่มยอดเงินคอมมิชชั่น
+            $member->wallet_balance = (float) ($member->wallet_balance + $commission);
+            $member->save();
+
+            // เรียก API เพื่อฝากเงินเข้า Betflix
+            $bf_deposit = app(BetflixController::class)->Master_Deposit($member->username, $commission);
+            Log::info('Betflix commission ' . $bf_deposit . ' ' . $commission . ' User = ' . $member->username);
+
+            if ($bf_deposit === "success") {
+                $transfer->status = 2;
+                $transfer->status_code = 'อนุมัติ';
+                $transfer->save();
+
+                DB::commit(); // ทุกอย่างสำเร็จ, บันทึกการเปลี่ยนแปลง
+                return response()->json(['success' => true, 'message' => 'รับคอมมิชชั่นสำเร็จ', 'new_balance' => $member->wallet_balance]);
+            } else {
+                DB::rollBack(); // เกิดข้อผิดพลาด, ย้อนกลับการเปลี่ยนแปลง
+                return response()->json(['success' => false, 'message' => 'ฝากเงินเข้า Betflix ล้มเหลว', 'reason' => $bf_deposit], 500);
+            }
+
+        } catch (Exception $e) {
+            DB::rollBack(); // เกิดข้อผิดพลาดจาก exception, ย้อนกลับการเปลี่ยนแปลง
+            Log::error('Transaction failed: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'เกิดข้อผิดพลาดที่ไม่คาดคิด'], 500);
+        }
     }
 }
