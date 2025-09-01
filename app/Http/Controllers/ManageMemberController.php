@@ -58,8 +58,8 @@ class ManageMemberController extends Controller
         //
         $member = Members::find($request->member_id);
         $transfer = Transfer::find($request->transfer_id);
-        Log::info($request->type . ' Admin approve ' . $member->username . ' Balance =  ' . $member->wallet_balance . ' transfer amount =' . $transfer->amount);
-        error_log($request->type . ' Admin approve ' . $member->username . ' Balance =  ' . $member->wallet_balance . ' transfer amount =' . $transfer->amount);
+        // Log::info($request->type . ' Admin approve ' . $member->username . ' Balance =  ' . $member->wallet_balance . ' transfer amount =' . $transfer->amount);
+        // error_log($request->type . ' Admin approve ' . $member->username . ' Balance =  ' . $member->wallet_balance . ' transfer amount =' . $transfer->amount);
 
         if ($transfer->status == 2 || $transfer->status == 3) {
             return redirect()->back();
@@ -285,8 +285,8 @@ class ManageMemberController extends Controller
                 error_log('Bonus = ' . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
 
                 $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, $amount_betflix);
-                Log::info('Deposit Betflix ' . $bf_deposit . ' ' . $amount_betflix . ' User =  ' . $member->username);
-                error_log('Deposit Betflix ' . $bf_deposit . ' ' . $amount_betflix . ' User =  ' . $member->username);
+                // Log::info('Deposit Betflix ' . $bf_deposit . ' ' . $amount_betflix . ' User =  ' . $member->username);
+                // error_log('Deposit Betflix ' . $bf_deposit . ' ' . $amount_betflix . ' User =  ' . $member->username);
                 // $bf_deposit = 'success';
                 if ($bf_deposit == 'success') {
                     $wheel_setting = WheelSpin::first();
@@ -380,9 +380,17 @@ class ManageMemberController extends Controller
             $transfer->turnover_on = 0;
             $transfer->save();
 
+            $withdraw_fee = 6.5 / 100;    // 0.065
+            $thb_usd_price = 33;        // อัตราแลกเปลี่ยน
+
+            $transfer_back = $transfer->amount * (1 - $withdraw_fee) / $thb_usd_price;
+
+            Log::info("withdraw eject transfer_back =".$transfer_back." transfer amount ".$transfer->amount." username ".$member->username);
+
+
             if ($request->type == 'withdraw') {
-                $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($transfer->amount));
-                Log::info('rollBack Deposit Betflix ' . $bf_deposit . ' ' . $transfer->amount . ' User =  ' . $member->username);
+                $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($transfer_back));
+                Log::info('rollBack Deposit Betflix ' . $bf_deposit . ' ' . $transfer_back . ' User =  ' . $member->username);
                 if ($bf_deposit == 'success') {
                     $new_balance = (float) $member->wallet_balance + $transfer->amount;
                     $member->update(['wallet_balance' => strval($new_balance)]);
