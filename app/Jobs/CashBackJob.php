@@ -78,7 +78,7 @@ class CashBackJob implements ShouldQueue
             $cash_back = $setting ? (abs($total_lose) * ($setting->cashback_percent / 100)) : 0;
         }
 
-        $cash_back = min($cash_back, 20000);
+        // $cash_back = min($cash_back, 20000);
 
         Logs::create([
             'username' => $member->username,
