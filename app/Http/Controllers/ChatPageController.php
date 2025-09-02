@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
+use App\Models\ConversationMember;
 use App\Models\Members;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\TextUI\XmlConfiguration\ConvertLogTypes;
 
 class ChatPageController extends Controller
 {
@@ -16,10 +18,19 @@ class ChatPageController extends Controller
     public function index(Request $req)
     {
         $me = $req->user();
-        $convs = Conversation::whereHas('members', fn($q) => $q->whereKey(1))
+        // $convs = Conversation::whereHas('members', fn($q) => $q->whereKey(1))
+        //     ->with(['members:id,username,nickname,fullname'])
+        //     ->latest('updated_at')
+        //     ->where('active', 1)
+        //     ->has('messages')
+        //     ->get();
+        $convs = Conversation::where('active', 1)
+            ->whereHas('members', fn($q) => $q->whereKey(1))
             ->with(['members:id,username,nickname,fullname'])
-            ->latest('updated_at')
-            ->has('messages')
+            ->withCount('messages')
+            ->with('latestMessage.member:id,username,nickname,fullname')
+            ->withMax('messages as last_message_at', 'created_at')   // ได้คอลัมน์ last_message_at
+            ->orderByDesc('last_message_at')
             ->get();
         // return $convs;
         return view('chat.index', compact('convs'));
@@ -35,7 +46,7 @@ class ChatPageController extends Controller
         $messages = $conversation->messages()
             ->with(['member:id,username,nickname,fullname'])
             ->orderBy('id', 'asc')->take(200)->get();
-        $m_member =Message::where('conversation_id', $conversation->id)->first();
+        $m_member = Message::where('conversation_id', $conversation->id)->first();
 
         $member = $conversation->members()->whereKey($m_member->member_id)->first();
         // return [$messages,$member];
@@ -64,15 +75,19 @@ class ChatPageController extends Controller
                 return is_array($decoded) ? $decoded : [];
             })->values()->all();
 
-        DB::transaction(function () use ($conversation) {
-            $conversation->delete();
-        });
+        // DB::transaction(function () use ($conversation) {
+        //     $conversation->delete();
+        // });
+        //  conversation active = 0
+        $conversation->active = 0;
+        $conversation->save();
+
 
         // ลบไฟล์แนบใน storage (ถ้าเก็บใน 'public' หรือปรับ disk ตามจริง)
         foreach ($attachments as $path) {
             try {
 
-                $delpath = explode('storage',$path);
+                $delpath = explode('storage', $path);
                 Storage::disk('public')->delete($delpath[1]);
             } catch (\Exception $e) {
                 error_log($e->getMessage());
