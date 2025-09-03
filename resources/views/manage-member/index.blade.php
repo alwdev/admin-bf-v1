@@ -461,129 +461,133 @@
       })
     }
 
-    function lock(member_id,user_id,member_name,status) {
-        if(status == 1){
-            Swal.mixin({
-                confirmButtonText: '{{__('main.yes')}} &rarr;',
-                showCancelButton: true,
-                cancelButtonText: '{{__('main.cancel')}}',
-                progressSteps: ['1', '2']
-            }).queue([
-                {
-                title: 'ต้องการล็อค Member หรือไม่',
-                }
-            ]).then( function (result) {
-                if (result.value) {
-                        $.ajax({
-                            type: 'post',
-                            headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            url: '{{ route('managemember.memberlock') }}',
-                            data: { member_id:member_id,user_id:user_id,status:status },
-                            success: function (data) {
-                                if(data!=false){
-                                    Swal.fire(
-                                            {
-                                                title: 'ล็อคการใช้งาน',
-                                                html: '<h4>ชื่อผู้ใช้: '+member_name+'</br></h4>' +
-                                                '<h4>ถูกล็อคการใช้งานแล้ว</br></h4>',
-                                                type: 'success',
-                                                confirmButtonText: 'ตกลง',
-                                                confirmButtonClass: 'btn btn-confirm mt-2'
+            window.lock = function(member_id, user_id, member_name, status) {
+            const isLock = (status == 1);
 
-                                            }
-                                        ).then(function() {
-                                            location.reload();
-                                        });
-
-                                    }
-                                }
-                        });
-                }
-            })
-        }else{
-            Swal.mixin({
-                confirmButtonText: 'ยืนยัน &rarr;',
+            // ตั้งค่า swal base
+            const swalBase = Swal.mixin({
+                confirmButtonText: 'ยืนยัน →',
                 showCancelButton: true,
                 cancelButtonText: 'ยกเลิก',
-                progressSteps: ['1', '2']
-            }).queue([
-                {
-                title: 'ต้องการปลดล็อค Member หรือไม่',
-                }
-            ]).then( function (result) {
-                if (result.value) {
-                        $.ajax({
-                            type: 'post',
-                            headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            url: '{{ route('managemember.memberlock') }}',
-                            data: { member_id:member_id,user_id:user_id,status:status },
-                            success: function (data) {
-                                if(data!=false){
-                                    Swal.fire(
-                                            {
-                                                title: 'ปลดล็อคการใช้งาน',
-                                                html: '<h4>ชื่อผู้ใช้: '+member_name+'</br></h4>' +
-                                                '<h4>ถูกปลดล็อคการใช้งานแล้ว</br></h4>',
-                                                type: 'success',
-                                                confirmButtonText: 'ตกลง',
-                                                confirmButtonClass: 'btn btn-confirm mt-2'
+                progressSteps: ['1', '2'],
+                reverseButtons: true
+            });
 
-                                            }
-                                        ).then(function() {
-                                            location.reload();
-                                        });
-                                    }
-                                }
-                        });
-                }
-            })
-        }
-    }
+            const confirmTitle = isLock ?
+                'ต้องการล็อค Member หรือไม่' :
+                'ต้องการปลดล็อค Member หรือไม่';
 
-    function delete_member(member_id,user_id,member_name) {
-        Swal.mixin({
-            // input: 'text',
-            confirmButtonText: 'ยืนยัน &rarr;',
-            showCancelButton: true,
-            cancelButtonText: 'ยกเลิก',
-            progressSteps: ['1', '2']
-        }).queue([
-            {
-            title: 'ต้องการลบสมาชิก หรือไม่',
-            }
-        ]).then( function (result) {
-            if (result.value) {
+            // popup ยืนยัน
+            swalBase.fire({
+                title: confirmTitle
+            }).then(function(result) {
+                if (result.isConfirmed) {
                     $.ajax({
                         type: 'post',
-                         headers: {
-                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                          },
-                          url: '{{ route('managemember.memberdelete') }}',
-                          data: { member_id:member_id,user_id:user_id },
-                          success: function (data) {
-                            if(data!=false){
-                                Swal.fire(
-                                    {
-                                        title: 'ลบสมาชิกใช้งาน',
-                                        html: '<h4>ชื่อผู้ใช้: '+member_name+'</br></h4>' +
-                                        '<h4>สมาชิกถูกลบแล้ว</br></h4>',
-                                        type: 'success',
-                                        confirmButtonText: 'ตกลง',
-                                        confirmButtonClass: 'btn btn-confirm mt-2'
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: '{{ route('managemember.memberlock') }}',
+                        data: {
+                            member_id: member_id,
+                            user_id: user_id,
+                            status: status
+                        },
+                        success: function(data) {
+                            if (data !== false) {
+                                const successTitle = isLock ? 'ล็อคการใช้งาน' : 'ปลดล็อคการใช้งาน';
+                                const successMsg = isLock ? 'ถูกล็อคการใช้งานแล้ว' :
+                                    'ถูกปลดล็อคการใช้งานแล้ว';
+
+                                swalBase.fire({
+                                    title: successTitle,
+                                    html: `<h4>ชื่อผู้ใช้: ${member_name}</h4><h4>${successMsg}</h4>`,
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonText: 'ตกลง',
+                                    customClass: {
+                                        confirmButton: 'btn btn-confirm mt-2'
                                     }
-                                    ).then(function() {
-                                        location.reload();
-                                    });
-                                }
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'ดำเนินการไม่สำเร็จ',
+                                    text: 'โปรดลองอีกครั้งหรือแจ้งผู้ดูแลระบบ'
+                                });
                             }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'เกิดข้อผิดพลาด',
+                                text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้'
+                            });
+                        }
                     });
-            }
-      })
-    }
+                }
+            });
+        }
+
+
+        window.delete_member = function(member_id, user_id, member_name) {
+            const swalBase = Swal.mixin({
+                confirmButtonText: 'ยืนยัน →',
+                showCancelButton: true,
+                cancelButtonText: 'ยกเลิก',
+                progressSteps: ['1', '2'],
+                reverseButtons: true
+            });
+
+            swalBase.fire({
+                title: 'ต้องการลบสมาชิก หรือไม่',
+                icon: 'warning'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'post',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: '{{ route('managemember.memberdelete') }}',
+                        data: {
+                            member_id: member_id,
+                            user_id: user_id
+                        },
+                        success: function(data) {
+                            if (data !== false) {
+                                Swal.fire({
+                                    title: 'ลบสมาชิกใช้งาน',
+                                    html: `<h4>ชื่อผู้ใช้: ${member_name}</h4><h4>สมาชิกถูกลบแล้ว</h4>`,
+                                    icon: 'success',
+                                    confirmButtonText: 'ตกลง',
+                                    customClass: {
+                                        confirmButton: 'btn btn-confirm mt-2'
+                                    }
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'ดำเนินการไม่สำเร็จ',
+                                    text: 'โปรดลองอีกครั้งหรือแจ้งผู้ดูแลระบบ'
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'เกิดข้อผิดพลาด',
+                                text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้'
+                            });
+                        }
+                    });
+                }
+            });
+        }
 
     @if (session('success'))
         Swal.fire({
