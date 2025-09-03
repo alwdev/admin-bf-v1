@@ -451,7 +451,7 @@ class TransactionController extends Controller
         $log = new \App\Models\Logs;
         $log->log = 'Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username . ' Bonus =' . $bonus;
         $log->save();
-        
+
         // $bf_deposit = "success";
         if ($bf_deposit == "success") {
             error_log("lineNotify_deposit bf_deposit success");
@@ -1321,6 +1321,7 @@ class TransactionController extends Controller
     {
         $data = Transfer::find($request->id);
         $data->turnover_on = 0;
+        $data->is_turnover_cleared = 1;
         $data->save();
         return redirect()->route('managemember.transaction')->with('status', 'success');
     }
