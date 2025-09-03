@@ -17,7 +17,7 @@ return [
     'member_manage' => 'จัดการสมาชิก',
     'transfer_list' => 'รายการฝากถอน',
     'report' => 'รายงาน',
-    'report_transfer' => 'รายงานการฝาก-ถอน',
+    'report_transfer' => 'รายงานการฝาก-ถอน/ Commission',
     'report_edit_credit' => 'รายงานการแก้ไขยอดเงิน',
     'report_error_transfert' => 'รายงานการฝากผิดพลาด',
     'book_bank' => 'สมุดบัญชีธนาคาร',

@@ -6,7 +6,7 @@ return [
     'member_manage' => '회원 관리',
     'transfer_list' => '입출금 목록',
     'report' => '보고서',
-    'report_transfer' => '입출금 보고서',
+    'report_transfer' => '입출금 보고서/Commission',
     'report_edit_credit' => '크레딧 조정 보고서',
     'report_error_transfert' => '잘못된 입금 보고서',
     'book_bank' => '은행 장부',

@@ -17,7 +17,7 @@ return [
     'member_manage' => 'Member Management',
     'transfer_list' => 'Deposit/Withdrawal List',
     'report' => 'Report',
-    'report_transfer' => 'Deposit/Withdrawal Report',
+    'report_transfer' => 'Deposit/Withdrawal/ Commission Report',
     'report_edit_credit' => 'Credit Adjustment Report',
     'report_error_transfert' => 'Incorrect Deposit Report',
     'book_bank' => 'Bank Account',

@@ -6,7 +6,7 @@ return [
     'member_manage' => 'メンバー管理',
     'transfer_list' => '入出金リスト',
     'report' => 'レポート',
-    'report_transfer' => '入出金レポート',
+    'report_transfer' => '入出金レポート/Commission',
     'report_edit_credit' => 'クレジット調整レポート',
     'report_error_transfert' => '誤入金レポート',
     'book_bank' => '銀行口座',

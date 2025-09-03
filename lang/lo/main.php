@@ -6,7 +6,7 @@ return [
     'member_manage' => 'ຈັດການສະມາຊິກ',
     'transfer_list' => 'ລາຍການເພີ່ມ/ຖອນເງິນ',
     'report' => 'ລາຍງານ',
-    'report_transfer' => 'ລາຍງານເພີ່ມ/ຖອນເງິນ',
+    'report_transfer' => 'ລາຍງານເພີ່ມ/ຖອນເງິນ/Commission',
     'report_edit_credit' => 'ລາຍງານແກ້ໄຂເຄຣດິດ',
     'report_error_transfert' => 'ລາຍງານການເພີ່ມເງິນຜິດພາດ',
     'book_bank' => 'ສົມຸດທະນາຄານ',
