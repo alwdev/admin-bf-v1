@@ -1017,7 +1017,7 @@ class ManageMemberController extends Controller
             $member->save();
 
             // เรียก API เพื่อฝากเงินเข้า Betflix
-            $bf_deposit = app(BetflixController::class)->Master_Deposit($member->username,number_format($commission,2));
+            $bf_deposit = app(BetflixController::class)->Master_Deposit($member->username,floor($commission));
             Log::info('Betflix commission ' . $bf_deposit . ' ' . $commission . ' User = ' . $member->username);
 
             if ($bf_deposit === "success") {
