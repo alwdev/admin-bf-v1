@@ -403,6 +403,13 @@ class ManageMemberController extends Controller
                 if ($bf_deposit == 'success') {
                     $new_balance = (float) $member->wallet_balance + $transfer->amount;
                     $member->update(['wallet_balance' => strval($new_balance)]);
+
+                    TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                    ->line(env('APP_NAME'))
+                    ->line('Admin has rejected the withdrawal. ' . $member->username)
+                    ->line('Amount :' . $transfer->amount .' '.$transfer->withdraw_bank_name)
+                    ->line('RollBack Amount :' . $transfer_back .' ABC')
+                    ->send();
                 }
             }
         }
