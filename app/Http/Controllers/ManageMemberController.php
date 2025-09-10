@@ -384,7 +384,7 @@ class ManageMemberController extends Controller
             $thb_usd_price = 33;        // อัตราแลกเปลี่ยน
 
             $transfer_back = $transfer->amount  * $thb_usd_price;
-            $transfer_back = $transfer_back + ($transfer_back * $withdraw_fee);
+            $transfer_back = $transfer_back / (1 - $withdraw_fee);
 
             // Log::info("withdraw eject transfer_back =".$transfer_back." transfer amount ".$transfer->amount." username ".$member->username);
             Logs::create([
