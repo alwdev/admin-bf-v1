@@ -383,14 +383,23 @@ class ManageMemberController extends Controller
             $withdraw_fee = 6.5 / 100;    // 0.065
             $thb_usd_price = 33;        // อัตราแลกเปลี่ยน
 
-            $transfer_back = ($transfer->amount + $withdraw_fee) * $thb_usd_price;
+            $transfer_back = $transfer->amount  * $thb_usd_price;
+            $transfer_back = $transfer_back + ($transfer_back * $withdraw_fee);
 
-            Log::info("withdraw eject transfer_back =".$transfer_back." transfer amount ".$transfer->amount." username ".$member->username);
+            // Log::info("withdraw eject transfer_back =".$transfer_back." transfer amount ".$transfer->amount." username ".$member->username);
+            Logs::create([
+                'username' => $member->username,
+                'log' => "withdraw eject transfer_back =".$transfer_back." transfer amount ".$transfer->amount." username ".$member->username
+            ]);
 
 
             if ($request->type == 'withdraw') {
                 $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($transfer_back));
-                Log::info('rollBack Deposit Betflix ' . $bf_deposit . ' ' . $transfer_back . ' User =  ' . $member->username);
+                // Log::info('rollBack Deposit Betflix ' . $bf_deposit . ' ' . $transfer_back . ' User =  ' . $member->username);
+                Logs::create([
+                    'username' => $member->username,
+                    'log' => 'rollBack withdraw : ' . $bf_deposit . ' transfer_back: ' . $transfer_back . ' User =  ' . $member->username
+                ]);
                 if ($bf_deposit == 'success') {
                     $new_balance = (float) $member->wallet_balance + $transfer->amount;
                     $member->update(['wallet_balance' => strval($new_balance)]);
