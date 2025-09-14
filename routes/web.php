@@ -14,6 +14,7 @@ use App\Http\Controllers\HashtagController;
 use App\Models\Members;
 use App\Http\Controllers\ChatPageController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\AlertController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -248,3 +249,4 @@ Route::get('whereHasChild/{id}', function ($id) {
 })->name('whereHasChild');
 
 Route::post('/receive-commission', [App\Http\Controllers\ManageMemberController::class, 'receive_commission']);
+Route::get('/get-system-alert', [AlertController::class, 'getSystemAlert']);

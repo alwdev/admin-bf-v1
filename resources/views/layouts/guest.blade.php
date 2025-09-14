@@ -157,6 +157,47 @@
                 return true;
             }
         </script>
+
+        <script>
+function checkSystemAlerts() {
+    fetch('/get-system-alert')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                showAlertsSequentially(data.messages);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching alert data:', error);
+        });
+}
+
+// ฟังก์ชันสำหรับแสดง SweetAlert ทีละข้อความ
+function showAlertsSequentially(messages, index = 0) {
+    if (index >= messages.length) {
+        return; // จบ loop ถ้าแสดงครบแล้ว
+    }
+
+    Swal.fire({
+        icon: 'warning',
+        title: 'แจ้งเตือนระบบ',
+        text: messages[index],
+        showConfirmButton: true
+    }).then(() => {
+        // เมื่อปิด alert อันนี้แล้ว แสดงอันถัดไป
+        showAlertsSequentially(messages, index + 1);
+    });
+}
+
+// เรียกใช้ฟังก์ชันทันทีเมื่อหน้าเว็บโหลด
+document.addEventListener('DOMContentLoaded', () => {
+    checkSystemAlerts();
+});
+
+// เรียกใช้ฟังก์ชันทุก 1 ชั่วโมง (3600000 ms)
+setInterval(checkSystemAlerts, 3600000);
+</script>
+
         @yield('scripts')
     </body>
 </html>
