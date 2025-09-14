@@ -472,7 +472,7 @@
             swalBase.fire({
                 title: confirmTitle
             }).then(function(result) {
-                if (result.isConfirmed) {
+                if (result.value) {
                     $.ajax({
                         type: 'post',
                         headers: {
@@ -536,7 +536,7 @@
                 title: 'ต้องการลบสมาชิก หรือไม่',
                 icon: 'warning'
             }).then(function(result) {
-                if (result.isConfirmed) {
+                if (result.value) {
                     $.ajax({
                         type: 'post',
                         headers: {
