@@ -450,15 +450,15 @@
             const fsize = (this.files[0].size)/1024;
             const fname = (this.files[0].name).split('.').pop();
 
-            if( fname!="png" && fname!="jpg" && fname!="jpeg"){
+            if(fname !== "png" && fname !== "jpg" && fname !== "jpeg" && fname !== "webp" && fname !== "gif" && fname !== "svg") {
                 Swal.fire({
-                            position: 'top-end',
-                            type: 'error',
-                            title: 'Wrong File!',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                      return true;
+                    position: 'top-end',
+                    type: 'error',
+                    title: 'Wrong File!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                return true;
             }
             else if(fsize>2048){
                 Swal.fire({
