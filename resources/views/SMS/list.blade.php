@@ -13,12 +13,12 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-flex align-items-center justify-content-between">
-                <h4 class="mb-0 font-size-18">SMS</h4>
+                <h4 class="mb-0 font-size-18">Logs</h4>
 
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
                         <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                        <li class="breadcrumb-item active">SMS</li>
+                        <li class="breadcrumb-item active">Logs</li>
                     </ol>
                 </div>
 
@@ -48,20 +48,21 @@
                     data-pagination="true" data-url="">
                     <thead class="table-light">
                         <tr>
-                            <th data-field="SMS" data-sortable="true">Logs</th>
+                            <th data-field="Username" data-sortable="true">Username</th>
                             <th data-field="time" data-sortable="true">TIME</th>
+                            <th data-field="SMS" data-sortable="true">Logs</th>
+
                         </tr>
                     </thead>
                     @php
-                        $data = \App\Models\Logs::where('log', '!=', null)
-                            ->orderBy('created_at', 'desc')
-                            ->get();
+                        $data = \App\Models\Logs::where('log', '!=', null)->orderBy('created_at', 'desc')->get();
                     @endphp
                     <tbody>
                         @foreach ($data as $item)
                             <tr>
-                                <td>{{ $item->log }}</td>
+                                <td>{{ $item->username }}</td>
                                 <td>{{ $item->created_at }}</td>
+                                <td>{{ $item->log }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -89,5 +90,4 @@
     <script
         src="https://unpkg.com/bootstrap-table@1.21.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js">
     </script>
-
 @endsection
