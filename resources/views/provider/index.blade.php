@@ -419,7 +419,7 @@
             Swal.fire({
                 title: "Are you sure?",
                 text: "{{ __('main.Do you want to change your status?') }}",
-                type: "warning",
+                icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
@@ -476,7 +476,7 @@
                 fname !== "svg") {
                 Swal.fire({
                     position: 'top-end',
-                    type: 'error',
+                    icon: 'error',
                     title: 'Wrong File!',
                     showConfirmButton: false,
                     timer: 1500
@@ -485,7 +485,7 @@
             } else if (fsize > 2048) {
                 Swal.fire({
                     position: 'top-end',
-                    type: 'error',
+                    icon: 'error',
                     title: 'Image are too large!',
                     showConfirmButton: false,
                     timer: 1500
@@ -528,7 +528,7 @@
                         $(function() {
                             Swal.fire({
                                 position: 'top-end',
-                                type: 'success',
+                                icon: 'success',
                                 title: 'Your work has been saved',
                                 showConfirmButton: false,
                                 timer: 1500
