@@ -7,6 +7,7 @@ use App\Models\ProductList;
 use App\Models\Gamelist;
 use App\Models\Category;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 
 class ProviderController extends Controller
 {
@@ -16,9 +17,112 @@ class ProviderController extends Controller
     public function index()
     {
         //
+        $categorys = Category::where('active',1)->get();
         $products = ProductList::all();
-        return view('provider.index', compact('products'));
+        return view('provider.index', compact('products','categorys'));
     }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'product_id' => 'required|string|unique:product_list',
+            'product_name' => 'required|string',
+            'category' => 'required|integer',
+            'active' => 'required|boolean',
+            'order_top' => 'required|integer',
+            'img' => 'required|image',
+            'img_mini' => 'required|image',
+        ]);
+
+        // สร้างชื่อไฟล์ใหม่
+        $imgName = time() . '_main.' . $request->img->getClientOriginalExtension();
+        $imgMiniName = time() . '_mini.' . $request->img_mini->getClientOriginalExtension();
+
+        // Path เต็ม
+        $imgFullPath = public_path('products/' . $imgName);
+        $imgMiniFullPath = public_path('products/' . $imgMiniName);
+
+        try {
+            // ย้ายไฟล์ไปยัง public/products
+            $request->img->move(public_path('products'), $imgName);
+            $request->img_mini->move(public_path('products'), $imgMiniName);
+
+            // บันทึกลงฐานข้อมูล
+            ProductList::create([
+                'product_id' => $validated['product_id'],
+                'product_name' => $validated['product_name'],
+                'category' => $validated['category'],
+                'active' => $validated['active'],
+                'order_top' => $validated['order_top'],
+                'img' => '/products/' . $imgName,
+                'img_mini' => '/products/' . $imgMiniName,
+            ]);
+
+            return redirect()->back()->with('success', 'เพิ่มข้อมูลเรียบร้อยแล้ว');
+
+        } catch (\Exception $e) {
+            // ลบไฟล์ที่ถูกอัปโหลดไว้แล้ว
+            if (file_exists($imgFullPath)) {
+                unlink($imgFullPath);
+            }
+
+            if (file_exists($imgMiniFullPath)) {
+                unlink($imgMiniFullPath);
+            }
+
+            // ส่ง error message กลับ
+            return redirect()->back()->with('error', 'เกิดข้อผิดพลาด: ' . $e->getMessage());
+        }
+    }
+
+    public function update(Request $request, $id)
+{
+    $validated = $request->validate([
+        'product_id' => [
+            'required',
+            'string',
+            Rule::unique('product_list')->ignore($id), // <-- อันนี้
+        ],
+        'product_name' => 'required|string',
+        'category' => 'required|integer',
+        'active' => 'required|boolean',
+        'order_top' => 'required|integer',
+        'img' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'img_mini' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    $product = ProductList::findOrFail($id);
+
+    // ลบรูปเก่า ถ้ามีการอัปโหลดรูปใหม่
+    if ($request->hasFile('img')) {
+        $oldImgPath = public_path($product->img);
+        if (file_exists($oldImgPath)) {
+            unlink($oldImgPath);
+        }
+
+        $imgName = time() . '_main.' . $request->img->getClientOriginalExtension();
+        $request->img->move(public_path('products'), $imgName);
+        $validated['img'] = '/products/' . $imgName;
+    }
+
+    if ($request->hasFile('img_mini')) {
+        $oldMiniPath = public_path($product->img_mini);
+        if (file_exists($oldMiniPath)) {
+            unlink($oldMiniPath);
+        }
+
+        $miniName = time() . '_mini.' . $request->img_mini->getClientOriginalExtension();
+        $request->img_mini->move(public_path('products'), $miniName);
+        $validated['img_mini'] = '/products/' . $miniName;
+    }
+
+    $product->update($validated);
+
+    return redirect()->back()->with('success', 'อัปเดตข้อมูลเรียบร้อยแล้ว');
+}
+
+
+
 
     public function updateprovider(Request $request)
     {

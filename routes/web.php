@@ -164,6 +164,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/updateproviderimage', [App\Http\Controllers\ProviderController::class, 'updateproviderimage'])->name('provider.updateproviderimage');
     Route::post('/order_top', [App\Http\Controllers\ProviderController::class, 'order_top'])->name('provider.order_top');
 
+    Route::post('/provider/store', [App\Http\Controllers\ProviderController::class, 'store'])->name('products.store');
+    Route::put('/provider/{id}', [App\Http\Controllers\ProviderController::class, 'update'])->name('products.update');
+
+
     Route::get('/GetAllGame', [App\Http\Controllers\ProviderController::class, 'GetAllGame']);
 
     Route::get('/partner', [App\Http\Controllers\PartnerController::class, 'index'])->name('partner.index')->middleware('CheckPermissionUser:manageuser,edit');
@@ -250,3 +254,4 @@ Route::get('whereHasChild/{id}', function ($id) {
 
 Route::post('/receive-commission', [App\Http\Controllers\ManageMemberController::class, 'receive_commission']);
 Route::get('/get-system-alert', [AlertController::class, 'getSystemAlert']);
+

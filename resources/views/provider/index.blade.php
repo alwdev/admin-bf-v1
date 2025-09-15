@@ -24,6 +24,9 @@
                 <h4 class="card-title"></h4>
                 <p class="card-subtitle mb-4">
                 </p>
+                <button type="button" class="btn btn-success mb-3" data-toggle="modal" data-target="#addProductModal">
+                    เพิ่มข้อมูล
+                </button>
 
                 <table id="basic-datatable" class="table m-10 table-bordered" data-filter-control="true" data-toggle="table"
                     data-search="true" data-show-export="false" data-click-to-select="false" data-pagination="true"
@@ -105,10 +108,19 @@
                                     </div>
                                 </td>
                                 {{-- <td><a href="{{ route('gamelist.index',$item->product_id) }}" class="btn btn-primary">View</a></td> --}}
-                                <td>{{ $item->order_top }}
+                                <td>
+                                    <div class="d-flex">
+
+                                        {{ $item->order_top }}
+                                        <button type="button" class="btn btn-primary btn-sm waves-effect waves-light ml-2" onclick="editOrderTop('{{ $item->id }}')"><i class="bx bx-edit-alt"></i></button>
+                                    </div>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-primary btn-sm waves-effect waves-light" onclick="editOrderTop('{{ $item->id }}')"><i class="bx bx-edit-alt"></i></button>
+                                    <button type="button" class="btn btn-primary btn-sm"
+    onclick='openEditModal(@json($item))'
+    data-toggle="modal" data-target="#editProductModal">
+    <i class="bx bx-edit-alt"></i>
+</button>
 
                                 </td>
                             </tr>
@@ -127,6 +139,154 @@
             <input type="hidden" id="provider" name="provider" value="" style="display:none"/>
             <input type="hidden" id="size" name="size" value="" style="display:none"/>
     </form>
+
+
+    <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <form method="POST" action="{{ route('products.store') }}" enctype="multipart/form-data">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">เพิ่มข้อมูล</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    {{-- ข้อมูลพื้นฐาน --}}
+                    <div class="form-group">
+                        <label for="product_id">รหัส</label>
+                        <input type="text" class="form-control" name="product_id" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product_name">ชื่อ</label>
+                        <input type="text" class="form-control" name="product_name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">หมวดหมู่</label>
+                        <select class="form-control" name="category" required>
+                            @foreach ($categorys as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="active">สถานะ</label>
+                        <select class="form-control" name="active" required>
+                            <option value="1">Enable</option>
+                            <option value="0">Disable</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="order_top">ลำดับการแสดงผล</label>
+                        <input type="number" class="form-control" name="order_top" required>
+                    </div>
+
+                    {{-- รูปภาพแบบแบ่งซ้ายขวา --}}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="img">รูปหลัก (ขนาดใหญ่)</label>
+                            <input type="file" class="form-control-file" name="img" id="img" accept="image/*" onchange="previewImage(this, 'previewImg')">
+                            <img id="previewImg" src="#" alt="Preview" style="width: 100%; max-height: 250px; margin-top: 10px; display: none; object-fit: contain;">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="img_mini">รูปขนาดย่อ</label>
+                            <input type="file" class="form-control-file" name="img_mini" id="img_mini" accept="image/*" onchange="previewImage(this, 'previewMini')">
+                            <img id="previewMini" src="#" alt="Preview" style="width: 100%; max-height: 150px; margin-top: 10px; display: none; object-fit: contain;">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">บันทึก</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <form method="POST" id="editProductForm" action="" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">แก้ไขข้อมูล</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    {{-- hidden id --}}
+                    {{-- <input type="hidden" name="product_id_hidden" id="edit_product_id_hidden"> --}}
+
+                    <div class="form-group">
+                        <label>รหัส</label>
+                        <input type="text" class="form-control" name="product_id" id="edit_product_id" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>ชื่อ</label>
+                        <input type="text" class="form-control" name="product_name" id="edit_product_name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>หมวดหมู่</label>
+                        <select class="form-control" name="category" id="edit_category" required>
+                            @foreach ($categorys as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>สถานะ</label>
+                        <select class="form-control" name="active" id="edit_active" required>
+                            <option value="1">Enable</option>
+                            <option value="0">Disable</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>ลำดับการแสดงผล</label>
+                        <input type="number" class="form-control"   name="order_top" id="edit_order_top" required>
+                    </div>
+
+                    {{-- รูปแบบซ้าย-ขวาเหมือนเดิม --}}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="edit_img">รูปหลัก (ขนาดใหญ่)</label>
+                            <input type="file" class="form-control-file" name="img" id="edit_img" accept="image/*" onchange="previewImage(this, 'previewEditImg')">
+                            <img id="previewEditImg" src="#" style="width: 100%; max-height: 250px; margin-top: 10px; display: none; object-fit: contain;">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="edit_img_mini">รูปขนาดย่อ</label>
+                            <input type="file" class="form-control-file" name="img_mini" id="edit_img_mini" accept="image/*" onchange="previewImage(this, 'previewEditMini')">
+                            <img id="previewEditMini" src="#" style="width: 100%; max-height: 150px; margin-top: 10px; display: none; object-fit: contain;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">บันทึกการแก้ไข</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
     <!-- end row-->
 @endsection
@@ -208,7 +368,7 @@
                     }
             })
     }
-        @if (session('status'))
+        @if (session('status') || session('success'))
 
             Swal.fire({
                 position: 'top-end',
@@ -362,4 +522,42 @@
        });
     });
     </script>
+
+    <script>
+    function previewImage(input, previewId) {
+        const preview = document.getElementById(previewId);
+        const file = input.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = "block";
+            }
+
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = "#";
+            preview.style.display = "none";
+        }
+    }
+</script>
+<script>
+    function openEditModal(data) {
+    $('#edit_product_id').val(data.product_id);
+    $('#edit_product_id_hidden').val(data.id);
+    $('#edit_product_name').val(data.product_name);
+    $('#edit_category').val(data.category);
+    $('#edit_active').val(data.active);
+    $('#edit_order_top').val(data.order_top);
+
+    $('#previewEditImg').attr('src', data.img).show();
+    $('#previewEditMini').attr('src', data.img_mini).show();
+
+    $('#editProductForm').attr('action', `/provider/${data.id}`);
+}
+
+</script>
+
 @endsection
