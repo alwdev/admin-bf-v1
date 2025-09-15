@@ -166,6 +166,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/provider/store', [App\Http\Controllers\ProviderController::class, 'store'])->name('products.store');
     Route::put('/provider/{id}', [App\Http\Controllers\ProviderController::class, 'update'])->name('products.update');
+    Route::delete('/provider_del/{id}', [App\Http\Controllers\ProviderController::class, 'destroy'])->name('products.destroy');
 
 
     Route::get('/GetAllGame', [App\Http\Controllers\ProviderController::class, 'GetAllGame']);
