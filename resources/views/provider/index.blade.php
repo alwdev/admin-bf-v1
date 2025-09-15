@@ -49,10 +49,12 @@
                         @foreach ($products as $item)
                             <tr>
                                 <td>
-                                    <img src="{{ $item->img }}" id="gmaeImage{{ $item->id }}" onclick="chooseImage(this,{{ $item->id }},'{{ $item->product_id }}','L')"   class="image-upload" style="max-height: 250px;cursor: pointer;">
+                                    <img src="{{ $item->img }}" id="gmaeImage{{ $item->id }}"  class="image-upload" style="max-height: 80px;cursor: pointer;">
+                                    {{-- <img src="{{ $item->img }}" id="gmaeImage{{ $item->id }}" onclick="chooseImage(this,{{ $item->id }},'{{ $item->product_id }}','L')"   class="image-upload" style="max-height: 80px;cursor: pointer;"> --}}
                                 </td>
                                 <td>
-                                    <img src="{{ $item->img_mini }}" id="gmaeImage2{{ $item->id }}" onclick="chooseImage(this,{{ $item->id }},'{{ $item->product_id }}','S')"   class="image-upload" style="max-height: 80px;cursor: pointer;">
+                                    <img src="{{ $item->img_mini }}" id="gmaeImage2{{ $item->id }}"  class="image-upload" style="max-height: 40px;cursor: pointer;">
+                                    {{-- <img src="{{ $item->img_mini }}" id="gmaeImage2{{ $item->id }}" onclick="chooseImage(this,{{ $item->id }},'{{ $item->product_id }}','S')"   class="image-upload" style="max-height: 40px;cursor: pointer;"> --}}
                                 </td>
                                 <td>{{ $item->product_id }}</td>
                                 <td>{{ $item->product_name }}</td>
