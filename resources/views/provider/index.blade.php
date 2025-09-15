@@ -349,17 +349,25 @@
     </script>
     <script>
         function editOrderTop(id) {
-            Swal.mixin({
-                input: 'text',
-                confirmButtonText: 'Ok &rarr;',
-                showCancelButton: true,
-                cancelButtonText: 'Cancel',
-                progressSteps: ['1', '2']
-            }).queue([{
+            Swal.fire({
                 title: '{{ __('main.Edit sequence') }}',
-                text: '{{ __('main.order') }}'
-            }]).then(function(result) {
-                if (result.value) {
+                input: 'text',
+                inputValue: '', // ค่าเริ่มต้นของ input ถ้าต้องการ
+                showCancelButton: true,
+                confirmButtonText: 'Ok',
+                cancelButtonText: 'Cancel',
+                showLoaderOnConfirm: true,
+                preConfirm: (order) => {
+                    // ตรวจสอบค่าที่ผู้ใช้ป้อนก่อนส่ง
+                    if (!order || isNaN(order)) {
+                        Swal.showValidationMessage('โปรดป้อนลำดับที่เป็นตัวเลข');
+                        return false;
+                    }
+                    return order;
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
                     $.ajax({
                         type: 'post',
                         headers: {
@@ -371,24 +379,33 @@
                             order_top: Number(result.value)
                         },
                         success: function(data) {
-                            if (data != false) {
+                            if (data !== false) {
                                 Swal.fire({
-                                    title: 'success',
-                                    type: 'success',
-                                    confirmButtonText: 'OK',
-                                    confirmButtonClass: 'btn btn-confirm mt-2'
-
+                                    title: 'สำเร็จ',
+                                    icon: 'success',
+                                    showConfirmButton: false,
+                                    timer: 1500
                                 }).then(function() {
                                     location.reload();
                                 });
-
+                            } else {
+                                Swal.fire({
+                                    title: 'เกิดข้อผิดพลาด',
+                                    text: 'ไม่สามารถอัปเดตข้อมูลได้',
+                                    icon: 'error'
+                                });
                             }
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire({
+                                title: 'เกิดข้อผิดพลาด',
+                                text: 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: ' + error,
+                                icon: 'error'
+                            });
                         }
                     });
-                } else if (result.dismiss == 'cancel') {
-                    console.log('cancel');
                 }
-            })
+            });
         }
         @if (session('status') || session('success'))
 
