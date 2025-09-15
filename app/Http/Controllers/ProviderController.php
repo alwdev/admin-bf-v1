@@ -30,8 +30,8 @@ class ProviderController extends Controller
             'category' => 'required|integer',
             'active' => 'required|boolean',
             'order_top' => 'required|integer',
-            'img' => 'required|image',
-            'img_mini' => 'required|image',
+            'img' => 'required|image|mimes:jpg,jpeg,png,webp,gif,svg|max:2048',
+            'img_mini' => 'required|image|mimes:jpg,jpeg,png,webp,gif,svg|max:2048',
         ]);
 
         // สร้างชื่อไฟล์ใหม่
@@ -87,8 +87,8 @@ class ProviderController extends Controller
         'category' => 'required|integer',
         'active' => 'required|boolean',
         'order_top' => 'required|integer',
-        'img' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        'img_mini' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'img' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif,svg|max:2048',
+        'img_mini' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif,svg|max:2048',
     ]);
 
     $product = ProductList::findOrFail($id);
@@ -215,7 +215,7 @@ class ProviderController extends Controller
         $game_id=$request->game_id;
         $provider=$request->provider;
         $validated = $request->validate([
-            'imgupload' => 'required|mimes:png,jpg,jpeg|max:2048',
+            'imgupload' => 'required|mimes:png,jpg,jpeg,webp,gif,svg|max:2048',
         ]);
         $fileName = $provider.$game_id.'.'.$request->imgupload->extension();
 
@@ -236,7 +236,7 @@ class ProviderController extends Controller
         $provider_id=$request->provider_id;
         $provider=$request->provider;
         $validated = $request->validate([
-            'imgupload' => 'required|mimes:png,jpg,jpeg|max:2048',
+            'imgupload' => 'required|mimes:png,jpg,jpeg,webp,gif,svg|max:2048',
         ]);
 
 
