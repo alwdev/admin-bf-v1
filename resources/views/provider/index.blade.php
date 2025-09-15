@@ -214,7 +214,7 @@
 
                         <div class="form-group">
                             <label for="order_top">ลำดับการแสดงผล</label>
-                            <input type="number" class="form-control" name="order_top" required>
+                            <input type="number" class="form-control" name="order_top" value="100" required>
                         </div>
 
                         {{-- รูปภาพแบบแบ่งซ้ายขวา --}}

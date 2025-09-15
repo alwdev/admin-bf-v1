@@ -16,10 +16,10 @@ class ProductList extends Model
         'active',
         'img',
         'img_mini',
-        'order_to',
+        'order_top',
         'store_id',
     ];
-    
+
     protected static function boot()
     {
         parent::boot();
