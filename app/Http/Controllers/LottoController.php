@@ -32,6 +32,7 @@ class LottoController extends Controller
                 // Log the deposit transaction
                 $log = new \App\Models\Logs;
                 $log->log = "Lotto Balance updated for {$member->username} with amount {$request->balance}";
+                $log->username = $member->username;
                 $log->save();
             }
 
@@ -57,6 +58,7 @@ class LottoController extends Controller
                 // Log the bet transaction
                 $log = new \App\Models\Logs;
                 $log->log = "Lotto Bet placed by {$member->username} for amount {$request->balance}";
+                $log->username = $member->username;
                 $log->save();
             }
 
@@ -81,6 +83,7 @@ class LottoController extends Controller
                 // Log the bet transaction
                 $log = new \App\Models\Logs;
                 $log->log = "Lotto Win  by {$member->username} for amount {$request->balance}";
+                $log->username = $member->username;
                 $log->save();
             }
 
@@ -105,6 +108,7 @@ class LottoController extends Controller
                 // Log the bet transaction
                 $log = new \App\Models\Logs;
                 $log->log = "Lotto Refun  by {$member->username} for amount {$request->balance}";
+                $log->username = $member->username;
                 $log->save();
             }
 
