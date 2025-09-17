@@ -22,6 +22,7 @@ use App\Models\Setting;
 use NotificationChannels\Telegram\TelegramMessage;
 use App\Jobs\RunAffiliate;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class ManageMemberController extends Controller
 {
@@ -284,70 +285,59 @@ class ManageMemberController extends Controller
 
                 error_log('Bonus = ' . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
 
-                $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, $amount_betflix);
-                // Log::info('Deposit Betflix ' . $bf_deposit . ' ' . $amount_betflix . ' User =  ' . $member->username);
-                // error_log('Deposit Betflix ' . $bf_deposit . ' ' . $amount_betflix . ' User =  ' . $member->username);
-                // $bf_deposit = 'success';
-                if ($bf_deposit == 'success') {
-                    $wheel_setting = WheelSpin::first();
-                    if ($wheel_setting && $wheel_setting->ticket_condition > 0) {
-                        // ตรวจสอบว่า $wheel_setting ไม่ใช่ null ก่อน
-                        if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
-                            $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
-                            $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
-                        }
-                    }
 
-                    $member->save();
-                    $transfer->new_balance = $member->wallet_balance;
-                    $transfer->status = 2;
-                    $transfer->status_code = 'อนุมัติ';
-                    $transfer->old_balance = $old_balance; // ใช้ $old_balance ที่เก็บไว้ตอนต้น
-                    if ($promotion_found_and_applied) {
-                        $transfer->turnover_on = 1;
+                $wheel_setting = WheelSpin::first();
+                if ($wheel_setting && $wheel_setting->ticket_condition > 0) {
+                    // ตรวจสอบว่า $wheel_setting ไม่ใช่ null ก่อน
+                    if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
+                        $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
+                        $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
                     }
-                    $transfer->save();
-
-                    // บันทึก PromotionUsed ก็ต่อเมื่อมีการใช้โปรโมชั่นจริง
-                    if ($promotion_found_and_applied) {
-                        // ต้องหา promotion_id ที่ถูกใช้จริง
-                        $promotion_id_used = null;
-                        if (isset($pro) && $pro instanceof Promotion) {
-                            $promotion_id_used = $pro->id;
-                        } elseif (isset($pro_recurring) && $pro_recurring instanceof Promotion) {
-                            $promotion_id_used = $pro_recurring->id;
-                        }
-
-                        if ($promotion_id_used) {
-                            PromotionUsed::create([
-                                'member_id' => $member->id,
-                                'promotion_id' => $promotion_id_used,
-                                'promotion_name' => $applied_promotion_name, // ใช้ชื่อโปรโมชั่นที่ถูก apply
-                                'amount' => $bonus_to_apply, // ใช้ $bonus_to_apply ที่คำนวณได้
-                            ]);
-                        }
-                    }
-                } else {
-                    // กรณี Betflix Deposit ไม่สำเร็จ ควร Rollback Bank Balance ด้วย
-                    if ($bank) {
-                        $bank->balance = (float) $bank->balance - (float) $transfer->amount; // คืนเงินจาก Bank
-                        $bank->save();
-                    }
-                    return redirect()->back()->with('error', $bf_deposit);
                 }
+
+                $member->save();
+                $transfer->new_balance = $member->wallet_balance;
+                $transfer->status = 2;
+                $transfer->status_code = 'อนุมัติ';
+                $transfer->old_balance = $old_balance; // ใช้ $old_balance ที่เก็บไว้ตอนต้น
+                if ($promotion_found_and_applied) {
+                    $transfer->turnover_on = 1;
+                }
+                $transfer->save();
+
+                // บันทึก PromotionUsed ก็ต่อเมื่อมีการใช้โปรโมชั่นจริง
+                if ($promotion_found_and_applied) {
+                    // ต้องหา promotion_id ที่ถูกใช้จริง
+                    $promotion_id_used = null;
+                    if (isset($pro) && $pro instanceof Promotion) {
+                        $promotion_id_used = $pro->id;
+                    } elseif (isset($pro_recurring) && $pro_recurring instanceof Promotion) {
+                        $promotion_id_used = $pro_recurring->id;
+                    }
+
+                    if ($promotion_id_used) {
+                        PromotionUsed::create([
+                            'member_id' => $member->id,
+                            'promotion_id' => $promotion_id_used,
+                            'promotion_name' => $applied_promotion_name, // ใช้ชื่อโปรโมชั่นที่ถูก apply
+                            'amount' => $bonus_to_apply, // ใช้ $bonus_to_apply ที่คำนวณได้
+                        ]);
+                    }
+                }
+
 
                 $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
 
                 // แก้ไข Telegram message ให้ใช้ $applied_promotion_name และ $message จาก logic ด้านบน
-                TelegramMessage::create()
-                    ->to(env('TELEGRAM_G_ID'))
-                    ->line(env('APP_NAME'))
-                    ->line('Admin has approved the credit. ' . $member->username)
-                    ->line('Amount :' . floor($transfer->amount))
-                    ->line('Bonus :' . $bonus) // ใช้ floor() กับ bonus ด้วยเพื่อความสอดคล้อง
-                    ->line('Promotion : ' . $applied_promotion_name) // แสดงชื่อโปรโมชั่นที่ถูกใช้
-                    ->line('Message : ' . $message) // แสดง message จาก logic
-                    ->send();
+                // TelegramMessage::create()
+                //     ->to(env('TELEGRAM_G_ID'))
+                //     ->line(env('APP_NAME'))
+                //     ->line('Admin has approved the credit. ' . $member->username)
+                //     ->line('Amount :' . floor($transfer->amount))
+                //     ->line('Bonus :' . $bonus) // ใช้ floor() กับ bonus ด้วยเพื่อความสอดคล้อง
+                //     ->line('Promotion : ' . $applied_promotion_name) // แสดงชื่อโปรโมชั่นที่ถูกใช้
+                //     ->line('Message : ' . $message) // แสดง message จาก logic
+                //     ->send();
             } elseif ($request->type == 'withdraw') {
                 $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
                 if ($bank) {
@@ -362,13 +352,13 @@ class ManageMemberController extends Controller
                 $transfer->old_balance = $old_balance;
                 $transfer->save();
 
-                TelegramMessage::create()
-                    ->to(env('TELEGRAM_G_ID'))
-                    ->line(env('APP_NAME'))
-                    ->line('Admin Make a transaction, approve a withdrawal ' . $member->username)
-                    ->line('Mount :' . floor($transfer->amount))
-                    ->line('Warning: Admin must make the transfer by themselves via the bank app.')
-                    ->send();
+                // TelegramMessage::create()
+                //     ->to(env('TELEGRAM_G_ID'))
+                //     ->line(env('APP_NAME'))
+                //     ->line('Admin Make a transaction, approve a withdrawal ' . $member->username)
+                //     ->line('Mount :' . floor($transfer->amount))
+                //     ->line('Warning: Admin must make the transfer by themselves via the bank app.')
+                //     ->send();
             }
         } elseif ($request->status == 'pending') {
             $transfer->status = 1;
@@ -389,28 +379,22 @@ class ManageMemberController extends Controller
             // Log::info("withdraw eject transfer_back =".$transfer_back." transfer amount ".$transfer->amount." username ".$member->username);
             Logs::create([
                 'username' => $member->username,
-                'log' => "withdraw eject transfer_back =".$transfer_back." transfer amount ".$transfer->amount." username ".$member->username
+                'log' => "withdraw eject transfer_back =" . $transfer_back . " transfer amount " . $transfer->amount . " username " . $member->username
             ]);
 
 
             if ($request->type == 'withdraw') {
-                $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($transfer_back));
-                // Log::info('rollBack Deposit Betflix ' . $bf_deposit . ' ' . $transfer_back . ' User =  ' . $member->username);
-                Logs::create([
-                    'username' => $member->username,
-                    'log' => 'rollBack withdraw : ' . $bf_deposit . ' transfer_back: ' . $transfer_back . ' User =  ' . $member->username
-                ]);
-                if ($bf_deposit == 'success') {
-                    $new_balance = (float) $member->wallet_balance + $transfer->amount;
-                    $member->update(['wallet_balance' => strval($new_balance)]);
 
-                    TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                    ->line(env('APP_NAME'))
-                    ->line('Admin has rejected the withdrawal. ' . $member->username)
-                    ->line('Amount :' . $transfer->amount .' '.$transfer->withdraw_bank_name)
-                    ->line('RollBack Amount :' . $transfer_back .' ABC')
-                    ->send();
-                }
+                $new_balance = (float) $member->wallet_balance + $transfer->amount;
+                $member->update(['wallet_balance' => strval($new_balance)]);
+
+                // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                // ->line(env('APP_NAME'))
+                // ->line('Admin has rejected the withdrawal. ' . $member->username)
+                // ->line('Amount :' . $transfer->amount . ' ' . $transfer->withdraw_bank_name)
+                // ->line('RollBack Amount :' . $transfer_back . ' ABC')
+                // ->send();
+
             }
         }
         return redirect()->back()->with('status', '200');
@@ -457,66 +441,69 @@ class ManageMemberController extends Controller
 
     public function memberEditBalance(Request $request)
     {
-        Log::info('edit balance =' . $request->balance . ' member_id =' . $request->member_id . ' type = ' . $request->type . ' Balance = ' . $request->balance);
+        try {
+            // --- 1. Validation and Data Sanitization ---
+            $validatedData = $request->validate([
+                'member_id' => 'required|integer|exists:members,id',
+                'balance' => 'required|numeric|min:0',
+                'type' => 'required|string|in:เติมมือ,คืนลูกค้า,แก้เครดิต', // Adjust based on your actual types
+                'user_id' => 'required|integer|exists:users,id',
+            ]);
 
-        $update_balance = 0;
-        $member = Members::find($request->member_id);
+            // --- 2. Database Transaction for Atomicity ---
+            // This ensures either all changes are saved or none are.
+            DB::beginTransaction();
 
-        if ($member) {
-            $old_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
-            if ($old_balance < $request->balance) {
-                $update_balance = $request->balance - $old_balance;
-                Log::info(' + Deposit update_balance =' . $update_balance);
-                $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, $update_balance);
-                // Log::info("Betflix Deposit " . $bf . ' ' . $update_balance . ' User =  ' . $member->username);
-            } elseif ($old_balance > $request->balance) {
-                if ($request->type == 'แก้เครดิต') {
-                    $update_balance = $old_balance - $request->balance;
+            $member = Members::findOrFail($validatedData['member_id']);
 
-                    Log::info(' - Withdraw update_balance =' . $update_balance);
-                    $bf = app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username, $update_balance);
-                    // Log::info("Betflix Withdraw " . $bf . ' ' . $update_balance . ' User =  ' . $member->username);
-                } else {
-                    return redirect()->route('managemember.index')->with('error', 'Select type is not correct');
-                }
+            // --- 3. Business Logic: Calculate New Balance ---
+            $amount = (float) $validatedData['balance'];
+            $currentBalance = (float) $member->wallet_balance;
+
+            // Use a switch statement for better readability
+            $newBalance = match ($validatedData['type']) {
+                'เติมมือ', 'คืนลูกค้า' => $currentBalance + $amount,
+                // Assuming 'ค่าปรับ' (Fine) or other types might be a deduction or a direct set
+                'แก้เครดิต' =>  $amount,
+                default => $amount, // Fallback, though 'in' validation handles this
+            };
+
+            // --- 4. Update Member's Wallet ---
+            // Add a check to prevent negative balances
+            if ($newBalance < 0) {
+                DB::rollBack();
+                return redirect()->route('managemember.index')->with('error', 'New balance cannot be negative.');
             }
 
-            $new_balance = app(\App\Http\Controllers\BetflixController::class)->Balance($member->username);
-
-            // $new_balance = 2;
-            $currentBalance = $member->wallet_balance;
-
-            $amount2 = (float) $request->balance - (float) $currentBalance;
-
-            $member->wallet_balance = $new_balance;
-            $member->update_by = $request->user_id;
+            $member->wallet_balance = $newBalance;
+            $member->update_by = $validatedData['user_id'];
             $member->save();
 
-            $d = new MemberEditBalance();
-            $d->user_id = $request->user_id;
-            $d->member_id = $request->member_id;
-            $d->amount = $amount2;
-            $d->type = $request->type;
-            $d->balance = $currentBalance;
-            $d->edit_balance = $new_balance;
-            $d->save();
+            // --- 5. Create a Log Record for the Transaction ---
+            MemberEditBalance::create([
+                'user_id' => $validatedData['user_id'],
+                'member_id' => $member->id,
+                'amount' => $amount,
+                'type' => $validatedData['type'],
+                'balance' => $currentBalance,
+                'edit_balance' => $newBalance,
+            ]);
 
-            // MemberEditBalance::create([
-            //     'user_id' => $request->user_id,
-            //     'member_id' => $request->member_id,
-            //     'amount' => $amount2,
-            //     'type' => $request->type,
-            //     'balance' => $currentBalance,
-            //     'edit_balance' => $new_balance,
-            // ]);
-            Log::info('MemberEditBalance created for  member_id = ' . $request->member_id . ' amount = ' . $amount2 . ' type = ' . $request->type);
-            return redirect()->route('managemember.index')->with('success', 'success');
-        } else {
-            Log::error('Member not found for member_id = ' . $request->member_id);
-            return redirect()->route('managemember.index')->with('error', 'Member not found');
+            DB::commit();
+
+            Log::info("Member balance updated successfully. Member ID: {$member->id}, New Balance: {$newBalance}");
+            return redirect()->route('managemember.index')->with('success', 'Balance updated successfully!');
+        } catch (ValidationException $e) {
+            // --- 6. Handle Validation Errors Gracefully ---
+            Log::error('Validation failed during balance edit.', ['errors' => $e->errors()]);
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            // --- 7. Catch All Other Errors and Rollback ---
+            DB::rollBack();
+            Log::error('Failed to update member balance.', ['error' => $e->getMessage()]);
+            return redirect()->route('managemember.index')->with('error', 'An error occurred. Please try again.');
         }
     }
-
     function memberupdateBankAccount(Request $request)
     {
         // dd($request);
@@ -624,9 +611,6 @@ class ManageMemberController extends Controller
                 ]);
                 // $member->wallet_balance = (float) ($member->wallet_balance + $cash_back);
                 // $member->save();
-
-                // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username,floor($cash_back));
-                // Log::info('Betflix CashBack '.$bf_deposit.' '.floor($cash_back).' User =  '.$member->username);
             }
         }
 
@@ -868,11 +852,6 @@ class ManageMemberController extends Controller
                         'transfer_date' => strtotime(now()),
                     ]);
                 }
-
-                // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($main_member->username,floor($commission));
-                // Log::info('Deposit commission to Betflix  '.$bf_deposit.' '.floor($commission).' User =  '.$main_member->username);
-                // $main_member->wallet_balance = (float) ($main_member->wallet_balance + $to);
-                // $main_member->save();
             }
         }
         Log::info('success Run affiliate Fixdete');
@@ -989,7 +968,7 @@ class ManageMemberController extends Controller
     }
 
     /////////////////////////////////////////////////////////////// API
-     public function receive_commission(Request $request)
+    public function receive_commission(Request $request)
     {
         DB::beginTransaction();
 
@@ -1033,7 +1012,7 @@ class ManageMemberController extends Controller
             $member->save();
 
             // เรียก API เพื่อฝากเงินเข้า Betflix
-            $bf_deposit = app(BetflixController::class)->Master_Deposit($member->username,floor($commission));
+            $bf_deposit = app(BetflixController::class)->Master_Deposit($member->username, floor($commission));
             Log::info('Betflix commission ' . $bf_deposit . ' ' . $commission . ' User = ' . $member->username);
 
             if ($bf_deposit === "success") {
@@ -1047,7 +1026,6 @@ class ManageMemberController extends Controller
                 DB::rollBack(); // เกิดข้อผิดพลาด, ย้อนกลับการเปลี่ยนแปลง
                 return response()->json(['success' => false, 'message' => $bf_deposit, 'reason' => $bf_deposit], 500);
             }
-
         } catch (Exception $e) {
             DB::rollBack(); // เกิดข้อผิดพลาดจาก exception, ย้อนกลับการเปลี่ยนแปลง
             Log::error('Transaction failed: ' . $e->getMessage());

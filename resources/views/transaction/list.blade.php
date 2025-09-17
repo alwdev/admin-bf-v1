@@ -85,7 +85,6 @@
                                             target="_blank" rel="noopener">
                                             {{ short_middle($item->deposit_from_bank_no, 5, 5) }}
                                         </a> <br>{{ $item->deposit_from_bank_type }}
-
                                     @elseif($item->type == 'withdraw')
                                         <img src="{{ env('APP_LOGO') }}" width="25" class="bank-logo">
                                         <a class="hash-pill"
@@ -265,11 +264,10 @@
                                 <a href="#" type="button" class="btn btn-outline-primary    btn-sm  waves-effect waves-light"><i class="bx bx-undo"></i></a> --}}
                                     </td>
                                 @endif
-                                <td><a class="hash-pill"
-                                            href="https://bscscan.com/tx/{{$item->ref_id}}"
-                                            target="_blank" rel="noopener">
-                                            {{ short_middle($item->ref_id, 10, 8) }}
-                                        </a></td>
+                                <td><a class="hash-pill" href="https://bscscan.com/tx/{{ $item->ref_id }}"
+                                        target="_blank" rel="noopener">
+                                        {{ short_middle($item->ref_id, 10, 8) }}
+                                    </a></td>
                             </tr>
                         @endforeach
 
@@ -307,7 +305,7 @@
 
             Swal.fire({
                 position: 'top-end',
-                type: 'success',
+                icon: 'success',
                 title: 'Your work has been saved',
                 showConfirmButton: false,
                 timer: 1500
@@ -317,7 +315,7 @@
 
             Swal.fire({
                 position: 'top-end',
-                type: 'success',
+                icon: 'success',
                 title: 'Your work has been saved',
                 showConfirmButton: false,
                 timer: 1500
@@ -336,7 +334,7 @@
             Swal.fire({
                 title: '{{ __('main.Do you want to change your status?') }}',
                 text: "**{{ __('main.Warningthe admin must transfer') }}**",
-                type: 'warning',
+                icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
                 cancelButtonText: 'No, Cancel!',
@@ -354,7 +352,7 @@
             Swal.fire({
                 title: '{{ __('main.Do you want to change your status?') }}',
                 text: "",
-                type: 'warning',
+                icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
                 cancelButtonText: 'No, Cancel!',

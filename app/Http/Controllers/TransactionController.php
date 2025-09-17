@@ -172,24 +172,24 @@ class TransactionController extends Controller
                 } else {
                     error_log("lineNotify_tranfer acc_no not match");
                     $member = Members::find($recheck_transfer->member_id);
-                    TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                        ->line('LINE-BOT ' . env('APP_NAME'))
-                        ->line('เลขบัญชีผู้โอนเงินไม่ตรงกับเลขบัญชีที่แจ้งไว้')
-                        ->line('User : ' . $member->username)
-                        ->line("amount = " . $request->amount)
-                        ->line("acc_no = " . $request->acc_no)
-                        ->line("transfer acc_no = " . $lastFourCharacters)
-                        ->send();
+                    // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                    //     ->line('LINE-BOT ' . env('APP_NAME'))
+                    //     ->line('เลขบัญชีผู้โอนเงินไม่ตรงกับเลขบัญชีที่แจ้งไว้')
+                    //     ->line('User : ' . $member->username)
+                    //     ->line("amount = " . $request->amount)
+                    //     ->line("acc_no = " . $request->acc_no)
+                    //     ->line("transfer acc_no = " . $lastFourCharacters)
+                    //     ->send();
                     return 404;
                 }
             } else {
 
-                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                    ->line('LINE-BOT ' . env('APP_NAME'))
-                    ->line('ไม่พบรายการโอนเงินในระบบ')
-                    ->line("amount = " . $request->amount)
-                    ->line("acc_no = " . $request->acc_no)
-                    ->send();
+                // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                //     ->line('LINE-BOT ' . env('APP_NAME'))
+                //     ->line('ไม่พบรายการโอนเงินในระบบ')
+                //     ->line("amount = " . $request->amount)
+                //     ->line("acc_no = " . $request->acc_no)
+                //     ->send();
                 return 404;
             }
 
@@ -431,108 +431,70 @@ class TransactionController extends Controller
 
         error_log("Bonus for Telegram = " . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
 
-        $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
-        Log::info('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
-        error_log('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
-        // $bf_deposit = "success";
-        if ($bf_deposit == "success") {
-            error_log("lineNotify_deposit bf_deposit success");
 
-            $wheel_setting = WheelSpin::first();
-            if ($wheel_setting && $wheel_setting->ticket_condition > 0) {
-                if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
-                    $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
-                    $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
-                }
+
+        error_log("lineNotify_deposit bf_deposit success");
+
+        $wheel_setting = WheelSpin::first();
+        if ($wheel_setting && $wheel_setting->ticket_condition > 0) {
+            if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
+                $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
+                $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
             }
-
-            $member->save();
-            $transfer->new_balance = $member->wallet_balance;
-            // $transfer->status และ $transfer->old_balance ถูกตั้งค่าไว้ด้านบนแล้ว
-            $transfer->save();
-
-            // **หมายเหตุ:** ส่วนนี้ (`$bank->balance = ...`) ดูเหมือนจะซ้ำซ้อน
-            // หากยอดเงินเข้าบัญชีธนาคารถูกบันทึกไปแล้วเมื่อมีการรับเงิน
-            // แต่ถ้า Logic ของคุณคือการอัปเดตยอดเงินในบัญชีธนาคารของระบบเมื่อเงินถูกโอนไปให้ Betflix
-            // ก็สามารถเก็บไว้ได้ แต่ควรพิจารณาความถูกต้องของ Flow
-            $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
-            if ($bank) {
-                // หากคุณเคยเพิ่ม $transfer->amount เข้า bank->balance ในบล็อก success
-                // ก็ควรหักออกในบล็อก failure นี้
-                // $bank->balance = (float) $bank->balance + (float) $transfer->amount;
-                // $bank->save();
-            }
-
-            // บันทึก PromotionUsed ก็ต่อเมื่อมีการใช้โปรโมชั่นจริง
-            if ($promotion_found_and_applied) {
-                // ดึง promotion_id และ promotion_name ที่ถูกใช้จริง
-                $promotion_id_to_log = null;
-                $promotion_name_to_log = $applied_promotion_name;
-
-                if (isset($pro) && $pro instanceof Promotion) {
-                    $promotion_id_to_log = $pro->id;
-                } elseif (isset($pro_recurring) && $pro_recurring instanceof Promotion) {
-                    $promotion_id_to_log = $pro_recurring->id;
-                }
-
-                if ($promotion_id_to_log) { // ตรวจสอบว่ามี promotion_id ที่จะบันทึก
-                    PromotionUsed::create([
-                        'member_id' => $member->id,
-                        'promotion_id' => $promotion_id_to_log,
-                        'promotion_name' => $promotion_name_to_log,
-                        'amount' => $bonus_to_apply, // ใช้ $bonus_to_apply ที่คำนวณได้
-                    ]);
-                }
-            }
-            $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
-            try {
-                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                    ->line('BOT-LINE ' . env('APP_NAME'))
-                    ->line('Transaction completed, credit transferred ' . $member->username)
-                    ->line('Amount :' . $transfer->amount)
-                    ->line('Bonus :' . $bonus) // ใช้ floor() กับ bonus ด้วย
-                    ->line('Promotion : ' . $applied_promotion_name) // แสดงชื่อโปรโมชั่นที่ถูกใช้
-                    ->line('Message : ' . $message) // แสดง message จาก logic
-                    ->send();
-            } catch (\Exception $e) {
-                error_log("Error sending Telegram message (success path): " . $e->getMessage());
-            }
-            return 200;
-        } else {
-            error_log("lineNotify_deposit bf_deposit failed for user: " . $member->username . " with response: " . $bf_deposit);
-            // กรณี Betflix Deposit ไม่สำเร็จ ควร Rollback Bank Balance และ Member Wallet Balance ด้วย
-            // เนื่องจากยอดเงินถูกเพิ่มเข้า wallet_balance แล้ว
-            $member->wallet_balance = $old_balance; // คืนยอดเงินใน wallet ของสมาชิก
-            $member->save();
-
-            // **หมายเหตุ:** การคืนเงินเข้าบัญชีธนาคารของระบบ (Bank)
-            // ควรพิจารณาว่ายอดเงินนี้ถูกเพิ่มเข้าไปใน Bank Balance ตอนไหน
-            // หากถูกเพิ่มไปแล้วตอนรับเงิน (ก่อนเรียกฟังก์ชันนี้) ก็ไม่ควรเพิ่มซ้ำ
-            // หากถูกเพิ่มในฟังก์ชันนี้ (ซึ่งไม่น่าเป็นไปได้) ก็ต้องหักออก
-            // แต่จากโค้ดเดิมของคุณใน if($bf_deposit == "success") มีการเพิ่ม Bank Balance
-            // ดังนั้นในกรณีที่ล้มเหลว ก็ควรหักออก (หากคุณต้องการให้ Bank Balance สะท้อนยอดเงินที่โอนไป Betflix)
-            $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
-            if ($bank) {
-                // หากคุณเคยเพิ่ม $transfer->amount เข้า bank->balance ในบล็อก success
-                // ก็ควรหักออกในบล็อก failure นี้
-                // $bank->balance = (float) $bank->balance - (float) $transfer->amount;
-                // $bank->save();
-            }
-
-            // อัปเดตสถานะ Transfer เป็น Failed
-            $transfer->status = 3; // หรือสถานะสำหรับ Failed
-            $transfer->status_code = "BOT.ไม่สำเร็จ: " . $bf_deposit;
-            $transfer->new_balance = $member->wallet_balance; // ยอดเงินใหม่ควรเป็นยอดเงินเก่าที่ rollback แล้ว
-            $transfer->save();
-
-            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                ->line('BOT-LINE ' . env('APP_NAME'))
-                ->line('Deposit Betflix failed for user ' . $member->username)
-                ->line('Amount :' . $transfer->amount)
-                ->line('Response :' . $bf_deposit)
-                ->send();
-            return 500;
         }
+
+        $member->save();
+        $transfer->new_balance = $member->wallet_balance;
+        // $transfer->status และ $transfer->old_balance ถูกตั้งค่าไว้ด้านบนแล้ว
+        $transfer->save();
+
+        // **หมายเหตุ:** ส่วนนี้ (`$bank->balance = ...`) ดูเหมือนจะซ้ำซ้อน
+        // หากยอดเงินเข้าบัญชีธนาคารถูกบันทึกไปแล้วเมื่อมีการรับเงิน
+        // แต่ถ้า Logic ของคุณคือการอัปเดตยอดเงินในบัญชีธนาคารของระบบเมื่อเงินถูกโอนไปให้ Betflix
+        // ก็สามารถเก็บไว้ได้ แต่ควรพิจารณาความถูกต้องของ Flow
+        $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
+        if ($bank) {
+            // หากคุณเคยเพิ่ม $transfer->amount เข้า bank->balance ในบล็อก success
+            // ก็ควรหักออกในบล็อก failure นี้
+            // $bank->balance = (float) $bank->balance + (float) $transfer->amount;
+            // $bank->save();
+        }
+
+        // บันทึก PromotionUsed ก็ต่อเมื่อมีการใช้โปรโมชั่นจริง
+        if ($promotion_found_and_applied) {
+            // ดึง promotion_id และ promotion_name ที่ถูกใช้จริง
+            $promotion_id_to_log = null;
+            $promotion_name_to_log = $applied_promotion_name;
+
+            if (isset($pro) && $pro instanceof Promotion) {
+                $promotion_id_to_log = $pro->id;
+            } elseif (isset($pro_recurring) && $pro_recurring instanceof Promotion) {
+                $promotion_id_to_log = $pro_recurring->id;
+            }
+
+            if ($promotion_id_to_log) { // ตรวจสอบว่ามี promotion_id ที่จะบันทึก
+                PromotionUsed::create([
+                    'member_id' => $member->id,
+                    'promotion_id' => $promotion_id_to_log,
+                    'promotion_name' => $promotion_name_to_log,
+                    'amount' => $bonus_to_apply, // ใช้ $bonus_to_apply ที่คำนวณได้
+                ]);
+            }
+        }
+        $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
+        try {
+            // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+            //     ->line('BOT-LINE ' . env('APP_NAME'))
+            //     ->line('Transaction completed, credit transferred ' . $member->username)
+            //     ->line('Amount :' . $transfer->amount)
+            //     ->line('Bonus :' . $bonus) // ใช้ floor() กับ bonus ด้วย
+            //     ->line('Promotion : ' . $applied_promotion_name) // แสดงชื่อโปรโมชั่นที่ถูกใช้
+            //     ->line('Message : ' . $message) // แสดง message จาก logic
+            //     ->send();
+        } catch (\Exception $e) {
+            error_log("Error sending Telegram message (success path): " . $e->getMessage());
+        }
+        return 200;
     }
 
     public function smsRequest(Request $request)
@@ -1184,8 +1146,6 @@ class TransactionController extends Controller
         $transfer->old_balance = $member->wallet_balance;
         $old_balance = $member->wallet_balance;
 
-        // $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,floor($transfer->amount));
-        // Log::info('Betflix Withdraw '.$bf_deposit.' '.floor($transfer->amount).' User =  '.$member->username);
 
         $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
         if ($bank) {
@@ -1593,47 +1553,40 @@ class TransactionController extends Controller
 
 
 
-        $bf_deposit =  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($amount_betflix));
-        Log::info('Deposit Betflix ' . $bf_deposit . ' amount : ' . floor($amount_betflix) . ' User =  ' . $member->username);
 
-        if ($bf_deposit == "success") {
-
-            $wheel_setting = WheelSpin::first();
-            if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
-                $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
-                $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
-            }
-
-            $member->save();
-            $transfer->new_balance = $member->wallet_balance;
-            $transfer->save();
-
-            $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
-            if ($bank) {
-                $bank->balance = (float) $bank->balance + (float) $transfer->amount;
-                $bank->save();
-            }
-
-            if ($transfer->promotion_id != 0) {
-                PromotionUsed::create([
-                    'member_id' => $member->id,
-                    'promotion_id' => $transfer->promotion_id,
-                    'promotion_name' => $pro->name,
-                    'amount' => $bonus
-                ]);
-            }
-            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                ->line('BOT ' . env('APP_NAME'))
-                ->line('ทำรายการสำเร็จ โอนเครดิตเข้า ' . $member->username)
-                ->line('จำนวน :' . $transfer->amount)
-                ->line('Bonus :' . $bonus)
-                ->line($pro_name . ': ' . $message)
-                ->send();
-
-            return 'success';
-        } else {
-            return 'error';
+        $wheel_setting = WheelSpin::first();
+        if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
+            $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
+            $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
         }
+
+        $member->save();
+        $transfer->new_balance = $member->wallet_balance;
+        $transfer->save();
+
+        $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
+        if ($bank) {
+            $bank->balance = (float) $bank->balance + (float) $transfer->amount;
+            $bank->save();
+        }
+
+        if ($transfer->promotion_id != 0) {
+            PromotionUsed::create([
+                'member_id' => $member->id,
+                'promotion_id' => $transfer->promotion_id,
+                'promotion_name' => $pro->name,
+                'amount' => $bonus
+            ]);
+        }
+        // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+        //     ->line('BOT ' . env('APP_NAME'))
+        //     ->line('ทำรายการสำเร็จ โอนเครดิตเข้า ' . $member->username)
+        //     ->line('จำนวน :' . $transfer->amount)
+        //     ->line('Bonus :' . $bonus)
+        //     ->line($pro_name . ': ' . $message)
+        //     ->send();
+
+        return 'success';
     }
     public function getPhoneAttribute($phone)
     {
@@ -1895,12 +1848,12 @@ class TransactionController extends Controller
             return 400; // ถ้ามีการล็อกอยู่ แสดงว่ามีการเรียกซ้ำ
         }
         Cache::put($key, true, 1); // ล็อก 1 วินาที
-        $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
-        // Log::info('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
-        error_log('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
+        // $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
+        // // Log::info('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
+        // error_log('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
         Cache::forget($key);
 
-        // $bf_deposit = "success";
+        $bf_deposit = "success";
         if ($bf_deposit == "success") {
             error_log("crypto_deposit bf_deposit success");
 
@@ -1952,9 +1905,9 @@ class TransactionController extends Controller
             }
             $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
             try {
-                $url ="";
-                if($transfer->ref_id != null && $transfer->ref_id != ""){
-                    $url = "https://bscscan.com/tx/".$transfer->ref_id;
+                $url = "";
+                if ($transfer->ref_id != null && $transfer->ref_id != "") {
+                    $url = "https://bscscan.com/tx/" . $transfer->ref_id;
                 }
                 // Log::info("bscscan url = " . $url);
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
@@ -1966,7 +1919,7 @@ class TransactionController extends Controller
                     ->line('Bonus :' . $bonus)
                     ->line('Promotion : ' . $applied_promotion_name)
                     ->line('Message : ' . $message)
-                     ->button('BSCSCAN', $url)
+                    ->button('BSCSCAN', $url)
                     ->send();
             } catch (\Exception $e) {
                 error_log("Error sending Telegram message (success path): " . $e->getMessage());

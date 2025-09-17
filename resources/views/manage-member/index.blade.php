@@ -120,7 +120,7 @@
                     </thead>
                     <tbody>
                         @foreach ($memberlist as $key => $member)
-                            <tr class="{{ $member->enable == 0 ? 'table-secondary' : '' }}">
+                            <tr class="{{ $member->enable == 0 ? 'table-danger' : '' }}">
                                 <td>{{ $member->username }}</td>
                                 <td>{{ $member->email }}</td>
                                 <td class="text-right">{{ $member->wallet_balance }}
@@ -583,10 +583,20 @@
         @if (session('success'))
             Swal.fire({
                 position: 'top-end',
-                type: 'success',
+                icon: 'success',
                 title: 'Your work has been saved',
                 showConfirmButton: false,
-                timer: 1500
+                timer: 3500
+            })
+        @endif
+
+        @if (session('error'))
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: '{{ session('error') }}',
+                showConfirmButton: false,
+                timer: 3500
             })
         @endif
     </script>
