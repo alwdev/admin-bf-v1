@@ -111,6 +111,11 @@
                             {{-- <li class="menu-sub-setting"><a href="{{ route('setting.mission') }}" class="active">ตั้งค่าเควสประจำวัน</a></li> --}}
                             <li class="menu-sub-setting"><a href="{{ route('setting.coupon') }}"
                                     class="active">{{ __('main.coupon_setting') }}</a></li>
+                            @if (auth()->user()->active == 99)
+                                <li class="menu-sub-setting"><a href="{{ route('setting.alert') }}"
+                                        class="active">Alert
+                                        System</a></li>
+                            @endif
                         </ul>
                     </li>
                     {{-- @endif --}}

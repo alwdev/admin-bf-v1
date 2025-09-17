@@ -54,7 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/transaction', [TransactionController::class, 'index'])->name('managemember.transaction')->middleware('CheckPermissionUser:transfer,view');
     Route::post('/turnover_on', [TransactionController::class, 'turnover_on'])->name('managemember.turnover_on')->middleware('CheckPermissionUser:transfer,view');
 
-     //Manage user
+    //Manage user
     Route::get('/manageuser', [ManageUserController::class, 'index'])->name('manageuser.index')->middleware('CheckPermissionUser:manageuser,view');
     Route::get('/addnewuser', [ManageUserController::class, 'create'])->name('manageuser.addnewuser')->middleware('CheckPermissionUser:manageuser,edit');
     Route::post('/newuser', [ManageUserController::class, 'store'])->name('manageuser.store')->middleware('CheckPermissionUser:manageuser,edit');
@@ -65,8 +65,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/updateuser', [ProfileController::class, 'updateuser'])->name('manageuser.updateuser');
     Route::post('/deluser', [ManageUserController::class, 'deluser'])->name('manageuser.deluser');
 
-    Route::get('/set_user_status/{username}/{status}', [BetflixController::class,'set_user_status']);
+    Route::get('/set_user_status/{username}/{status}', [BetflixController::class, 'set_user_status']);
 
+
+    Route::get('/alert-system', [SettingController::class, 'alert_index'])->name('setting.alert');
+    Route::delete('/alert-system-del', [SettingController::class, 'alert_del'])->name('setting.alert_del');
+    Route::post('/alert-system-store', [SettingController::class, 'alert_store'])->name('setting.alert_store');
+    Route::put('/alert-system-update', [SettingController::class, 'alert_update'])->name('setting.alert_update');
 
     Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
     Route::get('/setting/deposit_continuously', [SettingController::class, 'deposit_continuously'])->name('setting.deposit_continuously');
@@ -179,11 +184,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/partner/report/{id}', [App\Http\Controllers\PartnerController::class, 'report'])->name('partner.report')->middleware('CheckPermissionUser:manageuser,edit');
     Route::get('/partner/member-winloss', [App\Http\Controllers\PartnerController::class, 'getMemberWinlossData'])->name('partner.member.winloss.data');
 
-    Route::get('/article', [App\Http\Controllers\ArticleController::class,'index'])->name('article.index');
-    Route::get('/articleCreate', [App\Http\Controllers\ArticleController::class,'create'])->name('article.create');
-    Route::post('/article/store', [App\Http\Controllers\ArticleController::class,'store'])->name('article.store');
-    Route::get('/articleEdit/{id}', [App\Http\Controllers\ArticleController::class,'edit'])->name('article.edit');
-    Route::post('/article/update/{id}', [App\Http\Controllers\ArticleController::class,'update'])->name('article.update');
+    Route::get('/article', [App\Http\Controllers\ArticleController::class, 'index'])->name('article.index');
+    Route::get('/articleCreate', [App\Http\Controllers\ArticleController::class, 'create'])->name('article.create');
+    Route::post('/article/store', [App\Http\Controllers\ArticleController::class, 'store'])->name('article.store');
+    Route::get('/articleEdit/{id}', [App\Http\Controllers\ArticleController::class, 'edit'])->name('article.edit');
+    Route::post('/article/update/{id}', [App\Http\Controllers\ArticleController::class, 'update'])->name('article.update');
     Route::delete('/article/{id}', [App\Http\Controllers\ArticleController::class, 'destroy'])->name('article.destroy');
     Route::post('upload-image', [App\Http\Controllers\ArticleController::class, 'upload']);
 
@@ -195,22 +200,21 @@ Route::middleware('auth')->group(function () {
     //     $file="{{ asset('document.pdf')}}";
     //     return Response::download($file);
     // });
-    Route::get('/smsLog',function () {
+    Route::get('/smsLog', function () {
         return view('SMS.list');
     })->name('smsLog.index');
 
     //Chat
-    Route::get('/chat', [ChatPageController::class,'index'])->name('chat.index');
-    Route::get('/chat/{conversation}', [ChatPageController::class,'show'])->name('chat.show');
+    Route::get('/chat', [ChatPageController::class, 'index'])->name('chat.index');
+    Route::get('/chat/{conversation}', [ChatPageController::class, 'show'])->name('chat.show');
 
-    Route::get('/conversations/{conversation}/messages', [MessageController::class,'index'])->name('chat.messages.index');
-    Route::post('/conversations/{conversation}/messages', [MessageController::class,'store'])->name('chat.messages.store');
+    Route::get('/conversations/{conversation}/messages', [MessageController::class, 'index'])->name('chat.messages.index');
+    Route::post('/conversations/{conversation}/messages', [MessageController::class, 'store'])->name('chat.messages.store');
     Route::post('/chat/conversations/{conversation}/close', [App\Http\Controllers\ChatPageController::class, 'closeConversation'])->name('chat.conversations.close');
     Route::get('/conversations_count', [App\Http\Controllers\ChatPageController::class, 'conversations_count'])->name('chat.conversations.count');
-
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 Route::get('/sync_history', [App\Http\Controllers\HistoryController::class, 'sync_history'])->name('sync_history');
 Route::get('/get_biggame', [App\Http\Controllers\HistoryController::class, 'get_biggame'])->name('get_biggame');
@@ -255,4 +259,3 @@ Route::get('whereHasChild/{id}', function ($id) {
 
 Route::post('/receive-commission', [App\Http\Controllers\ManageMemberController::class, 'receive_commission']);
 Route::get('/get-system-alert', [AlertController::class, 'getSystemAlert']);
-
