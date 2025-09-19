@@ -1617,7 +1617,6 @@ class TransactionController extends Controller
         $amount_betflix = 0;
         $old_balance = (float) $member->wallet_balance; // เก็บยอดเงินเก่าก่อนคำนวณ
 
-        // ตั้งค่าสถานะ Transfer เบื้องต้น (จะถูกบันทึกเมื่อ Betflix สำเร็จ)
         $transfer->status = 2;
         $transfer->status_code = "success";
         $transfer->old_balance = $old_balance;

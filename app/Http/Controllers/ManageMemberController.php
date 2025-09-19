@@ -329,15 +329,15 @@ class ManageMemberController extends Controller
                 $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
 
                 // แก้ไข Telegram message ให้ใช้ $applied_promotion_name และ $message จาก logic ด้านบน
-                // TelegramMessage::create()
-                //     ->to(env('TELEGRAM_G_ID'))
-                //     ->line(env('APP_NAME'))
-                //     ->line('Admin has approved the credit. ' . $member->username)
-                //     ->line('Amount :' . floor($transfer->amount))
-                //     ->line('Bonus :' . $bonus) // ใช้ floor() กับ bonus ด้วยเพื่อความสอดคล้อง
-                //     ->line('Promotion : ' . $applied_promotion_name) // แสดงชื่อโปรโมชั่นที่ถูกใช้
-                //     ->line('Message : ' . $message) // แสดง message จาก logic
-                //     ->send();
+                TelegramMessage::create()
+                    ->to(env('TELEGRAM_G_ID'))
+                    ->line(env('APP_NAME'))
+                    ->line('Admin has approved the credit. ' . $member->username)
+                    ->line('Amount :' . floor($transfer->amount))
+                    ->line('Bonus :' . $bonus) // ใช้ floor() กับ bonus ด้วยเพื่อความสอดคล้อง
+                    ->line('Promotion : ' . $applied_promotion_name) // แสดงชื่อโปรโมชั่นที่ถูกใช้
+                    ->line('Message : ' . $message) // แสดง message จาก logic
+                    ->send();
             } elseif ($request->type == 'withdraw') {
                 $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
                 if ($bank) {
@@ -352,13 +352,13 @@ class ManageMemberController extends Controller
                 $transfer->old_balance = $old_balance;
                 $transfer->save();
 
-                // TelegramMessage::create()
-                //     ->to(env('TELEGRAM_G_ID'))
-                //     ->line(env('APP_NAME'))
-                //     ->line('Admin Make a transaction, approve a withdrawal ' . $member->username)
-                //     ->line('Mount :' . floor($transfer->amount))
-                //     ->line('Warning: Admin must make the transfer by themselves via the bank app.')
-                //     ->send();
+                TelegramMessage::create()
+                    ->to(env('TELEGRAM_G_ID'))
+                    ->line(env('APP_NAME'))
+                    ->line('Admin Make a transaction, approve a withdrawal ' . $member->username)
+                    ->line('Mount :' . floor($transfer->amount))
+                    ->line('Warning: Admin must make the transfer by themselves via the bank app.')
+                    ->send();
             }
         } elseif ($request->status == 'pending') {
             $transfer->status = 1;
@@ -388,12 +388,12 @@ class ManageMemberController extends Controller
                 $new_balance = (float) $member->wallet_balance + $transfer->amount;
                 $member->update(['wallet_balance' => strval($new_balance)]);
 
-                // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                // ->line(env('APP_NAME'))
-                // ->line('Admin has rejected the withdrawal. ' . $member->username)
-                // ->line('Amount :' . $transfer->amount . ' ' . $transfer->withdraw_bank_name)
-                // ->line('RollBack Amount :' . $transfer_back . ' ABC')
-                // ->send();
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                ->line(env('APP_NAME'))
+                ->line('Admin has rejected the withdrawal. ' . $member->username)
+                ->line('Amount :' . $transfer->amount . ' ' . $transfer->withdraw_bank_name)
+                ->line('RollBack Amount :' . $transfer_back . ' ABC')
+                ->send();
 
             }
         }
