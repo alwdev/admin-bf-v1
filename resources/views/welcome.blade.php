@@ -117,7 +117,7 @@
                     @endphp
                     <h6 class="text-muted text-uppercase mt-0">{{ __('dashboard.net_profit') }}</h6>
                     {{-- <h3 class="my-3 @if ((float) $total_withdraw - (float) $total_withdraw > 0) text-success @elseif((float) $total_withdraw - (float) $total_withdraw < 0) text-danger @endif">{{ number_format((float) $total_withdraw - (float) $total_withdraw,2) }} ฿</h3> --}}
-                    <h3 class="my-3">{{ number_format((float) $total_profit, 2) }} <span
+                    <h3 class="my-3">{{ number_format((float) $total__, 2) }} <span
                             style="font-size: 14px;color:rgb(145, 143, 143);">USDT</span></h3>
                     <div class="row text-center mt-4">
                         {{-- <div class="col-4">
