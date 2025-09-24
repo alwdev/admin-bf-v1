@@ -603,12 +603,12 @@ class SettingController extends Controller
                 'message' => 'required|string|max:255',
                 'active' => 'required|boolean',
             ]);
-
             // 2. Use a database transaction
             DB::beginTransaction();
 
             // 3. Find the alert by its ID and update it
             $alert = SystemAlert::findOrFail($validatedData['id']);
+
             $alert->update([
                 'date' => $validatedData['date'],
                 'time' => $validatedData['time'],
