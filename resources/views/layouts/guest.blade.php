@@ -172,55 +172,54 @@
     </script>
 
     <script>
-    function checkSystemAlerts() {
-        const lastAlertDate = localStorage.getItem('lastAlertDate');
-        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        function checkSystemAlerts() {
+            const lastAlertDate = localStorage.getItem('lastAlertDate');
+            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
-        // ถ้าแจ้งเตือนไปแล้ววันนี้ จะไม่เรียกซ้ำ
-        if (lastAlertDate === today) {
-            return;
+            // ถ้าแจ้งเตือนไปแล้ววันนี้ จะไม่เรียกซ้ำ
+            // if (lastAlertDate === today) {
+            //     return;
+            // }
+
+            fetch('/get-system-alert')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success' && data.messages.length > 0) {
+                        showAlertsSequentially(data.messages);
+                        // บันทึกว่าวันนี้แจ้งเตือนไปแล้ว
+                        localStorage.setItem('lastAlertDate', today);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching alert data:', error);
+                });
         }
 
-        fetch('/get-system-alert')
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success' && data.messages.length > 0) {
-                    showAlertsSequentially(data.messages);
+        // ฟังก์ชันสำหรับแสดง SweetAlert ทีละข้อความ
+        function showAlertsSequentially(messages, index = 0) {
+            if (index >= messages.length) {
+                return; // จบ loop ถ้าแสดงครบแล้ว
+            }
 
-                    // บันทึกว่าวันนี้แจ้งเตือนไปแล้ว
-                    localStorage.setItem('lastAlertDate', today);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching alert data:', error);
+            Swal.fire({
+                icon: 'warning',
+                title: 'แจ้งเตือนระบบ',
+                text: messages[index],
+                showConfirmButton: true
+            }).then(() => {
+                // เมื่อปิด alert อันนี้แล้ว แสดงอันถัดไป
+                showAlertsSequentially(messages, index + 1);
             });
-    }
-
-    // ฟังก์ชันสำหรับแสดง SweetAlert ทีละข้อความ
-    function showAlertsSequentially(messages, index = 0) {
-        if (index >= messages.length) {
-            return; // จบ loop ถ้าแสดงครบแล้ว
         }
 
-        Swal.fire({
-            icon: 'warning',
-            title: 'แจ้งเตือนระบบ',
-            text: messages[index],
-            showConfirmButton: true
-        }).then(() => {
-            // เมื่อปิด alert อันนี้แล้ว แสดงอันถัดไป
-            showAlertsSequentially(messages, index + 1);
+        // เรียกใช้ฟังก์ชันทันทีเมื่อหน้าเว็บโหลด
+        document.addEventListener('DOMContentLoaded', () => {
+            checkSystemAlerts();
         });
-    }
 
-    // เรียกใช้ฟังก์ชันทันทีเมื่อหน้าเว็บโหลด
-    document.addEventListener('DOMContentLoaded', () => {
-        checkSystemAlerts();
-    });
-
-    // เรียกใช้ฟังก์ชันทุก 1 ชั่วโมง (3600000 ms) แต่จะไม่ซ้ำวัน
-    setInterval(checkSystemAlerts, 3600000);
-</script>
+        // เรียกใช้ฟังก์ชันทุก 1 ชั่วโมง (3600000 ms) แต่จะไม่ซ้ำวัน
+        setInterval(checkSystemAlerts, 3600000);
+    </script>
 
     @yield('scripts')
 </body>
