@@ -202,8 +202,7 @@
                 denyButtonText: '{{ __('main.cancel') }}'
             }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
-                console.log(result);
-                if (result.isConfirmed) {
+                if (result.value) {
                     $('#destroy_id').val(id);
                     $('#destroy_form').submit();
                 } else {}
