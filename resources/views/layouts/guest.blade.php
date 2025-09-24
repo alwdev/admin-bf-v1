@@ -202,7 +202,7 @@
             }
 
             Swal.fire({
-                icon: 'warning',
+                type: 'warning',
                 title: 'แจ้งเตือนระบบ',
                 text: messages[index],
                 showConfirmButton: true
