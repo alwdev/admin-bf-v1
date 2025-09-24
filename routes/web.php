@@ -44,13 +44,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/memberEditBalance', [ManageMemberController::class, 'memberEditBalance'])->name('managemember.memberEditBalance')->middleware('CheckPermissionUser:member,edit');
     Route::post('/memberupdateBankAccount', [ManageMemberController::class, 'memberupdateBankAccount'])->name('managemember.memberupdateBankAccount')->middleware('CheckPermissionUser:member,edit');
     Route::get('/getcashback', [ManageMemberController::class, 'cash_back'])->name('managemember.getcashback')->middleware('CheckPermissionUser:member,view');
-Route::get('managemember/affiliates/{id}', [ManageMemberController::class, 'showAffiliates'])->name('managemember.affiliates');
+    Route::get('managemember/affiliates/{id}', [ManageMemberController::class, 'showAffiliates'])->name('managemember.affiliates');
 
     //Transaction
     Route::get('/transaction', [TransactionController::class, 'index'])->name('managemember.transaction')->middleware('CheckPermissionUser:transfer,view');
     Route::post('/turnover_on', [TransactionController::class, 'turnover_on'])->name('managemember.turnover_on')->middleware('CheckPermissionUser:transfer,view');
 
-     //Manage user
+    //Manage user
     Route::get('/manageuser', [ManageUserController::class, 'index'])->name('manageuser.index')->middleware('CheckPermissionUser:manageuser,view');
     Route::get('/addnewuser', [ManageUserController::class, 'create'])->name('manageuser.addnewuser')->middleware('CheckPermissionUser:manageuser,edit');
     Route::post('/newuser', [ManageUserController::class, 'store'])->name('manageuser.store')->middleware('CheckPermissionUser:manageuser,edit');
@@ -61,8 +61,12 @@ Route::get('managemember/affiliates/{id}', [ManageMemberController::class, 'show
     Route::post('/updateuser', [ProfileController::class, 'updateuser'])->name('manageuser.updateuser');
     Route::post('/deluser', [ManageUserController::class, 'deluser'])->name('manageuser.deluser');
 
-    Route::get('/set_user_status/{username}/{status}', [BetflixController::class,'set_user_status']);
+    Route::get('/set_user_status/{username}/{status}', [BetflixController::class, 'set_user_status']);
 
+    Route::get('/alert-system', [SettingController::class, 'alert_index'])->name('setting.alert');
+    Route::delete('/alert-system-del', [SettingController::class, 'alert_del'])->name('setting.alert_del');
+    Route::post('/alert-system-store', [SettingController::class, 'alert_store'])->name('setting.alert_store');
+    Route::put('/alert-system-update', [SettingController::class, 'alert_update'])->name('setting.alert_update');
 
     Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
     Route::get('/setting/deposit_continuously', [SettingController::class, 'deposit_continuously'])->name('setting.deposit_continuously');
@@ -170,11 +174,11 @@ Route::get('managemember/affiliates/{id}', [ManageMemberController::class, 'show
     Route::get('/partner/report/{id}', [App\Http\Controllers\PartnerController::class, 'report'])->name('partner.report')->middleware('CheckPermissionUser:manageuser,edit');
     Route::get('/partner/member-winloss', [App\Http\Controllers\PartnerController::class, 'getMemberWinlossData'])->name('partner.member.winloss.data');
 
-    Route::get('/article', [App\Http\Controllers\ArticleController::class,'index'])->name('article.index');
-    Route::get('/articleCreate', [App\Http\Controllers\ArticleController::class,'create'])->name('article.create');
-    Route::post('/article/store', [App\Http\Controllers\ArticleController::class,'store'])->name('article.store');
-    Route::get('/articleEdit/{id}', [App\Http\Controllers\ArticleController::class,'edit'])->name('article.edit');
-    Route::post('/article/update/{id}', [App\Http\Controllers\ArticleController::class,'update'])->name('article.update');
+    Route::get('/article', [App\Http\Controllers\ArticleController::class, 'index'])->name('article.index');
+    Route::get('/articleCreate', [App\Http\Controllers\ArticleController::class, 'create'])->name('article.create');
+    Route::post('/article/store', [App\Http\Controllers\ArticleController::class, 'store'])->name('article.store');
+    Route::get('/articleEdit/{id}', [App\Http\Controllers\ArticleController::class, 'edit'])->name('article.edit');
+    Route::post('/article/update/{id}', [App\Http\Controllers\ArticleController::class, 'update'])->name('article.update');
     Route::delete('/article/{id}', [App\Http\Controllers\ArticleController::class, 'destroy'])->name('article.destroy');
     Route::post('upload-image', [App\Http\Controllers\ArticleController::class, 'upload']);
 
@@ -182,14 +186,12 @@ Route::get('managemember/affiliates/{id}', [ManageMemberController::class, 'show
     //     $file="{{ asset('document.pdf')}}";
     //     return Response::download($file);
     // });
-    Route::get('/smsLog',function () {
+    Route::get('/smsLog', function () {
         return view('SMS.list');
     })->name('smsLog.index');
-
-
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 Route::get('/sync_history', [App\Http\Controllers\HistoryController::class, 'sync_history'])->name('sync_history');
 Route::get('/get_biggame', [App\Http\Controllers\HistoryController::class, 'get_biggame'])->name('get_biggame');
