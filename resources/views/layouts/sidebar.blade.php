@@ -65,6 +65,10 @@
                             setting</span></a>
                 </li>
                 <li>
+                    <a href="{{ route('top_games.index') }}" class="waves-effect"><i
+                            class='bx bx-joystick'></i><span>{{ __('Top Games') }}</span></a>
+                </li>
+                <li>
                     <a href="{{ route('provider.index') }}" class="waves-effect"><i
                             class='bx bx-joystick'></i><span>{{ __('main.game_cate') }}</span></a>
                 </li>
