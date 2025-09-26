@@ -65,9 +65,21 @@
                             setting</span></a>
                 </li>
                 <li>
-                    <a href="{{ route('top_games.index') }}" class="waves-effect"><i
-                            class='bx bx-joystick'></i><span>{{ __('Top Games') }}</span></a>
+                    <a href="javascript:void(0);" class="waves-effect"><i
+                            class="bx bxs-report"></i><span>{{ __('Front-end') }}</span></a>
+                    <ul class="" aria-expanded="false">
+                        {{-- <li class=""><a href="https://bo.psg777.com/bo/simpleReport" class="active">{{__('main.report')}}</a></li> --}}
+                        <li>
+                            <a href="{{ route('homepage.edit') }}" class="waves-effect"><i
+                                    class='bx bx-home'></i><span>{{ __('Home Page') }}</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('top_games.index') }}" class="waves-effect"><i
+                                    class='bx bx-joystick'></i><span>{{ __('Top Games') }}</span></a>
+                        </li>
+                    </ul>
                 </li>
+
                 <li>
                     <a href="{{ route('provider.index') }}" class="waves-effect"><i
                             class='bx bx-joystick'></i><span>{{ __('main.game_cate') }}</span></a>

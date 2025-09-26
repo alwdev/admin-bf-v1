@@ -16,6 +16,8 @@ use App\Http\Controllers\ChatPageController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\TopGameController;
+use App\Http\Controllers\HomePageController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -216,8 +218,10 @@ Route::middleware('auth')->group(function () {
 
 
 
-    //... (Routes อื่นๆ)
+    // ...
 
+    Route::get('homepage', [HomePageController::class, 'edit'])->name('homepage.edit');
+    Route::put('homepage', [HomePageController::class, 'update'])->name('homepage.update');
     // Resource routes (top_games.index, .store, .update, .destroy, ฯลฯ)
     Route::resource('top-games', TopGameController::class)
         ->names('top_games'); // กำหนดชื่อ route prefix เป็น 'top_games'
