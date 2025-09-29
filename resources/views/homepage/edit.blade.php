@@ -43,6 +43,10 @@
                         <label for="meta_description">Meta Description</label>
                         <textarea class="form-control" id="meta_description" name="meta_description" rows="3">{{ old('meta_description', $homePage->meta_description) }}</textarea>
                     </div>
+                    <div class="form-group">
+                        <label for="meta_keywords">Meta Keywords</label>
+                        <textarea class="form-control" id="meta_keywords" name="meta_keywords" rows="3">{{ old('meta_keywords', $homePage->meta_keywords) }}</textarea>
+                    </div>
                 </div>
             </div>
 

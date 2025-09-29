@@ -37,6 +37,7 @@ class HomePageController extends Controller
         $validator = Validator::make($request->all(), [
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:65535',
+            'meta_keywords' => 'nullable|string|max:65535',
             'content_html' => 'required|string', // ใช้ชื่อ 'content_html' ตาม input field ใน form
             'active' => 'required|boolean',
         ]);
