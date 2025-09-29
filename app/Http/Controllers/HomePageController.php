@@ -33,7 +33,7 @@ class HomePageController extends Controller
      */
     public function update(Request $request)
     {
-        // 1. กำหนดกฎ Validation
+        // 1. Validation
         $validator = Validator::make($request->all(), [
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:65535',
@@ -43,34 +43,34 @@ class HomePageController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $errorsHtml = '<ul>';
-            foreach ($validator->errors()->all() as $error) {
-                $errorsHtml .= '<li>' . $error . '</li>';
-            }
-            $errorsHtml .= '</ul>';
-
-            return redirect()->back()->withInput()->with('error', $errorsHtml);
+            return redirect()->back()
+                ->withInput()
+                ->with('error', implode('<br>', $validator->errors()->all()));
         }
 
-        // 2. ค้นหา record ที่ active
+        // 2. หา record แรก
         $homePage = HomePage::first();
 
-        // 3. จัดเตรียมข้อมูลสำหรับอัปเดต
-        $data = $request->only(['meta_title', 'meta_description', 'meta_keywords', 'active']);
+        if (!$homePage) {
+            // ถ้าไม่มี record แสดง error
+            return redirect()->back()->with('error', 'HomePage record not found.');
+        }
 
-        // เนื่องจาก content ถูก cast เป็น JSON เราต้องจัดเก็บ HTML เข้าไปในโครงสร้าง JSON
+        // 3. Assign ทีละฟิลด์
+        $homePage->meta_title = $request->meta_title;
+        $homePage->meta_description = $request->meta_description;
+        $homePage->meta_keywords = $request->meta_keywords;
+        $homePage->active = $request->active;
+
         $currentContent = is_array($homePage->content) ? $homePage->content : [];
         $currentContent['main_html'] = $request->content_html;
+        $homePage->content = $currentContent;
 
-        $data['content'] = $currentContent;
-        $data['revision'] = $homePage->revision + 1; // อัปเดต Revision
+        // 4. เพิ่ม revision
+        $homePage->revision += 1;
 
-        // 4. อัปเดตข้อมูล
-
-
-        $homePage->update($data);
-
-
+        // 5. Save
+        $homePage->save();
 
         return redirect()->route('homepage.edit')->with('success', 'HomePage content updated successfully.');
     }
