@@ -70,7 +70,7 @@
                 <div class="card-header">Content Status</div>
                 <div class="card-body">
                     <div class="form-group">
-                        <select name="active">
+                        <select class="form-control" name="active">
                             <option value="1" @selected($homePage->active == 1)>Enable</option>
                             <option value="0" @selected($homePage->active == 0)>Disable</option>
                         </select>
