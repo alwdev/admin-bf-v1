@@ -54,7 +54,7 @@ class HomePageController extends Controller
 
         // 2. ค้นหา record ที่ active
         $homePage = HomePage::first();
-        dd($homePage);
+
         // 3. จัดเตรียมข้อมูลสำหรับอัปเดต
         $data = $request->only(['meta_title', 'meta_description', 'meta_keywords', 'active']);
 
@@ -66,7 +66,12 @@ class HomePageController extends Controller
         $data['revision'] = $homePage->revision + 1; // อัปเดต Revision
 
         // 4. อัปเดตข้อมูล
+        \DB::enableQueryLog();
+
         $homePage->update($data);
+
+        dd(\DB::getQueryLog());
+
 
         return redirect()->route('homepage.edit')->with('success', 'HomePage content updated successfully.');
     }
