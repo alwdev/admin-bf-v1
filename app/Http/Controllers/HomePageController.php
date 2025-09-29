@@ -38,7 +38,7 @@ class HomePageController extends Controller
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:65535',
             'meta_keywords' => 'nullable|string|max:65535',
-            'content_html' => 'required|string', // ใช้ชื่อ 'content_html' ตาม input field ใน form
+            'content_html' => 'required|string',
             'active' => 'required|boolean',
         ]);
 
@@ -54,7 +54,7 @@ class HomePageController extends Controller
 
         // 2. ค้นหา record ที่ active
         $homePage = HomePage::first();
-
+        dd($homePage);
         // 3. จัดเตรียมข้อมูลสำหรับอัปเดต
         $data = $request->only(['meta_title', 'meta_description', 'meta_keywords', 'active']);
 
