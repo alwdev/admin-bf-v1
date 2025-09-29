@@ -66,7 +66,11 @@
             </div>
 
             {{-- สถานะ (Optional, ใช้ hidden field หากต้องการควบคุมผ่าน logic เท่านั้น) --}}
-            <input type="hidden" name="active" value="1">
+            <select name="active">
+                <option value="1" @selected($homePage->active == 1)>Enable</option>
+                <option value="0" @selected($homePage->active == 0)>Disable</option>
+            </select>
+
 
             <button type="submit" class="btn btn-primary">Save Home Page</button>
         </form>
