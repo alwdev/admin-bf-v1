@@ -66,11 +66,17 @@
             </div>
 
             {{-- สถานะ (Optional, ใช้ hidden field หากต้องการควบคุมผ่าน logic เท่านั้น) --}}
-            <select name="active">
-                <option value="1" @selected($homePage->active == 1)>Enable</option>
-                <option value="0" @selected($homePage->active == 0)>Disable</option>
-            </select>
-
+            <div class="card mb-4">
+                <div class="card-header">Content Status</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <select name="active">
+                            <option value="1" @selected($homePage->active == 1)>Enable</option>
+                            <option value="0" @selected($homePage->active == 0)>Disable</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
             <button type="submit" class="btn btn-primary">Save Home Page</button>
         </form>
