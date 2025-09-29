@@ -53,10 +53,10 @@ class HomePageController extends Controller
         }
 
         // 2. ค้นหา record ที่ active
-        $homePage = HomePage::where('active', true)->firstOrFail();
+        $homePage = HomePage::firstOrFail();
 
         // 3. จัดเตรียมข้อมูลสำหรับอัปเดต
-        $data = $request->only(['meta_title', 'meta_description', 'active']);
+        $data = $request->only(['meta_title', 'meta_description', 'meta_keywords', 'active']);
 
         // เนื่องจาก content ถูก cast เป็น JSON เราต้องจัดเก็บ HTML เข้าไปในโครงสร้าง JSON
         $currentContent = is_array($homePage->content) ? $homePage->content : [];
