@@ -66,11 +66,10 @@ class HomePageController extends Controller
         $data['revision'] = $homePage->revision + 1; // อัปเดต Revision
 
         // 4. อัปเดตข้อมูล
-        \DB::enableQueryLog();
+
 
         $homePage->update($data);
 
-        dd(\DB::getQueryLog());
 
 
         return redirect()->route('homepage.edit')->with('success', 'HomePage content updated successfully.');
