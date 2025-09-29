@@ -3,21 +3,17 @@
 @extends('layouts.guest')
 @section('styles')
     <style>
-        /* กำหนดความสูงสำหรับพื้นที่แก้ไขของ CKEditor */
-        /* .ck-editor__editable เป็น Class หลักที่ CKEditor ใช้ */
         .ck-editor__editable {
-            /* เพิ่มความสูงตรงนี้ตามต้องการ เช่น 800px หรือ 1000px */
             min-height: 800px !important;
-            /* Changed from 600px to 800px */
-            /* max-height: 80vh; */
-            /* ป้องกันความสูงเกินจอหากเปิดในจอขนาดเล็ก */
             overflow-y: auto;
         }
 
-        /* หากใช้ textarea เดิมเป็นตัวควบคุมความสูง (ใช้ในกรณีไม่มี editor) */
         .big-editor-height {
             min-height: 800px;
-            /* ควรปรับให้สัมพันธ์กัน */
+        }
+
+        #content_editor {
+            border: 1px solid #dbdbdb;
         }
     </style>
 @endsection
@@ -26,7 +22,7 @@
         <h2>Edit Home Page Content</h2>
         <hr>
 
-        <form action="{{ route('homepage.update') }}" method="POST">
+        <form action="{{ route('homepage.update') }}" method="POST" id="form_home_page">
             @csrf
             @method('PUT')
 
@@ -54,14 +50,21 @@
             <div class="card mb-4">
                 <div class="card-header">Main Content</div>
                 <div class="card-body">
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="content_editor">Page Content (HTML)</label>
-                        {{-- ดึง HTML ที่เก็บไว้ในโครงสร้าง JSON: $homePage->content['main_html'] --}}
                         <textarea rows="20" class="form-control big-editor-height" id="content_editor" name="content_html"
                             style="min-height: 500px;"> 
-        {{ old('content_html', $homePage->content['main_html'] ?? '') }}
-    </textarea>
+                            {{ old('content_html', $homePage->content['main_html'] ?? '') }}
+                        </textarea>
+                    </div> --}}
+                    <div class="form-group">
+                        <label for="content_editor">Page Content (HTML)</label>
+                        <div id="content_editor" class="big-editor-height">
+                            {!! old('content_html', $homePage->content['main_html'] ?? '') !!}
+                        </div>
+                        <input type="hidden" name="content_html" id="content_html_hidden">
                     </div>
+
                 </div>
             </div>
 
@@ -84,26 +87,66 @@
 @endsection
 
 @section('scripts')
-    {{-- ต้องโหลด Text Editor Library (ตัวอย่าง CKEditor 5) --}}
-    <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/decoupled-document/ckeditor.js"></script>
+
 
     <script>
         const csrfToken = document.querySelector('input[name="_token"]').value;
 
-        ClassicEditor
+        let editorInstance;
+
+        DecoupledEditor
             .create(document.querySelector('#content_editor'), {
                 ckfinder: {
                     uploadUrl: '{{ route('ckeditor.image_upload') }}',
-                    // **ส่วนนี้คือส่วนที่ส่ง Token ไปกับ Header ของ AJAX Request**
                     headers: {
                         'X-CSRF-TOKEN': csrfToken
                     }
+                },
+                image: {
+                    toolbar: ['imageTextAlternative', '|', 'resizeImage:50', 'resizeImage:75', 'resizeImage:original'],
+                    resizeOptions: [{
+                            name: 'resizeImage:original',
+                            label: 'Original',
+                            value: null
+                        },
+                        {
+                            name: 'resizeImage:50',
+                            label: '50%',
+                            value: '50'
+                        },
+                        {
+                            name: 'resizeImage:75',
+                            label: '75%',
+                            value: '75'
+                        }
+                    ]
                 }
             })
-            .catch(error => {
-                console.error(error);
+            .then(editor => {
+                editorInstance = editor;
+                const toolbarContainer = document.createElement('div');
+                toolbarContainer.id = 'toolbar-container';
+                document.querySelector('#content_editor').before(toolbarContainer);
+                toolbarContainer.appendChild(editor.ui.view.toolbar.element);
+            })
+            .catch(error => console.error(error));
+
+        // 3. ก่อน submit form ให้อัปเดตค่า hidden input
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form[action="{{ route('homepage.update') }}"]');
+            const hiddenInput = document.querySelector('#content_html_hidden');
+
+            if (!form || !hiddenInput) return;
+
+            form.addEventListener('submit', function(e) {
+                hiddenInput.value = editorInstance.getData();
+                console.log('Editor data:', hiddenInput.value);
+                // alert(hiddenInput.value); // สำหรับ debug
             });
+        });
     </script>
+
     <script>
         // 2. SweetAlert Error Handling (นำโค้ดเดิมมาใส่)
         @if (session('error'))
