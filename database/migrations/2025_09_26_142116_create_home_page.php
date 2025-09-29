@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             // 1. เนื้อหาหลัก (ใช้ JSON เพื่อความยืดหยุ่นในการเก็บข้อมูลแบบมีโครงสร้าง)
-            $table->json('content')->nullable()->comment('Main content data in JSON format');
+            $table->longText('content')->nullable()->comment('Main content data in JSON format');
 
             // 2. Metadata/SEO fields
             $table->string('meta_title', 255)->nullable();
