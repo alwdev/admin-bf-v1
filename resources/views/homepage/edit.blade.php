@@ -1,21 +1,23 @@
 {{-- resources/views/admin/home_page/edit.blade.php --}}
 
 @extends('layouts.guest')
-@section('style')
+@section('styles')
     <style>
         /* กำหนดความสูงสำหรับพื้นที่แก้ไขของ CKEditor */
         /* .ck-editor__editable เป็น Class หลักที่ CKEditor ใช้ */
         .ck-editor__editable {
-            /* ปรับค่า 500px, 600px, หรือ 700px ตามความต้องการ */
-            min-height: 600px !important;
-            max-height: 80vh;
+            /* เพิ่มความสูงตรงนี้ตามต้องการ เช่น 800px หรือ 1000px */
+            min-height: 800px !important;
+            /* Changed from 600px to 800px */
+            /* max-height: 80vh; */
             /* ป้องกันความสูงเกินจอหากเปิดในจอขนาดเล็ก */
             overflow-y: auto;
         }
 
         /* หากใช้ textarea เดิมเป็นตัวควบคุมความสูง (ใช้ในกรณีไม่มี editor) */
         .big-editor-height {
-            min-height: 600px;
+            min-height: 800px;
+            /* ควรปรับให้สัมพันธ์กัน */
         }
     </style>
 @endsection
@@ -51,7 +53,8 @@
                     <div class="form-group">
                         <label for="content_editor">Page Content (HTML)</label>
                         {{-- ดึง HTML ที่เก็บไว้ในโครงสร้าง JSON: $homePage->content['main_html'] --}}
-                        <textarea class="form-control big-editor-height" id="content_editor" name="content_html" style="min-height: 500px;"> 
+                        <textarea rows="20" class="form-control big-editor-height" id="content_editor" name="content_html"
+                            style="min-height: 500px;"> 
         {{ old('content_html', $homePage->content['main_html'] ?? '') }}
     </textarea>
                     </div>
