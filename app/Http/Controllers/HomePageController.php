@@ -14,19 +14,17 @@ class HomePageController extends Controller
      */
     public function edit()
     {
-        // ค้นหา record ที่ active ถ้าไม่มี ให้สร้าง instance ใหม่
-        $homePage = HomePage::firstOrNew(['active' => true]);
+        // หา record แรก (ไม่สร้างใหม่)
+        $homePage = HomePage::first();
 
-        // หากเป็น record ใหม่ (เพิ่งสร้าง instance) ให้กำหนดค่าเริ่มต้นและบันทึก
-        if (!$homePage->exists) {
-            $homePage->meta_title = 'Default Home Page Title';
-            // ... กำหนดค่าเริ่มต้นอื่นๆ
-            $homePage->content = ['main_html' => '<p>Welcome to our website! Edit this content.</p>'];
-            $homePage->save(); // **นี่คือส่วนที่สร้างแถวใน DB**
+        if (!$homePage) {
+            // ถ้าไม่มี record → redirect หรือแจ้ง admin
+            return redirect()->back()->with('error', 'HomePage record not found. Please create it first.');
         }
 
         return view('homepage.edit', compact('homePage'));
     }
+
 
     /**
      * Update the specified resource in storage.
