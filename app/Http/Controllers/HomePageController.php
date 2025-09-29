@@ -53,7 +53,7 @@ class HomePageController extends Controller
         }
 
         // 2. ค้นหา record ที่ active
-        $homePage = HomePage::firstOrFail();
+        $homePage = HomePage::first();
 
         // 3. จัดเตรียมข้อมูลสำหรับอัปเดต
         $data = $request->only(['meta_title', 'meta_description', 'meta_keywords', 'active']);
