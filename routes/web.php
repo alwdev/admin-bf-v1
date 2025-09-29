@@ -17,7 +17,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\TopGameController;
 use App\Http\Controllers\HomePageController;
-
+use App\Http\Controllers\CkeditorController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -222,6 +222,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('homepage', [HomePageController::class, 'edit'])->name('homepage.edit');
     Route::put('homepage', [HomePageController::class, 'update'])->name('homepage.update');
+
+
+    Route::post('ckeditor/image_upload', [CkeditorController::class, 'upload'])
+        ->name('ckeditor.image_upload');
     // Resource routes (top_games.index, .store, .update, .destroy, ฯลฯ)
     Route::resource('top-games', TopGameController::class)
         ->names('top_games'); // กำหนดชื่อ route prefix เป็น 'top_games'

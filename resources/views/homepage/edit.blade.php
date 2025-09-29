@@ -88,13 +88,23 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
 
     <script>
-        // 1. Initialize the Text Editor
+        const csrfToken = document.querySelector('input[name="_token"]').value;
+
         ClassicEditor
-            .create(document.querySelector('#content_editor'))
+            .create(document.querySelector('#content_editor'), {
+                ckfinder: {
+                    uploadUrl: '{{ route('ckeditor.image_upload') }}',
+                    // **ส่วนนี้คือส่วนที่ส่ง Token ไปกับ Header ของ AJAX Request**
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                }
+            })
             .catch(error => {
                 console.error(error);
             });
-
+    </script>
+    <script>
         // 2. SweetAlert Error Handling (นำโค้ดเดิมมาใส่)
         @if (session('error'))
             Swal.fire({
