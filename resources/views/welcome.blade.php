@@ -42,21 +42,21 @@
 
                     <div class="row text-center mt-4">
                         <div class="col-3">
-                            <h5 class="mb-0 text-primary">{{ number_format((float) $total_deposit_abc, 2) }}</h5>
-                            <p class="text-muted font-size-14 mb-0">ABC</p>
+                            <h5 class="mb-0 text-primary">{{ number_format((float) $total_deposit_ftb, 2) }}</h5>
+                            <p class="text-muted font-size-14 mb-0">FTB</p>
                         </div>
-                        <div class="col-3">
+                        {{-- <div class="col-3">
                             <h5 class="mb-0 text-info">{{ number_format((float) $total_deposit_fnx, 2) }}</h5>
                             <p class="text-muted font-size-14 mb-0">FNX</p>
-                        </div>
+                        </div> --}}
                         <div class="col-3">
-                            <h5 class="mb-0 text-success">{{ number_format((float) $total_deposit_usdt, 2) }}</h5>
-                            <p class="text-muted font-size-14 mb-0">USDT</p>
+                            <h5 class="mb-0 text-success">{{ number_format((float) $total_deposit_dfnx, 2) }}</h5>
+                            <p class="text-muted font-size-14 mb-0">DFNX</p>
                         </div>
-                        <div class="col-3">
+                        {{-- <div class="col-3">
                             <h5 class="mb-0 text-warning">{{ number_format((float) $total_deposit_ktx, 2) }}</h5>
                             <p class="text-muted font-size-14 mb-0">KTX</p>
-                        </div>
+                        </div> --}}
 
                     </div>
                 </div>
@@ -74,20 +74,16 @@
                     </div>
                     <h6 class="text-muted text-uppercase mt-0">{{ __('dashboard.withdraw_amount') }}</h6>
                     <h3 class="my-3">{{ number_format((float) $total_withdraw, 2) }} <span
-                            style="font-size: 14px;color:rgb(145, 143, 143);">USDF/USDT</span></h3>
+                            style="font-size: 14px;color:rgb(145, 143, 143);">DFNX</span></h3>
 
                     <div class="row text-center mt-4">
                         <div class="col-4">
-                            <h5 class="mb-0 text-danger">{{ number_format((float) $total_withdraw_abc, 2) }}</h5>
-                            <p class="text-muted font-size-14 mb-0">ABC</p>
+                            <h5 class="mb-0 text-danger">{{ number_format((float) $total_withdraw_ftb, 2) }}</h5>
+                            <p class="text-muted font-size-14 mb-0">FTB</p>
                         </div>
                         <div class="col-4">
-                            <h5 class="mb-0 text-primary">{{ number_format((float) $total_withdraw_usdf, 2) }}</h5>
-                            <p class="text-muted font-size-14 mb-0">USDF</p>
-                        </div>
-                        <div class="col-4">
-                            <h5 class="mb-0 text-success">{{ number_format((float) $total_withdraw_usdt, 2) }}</h5>
-                            <p class="text-muted font-size-14 mb-0">USDT</p>
+                            <h5 class="mb-0 text-primary">{{ number_format((float) $total_withdraw_dfnx, 2) }}</h5>
+                            <p class="text-muted font-size-14 mb-0">DFNX</p>
                         </div>
                     </div>
                 </div>
@@ -104,7 +100,7 @@
                         </span>
                     </div>
                     @php
-                        $total_profit = (float) $total_deposit - (float) $total_withdraw_abc;
+                        $total_profit = (float) $total_deposit - (float) $total_withdraw_ftb;
 
                         $thb_ = 33.0;
                         $fee = 6.5 / 100; // 0.065
@@ -118,20 +114,20 @@
                     <h6 class="text-muted text-uppercase mt-0">{{ __('dashboard.net_profit') }}</h6>
                     {{-- <h3 class="my-3 @if ((float) $total_withdraw - (float) $total_withdraw > 0) text-success @elseif((float) $total_withdraw - (float) $total_withdraw < 0) text-danger @endif">{{ number_format((float) $total_withdraw - (float) $total_withdraw,2) }} ฿</h3> --}}
                     <h3 class="my-3">{{ number_format((float) $total_profit, 2) }} <span
-                            style="font-size: 14px;color:rgb(145, 143, 143);">ABC</span></h3>
+                            style="font-size: 14px;color:rgb(145, 143, 143);">FTB</span></h3>
                     <div class="row text-center mt-4">
                         <div class="col-4">
                             <h5 class="mb-0 text-danger">{{ number_format((float) $amount__, 2) }}</h5>
-                            <p class="text-muted font-size-14 mb-0">ABC</p>
+                            <p class="text-muted font-size-14 mb-0">FTB</p>
                         </div>
                         <div class="col-4">
                             <h5 class="mb-0 text-primary">{{ number_format((float) $total__, 2) }}</h5>
-                            <p class="text-muted font-size-14 mb-0">USDF</p>
+                            <p class="text-muted font-size-14 mb-0">DFNX</p>
                         </div>
-                        <div class="col-4">
+                        {{-- <div class="col-4">
                             <h5 class="mb-0 text-success">{{ number_format((float) $total__, 2) }}</h5>
                             <p class="text-muted font-size-14 mb-0">USDT</p>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -246,23 +242,23 @@
                     {{-- <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $banks->sum('balance'), 2) }}
                     </h3> --}}
                     <div class="row text-center mt-4">
-                        <div class="col-4">
+                        {{-- <div class="col-4">
                             <h5 class="mb-0 text-danger">
                                 {{ number_format((float) $amount__ > 0 ? (float) $amount__ : 0, 2) }}
                             </h5>
-                            <p class="text-muted font-size-14 mb-0">ABC</p>
-                        </div>
+                            <p class="text-muted font-size-14 mb-0">FNX</p>
+                        </div> --}}
                         <div class="col-4">
                             <h5 class="mb-0 text-primary">
-                                {{ number_format((float) $total__ > 0 ? (float) $total__ : 0, 2) }}
+                                {{ number_format((float) $total__ > 0 ? (float) $amount__ : 0, 2) }}
                             </h5>
-                            <p class="text-muted font-size-14 mb-0">USDF</p>
+                            <p class="text-muted font-size-14 mb-0">FTB</p>
                         </div>
                         <div class="col-4">
                             <h5 class="mb-0 text-success">
                                 {{ number_format((float) $total__ > 0 ? (float) $total__ : 0, 2) }}
                             </h5>
-                            <p class="text-muted font-size-14 mb-0">USDT</p>
+                            <p class="text-muted font-size-14 mb-0">DFNX</p>
                         </div>
                     </div>
                 </div>

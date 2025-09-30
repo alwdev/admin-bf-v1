@@ -15,6 +15,7 @@ use App\Models\Members;
 use App\Http\Controllers\ChatPageController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\AlertController;
+use App\Http\Controllers\MenuController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -206,6 +207,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/conversations/{conversation}/messages', [MessageController::class, 'store'])->name('chat.messages.store');
     Route::post('/chat/conversations/{conversation}/close', [App\Http\Controllers\ChatPageController::class, 'closeConversation'])->name('chat.conversations.close');
     Route::get('/conversations_count', [App\Http\Controllers\ChatPageController::class, 'conversations_count'])->name('chat.conversations.count');
+
+    Route::resource('menus', MenuController::class);
+    Route::patch('menus/{menu}/toggle', [MenuController::class, 'toggle'])->name('menus.toggle');
 });
 
 require __DIR__ . '/auth.php';

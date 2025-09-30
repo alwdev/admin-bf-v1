@@ -98,6 +98,8 @@
                         <ul class="" aria-expanded="false">
                             <li class="menu-sub-setting"><a href="{{ route('setting.index') }}"
                                     class="active">{{ __('main.website_setting') }}</a></li>
+                            <li class="menu-sub-setting"><a href="{{ route('menus.index') }}"
+                                    class="active">{{ __('Menu Setting') }}</a></li>
                             <li class="menu-sub-setting"><a href="{{ route('setting.affiliate') }}"
                                     class="active">{{ __('main.recommend_setting') }}</a></li>
                             <li class="menu-sub-setting"><a href="{{ route('setting.popup') }}"
