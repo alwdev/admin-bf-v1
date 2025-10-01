@@ -1673,7 +1673,7 @@ class TransactionController extends Controller
         $thb_usd_price = 33; ///Thai Bath
         $crypto_price = Cypto::where('symbol', $request->symbol)->first();  // เช็คราคา crypto price/Dolla from Database
 
-        if ($request->symbol == 'FTB' || $request->symbol == 'DFNX' || $request->symbol == 'ABC') {    ////  ABC
+        if ($request->symbol == 'FTB'  || $request->symbol == 'ABC') {    ////  ABC
             $update_amount = $request->amount;
         } else {
             $update_amount = $request->amount * (float) $crypto_price->price * (float) $thb_usd_price; // USDT FNX
