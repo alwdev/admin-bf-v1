@@ -42,22 +42,38 @@
 
                     <div class="row text-center mt-4">
                         <div class="col-3">
-                            <h5 class="mb-0 text-primary">{{ number_format((float) $total_deposit_ftb, 2) }}</h5>
-                            <p class="text-muted font-size-14 mb-0">FTB</p>
+                            <h5 class="mb-0 text-primary">{{ number_format((float) $total_deposit_btc, 2) }}</h5>
+                            <p class="text-muted font-size-14 mb-0">BTC</p>
                         </div>
-                        {{-- <div class="col-3">
-                            <h5 class="mb-0 text-info">{{ number_format((float) $total_deposit_fnx, 2) }}</h5>
-                            <p class="text-muted font-size-14 mb-0">FNX</p>
-                        </div> --}}
                         <div class="col-3">
-                            <h5 class="mb-0 text-success">{{ number_format((float) $total_deposit_dfnx, 2) }}</h5>
+                            <h5 class="mb-0 text-success">{{ number_format((float) $total_deposit_eth, 2) }}</h5>
+                            <p class="text-muted font-size-14 mb-0">ETH</p>
+                        </div>
+                        <div class="col-3">
+                            <h5 class="mb-0 text-info">{{ number_format((float) $total_deposit_bnb, 2) }}</h5>
+                            <p class="text-muted font-size-14 mb-0">BNB</p>
+                        </div>
+                        <div class="col-3">
+                            <h5 class="mb-0 text-primary">{{ number_format((float) $total_deposit_dfnx, 2) }}</h5>
                             <p class="text-muted font-size-14 mb-0">DFNX</p>
                         </div>
-                        {{-- <div class="col-3">
-                            <h5 class="mb-0 text-warning">{{ number_format((float) $total_deposit_ktx, 2) }}</h5>
-                            <p class="text-muted font-size-14 mb-0">KTX</p>
-                        </div> --}}
+                        <div class="col-3">
+                            <h5 class="mb-0 text-info">{{ number_format((float) $total_deposit_ftb, 2) }}</h5>
+                            <p class="text-muted font-size-14 mb-0">FTB</p>
+                        </div>
+                        <div class="col-3">
+                            <h5 class="mb-0 text-primary">{{ number_format((float) $total_deposit_fnx, 2) }}</h5>
+                            <p class="text-muted font-size-14 mb-0">FNX</p>
+                        </div>
 
+                        <div class="col-3">
+                            <h5 class="mb-0 text-success">{{ number_format((float) $total_deposit_usdt, 2) }}</h5>
+                            <p class="text-muted font-size-14 mb-0">USDT</p>
+                        </div>
+                                                <div class="col-3">
+                            <h5 class="mb-0 text-success">{{ number_format((float) $total_deposit_pol, 2) }}</h5>
+                            <p class="text-muted font-size-14 mb-0">POL</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -238,7 +254,7 @@
                     <h6 class="text-muted text-uppercase mt-0">{{ __('dashboard.Balance') }} <span
                             class="badge rounded-pill text-bg-primary"
                             style="font-weight: 300;background: green;color: white;">{{ __('dashboard.Bankquantity') }}
-                            0xF7259643d1913878CEB3...</span></h6>
+                            0x...</span></h6>
                     {{-- <h3 class="my-3" data-plugin="counterup">{{ number_format((float) $banks->sum('balance'), 2) }}
                     </h3> --}}
                     <div class="row text-center mt-4">
