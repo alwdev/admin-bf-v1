@@ -360,6 +360,7 @@ class ManageMemberController extends Controller
                 $transfer->status = 2;
                 $transfer->status_code = 'อนุมัติ';
                 $transfer->old_balance = $old_balance;
+                $transfer->turnover_on = 0;
                 $transfer->save();
 
                 TelegramMessage::create()
@@ -389,7 +390,7 @@ class ManageMemberController extends Controller
             // Log::info("withdraw eject transfer_back =".$transfer_back." transfer amount ".$transfer->amount." username ".$member->username);
             Logs::create([
                 'username' => $member->username,
-                'log' => "withdraw eject transfer_back =".$transfer_back." transfer amount ".$transfer->amount." username ".$member->username
+                'log' => "withdraw eject transfer_back =" . $transfer_back . " transfer amount " . $transfer->amount . " username " . $member->username
             ]);
 
 
@@ -405,11 +406,11 @@ class ManageMemberController extends Controller
                     $member->update(['wallet_balance' => strval($new_balance)]);
 
                     TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                    ->line(env('APP_NAME'))
-                    ->line('Admin has rejected the withdrawal. ' . $member->username)
-                    ->line('Amount :' . $transfer->amount .' '.$transfer->withdraw_bank_name)
-                    ->line('RollBack Amount :' . $transfer_back .' ABC')
-                    ->send();
+                        ->line(env('APP_NAME'))
+                        ->line('Admin has rejected the withdrawal. ' . $member->username)
+                        ->line('Amount :' . $transfer->amount . ' ' . $transfer->withdraw_bank_name)
+                        ->line('RollBack Amount :' . $transfer_back . ' ABC')
+                        ->send();
                 }
             }
         }
@@ -989,7 +990,7 @@ class ManageMemberController extends Controller
     }
 
     /////////////////////////////////////////////////////////////// API
-     public function receive_commission(Request $request)
+    public function receive_commission(Request $request)
     {
         DB::beginTransaction();
 
@@ -1033,7 +1034,7 @@ class ManageMemberController extends Controller
             $member->save();
 
             // เรียก API เพื่อฝากเงินเข้า Betflix
-            $bf_deposit = app(BetflixController::class)->Master_Deposit($member->username,floor($commission));
+            $bf_deposit = app(BetflixController::class)->Master_Deposit($member->username, floor($commission));
             Log::info('Betflix commission ' . $bf_deposit . ' ' . $commission . ' User = ' . $member->username);
 
             if ($bf_deposit === "success") {
@@ -1047,7 +1048,6 @@ class ManageMemberController extends Controller
                 DB::rollBack(); // เกิดข้อผิดพลาด, ย้อนกลับการเปลี่ยนแปลง
                 return response()->json(['success' => false, 'message' => $bf_deposit, 'reason' => $bf_deposit], 500);
             }
-
         } catch (Exception $e) {
             DB::rollBack(); // เกิดข้อผิดพลาดจาก exception, ย้อนกลับการเปลี่ยนแปลง
             Log::error('Transaction failed: ' . $e->getMessage());
