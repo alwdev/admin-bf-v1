@@ -384,7 +384,7 @@ class ManageMemberController extends Controller
             $transfer->status = 3;
             $transfer->status_code = 'ปฏิเสธ';
             $transfer->turnover_on = 0;
-            // $transfer->save();
+            $transfer->save();
 
             // if ($transfer->withdraw_bank_name == "FTB") {
             //     $withdraw_fee = 6.5 / 100;    // 0.065
@@ -401,7 +401,7 @@ class ManageMemberController extends Controller
             // }
 
             if ($transfer->withdraw_bank_name == "FTB") {
-                $withdraw_fee = 6.5 / 100;
+                $withdraw_fee = 0;
                 $thb_usd_price = 1;
                 $final_usd_amount = (float) $transfer->amount;
                 $before_fee_usd = $final_usd_amount / (1 - $withdraw_fee);
@@ -409,7 +409,7 @@ class ManageMemberController extends Controller
                 $transfer_back = $original_amount;
             } else {
 
-                $withdraw_fee = 6.5 / 100;
+                $withdraw_fee = 0;
                 $thb_usd_price = 33;
                 $final_usd_amount = (float) $transfer->amount;
                 $before_fee_usd = $final_usd_amount / (1 - $withdraw_fee);
