@@ -386,11 +386,20 @@ class ManageMemberController extends Controller
             $transfer->turnover_on = 0;
             $transfer->save();
 
-            $withdraw_fee = 6.5 / 100;    // 0.065
-            $thb_usd_price = 33;        // อัตราแลกเปลี่ยน
+            if ($transfer->withdraw_bank_name == "FTB") {
+                $withdraw_fee = 6.5 / 100;    // 0.065
+                $thb_usd_price = 1;        // อัตราแลกเปลี่ยน
 
-            $transfer_back = $transfer->amount  * $thb_usd_price;
-            $transfer_back = $transfer_back / (1 - $withdraw_fee);
+                $transfer_back = $transfer->amount  * $thb_usd_price;
+                $transfer_back = $transfer_back / (1 - $withdraw_fee);
+            } else {
+                $withdraw_fee = 6.5 / 100;    // 0.065
+                $thb_usd_price = 33;        // อัตราแลกเปลี่ยน
+
+                $transfer_back = $transfer->amount  * $thb_usd_price;
+                $transfer_back = $transfer_back / (1 - $withdraw_fee);
+            }
+
 
             // Log::info("withdraw eject transfer_back =".$transfer_back." transfer amount ".$transfer->amount." username ".$member->username);
             Logs::create([
