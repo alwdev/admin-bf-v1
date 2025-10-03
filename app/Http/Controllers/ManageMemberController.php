@@ -384,22 +384,38 @@ class ManageMemberController extends Controller
             $transfer->status = 3;
             $transfer->status_code = 'ปฏิเสธ';
             $transfer->turnover_on = 0;
-            $transfer->save();
+            // $transfer->save();
+
+            // if ($transfer->withdraw_bank_name == "FTB") {
+            //     $withdraw_fee = 6.5 / 100;    // 0.065
+            //     $thb_usd_price = 1;        // อัตราแลกเปลี่ยน
+
+            //     $transfer_back = $transfer->amount  * $thb_usd_price;
+            //     $transfer_back = $transfer_back / (1 - $withdraw_fee);
+            // } else {
+            //     $withdraw_fee = 6.5 / 100;    // 0.065
+            //     $thb_usd_price = 33;        // อัตราแลกเปลี่ยน
+
+            //     $transfer_back = $transfer->amount  * $thb_usd_price;
+            //     $transfer_back = $transfer_back / (1 - $withdraw_fee);
+            // }
 
             if ($transfer->withdraw_bank_name == "FTB") {
-                $withdraw_fee = 6.5 / 100;    // 0.065
-                $thb_usd_price = 1;        // อัตราแลกเปลี่ยน
-
-                $transfer_back = $transfer->amount  * $thb_usd_price;
-                $transfer_back = $transfer_back / (1 - $withdraw_fee);
+                $withdraw_fee = 6.5 / 100;
+                $thb_usd_price = 1;
+                $final_usd_amount = (float) $transfer->amount;
+                $before_fee_usd = $final_usd_amount / (1 - $withdraw_fee);
+                $original_amount = $before_fee_usd * $thb_usd_price;
+                $transfer_back = $original_amount;
             } else {
-                $withdraw_fee = 6.5 / 100;    // 0.065
-                $thb_usd_price = 33;        // อัตราแลกเปลี่ยน
 
-                $transfer_back = $transfer->amount  * $thb_usd_price;
-                $transfer_back = $transfer_back / (1 - $withdraw_fee);
+                $withdraw_fee = 6.5 / 100;
+                $thb_usd_price = 33;
+                $final_usd_amount = (float) $transfer->amount;
+                $before_fee_usd = $final_usd_amount / (1 - $withdraw_fee);
+                $original_amount = $before_fee_usd * $thb_usd_price;
+                $transfer_back = $original_amount;
             }
-
 
             // Log::info("withdraw eject transfer_back =".$transfer_back." transfer amount ".$transfer->amount." username ".$member->username);
             Logs::create([
@@ -423,7 +439,7 @@ class ManageMemberController extends Controller
                         ->line(env('APP_NAME'))
                         ->line('Admin has rejected the withdrawal. ' . $member->username)
                         ->line('Amount :' . $transfer->amount . ' ' . $transfer->withdraw_bank_name)
-                        ->line('RollBack Amount :' . $transfer_back . ' ABC')
+                        ->line('RollBack Amount :' . $transfer_back . ' FTB')
                         ->send();
                 }
             }
