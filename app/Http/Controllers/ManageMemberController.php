@@ -442,6 +442,11 @@ class ManageMemberController extends Controller
                     if ($createdAt->lt(Carbon::create(2025, 10, 1))) {
                         $old_wallet = $user->old_wallet;
                         $transfer_back = $transfer_back + $old_wallet;
+
+                        Logs::create([
+                            'username' => $member->username,
+                            'log' => "withdraw eject old wallet =" . $old_wallet . " transfer amount " . $transfer->amount . " username " . $member->username
+                        ]);
                     }
                 }
 
