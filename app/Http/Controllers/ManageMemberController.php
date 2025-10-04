@@ -383,7 +383,6 @@ class ManageMemberController extends Controller
         } elseif ($request->status == 'reject') {
             $transfer->status = 3;
             $transfer->status_code = 'ปฏิเสธ';
-            $transfer->turnover_on = 0;
             $transfer->save();
 
             // if ($transfer->withdraw_bank_name == "FTB") {
@@ -427,6 +426,8 @@ class ManageMemberController extends Controller
             if ($request->type == 'withdraw') {
                 $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($transfer_back));
                 // Log::info('rollBack Deposit Betflix ' . $bf_deposit . ' ' . $transfer_back . ' User =  ' . $member->username);
+                $transfer->turnover_on = 0;
+                $transfer->save();
                 Logs::create([
                     'username' => $member->username,
                     'log' => 'rollBack withdraw : ' . $bf_deposit . ' transfer_back: ' . $transfer_back . ' User =  ' . $member->username
