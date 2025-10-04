@@ -432,15 +432,6 @@ class ManageMemberController extends Controller
                 $user = Members::find($transfer->member_id);
                 if ($user) {
 
-
-                    $check_transfer_type = Transfer::where('member_id', $user->id)->whereRaw('LOWER(`type`) = "deposit"')->whereIn('deposit_from_bank_type', ['FNX', 'FTB', 'DFNX'])->where('turnover_on', 1)->first();
-                    if ($check_transfer_type) {
-
-                        $deposit_amount =  (float) $check_transfer_type->amount;
-                        $total_ = $transfer_back +  $deposit_amount;
-                        $total_rollback = $total_;
-                    }
-
                     $createdAt = $user->created_at; // วันที่สมัครสมาชิก
                     // แยกลูกค้าเก่า/ใหม่
                     if ($createdAt->lt(Carbon::create(2025, 10, 1))) {
@@ -451,6 +442,14 @@ class ManageMemberController extends Controller
                             'username' => $member->username,
                             'log' => "withdraw eject old wallet =" . $old_wallet . " transfer_back " . $total_rollback  . " username " . $member->username
                         ]);
+                    } else {
+                        $check_transfer_type = Transfer::where('member_id', $user->id)->whereRaw('LOWER(`type`) = "deposit"')->whereIn('deposit_from_bank_type', ['FNX', 'FTB', 'DFNX'])->where('turnover_on', 1)->first();
+                        if ($check_transfer_type) {
+
+                            $deposit_amount =  (float) $check_transfer_type->amount;
+                            $total_ = $transfer_back +  $deposit_amount;
+                            $total_rollback = $total_;
+                        }
                     }
                 }
 
