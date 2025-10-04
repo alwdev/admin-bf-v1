@@ -398,6 +398,7 @@ class ManageMemberController extends Controller
             //     $transfer_back = $transfer->amount  * $thb_usd_price;
             //     $transfer_back = $transfer_back / (1 - $withdraw_fee);
             // }
+            $total_rollback = 0;
 
             if ($transfer->withdraw_bank_name == "FTB") {
                 $withdraw_fee = 0;
@@ -416,10 +417,12 @@ class ManageMemberController extends Controller
                 $transfer_back = $original_amount;
             }
 
+            $total_rollback = $transfer_back;
+
             // Log::info("withdraw eject transfer_back =".$transfer_back." transfer amount ".$transfer->amount." username ".$member->username);
             Logs::create([
                 'username' => $member->username,
-                'log' => "withdraw eject transfer_back =" . $transfer_back . " transfer amount " . $transfer->amount . " username " . $member->username
+                'log' => "withdraw eject transfer_back =" . $total_rollback . " transfer amount " . $transfer->amount . " username " . $member->username
             ]);
 
 
@@ -434,23 +437,24 @@ class ManageMemberController extends Controller
                     if ($check_transfer_type) {
 
                         $deposit_amount =  (float) $check_transfer_type->amount;
-                        $transfer_back = $transfer_back +  $deposit_amount;
+                        $total_ = $transfer_back +  $deposit_amount;
+                        $total_rollback = $total_;
                     }
 
                     $createdAt = $user->created_at; // วันที่สมัครสมาชิก
                     // แยกลูกค้าเก่า/ใหม่
                     if ($createdAt->lt(Carbon::create(2025, 10, 1))) {
                         $old_wallet = $user->old_wallet;
-                        $transfer_back = $transfer_back + $old_wallet;
-
+                        $total_2 = $transfer_back +  $old_wallet;
+                        $total_rollback = $total_2;
                         Logs::create([
                             'username' => $member->username,
-                            'log' => "withdraw eject old wallet =" . $old_wallet . " transfer amount " . $transfer->amount . " username " . $member->username
+                            'log' => "withdraw eject old wallet =" . $old_wallet . " transfer_back " . $total_rollback  . " username " . $member->username
                         ]);
                     }
                 }
 
-                $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($transfer_back));
+                $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($total_rollback));
                 // Log::info('rollBack Deposit Betflix ' . $bf_deposit . ' ' . $transfer_back . ' User =  ' . $member->username);
                 $transfer->turnover_on = 0;
                 $transfer->save();
