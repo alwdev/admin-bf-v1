@@ -362,21 +362,8 @@ class ManageMemberController extends Controller
                 $transfer->old_balance = $old_balance;
                 $transfer->save();
 
-                $a_ = 0;
                 $check_transfer_type = Transfer::where('member_id', $request->member_id)->whereRaw('LOWER(`type`) = "deposit"')->whereIn('deposit_from_bank_type', ['FNX', 'FTB', 'DFNX'])->where('turnover_on', 1)->first();
                 if ($check_transfer_type) {
-
-                    $deposit_amount =  (float) $check_transfer_type->amount;
-                    $a_ = $deposit_amount;
-                    $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username, floor($deposit_amount));
-                    Logs::create([
-                        'username' => $member->username,
-                        'log' => 'Withdraw (ตัดยอดตามจำนวนยอดฝาก): ' . $bf_deposit . ' amount: ' . $deposit_amount . ' User =  ' . $member->username
-                    ]);
-
-                    $member->wallet_balance = max(0, (float)$member->wallet_balance - $deposit_amount);
-                    $member->save();
-
                     $check_transfer_type->turnover_on = 0;
                     $check_transfer_type->save();
                 }
@@ -386,7 +373,6 @@ class ManageMemberController extends Controller
                     ->line(env('APP_NAME'))
                     ->line('Admin Make a transaction, approve a withdrawal ' . $member->username)
                     ->line('Mount :' . floor($transfer->amount))
-                    ->line('Deducted based on deposit amount :' . $a_)
                     ->line('Warning: Admin must make the transfer by themselves via the bank app.')
                     ->send();
             }
