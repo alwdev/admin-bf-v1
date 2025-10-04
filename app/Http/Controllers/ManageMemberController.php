@@ -424,6 +424,27 @@ class ManageMemberController extends Controller
 
 
             if ($request->type == 'withdraw') {
+
+
+                $user = Members::find($transfer->member_id);
+                if ($user) {
+
+
+                    $check_transfer_type = Transfer::where('member_id', $user->id)->whereRaw('LOWER(`type`) = "deposit"')->whereIn('deposit_from_bank_type', ['FNX', 'FTB', 'DFNX'])->where('turnover_on', 1)->first();
+                    if ($check_transfer_type) {
+
+                        $deposit_amount =  (float) $check_transfer_type->amount;
+                        $transfer_back = $transfer_back +  $deposit_amount;
+                    }
+
+                    $createdAt = $user->created_at; // วันที่สมัครสมาชิก
+                    // แยกลูกค้าเก่า/ใหม่
+                    if ($createdAt->lt(Carbon::create(2025, 10, 1))) {
+                        $old_wallet = $user->old_wallet;
+                        $transfer_back = $transfer_back + $old_wallet;
+                    }
+                }
+
                 $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($transfer_back));
                 // Log::info('rollBack Deposit Betflix ' . $bf_deposit . ' ' . $transfer_back . ' User =  ' . $member->username);
                 $transfer->turnover_on = 0;
