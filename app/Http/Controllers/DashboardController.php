@@ -19,6 +19,7 @@ class DashboardController extends Controller
         $member = Members::get();
         $member_new = Members::whereDate('created_at', Carbon::today())->orderby('id', 'desc')->get();
         $transfer = Transfer::where('status', 2)->whereDate('created_at', Carbon::today())->where('type', '!=', 'cashback')->get();
+
         $total_deposit = 0;
         $total_withdraw = 0;
         $total_member = 0;
@@ -148,7 +149,8 @@ class DashboardController extends Controller
             'topgame',
             'transfer',
             'member_new',
-            'total_bonus'));
+            'total_bonus'
+        ));
     }
 
     public function dashboard_date(Request $request)
@@ -177,31 +179,48 @@ class DashboardController extends Controller
             }
         }
         $total_member = count($member);
+
+        $total_deposit_btc = 0;
+        $total_deposit_bnb = 0;
+        $total_deposit_eth = 0;
         $total_deposit_dfnx = 0;
         $total_deposit_fnx = 0;
         $total_deposit_ftb = 0;
 
-        $total_withdraw_usdt = 0;
-        $total_withdraw_usdf = 0;
-        $total_withdraw_abc = 0; // เพิ่มตัวแปรสำหรับยอดถอน ABC
+        $total_deposit_usdt = 0;
+        $total_deposit_pol = 0;
+
+        $total_withdraw_dfnx = 0;
+        $total_withdraw_ftb = 0; // เพิ่มตัวแปรสำหรับยอดถอน ABC
+
 
         if ($transfer) {
             foreach ($transfer as $t) {
                 if ($t->type == 'deposit') {
-                    if ($t->deposit_from_bank_type == 'DFNX') {
+                    if ($t->deposit_from_bank_type == 'BTC') {
+                        $total_deposit_btc += $t->amount;
+                    } elseif ($t->deposit_from_bank_type == 'BNB') {
+                        $total_deposit_bnb += $t->amount;
+                    } elseif ($t->deposit_from_bank_type == 'ETH') {
+                        $total_deposit_eth += $t->amount;
+                    } elseif ($t->deposit_from_bank_type == 'DFNX') {
                         $total_deposit_dfnx += $t->amount;
                     } elseif ($t->deposit_from_bank_type == 'FNX') {
                         $total_deposit_fnx += $t->amount;
                     } elseif ($t->deposit_from_bank_type == 'FTB') {
                         $total_deposit_ftb += $t->amount;
+                    } elseif ($t->deposit_from_bank_type == 'USDT') {
+                        $total_deposit_usdt += $t->amount;
+                    } elseif ($t->deposit_from_bank_type == 'POL') {
+                        $total_deposit_pol += $t->amount;
                     }
+
+
                     $total_deposit += $t->amount;
                 } else {
                     // โค้ดสำหรับคำนวณยอดถอน
-                    if ($t->withdraw_bank_name == 'USDT') {
-                        $total_withdraw_usdt += $t->amount;
-                    } elseif ($t->withdraw_bank_name == 'USDF') {
-                        $total_withdraw_usdf += $t->amount;
+                    if ($t->withdraw_bank_name == 'DFNX') {
+                        $total_withdraw_dfnx += $t->amount;
                     }
                     $total_withdraw += $t->amount;
                 }
@@ -222,7 +241,7 @@ class DashboardController extends Controller
         // คำนวณหายอดเงินตั้งต้นในหน่วยบาท
         $original_amount = $before_fee_usd * $thb_usd_price;
 
-        $total_withdraw_abc = $original_amount;
+        $total_withdraw_ftb = $original_amount;
 
         $players = app(\App\Http\Controllers\BetflixController::class)->Multiple_Member_Report($dateS);
         if ($players) {
@@ -256,6 +275,30 @@ class DashboardController extends Controller
             ->sum('amount');
 
         $banks = Bank::where('enable', 1)->where('active', 1)->get();
-        return view('welcome', compact('total_deposit_dfnx', 'total_deposit_fnx', 'total_deposit_ftb', 'total_withdraw_usdt', 'total_withdraw_usdf', 'total_withdraw_abc', 'manual_topup', 'manual_cashback', 'total_bonus', 'banks', 'total_deposit', 'total_withdraw', 'new_member', 'total_member', 'players', 'total_online', 'topgame', 'transfer', 'member_new'));
+        return view('welcome', compact(
+            'total_deposit_btc',
+            'total_deposit_bnb',
+            'total_deposit_eth',
+            'total_deposit_dfnx',
+            'total_deposit_fnx',
+            'total_deposit_ftb',
+            'total_deposit_usdt',
+            'total_deposit_pol',
+            'total_withdraw_dfnx',
+            'total_withdraw_ftb',
+            'manual_topup',
+            'manual_cashback',
+            'banks',
+            'total_deposit',
+            'total_withdraw',
+            'new_member',
+            'total_member',
+            'players',
+            'total_online',
+            'topgame',
+            'transfer',
+            'member_new',
+            'total_bonus'
+        ));
     }
 }
