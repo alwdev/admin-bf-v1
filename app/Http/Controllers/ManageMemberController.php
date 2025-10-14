@@ -31,7 +31,7 @@ class ManageMemberController extends Controller
     public function index()
     {
         //
-        $memberlist = Members::where('active', 1)->orderBy('id', 'DESC')->get();
+        $memberlist = Members::orderBy('id', 'DESC')->get();
         return view('manage-member.index', compact('memberlist'));
     }
 
