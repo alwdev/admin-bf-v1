@@ -509,6 +509,9 @@ class ManageMemberController extends Controller
 
     public function memberdelete(Request $request)
     {
+        if (json_decode(auth()->user()->permissions)->member != 4) {
+            return redirect()->route('managemember.index')->with('error', 'You do not have permission to delete members.');
+        }
         $member = Members::find($request->member_id);
         $member->active = 0;
         $member->update_by = $request->user_id;
