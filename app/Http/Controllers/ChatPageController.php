@@ -25,7 +25,9 @@ class ChatPageController extends Controller
         //     ->has('messages')
         //     ->get();
         $convs = Conversation::where('active', 1)
-            ->whereHas('members', fn($q) => $q->whereKey(1))
+            ->whereHas('members', function ($q) use ($me) {
+                $q->whereKey($me->id);
+            })
             ->with(['members:id,username,nickname,fullname'])
             ->withCount('messages')
             ->with('latestMessage.member:id,username,nickname,fullname')
@@ -43,10 +45,14 @@ class ChatPageController extends Controller
         // แนบตัวเองเข้าห้องถ้ายังไม่ได้แนบ (กัน 403)
         $conversation->members()->syncWithoutDetaching([$me->id]);
 
+        // return $conversation->id;
+
         $messages = $conversation->messages()
             ->with(['member:id,username,nickname,fullname'])
             ->orderBy('id', 'asc')->take(200)->get();
         $m_member = Message::where('conversation_id', $conversation->id)->first();
+
+        // return $m_member;
 
         $member = $conversation->members()->whereKey($m_member->member_id)->first();
         // return [$messages,$member];
