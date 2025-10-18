@@ -399,7 +399,7 @@ class ManageMemberController extends Controller
 
                 if ($request->type === 'withdraw') {
                     $bf_deposit = app(\App\Http\Controllers\BetflixController::class)
-                        ->Master_Deposit($member->username, floatval($total_rollback));
+                        ->Master_Deposit($member->username, floor($total_rollback));
 
                     $transfer->turnover_on = 0;
                     $transfer->save();
