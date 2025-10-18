@@ -410,7 +410,7 @@ class ManageMemberController extends Controller
                     ]);
 
                     if ($bf_deposit === 'success') {
-                        $new_balance = (float) $member->wallet_balance + $transfer->amount;
+                        $new_balance = (float) $member->wallet_balance + $total_rollback;
                         $member->update(['wallet_balance' => strval($new_balance)]);
 
                         TelegramMessage::create()
