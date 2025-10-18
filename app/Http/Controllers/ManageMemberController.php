@@ -23,6 +23,7 @@ use NotificationChannels\Telegram\TelegramMessage;
 use App\Jobs\RunAffiliate;
 use Illuminate\Support\Facades\DB;
 
+
 class ManageMemberController extends Controller
 {
     /**
@@ -381,97 +382,65 @@ class ManageMemberController extends Controller
             $transfer->status_code = 'รอดำเนินการ';
             $transfer->save();
         } elseif ($request->status == 'reject') {
-            $transfer->status = 3;
-            $transfer->status_code = 'ปฏิเสธ';
-            $transfer->save();
 
-            // if ($transfer->withdraw_bank_name == "FTB") {
-            //     $withdraw_fee = 6.5 / 100;    // 0.065
-            //     $thb_usd_price = 1;        // อัตราแลกเปลี่ยน
+            try {
+                DB::beginTransaction();
 
-            //     $transfer_back = $transfer->amount  * $thb_usd_price;
-            //     $transfer_back = $transfer_back / (1 - $withdraw_fee);
-            // } else {
-            //     $withdraw_fee = 6.5 / 100;    // 0.065
-            //     $thb_usd_price = 33;        // อัตราแลกเปลี่ยน
+                $transfer->status = 3;
+                $transfer->status_code = 'ปฏิเสธ';
+                $transfer->save();
 
-            //     $transfer_back = $transfer->amount  * $thb_usd_price;
-            //     $transfer_back = $transfer_back / (1 - $withdraw_fee);
-            // }
-            $total_rollback = 0;
+                $total_rollback = $transfer->deposit_method;
 
-            if ($transfer->withdraw_bank_name == "FTB") {
-                $withdraw_fee = 0;
-                $thb_usd_price = 1;
-                $final_usd_amount = (float) $transfer->amount;
-                $before_fee_usd = $final_usd_amount / (1 - $withdraw_fee);
-                $original_amount = $before_fee_usd * $thb_usd_price;
-                $transfer_back = $original_amount;
-            } else {
+                Logs::create([
+                    'username' => $member->username,
+                    'log' => "withdraw eject transfer_back = $total_rollback transfer amount = $transfer->amount username = $member->username"
+                ]);
 
-                $withdraw_fee = 0;
-                $thb_usd_price = 33;
-                $final_usd_amount = (float) $transfer->amount;
-                $before_fee_usd = $final_usd_amount / (1 - $withdraw_fee);
-                $original_amount = $before_fee_usd * $thb_usd_price;
-                $transfer_back = $original_amount;
-            }
+                if ($request->type === 'withdraw') {
+                    $bf_deposit = app(\App\Http\Controllers\BetflixController::class)
+                        ->Master_Deposit($member->username, floatval($total_rollback));
 
-            $total_rollback = $transfer_back;
+                    $transfer->turnover_on = 0;
+                    $transfer->save();
 
-            // Log::info("withdraw eject transfer_back =".$transfer_back." transfer amount ".$transfer->amount." username ".$member->username);
-            Logs::create([
-                'username' => $member->username,
-                'log' => "withdraw eject transfer_back =" . $total_rollback . " transfer amount " . $transfer->amount . " username " . $member->username
-            ]);
+                    Logs::create([
+                        'username' => $member->username,
+                        'log' => "rollBack withdraw: $bf_deposit transfer_back: $total_rollback User = $member->username"
+                    ]);
 
+                    if ($bf_deposit === 'success') {
+                        $new_balance = (float) $member->wallet_balance + $transfer->amount;
+                        $member->update(['wallet_balance' => strval($new_balance)]);
 
-            if ($request->type == 'withdraw') {
-
-
-                $user = Members::find($transfer->member_id);
-                if ($user) {
-
-                    $createdAt = $user->created_at; // วันที่สมัครสมาชิก
-                    // แยกลูกค้าเก่า/ใหม่
-                    if ($createdAt->lt(Carbon::create(2025, 10, 1))) {
-                        $old_wallet = $user->old_wallet;
-                        $total_2 = $transfer_back +  $old_wallet;
-                        $total_rollback = $total_2;
-                        Logs::create([
-                            'username' => $member->username,
-                            'log' => "withdraw eject old wallet =" . $old_wallet . " transfer_back " . $total_rollback  . " username " . $member->username
-                        ]);
+                        TelegramMessage::create()
+                            ->to(env('TELEGRAM_G_ID'))
+                            ->line(env('APP_NAME'))
+                            ->line("Admin has rejected the withdrawal. $member->username")
+                            ->line("Amount: $transfer->amount {$transfer->withdraw_bank_name}")
+                            ->line("RollBack Amount: $transfer_back FTB")
+                            ->send();
                     } else {
-                        $check_transfer_type = Transfer::where('member_id', $user->id)->whereRaw('LOWER(`type`) = "deposit"')->whereIn('deposit_from_bank_type', ['FNX', 'FTB', 'DFNX'])->where('turnover_on', 1)->first();
-                        if ($check_transfer_type) {
-
-                            $deposit_amount =  (float) $check_transfer_type->amount;
-                            $total_ = $transfer_back +  $deposit_amount;
-                            $total_rollback = $total_;
-                        }
+                        throw new \Exception("Betflix rollback failed: $bf_deposit");
                     }
                 }
 
-                $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($total_rollback));
-                // Log::info('rollBack Deposit Betflix ' . $bf_deposit . ' ' . $transfer_back . ' User =  ' . $member->username);
-                $transfer->turnover_on = 0;
-                $transfer->save();
-                Logs::create([
-                    'username' => $member->username,
-                    'log' => 'rollBack withdraw : ' . $bf_deposit . ' transfer_back: ' . $transfer_back . ' User =  ' . $member->username
-                ]);
-                if ($bf_deposit == 'success') {
-                    $new_balance = (float) $member->wallet_balance + $transfer->amount;
-                    $member->update(['wallet_balance' => strval($new_balance)]);
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
 
-                    TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                        ->line(env('APP_NAME'))
-                        ->line('Admin has rejected the withdrawal. ' . $member->username)
-                        ->line('Amount :' . $transfer->amount . ' ' . $transfer->withdraw_bank_name)
-                        ->line('RollBack Amount :' . $transfer_back . ' FTB')
-                        ->send();
-                }
+                Log::error("Withdraw rollback failed: " . $e->getMessage());
+
+                // คืนค่าข้อมูลที่พยายามบันทึกกลับไป (เช่นสำหรับ Livewire หรือ response)
+                return response()->json([
+                    'success' => false,
+                    'error' => 'เกิดข้อผิดพลาดในการ rollback',
+                    'data' => [
+                        'username' => $member->username,
+                        'amount' => $transfer->amount,
+                        'deposit_method' => $total_rollback,
+                    ]
+                ], 500);
             }
         }
         return redirect()->back()->with('status', '200');
