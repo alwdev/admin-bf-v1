@@ -418,7 +418,7 @@ class ManageMemberController extends Controller
                             ->line(env('APP_NAME'))
                             ->line("Admin has rejected the withdrawal. $member->username")
                             ->line("Amount: $transfer->amount {$transfer->withdraw_bank_name}")
-                            ->line("RollBack Amount: $transfer_back FTB")
+                            ->line("RollBack Amount: $total_rollback FTB")
                             ->send();
                     } else {
                         throw new \Exception("Betflix rollback failed: $bf_deposit");
