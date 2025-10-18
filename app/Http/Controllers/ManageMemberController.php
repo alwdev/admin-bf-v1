@@ -432,15 +432,7 @@ class ManageMemberController extends Controller
                 Log::error("Withdraw rollback failed: " . $e->getMessage());
 
                 // คืนค่าข้อมูลที่พยายามบันทึกกลับไป (เช่นสำหรับ Livewire หรือ response)
-                return response()->json([
-                    'success' => false,
-                    'error' => 'เกิดข้อผิดพลาดในการ rollback',
-                    'data' => [
-                        'username' => $member->username,
-                        'amount' => $transfer->amount,
-                        'deposit_method' => $total_rollback,
-                    ]
-                ], 500);
+                return  redirect()->back()->with('error', $e->getMessage());
             }
         }
         return redirect()->back()->with('status', '200');
