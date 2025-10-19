@@ -44,8 +44,7 @@ class DashboardController extends Controller
         $total_deposit_pol = 0;
 
         $total_withdraw_dfnx = 0;
-        $total_withdraw_ftb = 0; // เพิ่มตัวแปรสำหรับยอดถอน ABC
-
+        $total_withdraw_ftb = 0;
 
         if ($transfer) {
             foreach ($transfer as $t) {
@@ -72,9 +71,6 @@ class DashboardController extends Controller
                     $total_deposit += $t->amount;
                 } else {
                     // โค้ดสำหรับคำนวณยอดถอน
-                    if ($t->withdraw_bank_name == 'DFNX') {
-                        $total_withdraw_dfnx += $t->amount;
-                    }
                     $total_withdraw += $t->amount;
                 }
             }
@@ -94,7 +90,7 @@ class DashboardController extends Controller
         // คำนวณหายอดเงินตั้งต้นในหน่วยบาท
         $original_amount = $before_fee_usd * $thb_usd_price;
 
-        $total_withdraw_ftb = $original_amount;
+        $total_withdraw_ftb = $total_withdraw;
 
 
         $topgame = [];
