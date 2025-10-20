@@ -14,8 +14,8 @@ class PromotionController extends Controller
     public function index()
     {
         //
-        $promotions = Promotion::where('active',1)->get();
-        return view('promotion.index',compact('promotions'));
+        $promotions = Promotion::where('active', 1)->get();
+        return view('promotion.index', compact('promotions'));
     }
 
     /**
@@ -30,7 +30,7 @@ class PromotionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
- public function store(Request $request)
+    public function store(Request $request)
     {
         // 1. Validation Rules
         $rules = [
@@ -86,7 +86,6 @@ class PromotionController extends Controller
 
             // Example if you want one OR the other (not both) for recurring turnover
             $rules['recurring_turnover_percentage'] = 'required_without:recurring_turnover|nullable|numeric|min:0';
-
         } else {
             $rules['recurring_promotion_days'] = 'nullable';
             $rules['recurring_bonus_percentage'] = 'nullable';
@@ -106,7 +105,7 @@ class PromotionController extends Controller
 
         // 2. จัดการค่า Bonus, Turnover, Withdraw Limit (บาท/เท่า หรือ เปอร์เซ็นต์)
         $pro->is_percentage_based = $request->boolean('is_percentage_based'); // Assign this first
-
+        $pro->is_turnover_x2 = $request->boolean('is_turnover_x2');
         if ($pro->is_percentage_based) {
             // ถ้าใช้เปอร์เซ็นต์
             $pro->bonus = 0.0;
@@ -155,12 +154,12 @@ class PromotionController extends Controller
         if ($request->hasFile('image')) {
             $fileName = time() . '.' . $request->image->extension();
             $request->image->move(public_path('_image'), $fileName);
-            $pro->image = env('APP_URL').'/_image/' . $fileName;
+            $pro->image = env('APP_URL') . '/_image/' . $fileName;
         } else {
             // Assign a default image path if no image is uploaded and it's required
             // (Your validation already makes it required, so this else block might not be hit)
             // It's safer to have a default image in case validation is bypassed or for existing records.
-            $pro->image = env('APP_URL').'/_image/default_promotion.png'; // Make sure you have a default image
+            $pro->image = env('APP_URL') . '/_image/default_promotion.png'; // Make sure you have a default image
         }
 
         // 7. กำหนดค่าเริ่มต้นสำหรับคอลัมน์อื่นๆ ที่เป็น NOT NULL ใน DB และไม่มีในฟอร์ม
@@ -205,13 +204,13 @@ class PromotionController extends Controller
     {
         //
         $promotion = Promotion::find($id);
-        return view('promotion.edit',compact('promotion'));
+        return view('promotion.edit', compact('promotion'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-   public function update(Request $request, string $id)
+    public function update(Request $request, string $id)
     {
         // 1. ค้นหารายการ Promotion ที่มีอยู่
         $pro = Promotion::find($id);
@@ -267,7 +266,6 @@ class PromotionController extends Controller
             // *** NEW: Validation สำหรับ recurring_turnover fields ***
             // ใช้ required_without ถ้าต้องการให้ต้องกรอกอย่างใดอย่างหนึ่ง (ไม่พร้อมกัน)
             $rules['recurring_turnover_percentage'] = 'required_without:recurring_turnover|nullable|numeric|min:0';
-
         } else {
             $rules['recurring_promotion_days'] = 'nullable';
             $rules['recurring_bonus_percentage'] = 'nullable';
@@ -288,6 +286,7 @@ class PromotionController extends Controller
 
         // 4. จัดการค่า Bonus, Turnover, Withdraw Limit (บาท/เท่า หรือ เปอร์เซ็นต์)
         $pro->is_percentage_based = $request->boolean('is_percentage_based'); // กำหนดค่านี้ก่อน
+        $pro->is_turnover_x2 = $request->boolean('is_turnover_x2');
 
         if ($pro->is_percentage_based) {
             $pro->bonus = 0.0;
@@ -382,6 +381,6 @@ class PromotionController extends Controller
         $pro = Promotion::find($request->id);
         $pro->active = 0;
         $pro->save();
-        return redirect()->route('promotion.index')->with('status','200');
+        return redirect()->route('promotion.index')->with('status', '200');
     }
 }

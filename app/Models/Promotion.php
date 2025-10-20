@@ -13,13 +13,29 @@ class Promotion extends Model
     protected $table = 'promotion';
 
     protected $fillable = [
-        'name', 'turnover', 'enable', 'active', 'bonus', 'withdraw_percent',
-        'is_newuser', 'withdraw_limit', 'deposit', 'store_id', 'description', 'image',
-        'is_percentage_based', 'bonus_percentage', 'turnover_percentage',
-        'withdraw_limit_percentage', 'is_recurring_promotion', 'recurring_promotion_days',
+        'name',
+        'turnover',
+        'enable',
+        'active',
+        'bonus',
+        'withdraw_percent',
+        'is_newuser',
+        'withdraw_limit',
+        'deposit',
+        'store_id',
+        'description',
+        'image',
+        'is_percentage_based',
+        'bonus_percentage',
+        'turnover_percentage',
+        'withdraw_limit_percentage',
+        'is_recurring_promotion',
+        'recurring_promotion_days',
         'applicable_games', // ยังคงต้องอยู่ใน fillable
-        'is_first_deposit_bonus', 'recurring_bonus_percentage',
+        'is_first_deposit_bonus',
+        'recurring_bonus_percentage',
         'recurring_turnover_percentage',
+        'is_turnover_x2',
     ];
 
     protected $casts = [
@@ -27,6 +43,7 @@ class Promotion extends Model
         // *** เพราะดูเหมือนว่ามันจะทำงานได้ไม่ดีกับระบบของคุณในตอนนี้ ***
         // 'applicable_games' => 'array',
 
+        'is_turnover_x2' => 'boolean',
         'is_percentage_based' => 'boolean',
         'is_recurring_promotion' => 'boolean',
         'is_first_deposit_bonus' => 'boolean',
@@ -71,11 +88,26 @@ class Promotion extends Model
     ];
 
     // Percentage fields mutators (เหมือนเดิม)
-    protected function bonusPercentage(): Attribute { return Attribute::make(get: fn ($value) => (float) $value, set: fn ($value) => (float) str_replace('%', '', (string) $value)); }
-    protected function turnoverPercentage(): Attribute { return Attribute::make(get: fn ($value) => (float) $value, set: fn ($value) => (float) str_replace('%', '', (string) $value)); }
-    protected function withdrawLimitPercentage(): Attribute { return Attribute::make(get: fn ($value) => (float) $value, set: fn ($value) => (float) str_replace('%', '', (string) $value)); }
-    protected function recurringBonusPercentage(): Attribute { return Attribute::make(get: fn ($value) => (float) $value, set: fn ($value) => (float) str_replace('%', '', (string) $value)); }
-    protected function recurringTurnoverPercentage(): Attribute { return Attribute::make(get: fn ($value) => (float) $value, set: fn ($value) => (float) str_replace('%', '', (string) $value)); }
+    protected function bonusPercentage(): Attribute
+    {
+        return Attribute::make(get: fn($value) => (float) $value, set: fn($value) => (float) str_replace('%', '', (string) $value));
+    }
+    protected function turnoverPercentage(): Attribute
+    {
+        return Attribute::make(get: fn($value) => (float) $value, set: fn($value) => (float) str_replace('%', '', (string) $value));
+    }
+    protected function withdrawLimitPercentage(): Attribute
+    {
+        return Attribute::make(get: fn($value) => (float) $value, set: fn($value) => (float) str_replace('%', '', (string) $value));
+    }
+    protected function recurringBonusPercentage(): Attribute
+    {
+        return Attribute::make(get: fn($value) => (float) $value, set: fn($value) => (float) str_replace('%', '', (string) $value));
+    }
+    protected function recurringTurnoverPercentage(): Attribute
+    {
+        return Attribute::make(get: fn($value) => (float) $value, set: fn($value) => (float) str_replace('%', '', (string) $value));
+    }
 
     public function getIsRecurringPromotionTextAttribute(): string
     {
@@ -121,7 +153,7 @@ class Promotion extends Model
             // พยายาม json_decode อีกครั้งหลังจากแก้ไข
             $decodedFixed = json_decode('["' . $fixedValue . '"]', true); // ลองใส่ใน array และ quotes
             if (is_array($decodedFixed) && !empty($decodedFixed[0])) {
-                 // ตรวจสอบว่า element แรกถูกถอดรหัสแล้ว
+                // ตรวจสอบว่า element แรกถูกถอดรหัสแล้ว
                 $finalDecoded = json_decode('"' . $decodedFixed[0] . '"');
                 if ($finalDecoded !== null && $finalDecoded !== false) {
                     return [$finalDecoded];
@@ -135,15 +167,31 @@ class Promotion extends Model
     }
 
     // --- Scopes และ Relationships (ยังคงเหมือนเดิม) ---
-    public function scopeActive($query) { return $query->where('active', true); }
-    public function scopeForNewUsers($query) { return $query->where('is_newuser', true); }
-    public function scopeForFirstDepositBonus($query) { return $query->where('is_first_deposit_bonus', true); }
-    public function scopePercentageBased($query) { return $query->where('is_percentage_based', true); }
-    public function scopeApplicableToGame($query, $gameType) {
+    public function scopeActive($query)
+    {
+        return $query->where('active', true);
+    }
+    public function scopeForNewUsers($query)
+    {
+        return $query->where('is_newuser', true);
+    }
+    public function scopeForFirstDepositBonus($query)
+    {
+        return $query->where('is_first_deposit_bonus', true);
+    }
+    public function scopePercentageBased($query)
+    {
+        return $query->where('is_percentage_based', true);
+    }
+    public function scopeApplicableToGame($query, $gameType)
+    {
         // ใช้ WHERE JSON_CONTAINS ได้ถ้าคอลัมน์เป็น JSON type จริงๆ
         // แต่ถ้าเป็น TEXT ต้องใช้วิธีอื่น (เช่น LIKE '%"'.$gameType.'"%')
         // ถ้าตอนนี้ยังเป็น TEXT ให้ใช้ LIKE ไปก่อน
         return $query->whereJsonContains('applicable_games', $gameType);
     }
-    public function store() { return $this->belongsTo(Store::class); }
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
+    }
 }

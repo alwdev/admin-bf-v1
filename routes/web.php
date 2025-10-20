@@ -244,6 +244,7 @@ Route::get('/pg_get_spin_summaryby_user/{username}/{start_day}/{end_day}', [App\
 Route::get('/get_spin_orderby_username/{username}/{start_day}/{end_day}', [App\Http\Controllers\PgHardController::class, 'get_spin_orderby_username']);
 
 Route::get('/Single_Member_Report_all_Provider/{username}/{start_day}/{end_day}', [BetflixController::class, 'Single_Member_Report_all_Provider']);
+Route::get('/Single_Member_Report_all_Provider_EX_Sport/{username}/{start_day}/{end_day}', [BetflixController::class, 'Single_Member_Report_all_Provider_EX_Sport']);
 
 
 Route::resource('links', HashtagController::class);

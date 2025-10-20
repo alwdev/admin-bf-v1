@@ -363,7 +363,7 @@ class ManageMemberController extends Controller
                 $transfer->old_balance = $old_balance;
                 $transfer->save();
 
-                $check_transfer_type = Transfer::where('member_id', $request->member_id)->whereRaw('LOWER(`type`) = "deposit"')->whereIn('deposit_from_bank_type', ['FNX', 'FTB', 'DFNX'])->where('turnover_on', 1)->first();
+                $check_transfer_type = Transfer::where('member_id', $request->member_id)->whereRaw('LOWER(`type`) = "deposit"')->where('turnover_on', 1)->first();
                 if ($check_transfer_type) {
                     $check_transfer_type->turnover_on = 0;
                     $check_transfer_type->save();
