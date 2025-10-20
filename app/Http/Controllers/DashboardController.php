@@ -237,7 +237,8 @@ class DashboardController extends Controller
         // คำนวณหายอดเงินตั้งต้นในหน่วยบาท
         $original_amount = $before_fee_usd * $thb_usd_price;
 
-        $total_withdraw_ftb = $original_amount;
+
+        $total_withdraw_ftb = $total_withdraw;
 
         $players = app(\App\Http\Controllers\BetflixController::class)->Multiple_Member_Report($dateS);
         if ($players) {
