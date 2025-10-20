@@ -35,7 +35,7 @@ class CashBackLottoCommand extends Command
         // ------------------------------------
         // ส่วนที่ 1: การแจ้งเตือนเริ่มต้น
         // ------------------------------------
-        $this->info('Starting Lotto Cashback Dispatch...');
+        $this->info('Starting Lotto Affiliate Dispatch...');
 
         // ตัวอย่างการส่งแจ้งเตือน Telegram (นำมาจากโครงสร้างเดิมของคุณ)
         try {
@@ -65,13 +65,13 @@ class CashBackLottoCommand extends Command
         // ------------------------------------
         // ส่วนที่ 3: การแจ้งเตือนสิ้นสุด
         // ------------------------------------
-        $this->info('Lotto Cashback Job dispatched for ' . $totalDispatched . ' members!');
+        $this->info('Lotto Affiliate Job dispatched for ' . $totalDispatched . ' members!');
 
         // ตัวอย่างการส่งแจ้งเตือน Telegram สิ้นสุด
         try {
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line(env('APP_NAME'))
-                ->line('BOT สิ้นสุดการ Cashback Lotto')
+                ->line('BOT สิ้นสุดการ Lotto Affiliate')
                 ->line("ส่ง Job เข้า Queue ทั้งหมด: {$totalDispatched} งาน")
                 ->send();
         } catch (\Exception $e) {

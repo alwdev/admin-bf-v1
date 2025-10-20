@@ -2,67 +2,118 @@
 
 namespace App\Jobs;
 
+use App\Models\Members;
+use App\Models\Affiliate;
+use App\Models\Transfer;
+use App\Models\Logs;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Members;
-use App\Models\LottoTransaction; // สมมติว่ามี Model สำหรับรายการซื้อหวย
+use Illuminate\Support\Facades\Log;
+use NotificationChannels\Telegram\TelegramMessage;
+use Illuminate\Support\Facades\DB;
 
 class CashBackLottoJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $memberId;
+    public $timeout = 3600;
+    public $tries = 3;
 
-    /**
-     * สร้าง Job Instance ใหม่.
-     *
-     * @param int $memberId
-     * @return void
-     */
-    public function __construct(int $memberId)
+    public function __construct($memberId)
     {
         $this->memberId = $memberId;
     }
 
-    /**
-     * รัน Job.
-     *
-     * @return void
-     */
     public function handle()
     {
         $member = Members::find($this->memberId);
+        if (!$member) return;
 
-        if (!$member) {
-            return; // ไม่พบสมาชิก
+        set_time_limit(3600);
+
+        $com_ = 8;
+
+
+        $child_ids = json_decode($member->ref_user);
+        if (!$child_ids) return;
+
+        foreach ($child_ids as $child_id) {
+            $child = Members::find($child_id);
+            if (!$child) continue;
+
+            $winlose = $this->getWinLose($child);
+
+            if ($winlose < 0) {
+                $commission_level2 = abs($winlose) * ($com_ / 100);
+                $this->createTransfer($member, $commission_level2);
+            }
+
+            $parents = Members::whereHasChild($member->id)->get();
+            foreach ($parents as $parent) {
+                if ($winlose < 0) {
+                    $commission_level3 = abs($winlose) * ($com_ / 100);
+                    $this->createTransfer($parent, $commission_level3);
+                }
+            }
         }
+    }
 
-        // 1. กำหนดช่วงเวลาที่ต้องการคำนวณ (เช่น 1 สัปดาห์ที่ผ่านมา)
-        $endDate = now();
-        $startDate = now()->subWeek();
+    /**
+     * ฟังก์ชันคำนวณยอดเล่น/ยอดเสียของสมาชิก
+     */
+    private function getWinLose($member)
+    {
+        try {
 
-        // 2. ดึงยอดซื้อหวยในช่วงเวลาที่กำหนด
-        $totalLottoBet = LottoTransaction::where('member_id', $member->id)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->sum('amount');
 
-        // 3. กำหนดอัตรา Cashback (สมมติ 5%)
-        $cashbackRate = 0.05;
-        $cashbackAmount = $totalLottoBet * $cashbackRate;
+            $username = $member->username;
+            $yesterdayStart = now()->subDay()->startOfDay();
+            $yesterdayEnd = now()->subDay()->endOfDay();
 
-        if ($cashbackAmount > 0) {
-            // 4. ทำการเพิ่มยอดเงิน/บันทึกรายการ
-            // $member->wallet += $cashbackAmount;
-            // $member->save();
+            $totalAmount_bet = Logs::where('log', 'like', 'Lotto Bet placed%')
+                ->where('log', 'like', '%' . $username . '%')
+                ->whereBetween('created_at', [$yesterdayStart, $yesterdayEnd])
+                ->sum(DB::raw("CAST(SUBSTRING_INDEX(log, 'amount ', -1) AS DECIMAL(10, 2))"));
 
-            // 5. บันทึก Log หรือ Transaction (สำคัญมาก!)
-            \Log::info("Member ID: {$member->id} received lotto cashback: {$cashbackAmount}");
-            // Logs::create([...]); // บันทึกในตาราง Logs ของคุณ
+            $totalAmount_win = Logs::where('log', 'like', 'Lotto Win%')
+                ->where('log', 'like', '%' . $username . '%')
+                ->whereBetween('created_at', [$yesterdayStart, $yesterdayEnd])
+                ->sum(DB::raw("CAST(SUBSTRING_INDEX(log, 'amount ', -1) AS DECIMAL(10, 2))"));
 
-            // ... อาจจะส่ง Notification ส่วนตัวหาสมาชิกด้วย
+            $winlose =  $totalAmount_win - $totalAmount_bet;
+
+            return $winlose;
+        } catch (\Exception $e) {
+            Log::info('API Error for ' . $member->username . ': ' . $e->getMessage());
+            return 0;
         }
+    }
+
+    /**
+     * ฟังก์ชันสร้าง Transfer และอัพเดต wallet
+     */
+    private function createTransfer($member, $amount)
+    {
+        if ($amount <= 0) return;
+
+        Transfer::create([
+            'member_id' => $member->id,
+            'amount' => $amount,
+            'status' => 1,
+            'status_code' => 'รออนุมัติ',
+            'type' => 'commission',
+            'promotion' => 'commission lotto',
+            'old_balance' => $member->wallet_balance,
+            'new_balance' => $member->wallet_balance + $amount,
+            'transfer_date' => strtotime(now()),
+        ]);
+
+        // อัพเดต wallet balance ของสมาชิก
+        // $member->wallet_balance += $amount;
+        // $member->save();
     }
 }
