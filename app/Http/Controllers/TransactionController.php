@@ -1915,12 +1915,6 @@ class TransactionController extends Controller
             $member->save();
             $transfer->new_balance = $member->wallet_balance;
 
-            if (in_array($transfer->deposit_from_bank_type, ['FNX', 'FTB', 'DFNX'])) {
-                $transfer->promotion_id = 9999; //โปรนี้ไม่มีจริง เหรียญ 3  เงื่อนไขทุกยอดฝากของ Coin FTB,DFNX,FNX ต้องเล่นให้ได้กำไร 100% ของยอดฝากถึงถอนเฉพาะกำไรได้ เช่น ฝาก 150฿ ต้องเล่นได้ 300฿
-                $transfer->promotion = 'โปรโมชั่นเหรียญ FNX FTB DFNX กำไร 100% ของยอดฝาก';
-                $transfer->turnover_on = 1;
-            }
-
             // $transfer->status และ $transfer->old_balance ถูกตั้งค่าไว้ด้านบนแล้ว
             $transfer->save();
 
