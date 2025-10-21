@@ -1755,6 +1755,10 @@ class TransactionController extends Controller
         // *** Logic สำหรับโปรโมชั่นที่ลูกค้าเลือก (promotion_id != 0) หรือ โปรโมชั่นแรกของสมาชิกใหม่ ***
         // *** จะทำงานก็ต่อเมื่อยังไม่มีโปรโมชั่นต่อเนื่องถูก apply อัตโนมัติ ***
         // --------------------------------------------------------------------------------------
+        Logs::create([
+            'log' => 'crpto deposit request->promotion_id=' . $transfer->promotion_id,
+            'username' => $transfer->username
+        ]);
 
         if (!$promotion_found_and_applied) { // ถ้ายังไม่มีโปรโมชั่นใดๆ ถูก apply
             if ($transfer->promotion_id != 0) {
@@ -1887,7 +1891,10 @@ class TransactionController extends Controller
             // $transfer->bonus_applied = 0.0;
             $transfer->promotion_id = 0; // ไม่มีโปรโมชั่นก็เป็น null
         }
-
+        Logs::create([
+            'log' => 'crpto deposit request->promotion_id=' . $transfer->promotion_id,
+            'username' => $transfer->member_id
+        ]);
         error_log("Bonus for Telegram = " . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
 
         $key = "deposit_lock:{$member->username}:{$amount_betflix}";
