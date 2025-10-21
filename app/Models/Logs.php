@@ -11,7 +11,8 @@ class Logs extends Model
     protected $table = 'logs';
     protected $fillable = [
         'log',
+        'username',
         'sms',
-        'username'
+        'register_url'
     ];
 }
