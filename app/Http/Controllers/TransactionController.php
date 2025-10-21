@@ -1755,10 +1755,6 @@ class TransactionController extends Controller
         // *** Logic สำหรับโปรโมชั่นที่ลูกค้าเลือก (promotion_id != 0) หรือ โปรโมชั่นแรกของสมาชิกใหม่ ***
         // *** จะทำงานก็ต่อเมื่อยังไม่มีโปรโมชั่นต่อเนื่องถูก apply อัตโนมัติ ***
         // --------------------------------------------------------------------------------------
-        Logs::create([
-            'log' => 'crpto deposit request->promotion_id=' . $transfer->promotion_id,
-            'username' => $transfer->username
-        ]);
 
         if (!$promotion_found_and_applied) { // ถ้ายังไม่มีโปรโมชั่นใดๆ ถูก apply
             if ($transfer->promotion_id != 0) {
