@@ -17,24 +17,15 @@ class ChatPageController extends Controller
     // รายการห้องที่แอดมินอยู่ (ล่าสุด)
     public function index(Request $req)
     {
-        $me = $req->user();
-        // $convs = Conversation::whereHas('members', fn($q) => $q->whereKey(1))
-        //     ->with(['members:id,username,nickname,fullname'])
-        //     ->latest('updated_at')
-        //     ->where('active', 1)
-        //     ->has('messages')
-        //     ->get();
+        // ทุกรายการที่ active อยู่ (ไม่กรองตามสมาชิก)
         $convs = Conversation::where('active', 1)
-            ->whereHas('members', function ($q) use ($me) {
-                $q->whereKey($me->id);
-            })
             ->with(['members:id,username,nickname,fullname'])
             ->withCount('messages')
             ->with('latestMessage.member:id,username,nickname,fullname')
-            ->withMax('messages as last_message_at', 'created_at')   // ได้คอลัมน์ last_message_at
+            ->withMax('messages as last_message_at', 'created_at')
             ->orderByDesc('last_message_at')
             ->get();
-        // return $convs;
+
         return view('chat.index', compact('convs'));
     }
 
