@@ -78,7 +78,7 @@
                                     <td>
                                         @php
 
-                                            $member = App\Models\Members::where('id', $item->members[0]->id)->first();
+                                            $member = App\Models\Members::find(optional($item->members->last())->id);
                                         @endphp
                                         <button type="button" class="btn btn-info btn-sm btn-info-modal"
                                             data-toggle="modal" data-target="#memberInfoModal"
@@ -86,7 +86,7 @@
                                             <i class="bx bx-info-circle"></i> Info
                                         </button>
                                         @if ($item->members->count() > 0)
-                                            {{ $item->members[0]->username }}
+                                            {{ $member->username }}
                                         @else
                                             No members
                                         @endif
