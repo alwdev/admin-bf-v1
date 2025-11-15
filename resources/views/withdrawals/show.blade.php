@@ -33,7 +33,7 @@
         <h5 class="card-title">ข้อมูลคำขอ</h5>
         <table class="table table-sm">
             <tr><th>Member</th><td>{{ optional($requestItem->member)->username }}</td></tr>
-            <tr><th>Destination Address</th><td>{{ $requestItem->destination_address ?: '-' }}</td></tr>
+            <tr><th>Destination Address</th><td>{{ $member->wallet_address ?: '-' }}</td></tr>
             <tr><th>Requested Amount (USDT)</th><td>{{ $requestItem->amount_usdt }}</td></tr>
             <tr><th>Fee (6.5%)</th><td>{{ $requestItem->fee_amount }}</td></tr>
             <tr><th>Net To Transfer</th><td><strong>{{ $requestItem->net_amount }}</strong></td></tr>

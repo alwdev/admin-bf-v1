@@ -30,7 +30,8 @@ class WithdrawalRequestController extends Controller
     public function show(int $id): View
     {
         $requestItem = WithdrawalRequest::with('member')->findOrFail($id);
-        return view('withdrawals.show', compact('requestItem'));
+        $member = $requestItem->member;
+        return view('withdrawals.show', compact('requestItem', 'member'));
     }
 
     /**
