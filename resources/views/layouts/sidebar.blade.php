@@ -60,6 +60,11 @@
                                 List</span></a>
                     </li>
                 @endif
+                <li class="menu-title">Aurvia Trde</li>
+                    <li>
+                    <a href="{{ route('withdrawals.index') }}" class="waves-effect"><i class='bx bx-bitcoin'></i><span>Trede withdrawals</span></a>
+                </li>
+
                 <li class="menu-title">{{ __('main.setting') }}</li>
                 <li>
                     <a href="{{ route('crypto.index') }}" class="waves-effect"><i class='bx bx-bitcoin'></i><span>Coin

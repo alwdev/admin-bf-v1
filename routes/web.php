@@ -16,6 +16,7 @@ use App\Http\Controllers\ChatPageController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\WithdrawalRequestController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -210,6 +211,11 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('menus', MenuController::class);
     Route::patch('menus/{menu}/toggle', [MenuController::class, 'toggle'])->name('menus.toggle');
+
+    // USDT Withdrawal management
+    Route::get('/withdrawals-usdt', [WithdrawalRequestController::class, 'index'])->name('withdrawals.index')->middleware('CheckPermissionUser:transfer,view');
+    Route::get('/withdrawals-usdt/{id}', [WithdrawalRequestController::class, 'show'])->name('withdrawals.show')->middleware('CheckPermissionUser:transfer,view');
+    Route::post('/withdrawals-usdt/{id}/mark-paid', [WithdrawalRequestController::class, 'markPaid'])->name('withdrawals.markPaid')->middleware('CheckPermissionUser:transfer,edit');
 });
 
 require __DIR__ . '/auth.php';
