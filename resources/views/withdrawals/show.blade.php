@@ -31,14 +31,25 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">ข้อมูลคำขอ</h5>
-        <table class="table table-sm">
+        <table class="table table-sm text-sm">
             <tr><th>Member</th><td>{{ optional($requestItem->member)->username }}</td></tr>
-            <tr><th>Destination Address</th><td>{{ $member->wallet_address ?: '-' }}</td></tr>
+            <tr><th>Destination Address</th><td>
+                @php($dest = optional($requestItem->member)->wallet_address ?? $requestItem->destination_address)
+                <span id="destinationAddress">{{ $dest ?: '-' }}</span>
+                @if($dest)
+                    <button type="button" class="btn btn-sm btn-outline-secondary ml-2" onclick="copyText('destinationAddress')">Copy</button>
+                @endif
+            </td></tr>
             <tr><th>Requested Amount (USDT)</th><td>{{ $requestItem->amount_usdt }}</td></tr>
             <tr><th>Fee (6.5%)</th><td>{{ $requestItem->fee_amount }}</td></tr>
-            <tr><th>Net To Transfer</th><td><strong>{{ $requestItem->net_amount }}</strong></td></tr>
+            <tr><th>Net To Transfer</th><td><strong id="netAmount">{{ $requestItem->net_amount }}</strong> <button type="button" class="btn btn-sm btn-outline-secondary ml-2" onclick="copyText('netAmount')">Copy</button></td></tr>
             <tr><th>Status</th><td>{{ $requestItem->status }}</td></tr>
-            <tr><th>TX Hash</th><td>{{ $requestItem->tx_hash ?: '-' }}</td></tr>
+            <tr><th>TX Hash</th><td>
+                <span id="txHash">{{ $requestItem->tx_hash ?: '-' }}</span>
+                @if($requestItem->tx_hash)
+                    <button type="button" class="btn btn-sm btn-outline-secondary ml-2" onclick="copyText('txHash')">Copy</button>
+                @endif
+            </td></tr>
             <tr><th>Created At</th><td>{{ $requestItem->created_at }}</td></tr>
         </table>
 
@@ -58,4 +69,30 @@
         @endif
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+function copyText(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    var text = (el.textContent || el.innerText).trim();
+    if(!text || text==='-') return;
+    if(navigator.clipboard){
+        navigator.clipboard.writeText(text).then(function(){ showCopyToast(); });
+    } else {
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showCopyToast();
+    }
+}
+function showCopyToast(){
+    if(window.Swal){
+        Swal.fire({toast:true,position:'top-end',icon:'success',title:'Copied',showConfirmButton:false,timer:1200});
+    } else if(window.toastr){
+        toastr.success('Copied');
+    } else {
+        alert('Copied');
+    }
+}
+</script>
 @endsection
