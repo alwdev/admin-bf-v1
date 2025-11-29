@@ -101,6 +101,7 @@ class PromotionController extends Controller
         $pro->name = $request->name;
         $pro->deposit = $request->deposit;
         $pro->description = $request->description;
+        $pro->bonus_type = $request->input('bonus_type');
         $pro->active = true; // Set to boolean true
 
         // 2. จัดการค่า Bonus, Turnover, Withdraw Limit (บาท/เท่า หรือ เปอร์เซ็นต์)
@@ -282,6 +283,7 @@ class PromotionController extends Controller
         $pro->name = $request->name;
         $pro->deposit = $request->deposit;
         $pro->description = $request->description;
+        $pro->bonus_type = $request->input('bonus_type');
         $pro->active = true; // สมมติว่ายังคง active หลังจากอัปเดต หากไม่มีการจัดการอย่างชัดเจน
 
         // 4. จัดการค่า Bonus, Turnover, Withdraw Limit (บาท/เท่า หรือ เปอร์เซ็นต์)

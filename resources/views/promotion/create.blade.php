@@ -61,6 +61,25 @@
                             <x-input-error :messages="$errors->get('is_turnover_x2')" class="mt-2" />
                         </div>
 
+                        <div class="form-group">
+                            <label for="bonus_type">ใช้ได้กับ</label>
+                            <select class="form-control select2-multi" id="bonus_type" name="bonus_type[]"
+                                multiple="multiple" required>
+                                @php
+                                    $gameOptions = ['ทั้งหมด', 'คริปโต', 'โอนเงิน'];
+                                    $oldSelectedGames = old('bonus_type', ['ทั้งหมด']);
+                                @endphp
+                                @foreach ($gameOptions as $game)
+                                    <option value="{{ $game }}"
+                                        {{ in_array($game, $oldSelectedGames) ? 'selected' : '' }}>
+                                        {{ $game }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('bonus_type')" class="mt-2" />
+                            <x-input-error :messages="$errors->get('bonus_type.*')" class="mt-2" />
+                        </div>
+
                         {{-- Bonus Field (จะซ่อน/แสดงตาม is_percentage_based) --}}
                         <div class="form-group" id="bonus_amount_group"
                             style="display: {{ old('is_percentage_based') ? 'none' : 'block' }};">

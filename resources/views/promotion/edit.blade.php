@@ -83,6 +83,28 @@
                                 โบนัส</label>
                             <x-input-error :messages="$errors->get('is_turnover_x2')" class="mt-2" />
                         </div>
+                        <div class="form-group">
+                            <label for="bonus_type">{{ __('main.Applicable to games') }}</label>
+                            <select class="form-control select2-multi" id="bonus_type" name="bonus_type[]"
+                                multiple="multiple" required>
+                                @php
+                                    $gameOptions = ['ทั้งหมด', 'คริปโต', 'โอนเงิน'];
+                                    // แปลง $promotion->bonus_type ให้เป็น array ที่ถูกต้องก่อนนำไปใช้
+                                    // ตรวจสอบว่า $promotion->bonus_type เป็น array อยู่แล้วหรือไม่
+                                    $selectedGames = is_array($promotion->bonus_type) ? $promotion->bonus_type : [];
+                                    // ใช้ old() เพื่อให้ค่าเดิมถูกเลือกเมื่อ validation ไม่ผ่าน
+                                    $selectedGames = old('bonus_type', $selectedGames);
+                                @endphp
+                                @foreach ($gameOptions as $game)
+                                    <option value="{{ $game }}"
+                                        {{ in_array($game, $selectedGames) ? 'selected' : '' }}>
+                                        {{ $game }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('bonus_type')" class="mt-2" />
+                            <x-input-error :messages="$errors->get('bonus_type.*')" class="mt-2" />
+                        </div>
 
                         {{-- Bonus Field (จะซ่อน/แสดงตาม is_percentage_based) --}}
                         <div class="form-group" id="bonus_amount_group"
@@ -98,7 +120,8 @@
                             style="display: {{ old('is_percentage_based', $promotion->is_percentage_based) ? 'block' : 'none' }};">
                             <label for="bonus_percentage">โบนัส (%)</label>
                             <input class="form-control float-number" type="text" id="bonus_percentage"
-                                name="bonus_percentage" value="{{ old('bonus_percentage', $promotion->bonus_percentage) }}"
+                                name="bonus_percentage"
+                                value="{{ old('bonus_percentage', $promotion->bonus_percentage) }}"
                                 placeholder="เช่น 10.00 สำหรับ 10%">
                             <x-input-error :messages="$errors->get('bonus_percentage')" class="mt-2" />
                         </div>

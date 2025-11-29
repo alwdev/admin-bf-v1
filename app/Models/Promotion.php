@@ -36,6 +36,7 @@ class Promotion extends Model
         'recurring_bonus_percentage',
         'recurring_turnover_percentage',
         'is_turnover_x2',
+        'bonus_type',
     ];
 
     protected $casts = [
@@ -193,5 +194,37 @@ class Promotion extends Model
     public function store()
     {
         return $this->belongsTo(Store::class);
+    }
+
+    /**
+     * Mutator/Accessor สำหรับ bonus_type (เหมือนกับ applicable_games)
+     */
+    public function setBonusTypeAttribute($value)
+    {
+        if (!is_array($value)) {
+            $value = (array) $value;
+        }
+        $cleanedValue = array_values(array_filter($value, fn($item) => $item !== null && $item !== ''));
+        $this->attributes['bonus_type'] = json_encode($cleanedValue, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function getBonusTypeAttribute($value)
+    {
+        if (is_string($value) && !empty($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+            $fixedValue = preg_replace('/(?<!\\\)(u[0-9a-fA-F]{4})/', '\\\\$1', $value);
+            $decodedFixed = json_decode('["' . $fixedValue . '"]', true);
+            if (is_array($decodedFixed) && !empty($decodedFixed[0])) {
+                $finalDecoded = json_decode('"' . $decodedFixed[0] . '"');
+                if ($finalDecoded !== null && $finalDecoded !== false) {
+                    return [$finalDecoded];
+                }
+            }
+            return [$value];
+        }
+        return [];
     }
 }
