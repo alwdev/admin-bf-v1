@@ -17,28 +17,57 @@
     <div class="row">
         <div class="col-12 card">
             <div class="card-body">
-                <div class="d-flex justify-content-between mb-3">
-                    <h4 class="card-title mb-0">รายการเกม</h4>
-                    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#createModal">
-                        <i class="bx bx-plus"></i> เพิ่มเกม
-                    </button>
-                </div>
+            <div class="d-flex justify-content-between mb-3 align-items-end">
+                <h4 class="card-title mb-0">รายการเกม</h4>
+                <form class="form-inline" method="GET" action="{{ route('sbo.games.index') }}">
+                    <div class="form-group mr-2">
+                        <label class="mr-1">Provider</label>
+                        <select name="provider_name" class="form-control">
+                            <option value="">ทั้งหมด</option>
+                            @foreach($providers as $p)
+                                <option value="{{ $p->name }}" {{ request('provider_name')==$p->name?'selected':'' }}>{{ $p->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group mr-2">
+                        <input type="text" name="game_name" value="{{ request('game_name') }}" class="form-control" placeholder="ชื่อเกม">
+                    </div>
+                    <div class="form-group mr-2">
+                        <input type="text" name="game_code" value="{{ request('game_code') }}" class="form-control" placeholder="โค้ด">
+                    </div>
+                    <div class="form-group mr-2">
+                        <select name="active" class="form-control">
+                            <option value="all" {{ request('active','all')=='all'?'selected':'' }}>ทุกสถานะ</option>
+                            <option value="1" {{ request('active')==='1'?'selected':'' }}>Enable</option>
+                            <option value="0" {{ request('active')==='0'?'selected':'' }}>Disable</option>
+                        </select>
+                    </div>
+                    <div class="form-group mr-2">
+                        <select name="per_page" class="form-control">
+                            @foreach([50,100,150,200] as $pp)
+                                <option value="{{ $pp }}" {{ (int)request('per_page', $perPage ?? 50)===$pp?'selected':'' }}>{{ $pp }}/หน้า</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button class="btn btn-secondary mr-2">ค้นหา</button>
+                    <a href="{{ route('sbo.games.index') }}" class="btn btn-light mr-2">ล้าง</a>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal"><i class="bx bx-plus"></i> เพิ่มเกม</button>
+                </form>
+            </div>
 
-                <table id="basic-datatable" class="table m-10 table-bordered" data-filter-control="true" data-toggle="table"
-                    data-search="true" data-show-export="false" data-click-to-select="false" data-pagination="true"
-                    data-url="">
-                    <thead class="table-light">
-                        <tr>
-                            <th>รูป</th>
-                            <th data-field="provider_name" data-filter-control="select" data-sortable="true">ค่าย</th>
-                            <th data-field="provider_type" data-filter-control="select" data-sortable="true">ประเภท</th>
+            <table class="table m-10 table-bordered">
                             <th data-field="game_name" data-filter-control="input" data-sortable="true">ชื่อเกม</th>
                             <th data-field="game_code" data-filter-control="input" data-sortable="true">โค้ด</th>
                             <th data-field="active" data-filter-control="select" data-sortable="true">สถานะ</th>
-                            <th style="width:120px;"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                        <th>ค่าย</th>
+                        <th>ประเภท</th>
+                        <th>ชื่อเกม</th>
+                        <th>โค้ด</th>
+                        <th>สถานะ</th>
+                            <tr>
+                                <td>
+                                    <img src="{{ $item->img ?: asset('images/logo.png') }}"
+                                        id="gameImage{{ $item->id }}" onclick="chooseImage({{ $item->id }})"
                         @foreach ($games as $item)
                             <tr>
                                 <td>
@@ -78,6 +107,9 @@
                         @endforeach
                     </tbody>
                 </table>
+            <div class="mt-3">
+                {{ $games->links() }}
+            </div>
             </div>
         </div>
     </div>
@@ -192,23 +224,12 @@
 @endsection
 
 @section('scripts')
-    <link rel="stylesheet" href="{{ asset('plugins/datatables/dataTables.bootstrap4.css') }}">
-    <link rel="stylesheet" href="{{ asset('plugins/datatables/responsive.bootstrap4.css') }}">
-    <link href="https://unpkg.com/bootstrap-table@1.21.2/dist/bootstrap-table.min.css" rel="stylesheet">
-    <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables/dataTables.bootstrap4.js') }}"></script>
-    <script src="{{ asset('plugins/datatables/dataTables.responsive.min.js') }}"></script>
-    <script src="https://unpkg.com/bootstrap-table@1.21.2/dist/bootstrap-table.min.js"></script>
-    <script
+ 
         src="https://unpkg.com/bootstrap-table@1.21.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js">
     </script>
     <script>
         function toggleActive(id, checked) {
             $.post('{{ route('sbo.games.toggle') }}', {
-                id: id,
-                checked: checked ? 1 : 0,
-                _token: '{{ csrf_token() }}'
-            });
         }
 
         function chooseImage(id) {
