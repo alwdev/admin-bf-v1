@@ -60,7 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/updateuser', [ProfileController::class, 'updateuser'])->name('manageuser.updateuser');
     Route::post('/deluser', [ManageUserController::class, 'deluser'])->name('manageuser.deluser');
 
-    
+
 
     Route::get('/alert-system', [SettingController::class, 'alert_index'])->name('setting.alert');
     Route::delete('/alert-system-del', [SettingController::class, 'alert_del'])->name('setting.alert_del');
@@ -126,7 +126,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/member_play_egame/{date_id}', [ReportController::class, 'member_play_egame'])->name('report.member_play_egame')->middleware('CheckPermissionUser:report,view');
     Route::get('/member_transfer/{date_id}', [ReportController::class, 'transfer_report'])->name('report.member_transfer')->middleware('CheckPermissionUser:report,view');
 
-    
+
 
     //bank account
     Route::get('/bankaccount', [App\Http\Controllers\BankAccountController::class, 'index'])->name('bankaccount.index');
@@ -161,6 +161,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/order_top', [App\Http\Controllers\ProviderController::class, 'order_top'])->name('provider.order_top');
 
     Route::get('/GetAllGame', [App\Http\Controllers\ProviderController::class, 'GetAllGame']);
+
+    // SBO Games
+    Route::get('/sbo/games', [App\Http\Controllers\SboGameController::class, 'index'])->name('sbo.games.index');
+    Route::post('/sbo/games', [App\Http\Controllers\SboGameController::class, 'store'])->name('sbo.games.store');
+    Route::post('/sbo/games/{id}', [App\Http\Controllers\SboGameController::class, 'update'])->name('sbo.games.update');
+    Route::delete('/sbo/games/{id}', [App\Http\Controllers\SboGameController::class, 'destroy'])->name('sbo.games.destroy');
+    Route::post('/sbo/games/toggle', [App\Http\Controllers\SboGameController::class, 'toggle'])->name('sbo.games.toggle');
+    Route::post('/sbo/games/upload', [App\Http\Controllers\SboGameController::class, 'uploadImage'])->name('sbo.games.upload');
 
     Route::get('/partner', [App\Http\Controllers\PartnerController::class, 'index'])->name('partner.index')->middleware('CheckPermissionUser:manageuser,edit');
     Route::get('/partner/add', [App\Http\Controllers\PartnerController::class, 'add'])->name('partner.add')->middleware('CheckPermissionUser:manageuser,edit');
@@ -215,7 +223,7 @@ Route::get('/pghard_detail_report/{username}/{start_day}/{end_day}', [App\Http\C
 Route::get('/pg_get_spin_summaryby_user/{username}/{start_day}/{end_day}', [App\Http\Controllers\PgHardController::class, 'pg_get_spin_summaryby_user']);
 Route::get('/get_spin_orderby_username/{username}/{start_day}/{end_day}', [App\Http\Controllers\PgHardController::class, 'get_spin_orderby_username']);
 
- 
+
 
 
 Route::resource('links', HashtagController::class);

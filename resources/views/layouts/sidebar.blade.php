@@ -61,8 +61,8 @@
                             class='bx bxs-bank'></i><span>{{ __('main.book_bank') }}</span></a>
                 </li>
                 <li>
-                    <a href="{{ route('provider.index') }}" class="waves-effect"><i
-                            class='bx bx-joystick'></i><span>{{ __('main.game_cate') }}</span></a>
+                    <a href="{{ route('sbo.games.index') }}" class="waves-effect"><i
+                            class='bx bx-joystick'></i><span>SBO Games</span></a>
                 </li>
                 <li>
                     <a href="{{ route('promotion.index') }}" class="waves-effect"><i
