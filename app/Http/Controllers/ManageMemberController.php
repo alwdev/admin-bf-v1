@@ -435,7 +435,10 @@ class ManageMemberController extends Controller
     {
 
         try {
-            DB::transaction(function () use ($request) {
+            $apiRespBody = null;
+            $apiAction = null;
+            $usernameFinal = null;
+            DB::transaction(function () use ($request, &$apiRespBody, &$apiAction, &$usernameFinal) {
                 $member = Members::where('id', $request->member_id)->lockForUpdate()->first();
                 if (!$member) {
                     throw new \RuntimeException('member not found');
@@ -477,6 +480,7 @@ class ManageMemberController extends Controller
                 if ($prefix !== '' && strncmp($username, $prefix, strlen($prefix)) !== 0) {
                     $username = $prefix . $username;
                 }
+                $usernameFinal = $username;
                 $txnIdGen = function (string $p) {
                     return $p . date('YmdHis') . mt_rand(10000, 99999);
                 };
@@ -493,7 +497,10 @@ class ManageMemberController extends Controller
                         'headers' => ['Content-Type' => 'application/json'],
                         'json' => $payload,
                     ]);
-                    $resp = json_decode((string) $response->getBody(), true);
+                    $apiAction = 'deposit';
+                    $apiRespBody = (string) $response->getBody();
+                    Log::info('SBO deposit resp ' . $apiRespBody);
+                    $resp = json_decode($apiRespBody, true);
                     $log = new Logs;
                     $log->username = $username;
                     $log->log = 'SBO deposit sync txnId=' . ($resp['txnId'] ?? '') . ' refno=' . ($resp['refno'] ?? '') . ' balance=' . ($resp['balance'] ?? '') . ' outstanding=' . ($resp['outstanding'] ?? '');
@@ -515,7 +522,10 @@ class ManageMemberController extends Controller
                             'headers' => ['Content-Type' => 'application/json'],
                             'json' => $payload,
                         ]);
-                        $resp = json_decode((string) $response->getBody(), true);
+                        $apiAction = 'deposit';
+                        $apiRespBody = (string) $response->getBody();
+                        Log::info('SBO deposit resp ' . $apiRespBody);
+                        $resp = json_decode($apiRespBody, true);
                         $log = new Logs;
                         $log->username = $username;
                         $log->log = 'SBO deposit sync (แก้เครดิต) txnId=' . ($resp['txnId'] ?? '') . ' refno=' . ($resp['refno'] ?? '') . ' balance=' . ($resp['balance'] ?? '') . ' outstanding=' . ($resp['outstanding'] ?? '') . ' amount=' . $delta;
@@ -536,7 +546,10 @@ class ManageMemberController extends Controller
                             'headers' => ['Content-Type' => 'application/json'],
                             'json' => $payload,
                         ]);
-                        $resp = json_decode((string) $response->getBody(), true);
+                        $apiAction = 'withdraw';
+                        $apiRespBody = (string) $response->getBody();
+                        Log::info('SBO withdraw resp ' . $apiRespBody);
+                        $resp = json_decode($apiRespBody, true);
                         $log = new Logs;
                         $log->username = $username;
                         $log->log = 'SBO withdraw sync (แก้เครดิต) txnId=' . ($resp['txnId'] ?? '') . ' refno=' . ($resp['refno'] ?? '') . ' balance=' . ($resp['balance'] ?? '') . ' outstanding=' . ($resp['outstanding'] ?? '') . ' amount=' . abs($delta);
@@ -547,8 +560,21 @@ class ManageMemberController extends Controller
                     }
                 }
             });
+            if ($apiRespBody) {
+                $log = new Logs;
+                $log->username = $usernameFinal ?? '';
+                $log->log = 'SBO ' . ($apiAction ?? '') . ' resp ' . $apiRespBody;
+                $log->save();
+            }
         } catch (\Throwable $e) {
             Log::error('memberEditBalance rollback ' . $e->getMessage());
+            if (isset($apiRespBody) && $apiRespBody) {
+                Log::error('SBO API resp ' . $apiRespBody);
+                $log = new Logs;
+                $log->username = $usernameFinal ?? '';
+                $log->log = 'SBO ' . ($apiAction ?? '') . ' resp ' . $apiRespBody;
+                $log->save();
+            }
             return redirect()->route('managemember.index')->with('error', 'failed');
         }
 
