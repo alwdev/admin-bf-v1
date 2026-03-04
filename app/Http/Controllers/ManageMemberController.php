@@ -20,6 +20,7 @@ use App\Models\Affiliate;
 use App\Models\WheelSpin;
 use App\Models\Setting;
 use NotificationChannels\Telegram\TelegramMessage;
+use GuzzleHttp\Client;
 
 class ManageMemberController extends Controller
 {
@@ -460,6 +461,79 @@ class ManageMemberController extends Controller
             $d->balance = $currentBalance;
             $d->edit_balance = $new_balance;
             $d->save();
+
+            // 568Win API balance sync
+            try {
+                $baseUrl = rtrim(env('GAME_API_BASE_URL', ''), '/');
+                $companyKey = env('GAME_COMPANY_KEY', '');
+                $serverId = env('GAME_SERVER_ID', '');
+
+                if ($baseUrl !== '' && $companyKey !== '' && $serverId !== '') {
+                    $client = new Client(['timeout' => 10]);
+                    $username = $member->username;
+                    $txnId = function (string $prefix) {
+                        return $prefix . date('YmdHis') . mt_rand(10000, 99999);
+                    };
+
+                    if ($request->type == 'เติมมือ') {
+                        $payload = [
+                            'Username'   => $username,
+                            'txnId'      => $txnId('D'),
+                            'Amount'     => (float) $request->balance,
+                            'CompanyKey' => $companyKey,
+                            'ServerId'   => $serverId,
+                        ];
+                        $client->post($baseUrl . '/web-root/restricted/player/deposit.aspx', [
+                            'headers' => ['Content-Type' => 'application/json'],
+                            'json'    => $payload,
+                        ]);
+                        $log = new Logs;
+                        $log->username = $username;
+                        $log->log = '568Win deposit sync amount=' . (float) $request->balance;
+                        $log->save();
+                    } elseif ($request->type == 'แก้เครดิต') {
+                        $delta = (float) $new_balance - (float) $currentBalance;
+                        if ($delta > 0) {
+                            $payload = [
+                                'Username'   => $username,
+                                'txnId'      => $txnId('D'),
+                                'Amount'     => $delta,
+                                'CompanyKey' => $companyKey,
+                                'ServerId'   => $serverId,
+                            ];
+                            $client->post($baseUrl . '/web-root/restricted/player/deposit.aspx', [
+                                'headers' => ['Content-Type' => 'application/json'],
+                                'json'    => $payload,
+                            ]);
+                            $log = new Logs;
+                            $log->username = $username;
+                            $log->log = '568Win deposit sync (แก้เครดิต) amount=' . $delta;
+                            $log->save();
+                        } elseif ($delta < 0) {
+                            $payload = [
+                                'Username'     => $username,
+                                'txnId'        => $txnId('W'),
+                                'IsFullAmount' => false,
+                                'Amount'       => abs($delta),
+                                'CompanyKey'   => $companyKey,
+                                'ServerId'     => $serverId,
+                            ];
+                            $client->post($baseUrl . '/web-root/restricted/player/withdraw.aspx', [
+                                'headers' => ['Content-Type' => 'application/json'],
+                                'json'    => $payload,
+                            ]);
+                            $log = new Logs;
+                            $log->username = $username;
+                            $log->log = '568Win withdraw sync (แก้เครดิต) amount=' . abs($delta);
+                            $log->save();
+                        }
+                    }
+                } else {
+                    Log::warning('568Win API env missing: GAME_API_BASE_URL/GAME_COMPANY_KEY/GAME_SERVER_ID');
+                }
+            } catch (\Exception $e) {
+                Log::error('568Win API sync error: ' . $e->getMessage());
+            }
         }
 
         return redirect()->route('managemember.index')->with('success', 'success');
