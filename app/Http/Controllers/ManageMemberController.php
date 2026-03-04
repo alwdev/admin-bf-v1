@@ -462,15 +462,18 @@ class ManageMemberController extends Controller
             $d->edit_balance = $new_balance;
             $d->save();
 
-            // 568Win API balance sync
             try {
-                $baseUrl = rtrim(env('GAME_API_BASE_URL', ''), '/');
-                $companyKey = env('GAME_COMPANY_KEY', '');
-                $serverId = env('GAME_SERVER_ID', '');
+                $baseUrl = rtrim(env('SBO_BASE_URL', ''), '/');
+                $companyKey = env('SBO_COMPANY_KEY', '');
+                $serverId = env('SBO_SERVER_ID', '');
+                $prefix = env('SBO_AGENT_USERNAME_PREFIX', '');
 
                 if ($baseUrl !== '' && $companyKey !== '' && $serverId !== '') {
                     $client = new Client(['timeout' => 10]);
                     $username = $member->username;
+                    if ($prefix !== '' && strncmp($username, $prefix, strlen($prefix)) !== 0) {
+                        $username = $prefix . $username;
+                    }
                     $txnId = function (string $prefix) {
                         return $prefix . date('YmdHis') . mt_rand(10000, 99999);
                     };
@@ -529,10 +532,10 @@ class ManageMemberController extends Controller
                         }
                     }
                 } else {
-                    Log::warning('568Win API env missing: GAME_API_BASE_URL/GAME_COMPANY_KEY/GAME_SERVER_ID');
+                    Log::warning('SBO API env missing: SBO_BASE_URL/SBO_COMPANY_KEY/SBO_SERVER_ID');
                 }
             } catch (\Exception $e) {
-                Log::error('568Win API sync error: ' . $e->getMessage());
+                Log::error('SBO API sync error: ' . $e->getMessage());
             }
         }
 
