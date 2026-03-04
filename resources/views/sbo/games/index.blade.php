@@ -56,57 +56,45 @@
             </div>
 
             <table class="table m-10 table-bordered">
-                            <th data-field="game_name" data-filter-control="input" data-sortable="true">ชื่อเกม</th>
-                            <th data-field="game_code" data-filter-control="input" data-sortable="true">โค้ด</th>
-                            <th data-field="active" data-filter-control="select" data-sortable="true">สถานะ</th>
+                <thead class="table-light">
+                    <tr>
+                        <th>รูป</th>
                         <th>ค่าย</th>
                         <th>ประเภท</th>
                         <th>ชื่อเกม</th>
                         <th>โค้ด</th>
                         <th>สถานะ</th>
-                            <tr>
-                                <td>
-                                    <img src="{{ $item->img ?: asset('images/logo.png') }}"
-                                        id="gameImage{{ $item->id }}" onclick="chooseImage({{ $item->id }})"
-                        @foreach ($games as $item)
-                            <tr>
-                                <td>
-                                    <img src="{{ $item->img ?: asset('images/logo.png') }}"
-                                        id="gameImage{{ $item->id }}" onclick="chooseImage({{ $item->id }})"
-                                        style="max-height: 80px; cursor: pointer;">
-                                </td>
-                                <td>{{ $item->provider_name }}</td>
-                                <td>{{ $item->provider_type }}</td>
-                                <td>{{ $item->game_name }}</td>
-                                <td>{{ $item->game_code }}</td>
-                                <td>
-                                    <div class="custom-control custom-switch">
-                                        <input type="checkbox" class="custom-control-input"
-                                            id="activeSwitch{{ $item->id }}"
-                                            onchange="toggleActive({{ $item->id }}, this.checked)"
-                                            {{ $item->active ? 'checked' : '' }}>
-                                        <label class="custom-control-label" for="activeSwitch{{ $item->id }}">
-                                            {{ $item->active ? 'Enable' : 'Disable' }}
-                                        </label>
-                                    </div>
-                                </td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm" onclick="openEdit({{ $item->id }})">
-                                        <i class="bx bx-edit-alt"></i>
-                                    </button>
-                                    <form action="{{ route('sbo.games.destroy', $item->id) }}" method="POST"
-                                        class="d-inline" onsubmit="return confirm('ยืนยันการลบ?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-danger btn-sm">
-                                            <i class="bx bx-trash-alt"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        <th style="width:120px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($games as $item)
+                        <tr>
+                            <td>
+                                <img src="{{ $item->img ?: asset('images/logo.png') }}" id="gameImage{{ $item->id }}" onclick="chooseImage({{ $item->id }})" style="max-height: 80px; cursor: pointer;">
+                            </td>
+                            <td>{{ $item->provider_name }}</td>
+                            <td>{{ $item->provider_type }}</td>
+                            <td>{{ $item->game_name }}</td>
+                            <td>{{ $item->game_code }}</td>
+                            <td>
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="activeSwitch{{ $item->id }}" onchange="toggleActive({{ $item->id }}, this.checked)" {{ $item->active ? 'checked' : '' }}>
+                                    <label class="custom-control-label" for="activeSwitch{{ $item->id }}">{{ $item->active ? 'Enable' : 'Disable' }}</label>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="openEdit({{ $item->id }})"><i class="bx bx-edit-alt"></i></button>
+                                <form action="{{ route('sbo.games.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('ยืนยันการลบ?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger btn-sm"><i class="bx bx-trash-alt"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
             <div class="mt-3">
                 {{ $games->links() }}
             </div>
