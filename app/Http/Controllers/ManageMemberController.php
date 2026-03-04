@@ -284,56 +284,49 @@ class ManageMemberController extends Controller
 
                 error_log('Bonus = ' . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
 
-                $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
-                Log::info('Deposit Betflix ' . $bf_deposit . ' ' . $amount_betflix . ' User =  ' . $member->username);
-                error_log('Deposit Betflix ' . $bf_deposit . ' ' . $amount_betflix . ' User =  ' . $member->username);
-                // $bf_deposit = 'success';
-                if ($bf_deposit == 'success') {
-                    $wheel_setting = WheelSpin::first();
-                    if ($wheel_setting && $wheel_setting->ticket_condition > 0) {
-                        // ตรวจสอบว่า $wheel_setting ไม่ใช่ null ก่อน
-                        if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
-                            $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
-                            $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
-                        }
-                    }
-
-                    $member->save();
-                    $transfer->new_balance = $member->wallet_balance;
-                    $transfer->status = 2;
-                    $transfer->status_code = 'อนุมัติ';
-                    $transfer->old_balance = $old_balance; // ใช้ $old_balance ที่เก็บไว้ตอนต้น
-                    if ($promotion_found_and_applied) {
-                        $transfer->turnover_on = 1;
-                    }
-                    $transfer->save();
-
-                    // บันทึก PromotionUsed ก็ต่อเมื่อมีการใช้โปรโมชั่นจริง
-                    if ($promotion_found_and_applied) {
-                        // ต้องหา promotion_id ที่ถูกใช้จริง
-                        $promotion_id_used = null;
-                        if (isset($pro) && $pro instanceof Promotion) {
-                            $promotion_id_used = $pro->id;
-                        } elseif (isset($pro_recurring) && $pro_recurring instanceof Promotion) {
-                            $promotion_id_used = $pro_recurring->id;
-                        }
-
-                        if ($promotion_id_used) {
-                            PromotionUsed::create([
-                                'member_id' => $member->id,
-                                'promotion_id' => $promotion_id_used,
-                                'promotion_name' => $applied_promotion_name, // ใช้ชื่อโปรโมชั่นที่ถูก apply
-                                'amount' => $bonus_to_apply, // ใช้ $bonus_to_apply ที่คำนวณได้
-                            ]);
-                        }
-                    }
-                } else {
-                    // กรณี Betflix Deposit ไม่สำเร็จ ควร Rollback Bank Balance ด้วย
+                $sboResp = app(\App\Http\Controllers\SboApiController::class)->deposit($member->username, (float) $amount_betflix);
+                if (!(is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0)) {
                     if ($bank) {
-                        $bank->balance = (float) $bank->balance - (float) $transfer->amount; // คืนเงินจาก Bank
+                        $bank->balance = (float) $bank->balance - (float) $transfer->amount;
                         $bank->save();
                     }
-                    return redirect()->back()->with('error', $bf_deposit);
+                    return redirect()->back()->with('error', 'SBO deposit error');
+                }
+
+                $wheel_setting = WheelSpin::first();
+                if ($wheel_setting && $wheel_setting->ticket_condition > 0) {
+                    if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
+                        $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
+                        $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
+                    }
+                }
+
+                $member->save();
+                $transfer->new_balance = $member->wallet_balance;
+                $transfer->status = 2;
+                $transfer->status_code = 'อนุมัติ';
+                $transfer->old_balance = $old_balance;
+                if ($promotion_found_and_applied) {
+                    $transfer->turnover_on = 1;
+                }
+                $transfer->save();
+
+                if ($promotion_found_and_applied) {
+                    $promotion_id_used = null;
+                    if (isset($pro) && $pro instanceof Promotion) {
+                        $promotion_id_used = $pro->id;
+                    } elseif (isset($pro_recurring) && $pro_recurring instanceof Promotion) {
+                        $promotion_id_used = $pro_recurring->id;
+                    }
+
+                    if ($promotion_id_used) {
+                        PromotionUsed::create([
+                            'member_id' => $member->id,
+                            'promotion_id' => $promotion_id_used,
+                            'promotion_name' => $applied_promotion_name,
+                            'amount' => $bonus_to_apply,
+                        ]);
+                    }
                 }
 
                 $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
@@ -353,6 +346,15 @@ class ManageMemberController extends Controller
                 if ($bank) {
                     $bank->balance = (float) $bank->balance - (float) $transfer->amount;
                     $bank->save();
+                }
+
+                $sboResp = app(\App\Http\Controllers\SboApiController::class)->withdraw($member->username, (float) $transfer->amount, false);
+                if (!(is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0)) {
+                    if ($bank) {
+                        $bank->balance = (float) $bank->balance + (float) $transfer->amount;
+                        $bank->save();
+                    }
+                    return redirect()->back()->with('error', 'SBO withdraw error');
                 }
 
                 $member->save();
@@ -381,9 +383,8 @@ class ManageMemberController extends Controller
             $transfer->save();
 
             if ($request->type == 'withdraw') {
-                $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($transfer->amount));
-                Log::info('rollBack Deposit Betflix ' . $bf_deposit . ' ' . $transfer->amount . ' User =  ' . $member->username);
-                if ($bf_deposit == 'success') {
+                $sboResp = app(\App\Http\Controllers\SboApiController::class)->deposit($member->username, (float) $transfer->amount);
+                if (is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0) {
                     $new_balance = (float) $member->wallet_balance + $transfer->amount;
                     $member->update(['wallet_balance' => strval($new_balance)]);
                 }
@@ -468,41 +469,16 @@ class ManageMemberController extends Controller
                 $d->edit_balance = $new_balance;
                 $d->save();
 
-                $baseUrl = rtrim(env('SBO_BASE_URL', ''), '/');
-                $companyKey = env('SBO_COMPANY_KEY', '');
-                $serverId = env('SBO_SERVER_ID', '');
-                $prefix = env('SBO_AGENT_USERNAME_PREFIX', '');
-                if ($baseUrl === '' || $companyKey === '' || $serverId === '') {
-                    throw new \RuntimeException('SBO env missing');
-                }
-                $client = new Client(['timeout' => 10]);
-                $username = $member->username;
-                if ($prefix !== '' && strncmp($username, $prefix, strlen($prefix)) !== 0) {
-                    $username = $prefix . $username;
-                }
-                $usernameFinal = $username;
-                $txnIdGen = function (string $p) {
-                    return $p . date('YmdHis') . mt_rand(10000, 99999);
-                };
+                $usernameFinal = $member->username;
+                $api = app(\App\Http\Controllers\SboApiController::class);
 
                 if ($request->type == 'เติมมือ') {
-                    $payload = [
-                        'Username' => $username,
-                        'txnId' => $txnIdGen('D'),
-                        'Amount' => (float) $request->balance,
-                        'CompanyKey' => $companyKey,
-                        'ServerId' => $serverId,
-                    ];
-                    $response = $client->post($baseUrl . '/web-root/restricted/player/deposit.aspx', [
-                        'headers' => ['Content-Type' => 'application/json'],
-                        'json' => $payload,
-                    ]);
+                    $resp = $api->deposit($member->username, (float) $request->balance);
                     $apiAction = 'deposit';
-                    $apiRespBody = (string) $response->getBody();
-                    Log::info('SBO deposit resp ' . $apiRespBody);
-                    $resp = json_decode($apiRespBody, true);
+                    $apiRespBody = $resp['__raw'] ?? null;
+                    $usernameFinal = $resp['__username'] ?? $usernameFinal;
                     $log = new Logs;
-                    $log->username = $username;
+                    $log->username = $usernameFinal;
                     $log->log = 'SBO deposit sync txnId=' . ($resp['txnId'] ?? '') . ' refno=' . ($resp['refno'] ?? '') . ' balance=' . ($resp['balance'] ?? '') . ' outstanding=' . ($resp['outstanding'] ?? '');
                     $log->save();
                     if (!(is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0)) {
@@ -511,47 +487,24 @@ class ManageMemberController extends Controller
                 } elseif ($request->type == 'แก้เครดิต') {
                     $delta = (float) $new_balance - (float) $currentBalance;
                     if ($delta > 0) {
-                        $payload = [
-                            'Username' => $username,
-                            'txnId' => $txnIdGen('D'),
-                            'Amount' => $delta,
-                            'CompanyKey' => $companyKey,
-                            'ServerId' => $serverId,
-                        ];
-                        $response = $client->post($baseUrl . '/web-root/restricted/player/deposit.aspx', [
-                            'headers' => ['Content-Type' => 'application/json'],
-                            'json' => $payload,
-                        ]);
+                        $resp = $api->deposit($member->username, $delta);
                         $apiAction = 'deposit';
-                        $apiRespBody = (string) $response->getBody();
-                        Log::info('SBO deposit resp ' . $apiRespBody);
-                        $resp = json_decode($apiRespBody, true);
+                        $apiRespBody = $resp['__raw'] ?? null;
+                        $usernameFinal = $resp['__username'] ?? $usernameFinal;
                         $log = new Logs;
-                        $log->username = $username;
+                        $log->username = $usernameFinal;
                         $log->log = 'SBO deposit sync (แก้เครดิต) txnId=' . ($resp['txnId'] ?? '') . ' refno=' . ($resp['refno'] ?? '') . ' balance=' . ($resp['balance'] ?? '') . ' outstanding=' . ($resp['outstanding'] ?? '') . ' amount=' . $delta;
                         $log->save();
                         if (!(is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0)) {
                             throw new \RuntimeException('SBO deposit error');
                         }
                     } elseif ($delta < 0) {
-                        $payload = [
-                            'Username' => $username,
-                            'txnId' => $txnIdGen('W'),
-                            'IsFullAmount' => false,
-                            'Amount' => abs($delta),
-                            'CompanyKey' => $companyKey,
-                            'ServerId' => $serverId,
-                        ];
-                        $response = $client->post($baseUrl . '/web-root/restricted/player/withdraw.aspx', [
-                            'headers' => ['Content-Type' => 'application/json'],
-                            'json' => $payload,
-                        ]);
+                        $resp = $api->withdraw($member->username, abs($delta), false);
                         $apiAction = 'withdraw';
-                        $apiRespBody = (string) $response->getBody();
-                        Log::info('SBO withdraw resp ' . $apiRespBody);
-                        $resp = json_decode($apiRespBody, true);
+                        $apiRespBody = $resp['__raw'] ?? null;
+                        $usernameFinal = $resp['__username'] ?? $usernameFinal;
                         $log = new Logs;
-                        $log->username = $username;
+                        $log->username = $usernameFinal;
                         $log->log = 'SBO withdraw sync (แก้เครดิต) txnId=' . ($resp['txnId'] ?? '') . ' refno=' . ($resp['refno'] ?? '') . ' balance=' . ($resp['balance'] ?? '') . ' outstanding=' . ($resp['outstanding'] ?? '') . ' amount=' . abs($delta);
                         $log->save();
                         if (!(is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0)) {
@@ -642,18 +595,8 @@ class ManageMemberController extends Controller
 
             $total_lose = 0;
             $cash_back = 0;
-            try {
-                $winlose = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($member->username, -1, -1)->winloss;
-
-                if ($winlose) {
-                    $total_lose =  $winlose;
-                } else {
-                    $total_lose = 0;
-                }
-            } catch (\Exception $e) {
-                Log::error('Error Betflix API : ' . $e->getMessage());
-                $winlose = 0;
-            }
+            $winlose = 0;
+            $total_lose = 0;
 
 
             if (abs($total_lose) > 0) {
@@ -725,21 +668,8 @@ class ManageMemberController extends Controller
                     $under_member = Members::where('id', $_member)->first();
                     Log::info("Under of " . $main_member->username . " member : " . $under_member->username);
 
-                    try {
-                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, -1, -1);
-                        if ($bf_total_bet) {
-                            $total_bet = $bf_total_bet->valid_amount;
-                            $winlose = $bf_total_bet->winloss;
-                            Log::info("bf_total_bet : " . $bf_total_bet->valid_amount);
-                        } else {
-                            Log::info("bf_total_bet : " . $bf_total_bet->msg);
-                        }
-                    } catch (\Exception $e) {
-                        Log::info('Betflix API Error : ' . $e->getMessage());
-                        $total_bet = 0;
-                        $winlose = 0;
-                        continue;
-                    }
+                    $total_bet = 0;
+                    $winlose = 0;
 
                     try {
                         $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, -1, -1);
@@ -828,21 +758,8 @@ class ManageMemberController extends Controller
                     $under_member = Members::where('id', $_member)->first();
                     Log::info("Under of " . $main_member->username . " member : " . $under_member->username);
 
-                    try {
-                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, $date_start, $date_end);
-                        if ($bf_total_bet) {
-                            $total_bet = $bf_total_bet->valid_amount;
-                            $winlose = $bf_total_bet->winloss;
-                            Log::info("bf_total_bet : " . $bf_total_bet->valid_amount);
-                        } else {
-                            Log::info("bf_total_bet : " . $bf_total_bet->msg);
-                        }
-                    } catch (\Exception $e) {
-                        Log::info('Betflix API Error : ' . $e->getMessage());
-                        $total_bet = 0;
-                        $winlose = 0;
-                        continue;
-                    }
+                    $total_bet = 0;
+                    $winlose = 0;
 
                     try {
                         $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, $date_start, $date_end);

@@ -64,23 +64,13 @@ class RunAffiliate implements ShouldQueue
      */
     private function getWinLose($member)
     {
+        $winlose = 0;
         try {
-            $bf_total = app(\App\Http\Controllers\BetflixController::class)
-                ->Single_Member_Report_all_Provider($member->username, -1, -1);
-            $total_bet = $bf_total->valid_amount ?? 0;
-            $winlose = $bf_total->winloss ?? 0;
-
             $pg_total = app(\App\Http\Controllers\PgHardController::class)
                 ->pg_get_spin_summaryby_user($member->username, -1, -1);
-            if (isset($pg_total['data'][0]['totalAmount'])) {
-                $total_bet += $pg_total['data'][0]['totalAmount'];
-            }
-
-            return $winlose;
         } catch (\Exception $e) {
-            Log::info('API Error for ' . $member->username . ': ' . $e->getMessage());
-            return 0;
         }
+        return $winlose;
     }
 
     /**

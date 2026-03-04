@@ -14,7 +14,7 @@ use App\Models\Members;
 use App\Models\Transfer;
 use App\Models\Setting;
 use App\Models\Logs;
-use App\Http\Controllers\BetflixController;
+
 
 class CashBackJob implements ShouldQueue
 {
@@ -63,15 +63,6 @@ class CashBackJob implements ShouldQueue
 
 
         $total_lose = 0;
-        try {
-            $winlose = app(BetflixController::class)
-                ->Single_Member_Report_all_Provider($member->username, -1, -1)
-                ->winloss ?? 0;
-
-            $total_lose = $winlose;
-        } catch (\Exception $e) {
-            Log::error('Error Betflix API : ' . $e->getMessage());
-        }
 
         $cash_back = 0;
         if (abs($total_lose) > 0) {

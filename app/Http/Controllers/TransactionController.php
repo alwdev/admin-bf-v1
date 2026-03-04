@@ -43,20 +43,14 @@ class TransactionController extends Controller
     public function checkTurnOver($mid)
     {
         $member = Members::where('id', $mid)->first();
-        $turn_over = app(\App\Http\Controllers\BetflixController::class)->lastDay_TurnOver($member->username);
+        $turn_over = 0;
         $check_transfers = Transfer::where('member_id', $mid)->where('type', 'deposit')->latest('created_at')->first();
 
         if ($check_transfers) {
             if ($check_transfers->turnover_on == 1) {
                 if ($check_transfers->promotion_id != 0) {
                     $check_balance = Members::where('id', $mid)->first();
-
-                    // $turn_over = app(\App\Http\Controllers\BetflixController::class)->lastDay_TurnOver($member->username);
-                    try {
-                        $turn_over = app(\App\Http\Controllers\BetflixController::class)->lastDay_TurnOver($member->username);
-                    } catch (\Throwable $th) {
-                        $turnover = 0;
-                    }
+                    $turn_over = 0;
                     $current_balance = $check_balance->wallet_balance;
                     $last_transfers = $check_transfers->amount;
 
@@ -446,15 +440,9 @@ class TransactionController extends Controller
 
         error_log("Bonus for Telegram = " . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
 
-        $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
-
-        $log = new \App\Models\Logs;
-        $log->log = 'Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username . ' Bonus =' . $bonus;
-        $log->save();
-
-        // $bf_deposit = "success";
-        if ($bf_deposit == "success") {
-            error_log("lineNotify_deposit bf_deposit success");
+        $sboResp = app(\App\Http\Controllers\SboApiController::class)->deposit($member->username, (float) $amount_betflix);
+        if (is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0) {
+            error_log("lineNotify_deposit sbo deposit success");
 
             $wheel_setting = WheelSpin::first();
             if ($wheel_setting && $wheel_setting->ticket_condition > 0) {
@@ -471,7 +459,7 @@ class TransactionController extends Controller
 
             // **หมายเหตุ:** ส่วนนี้ (`$bank->balance = ...`) ดูเหมือนจะซ้ำซ้อน
             // หากยอดเงินเข้าบัญชีธนาคารถูกบันทึกไปแล้วเมื่อมีการรับเงิน
-            // แต่ถ้า Logic ของคุณคือการอัปเดตยอดเงินในบัญชีธนาคารของระบบเมื่อเงินถูกโอนไปให้ Betflix
+            // แต่ถ้า Logic ของคุณคือการอัปเดตยอดเงินในบัญชีธนาคารของระบบเมื่อเงินถูกโอนไปให้ SBO
             // ก็สามารถเก็บไว้ได้ แต่ควรพิจารณาความถูกต้องของ Flow
             $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
             if ($bank) {
@@ -517,8 +505,8 @@ class TransactionController extends Controller
             }
             return 200;
         } else {
-            error_log("lineNotify_deposit bf_deposit failed for user: " . $member->username . " with response: " . $bf_deposit);
-            // กรณี Betflix Deposit ไม่สำเร็จ ควร Rollback Bank Balance และ Member Wallet Balance ด้วย
+            error_log("lineNotify_deposit sbo deposit failed for user: " . $member->username);
+            // กรณี SBO Deposit ไม่สำเร็จ ควร Rollback Bank Balance และ Member Wallet Balance ด้วย
             // เนื่องจากยอดเงินถูกเพิ่มเข้า wallet_balance แล้ว
             $member->wallet_balance = $old_balance; // คืนยอดเงินใน wallet ของสมาชิก
             $member->save();
@@ -527,7 +515,7 @@ class TransactionController extends Controller
             // ควรพิจารณาว่ายอดเงินนี้ถูกเพิ่มเข้าไปใน Bank Balance ตอนไหน
             // หากถูกเพิ่มไปแล้วตอนรับเงิน (ก่อนเรียกฟังก์ชันนี้) ก็ไม่ควรเพิ่มซ้ำ
             // หากถูกเพิ่มในฟังก์ชันนี้ (ซึ่งไม่น่าเป็นไปได้) ก็ต้องหักออก
-            // แต่จากโค้ดเดิมของคุณใน if($bf_deposit == "success") มีการเพิ่ม Bank Balance
+            // แต่จากโค้ดเดิมของคุณใน success มีการเพิ่ม Bank Balance
             // ดังนั้นในกรณีที่ล้มเหลว ก็ควรหักออก (หากคุณต้องการให้ Bank Balance สะท้อนยอดเงินที่โอนไป Betflix)
             $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
             if ($bank) {
@@ -539,15 +527,14 @@ class TransactionController extends Controller
 
             // อัปเดตสถานะ Transfer เป็น Failed
             $transfer->status = 3; // หรือสถานะสำหรับ Failed
-            $transfer->status_code = "BOT.ไม่สำเร็จ: " . $bf_deposit;
+            $transfer->status_code = "BOT.ไม่สำเร็จ: SBO deposit error";
             $transfer->new_balance = $member->wallet_balance; // ยอดเงินใหม่ควรเป็นยอดเงินเก่าที่ rollback แล้ว
             $transfer->save();
 
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT-LINE ' . env('APP_NAME'))
-                ->line('Deposit Betflix failed for user ' . $member->username)
+                ->line('SBO deposit failed for user ' . $member->username)
                 ->line('Amount :' . $transfer->amount)
-                ->line('Response :' . $bf_deposit)
                 ->send();
             return 500;
         }
@@ -654,10 +641,8 @@ class TransactionController extends Controller
 
 
 
-                $bf_deposit =  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($amount_betflix));
-                Log::info('Deposit Betflix ' . $bf_deposit . ' ' . floor($amount_betflix) . ' User =  ' . $member->username);
-
-                if ($bf_deposit == "success") {
+                $sboResp = app(\App\Http\Controllers\SboApiController::class)->deposit($member->username, (float) floor($amount_betflix));
+                if (is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0) {
 
                     $wheel_setting = WheelSpin::first();
                     if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
@@ -794,10 +779,8 @@ class TransactionController extends Controller
                 }
 
 
-                $bf_deposit =  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($amount_betflix));
-                Log::info('Deposit Betflix ' . $bf_deposit . ' ' . floor($amount_betflix) . ' User =  ' . $member->username);
-
-                if ($bf_deposit == "success") {
+                $sboResp = app(\App\Http\Controllers\SboApiController::class)->deposit($member->username, (float) floor($amount_betflix));
+                if (is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0) {
 
                     $wheel_setting = WheelSpin::first();
                     if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
@@ -947,10 +930,8 @@ class TransactionController extends Controller
                 }
 
 
-                $bf_deposit =  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($amount_betflix));
-                Log::info('Deposit Betflix ' . $bf_deposit . ' ' . floor($amount_betflix) . ' User =  ' . $member->username);
-
-                if ($bf_deposit == "success") {
+                $sboResp = app(\App\Http\Controllers\SboApiController::class)->deposit($member->username, (float) floor($amount_betflix));
+                if (is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0) {
 
                     $wheel_setting = WheelSpin::first();
                     if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
@@ -1084,10 +1065,8 @@ class TransactionController extends Controller
                 }
 
 
-                $bf_deposit =  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($amount_betflix));
-                Log::info('Deposit Betflix ' . $bf_deposit . ' ' . floor($amount_betflix) . ' User =  ' . $member->username);
-
-                if ($bf_deposit == "success") {
+                $sboResp = app(\App\Http\Controllers\SboApiController::class)->deposit($member->username, (float) floor($amount_betflix));
+                if (is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0) {
 
                     $wheel_setting = WheelSpin::first();
                     if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
@@ -1446,10 +1425,8 @@ class TransactionController extends Controller
 
 
 
-            $bf_deposit =  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($amount_betflix));
-            Log::info('Deposit Betflix ' . $bf_deposit . ' ' . floor($amount_betflix) . ' User =  ' . $member->username);
-
-            if ($bf_deposit == "success") {
+            $sboResp = app(\App\Http\Controllers\SboApiController::class)->deposit($member->username, (float) floor($amount_betflix));
+            if (is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0) {
 
                 $wheel_setting = WheelSpin::first();
                 if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
@@ -1612,10 +1589,8 @@ class TransactionController extends Controller
 
 
 
-        $bf_deposit =  app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, floor($amount_betflix));
-        // Log::info('Deposit Betflix ' . $bf_deposit . ' amount : ' . floor($amount_betflix) . ' User =  ' . $member->username);
-
-        if ($bf_deposit == "success") {
+        $sboResp = app(\App\Http\Controllers\SboApiController::class)->deposit($member->username, (float) floor($amount_betflix));
+        if (is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0) {
 
             $wheel_setting = WheelSpin::first();
             if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
@@ -1650,8 +1625,6 @@ class TransactionController extends Controller
                 ->send();
 
             return 'success';
-        } else {
-            return 'error';
         }
     }
     public function getPhoneAttribute($phone)
@@ -1894,12 +1867,9 @@ class TransactionController extends Controller
 
         error_log("Bonus for Telegram = " . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
 
-        $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Deposit($member->username, ($amount_betflix));
-        Log::info('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
-        error_log('Deposit Betflix ' . $bf_deposit . ' ' . ($amount_betflix) . ' User = ' . $member->username);
-        // $bf_deposit = "success";
-        if ($bf_deposit == "success") {
-            error_log("crypto_deposit bf_deposit success");
+        $sboResp = app(\App\Http\Controllers\SboApiController::class)->deposit($member->username, (float) $amount_betflix);
+        if (is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0) {
+            error_log("crypto_deposit sbo deposit success");
 
             $wheel_setting = WheelSpin::first();
             if ($wheel_setting && $wheel_setting->ticket_condition > 0) {
@@ -1916,7 +1886,7 @@ class TransactionController extends Controller
 
             // **หมายเหตุ:** ส่วนนี้ (`$bank->balance = ...`) ดูเหมือนจะซ้ำซ้อน
             // หากยอดเงินเข้าบัญชีธนาคารถูกบันทึกไปแล้วเมื่อมีการรับเงิน
-            // แต่ถ้า Logic ของคุณคือการอัปเดตยอดเงินในบัญชีธนาคารของระบบเมื่อเงินถูกโอนไปให้ Betflix
+            // แต่ถ้า Logic ของคุณคือการอัปเดตยอดเงินในบัญชีธนาคารของระบบเมื่อเงินถูกโอนไปให้ SBO
             // ก็สามารถเก็บไว้ได้ แต่ควรพิจารณาความถูกต้องของ Flow
             $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
             if ($bank) {
@@ -1962,8 +1932,8 @@ class TransactionController extends Controller
             }
             return 200;
         } else {
-            error_log("crypto_deposit bf_deposit failed for user: " . $member->username . " with response: " . $bf_deposit);
-            // กรณี Betflix Deposit ไม่สำเร็จ ควร Rollback Bank Balance และ Member Wallet Balance ด้วย
+            error_log("crypto_deposit sbo deposit failed for user: " . $member->username);
+            // กรณี SBO Deposit ไม่สำเร็จ ควร Rollback Bank Balance และ Member Wallet Balance ด้วย
             // เนื่องจากยอดเงินถูกเพิ่มเข้า wallet_balance แล้ว
             $member->wallet_balance = $old_balance; // คืนยอดเงินใน wallet ของสมาชิก
             $member->save();
@@ -1972,8 +1942,8 @@ class TransactionController extends Controller
             // ควรพิจารณาว่ายอดเงินนี้ถูกเพิ่มเข้าไปใน Bank Balance ตอนไหน
             // หากถูกเพิ่มไปแล้วตอนรับเงิน (ก่อนเรียกฟังก์ชันนี้) ก็ไม่ควรเพิ่มซ้ำ
             // หากถูกเพิ่มในฟังก์ชันนี้ (ซึ่งไม่น่าเป็นไปได้) ก็ต้องหักออก
-            // แต่จากโค้ดเดิมของคุณใน if($bf_deposit == "success") มีการเพิ่ม Bank Balance
-            // ดังนั้นในกรณีที่ล้มเหลว ก็ควรหักออก (หากคุณต้องการให้ Bank Balance สะท้อนยอดเงินที่โอนไป Betflix)
+            // แต่จากโค้ดเดิมของคุณใน success มีการเพิ่ม Bank Balance
+            // ดังนั้นในกรณีที่ล้มเหลว ก็ควรหักออก (หากคุณต้องการให้ Bank Balance สะท้อนยอดเงินที่โอนไป)
             $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
             if ($bank) {
                 // หากคุณเคยเพิ่ม $cryptoAmount เข้า bank->balance ในบล็อก success
@@ -1984,15 +1954,14 @@ class TransactionController extends Controller
 
             // อัปเดตสถานะ Transfer เป็น Failed
             $transfer->status = 3; // หรือสถานะสำหรับ Failed
-            $transfer->status_code = "BOT.ไม่สำเร็จ: " . $bf_deposit;
+            $transfer->status_code = "BOT.ไม่สำเร็จ: SBO deposit error";
             $transfer->new_balance = $member->wallet_balance; // ยอดเงินใหม่ควรเป็นยอดเงินเก่าที่ rollback แล้ว
             $transfer->save();
 
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT ' . env('APP_NAME'))
-                ->line('Deposit Betflix failed for user ' . $member->username)
+                ->line('SBO deposit failed for user ' . $member->username)
                 ->line('Amount :' . $cryptoAmount)
-                ->line('Response :' . $bf_deposit)
                 ->send();
             return 500;
         }

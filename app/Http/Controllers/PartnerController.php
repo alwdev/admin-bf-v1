@@ -392,19 +392,9 @@ class PartnerController extends Controller
                 $total_bet = 0;
                 $winlose = 0;
 
-                try {
-                    // การเรียก API ภายนอกควรถูกย้ายไปทำใน Background Job หากมีจำนวนมาก
-                    $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, $diff1, $diff2);
-                    if ($bf_total_bet) {
-
-                        $total_bet += $bf_total_bet->valid_amount;
-                        $winlose += $bf_total_bet->winloss;
-                    }
-                } catch (\Exception $e) {
-                    // ไม่ควรใช้ dd() ในโค้ดจริง
-                    // ควรใช้การบันทึก Log แทน เช่น Log::error('Betflix API Error: ' . $e->getMessage());
-                    continue;
-                }
+                // ตัด Betflix ออก: ตั้งค่า default เป็น 0
+                $total_bet += 0;
+                $winlose += 0;
 
                 try {
                     $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, $diff1, $diff2);
@@ -481,19 +471,7 @@ class PartnerController extends Controller
                 $total_bet = 0;
                 $winlose = 0;
 
-                try {
-                    // การเรียก API ภายนอกควรถูกย้ายไปทำใน Background Job หากมีจำนวนมาก
-                    $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, $diff1, $diff2);
-                    if ($bf_total_bet) {
-
-                        $total_bet += $bf_total_bet->valid_amount;
-                        $winlose += $bf_total_bet->winloss;
-                    }
-                } catch (\Exception $e) {
-                    // ไม่ควรใช้ dd() ในโค้ดจริง
-                    // ควรใช้การบันทึก Log แทน เช่น Log::error('Betflix API Error: ' . $e->getMessage());
-                    continue;
-                }
+                
 
                 try {
                     $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, $diff1, $diff2);

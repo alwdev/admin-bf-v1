@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\BetflixController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ManageMemberController;
 use App\Http\Controllers\ManageUserController;
@@ -61,7 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/updateuser', [ProfileController::class, 'updateuser'])->name('manageuser.updateuser');
     Route::post('/deluser', [ManageUserController::class, 'deluser'])->name('manageuser.deluser');
 
-    Route::get('/set_user_status/{username}/{status}', [BetflixController::class, 'set_user_status']);
+    
 
     Route::get('/alert-system', [SettingController::class, 'alert_index'])->name('setting.alert');
     Route::delete('/alert-system-del', [SettingController::class, 'alert_del'])->name('setting.alert_del');
@@ -127,10 +126,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/member_play_egame/{date_id}', [ReportController::class, 'member_play_egame'])->name('report.member_play_egame')->middleware('CheckPermissionUser:report,view');
     Route::get('/member_transfer/{date_id}', [ReportController::class, 'transfer_report'])->name('report.member_transfer')->middleware('CheckPermissionUser:report,view');
 
-    Route::get('/Multiple_Member_Report/{day}', [BetflixController::class, 'Multiple_Member_Report'])->name('report.Multiple_Member_Report')->middleware('CheckPermissionUser:report,view');
-    Route::get('/Single_ReportTimeProvider/{username}/{start_day}/{end_day}', [BetflixController::class, 'Single_ReportTimeProvider'])->name('report.Single_ReportTimeProvider')->middleware('CheckPermissionUser:report,view');
-    Route::get('/lastDay_TurnOver/{username}', [BetflixController::class, 'lastDay_TurnOver'])->name('report.lastDay_TurnOver')->middleware('CheckPermissionUser:report,view');
-    Route::get('/last7Day_TurnOver/{username}', [BetflixController::class, 'last7Day_TurnOver'])->name('report.last7Day_TurnOver')->middleware('CheckPermissionUser:report,view');
+    
 
     //bank account
     Route::get('/bankaccount', [App\Http\Controllers\BankAccountController::class, 'index'])->name('bankaccount.index');
@@ -219,7 +215,7 @@ Route::get('/pghard_detail_report/{username}/{start_day}/{end_day}', [App\Http\C
 Route::get('/pg_get_spin_summaryby_user/{username}/{start_day}/{end_day}', [App\Http\Controllers\PgHardController::class, 'pg_get_spin_summaryby_user']);
 Route::get('/get_spin_orderby_username/{username}/{start_day}/{end_day}', [App\Http\Controllers\PgHardController::class, 'get_spin_orderby_username']);
 
-Route::get('/Single_Member_Report_all_Provider/{username}/{start_day}/{end_day}', [BetflixController::class, 'Single_Member_Report_all_Provider']);
+ 
 
 
 Route::resource('links', HashtagController::class);

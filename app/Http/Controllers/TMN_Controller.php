@@ -146,8 +146,14 @@ class TMN_Controller extends Controller
             $transfer->old_balance = $member->wallet_balance;
             $old_balance = $member->wallet_balance;
 
-            $bf_deposit=  app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username,floor($transfer->amount));
-            Log::info('Betflix Withdraw '.$bf_deposit.' '.floor($transfer->amount).' User =  '.$member->username);
+            $sboResp = app(\App\Http\Controllers\SboApiController::class)->withdraw($member->username,(float) floor($transfer->amount), false);
+            if (!(is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0)) {
+                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                    ->line('BOT '.env('APP_NAME'))
+                    ->line('พบข้อผิดพลาดในการถอนเครดิต SBO '.$member->username)
+                    ->send();
+                return response()->json(['message'=>'SBO withdraw error'],400);
+            }
 
             $transfer->ref_id = $ref;
             $transfer->status = 2;

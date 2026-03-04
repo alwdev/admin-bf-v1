@@ -52,15 +52,8 @@ class PartnerCallWinloseJob implements ShouldQueue
                     $total_bet = 0;
                     $winlose = 0;
 
-                    try {
-                        $bf_total_bet = app(\App\Http\Controllers\BetflixController::class)->Single_Member_Report_all_Provider($under_member->username, -1, -1);
-                        if ($bf_total_bet) {
-                            $total_bet = $bf_total_bet->valid_amount;
-                            $winlose = $bf_total_bet->winloss;
-                        }
-                    } catch (\Exception $e) {
-                        continue;
-                    }
+                    $total_bet += 0;
+                    $winlose += 0;
 
                     try {
                         $pg_total_bet = app(\App\Http\Controllers\PgHardController::class)->pg_get_spin_summaryby_user($under_member->username, -1, -1);

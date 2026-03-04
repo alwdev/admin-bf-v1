@@ -27,8 +27,8 @@ class LottoController extends Controller
             $member->wallet_balance = $amount;
             $member->save();
 
-            $bf_deposit = app(\App\Http\Controllers\BetflixController::class)->Master_Withdraw($member->username, ($request->balance));
-            if ($bf_deposit == 'success') {
+            $resp = app(\App\Http\Controllers\SboApiController::class)->withdraw($member->username, (float)$request->balance, false);
+            if (is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0) {
                 // Log the deposit transaction
                 $log = new \App\Models\Logs;
                 $log->log = "Lotto Balance updated for {$member->username} with amount {$request->balance}";
@@ -48,10 +48,9 @@ class LottoController extends Controller
         $amount = $member->wallet_balance - $request->balance;
         if ($member) {
 
-            $bf = app(\App\Http\Controllers\BetflixController::class)
-                ->Master_Withdraw($member->username, $request->balance);
-
-            if ($bf == 'success') {
+            $resp = app(\App\Http\Controllers\SboApiController::class)
+                ->withdraw($member->username, (float)$request->balance, false);
+            if (is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0) {
                 $member->wallet_balance = $amount;
                 $member->save();
                 // Log the bet transaction
@@ -72,10 +71,9 @@ class LottoController extends Controller
         $amount = $member->wallet_balance - $request->balance;
         if ($member) {
 
-            $bf = app(\App\Http\Controllers\BetflixController::class)
-                ->Master_Deposit($member->username, $request->balance);
-
-            if ($bf == 'success') {
+            $resp = app(\App\Http\Controllers\SboApiController::class)
+                ->deposit($member->username, (float)$request->balance);
+            if (is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0) {
                 $member->wallet_balance = $amount;
                 $member->save();
                 // Log the bet transaction
@@ -96,10 +94,9 @@ class LottoController extends Controller
         $amount = $member->wallet_balance + $request->balance;
         if ($member) {
 
-            $bf = app(\App\Http\Controllers\BetflixController::class)
-                ->Master_Deposit($member->username, $request->balance);
-
-            if ($bf == 'success') {
+            $resp = app(\App\Http\Controllers\SboApiController::class)
+                ->deposit($member->username, (float)$request->balance);
+            if (is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0) {
                 $member->wallet_balance = $amount;
                 $member->save();
                 // Log the bet transaction
