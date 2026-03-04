@@ -141,7 +141,7 @@
                                                 <select name="type" class="form-control" required>
                                                     <option value=""></option>
                                                     <option value="เติมมือ">{{__('dashboard.Add_normal')}}</option>
-                                                    <option value="คืนลูกค้า">{{__('dashboard.Customer_Refund')}}</option>
+                                                    {{-- <option value="คืนลูกค้า">{{__('dashboard.Customer_Refund')}}</option> --}}
                                                     <option value="แก้เครดิต">{{__('managemember.Edit_balance')}}</option>
                                                 </select>
                                             </div>
