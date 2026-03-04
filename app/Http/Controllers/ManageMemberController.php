@@ -21,6 +21,7 @@ use App\Models\WheelSpin;
 use App\Models\Setting;
 use NotificationChannels\Telegram\TelegramMessage;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\DB;
 
 class ManageMemberController extends Controller
 {
@@ -433,110 +434,122 @@ class ManageMemberController extends Controller
     public function memberEditBalance(Request $request)
     {
 
-        error_log("request->balance =" . $request->balance);
+        try {
+            DB::transaction(function () use ($request) {
+                $member = Members::where('id', $request->member_id)->lockForUpdate()->first();
+                if (!$member) {
+                    throw new \RuntimeException('member not found');
+                }
+                $new_balance_input = (float) $request->balance;
+                $currentBalance = (float) $member->wallet_balance;
+                $amount2 = $new_balance_input;
+                $new_balance = $new_balance_input;
+                if ($request->type == 'เติมมือ') {
+                    $new_balance = $currentBalance + $new_balance_input;
+                } elseif ($request->type == 'แก้เครดิต') {
+                    $amount2 = $new_balance_input;
+                } else {
+                    $amount2 = $new_balance_input;
+                }
 
-        $update_balance = 0;
-        $member = Members::find($request->member_id);
-        if ($member) {
-            $new_balance = $request->balance;
-            $currentBalance = $member->wallet_balance;
-            $amount2 =  $new_balance;
-            if ($request->type == 'เติมมือ') {
-                $new_balance = (float) $currentBalance + (float) $new_balance;
-            } elseif ($request->type == 'แก้เครดิต') {
-                $amount2 =  $new_balance;
-            } else {
-                $amount2 =  $new_balance;
-            }
+                $member->wallet_balance = $new_balance;
+                $member->update_by = $request->user_id;
+                $member->save();
 
-            $member->wallet_balance = $new_balance;
-            $member->update_by = $request->user_id;
-            $member->save();
+                $d = new MemberEditBalance;
+                $d->user_id = $request->user_id;
+                $d->member_id = $request->member_id;
+                $d->amount = $amount2;
+                $d->type = $request->type;
+                $d->balance = $currentBalance;
+                $d->edit_balance = $new_balance;
+                $d->save();
 
-            $d = new MemberEditBalance;
-            $d->user_id = $request->user_id;
-            $d->member_id = $request->member_id;
-            $d->amount = $amount2;
-            $d->type = $request->type;
-            $d->balance = $currentBalance;
-            $d->edit_balance = $new_balance;
-            $d->save();
-
-            try {
                 $baseUrl = rtrim(env('SBO_BASE_URL', ''), '/');
                 $companyKey = env('SBO_COMPANY_KEY', '');
                 $serverId = env('SBO_SERVER_ID', '');
                 $prefix = env('SBO_AGENT_USERNAME_PREFIX', '');
+                if ($baseUrl === '' || $companyKey === '' || $serverId === '') {
+                    throw new \RuntimeException('SBO env missing');
+                }
+                $client = new Client(['timeout' => 10]);
+                $username = $member->username;
+                if ($prefix !== '' && strncmp($username, $prefix, strlen($prefix)) !== 0) {
+                    $username = $prefix . $username;
+                }
+                $txnIdGen = function (string $p) {
+                    return $p . date('YmdHis') . mt_rand(10000, 99999);
+                };
 
-                if ($baseUrl !== '' && $companyKey !== '' && $serverId !== '') {
-                    $client = new Client(['timeout' => 10]);
-                    $username = $member->username;
-                    if ($prefix !== '' && strncmp($username, $prefix, strlen($prefix)) !== 0) {
-                        $username = $prefix . $username;
+                if ($request->type == 'เติมมือ') {
+                    $payload = [
+                        'Username' => $username,
+                        'txnId' => $txnIdGen('D'),
+                        'Amount' => (float) $request->balance,
+                        'CompanyKey' => $companyKey,
+                        'ServerId' => $serverId,
+                    ];
+                    $response = $client->post($baseUrl . '/web-root/restricted/player/deposit.aspx', [
+                        'headers' => ['Content-Type' => 'application/json'],
+                        'json' => $payload,
+                    ]);
+                    $resp = json_decode((string) $response->getBody(), true);
+                    $log = new Logs;
+                    $log->username = $username;
+                    $log->log = 'SBO deposit sync txnId=' . ($resp['txnId'] ?? '') . ' refno=' . ($resp['refno'] ?? '') . ' balance=' . ($resp['balance'] ?? '') . ' outstanding=' . ($resp['outstanding'] ?? '');
+                    $log->save();
+                    if (!(is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0)) {
+                        throw new \RuntimeException('SBO deposit error');
                     }
-                    $txnId = function (string $prefix) {
-                        return $prefix . date('YmdHis') . mt_rand(10000, 99999);
-                    };
-
-                    if ($request->type == 'เติมมือ') {
+                } elseif ($request->type == 'แก้เครดิต') {
+                    $delta = (float) $new_balance - (float) $currentBalance;
+                    if ($delta > 0) {
                         $payload = [
-                            'Username'   => $username,
-                            'txnId'      => $txnId('D'),
-                            'Amount'     => (float) $request->balance,
+                            'Username' => $username,
+                            'txnId' => $txnIdGen('D'),
+                            'Amount' => $delta,
                             'CompanyKey' => $companyKey,
-                            'ServerId'   => $serverId,
+                            'ServerId' => $serverId,
                         ];
-                        $client->post($baseUrl . '/web-root/restricted/player/deposit.aspx', [
+                        $response = $client->post($baseUrl . '/web-root/restricted/player/deposit.aspx', [
                             'headers' => ['Content-Type' => 'application/json'],
-                            'json'    => $payload,
+                            'json' => $payload,
                         ]);
+                        $resp = json_decode((string) $response->getBody(), true);
                         $log = new Logs;
                         $log->username = $username;
-                        $log->log = '568Win deposit sync amount=' . (float) $request->balance;
+                        $log->log = 'SBO deposit sync (แก้เครดิต) txnId=' . ($resp['txnId'] ?? '') . ' refno=' . ($resp['refno'] ?? '') . ' balance=' . ($resp['balance'] ?? '') . ' outstanding=' . ($resp['outstanding'] ?? '') . ' amount=' . $delta;
                         $log->save();
-                    } elseif ($request->type == 'แก้เครดิต') {
-                        $delta = (float) $new_balance - (float) $currentBalance;
-                        if ($delta > 0) {
-                            $payload = [
-                                'Username'   => $username,
-                                'txnId'      => $txnId('D'),
-                                'Amount'     => $delta,
-                                'CompanyKey' => $companyKey,
-                                'ServerId'   => $serverId,
-                            ];
-                            $client->post($baseUrl . '/web-root/restricted/player/deposit.aspx', [
-                                'headers' => ['Content-Type' => 'application/json'],
-                                'json'    => $payload,
-                            ]);
-                            $log = new Logs;
-                            $log->username = $username;
-                            $log->log = '568Win deposit sync (แก้เครดิต) amount=' . $delta;
-                            $log->save();
-                        } elseif ($delta < 0) {
-                            $payload = [
-                                'Username'     => $username,
-                                'txnId'        => $txnId('W'),
-                                'IsFullAmount' => false,
-                                'Amount'       => abs($delta),
-                                'CompanyKey'   => $companyKey,
-                                'ServerId'     => $serverId,
-                            ];
-                            $client->post($baseUrl . '/web-root/restricted/player/withdraw.aspx', [
-                                'headers' => ['Content-Type' => 'application/json'],
-                                'json'    => $payload,
-                            ]);
-                            $log = new Logs;
-                            $log->username = $username;
-                            $log->log = '568Win withdraw sync (แก้เครดิต) amount=' . abs($delta);
-                            $log->save();
+                        if (!(is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0)) {
+                            throw new \RuntimeException('SBO deposit error');
+                        }
+                    } elseif ($delta < 0) {
+                        $payload = [
+                            'Username' => $username,
+                            'txnId' => $txnIdGen('W'),
+                            'IsFullAmount' => false,
+                            'Amount' => abs($delta),
+                            'CompanyKey' => $companyKey,
+                            'ServerId' => $serverId,
+                        ];
+                        $response = $client->post($baseUrl . '/web-root/restricted/player/withdraw.aspx', [
+                            'headers' => ['Content-Type' => 'application/json'],
+                            'json' => $payload,
+                        ]);
+                        $resp = json_decode((string) $response->getBody(), true);
+                        $log = new Logs;
+                        $log->username = $username;
+                        $log->log = 'SBO withdraw sync (แก้เครดิต) txnId=' . ($resp['txnId'] ?? '') . ' refno=' . ($resp['refno'] ?? '') . ' balance=' . ($resp['balance'] ?? '') . ' outstanding=' . ($resp['outstanding'] ?? '') . ' amount=' . abs($delta);
+                        $log->save();
+                        if (!(is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0)) {
+                            throw new \RuntimeException('SBO withdraw error');
                         }
                     }
-                } else {
-                    Log::warning('SBO API env missing: SBO_BASE_URL/SBO_COMPANY_KEY/SBO_SERVER_ID');
                 }
-            } catch (\Exception $e) {
-                Log::error('SBO API sync error: ' . $e->getMessage());
-            }
+            });
+        } catch (\Throwable $e) {
+            Log::error('memberEditBalance rollback ' . $e->getMessage());
+            return redirect()->route('managemember.index')->with('error', 'failed');
         }
 
         return redirect()->route('managemember.index')->with('success', 'success');
