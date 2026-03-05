@@ -101,7 +101,7 @@
                     </tbody>
                 </table>
                 <div class="mt-3">
-                    {{ $providers->links() }}
+                    {{ $providers->links('pagination::bootstrap-4') }}
                 </div>
             </div>
         </div>
@@ -202,6 +202,15 @@
 @endsection
 
 @section('scripts')
+    <style>
+        .pagination {
+            justify-content: flex-end;
+        }
+
+        .page-link {
+            cursor: pointer;
+        }
+    </style>
     <script>
         $.ajaxSetup({
             headers: {
