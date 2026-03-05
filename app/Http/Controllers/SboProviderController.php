@@ -29,7 +29,10 @@ class SboProviderController extends Controller
             $q->where('active', (int)$request->get('active'));
         }
         $providers = $q->orderBy('name')->paginate($perPage)->appends($request->query());
-        $types = ['Games', 'EGAMES', 'LIVECASINO', 'SPORT'];
+        $types = \App\Models\SboProvider::select('type')->distinct()->pluck('type')->filter()->values()->toArray();
+        if (count($types) === 0) {
+            $types = ['Games', 'EGAMES', 'LIVECASINO', 'SPORT'];
+        }
         return view('sbo.providers.index', compact('providers', 'perPage', 'types'));
     }
 
