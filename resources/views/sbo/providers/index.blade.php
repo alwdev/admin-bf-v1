@@ -280,10 +280,36 @@
                         const json = xhr.responseJSON || {};
                         if (json.error) msg = json.error;
                     } catch (e) {}
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: msg
+                    // fallback: try update endpoint with only image
+                    const id = $('#upload_provider_id').val();
+                    const fd = new FormData();
+                    fd.append('img', $('#provider_imgupload')[0].files[0]);
+                    fd.append('_token', '{{ csrf_token() }}');
+                    $.ajax({
+                        url: '/sbo/providers/' + id,
+                        type: 'POST',
+                        data: fd,
+                        processData: false,
+                        contentType: false,
+                        success: function(res2) {
+                            const bust = (res2.img || '') + '?t=' + Date.now();
+                            $('#providerImage' + id).attr('src', bust);
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'อัปเดทรูป Provider สำเร็จ',
+                                showConfirmButton: false,
+                                timer: 1200
+                            });
+                            $('#provider_imgupload').val('');
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: msg
+                            });
+                        }
                     });
                 }
             });

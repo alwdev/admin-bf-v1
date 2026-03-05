@@ -64,13 +64,14 @@ class SboProviderController extends Controller
     {
         $provider = SboProvider::findOrFail($id);
         $validator = Validator::make($request->all(), [
-            'gpid' => 'nullable|integer',
-            'name' => 'required|string|max:255',
-            'type' => 'nullable|string|max:255',
-            'lobby_game_id' => 'nullable|integer',
-            'img' => 'nullable|image|max:2048',
-            'supports_game_id_login' => 'nullable|boolean',
-            'devices' => 'nullable|string',
+            'gpid' => 'sometimes|integer',
+            'name' => 'sometimes|required|string|max:255',
+            'type' => 'sometimes|string|max:255',
+            'lobby_game_id' => 'sometimes|integer',
+            'img' => 'sometimes|image|max:2048',
+            'supports_game_id_login' => 'sometimes|boolean',
+            'devices' => 'sometimes|string',
+            'active' => 'sometimes|boolean',
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
@@ -80,7 +81,9 @@ class SboProviderController extends Controller
             $path = $request->file('img')->store('images/sbo/providers', 'public');
             $data['img'] = asset('storage/' . $path);
         }
-        $data['active'] = $request->boolean('active');
+        if ($request->has('active')) {
+            $data['active'] = $request->boolean('active');
+        }
         $provider->update($data);
         return redirect()->route('sbo.providers.index')->with('success', 'Updated');
     }

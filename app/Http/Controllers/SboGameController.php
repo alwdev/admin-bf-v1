@@ -77,15 +77,15 @@ class SboGameController extends Controller
     {
         $game = SboGameList::findOrFail($id);
         $validator = Validator::make($request->all(), [
-            'provider_name' => 'required|string|max:255',
-            'provider_type' => 'nullable|string|max:255',
-            'game_id' => 'nullable|string|max:255',
-            'game_name' => 'required|string|max:255',
-            'game_code' => 'nullable|string|max:255',
-            'gpid' => 'nullable|integer',
-            'active' => 'nullable|boolean',
-            'payload' => 'nullable|string',
-            'img' => 'nullable|image|max:2048',
+            'provider_name' => 'sometimes|required|string|max:255',
+            'provider_type' => 'sometimes|string|max:255',
+            'game_id' => 'sometimes|string|max:255',
+            'game_name' => 'sometimes|required|string|max:255',
+            'game_code' => 'sometimes|string|max:255',
+            'gpid' => 'sometimes|integer',
+            'active' => 'sometimes|boolean',
+            'payload' => 'sometimes|string',
+            'img' => 'sometimes|image|max:2048',
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
@@ -95,7 +95,9 @@ class SboGameController extends Controller
             $path = $request->file('img')->store('images/sbo/games', 'public');
             $data['img'] = asset('storage/' . $path);
         }
-        $data['active'] = $request->boolean('active');
+        if ($request->has('active')) {
+            $data['active'] = $request->boolean('active');
+        }
         $game->update($data);
         return redirect()->route('sbo.games.index')->with('success', 'Updated');
     }

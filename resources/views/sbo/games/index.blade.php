@@ -269,10 +269,35 @@
                         const json = xhr.responseJSON || {};
                         if (json.error) msg = json.error;
                     } catch(e){}
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: msg
+                    const id = $('#upload_game_id').val();
+                    const fd = new FormData();
+                    fd.append('img', $('#imgupload')[0].files[0]);
+                    fd.append('_token', '{{ csrf_token() }}');
+                    $.ajax({
+                        url: '/sbo/games/'+id,
+                        type: 'POST',
+                        data: fd,
+                        processData: false,
+                        contentType: false,
+                        success: function(res2){
+                            const bust = (res2.img || '') + '?t=' + Date.now();
+                            $('#gameImage' + id).attr('src', bust);
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'อัปเดทรูปเกมสำเร็จ',
+                                showConfirmButton: false,
+                                timer: 1200
+                            });
+                            $('#imgupload').val('');
+                        },
+                        error: function(){
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: msg
+                            });
+                        }
                     });
                 }
             });
