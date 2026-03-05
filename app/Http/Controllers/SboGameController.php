@@ -66,7 +66,7 @@ class SboGameController extends Controller
         $data = $validator->validated();
         if ($request->hasFile('img')) {
             $path = $request->file('img')->store('images/sbo/games', 'public');
-            $data['img'] = '/storage/' . $path;
+            $data['img'] = asset('storage/' . $path);
         }
         $data['active'] = $request->boolean('active');
         SboGameList::create($data);
@@ -93,7 +93,7 @@ class SboGameController extends Controller
         $data = $validator->validated();
         if ($request->hasFile('img')) {
             $path = $request->file('img')->store('images/sbo/games', 'public');
-            $data['img'] = '/storage/' . $path;
+            $data['img'] = asset('storage/' . $path);
         }
         $data['active'] = $request->boolean('active');
         $game->update($data);
@@ -131,7 +131,7 @@ class SboGameController extends Controller
         ]);
         $game = SboGameList::findOrFail($request->id);
         $path = $request->file('imgupload')->store('images/sbo/games', 'public');
-        $game->img = '/storage/' . $path;
+        $game->img = asset('storage/' . $path);
         $game->save();
         return response()->json(['img' => $game->img]);
     }

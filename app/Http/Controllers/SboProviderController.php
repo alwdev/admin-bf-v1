@@ -53,7 +53,7 @@ class SboProviderController extends Controller
         $data = $validator->validated();
         if ($request->hasFile('img')) {
             $path = $request->file('img')->store('images/sbo/providers', 'public');
-            $data['img'] = '/storage/' . $path;
+            $data['img'] = asset('storage/' . $path);
         }
         $data['active'] = $request->boolean('active');
         SboProvider::create($data);
@@ -78,7 +78,7 @@ class SboProviderController extends Controller
         $data = $validator->validated();
         if ($request->hasFile('img')) {
             $path = $request->file('img')->store('images/sbo/providers', 'public');
-            $data['img'] = '/storage/' . $path;
+            $data['img'] = asset('storage/' . $path);
         }
         $data['active'] = $request->boolean('active');
         $provider->update($data);
@@ -116,7 +116,7 @@ class SboProviderController extends Controller
         ]);
         $provider = SboProvider::findOrFail($request->id);
         $path = $request->file('imgupload')->store('images/sbo/providers', 'public');
-        $provider->img = '/storage/' . $path;
+        $provider->img = asset('storage/' . $path);
         $provider->save();
         return response()->json(['img' => $provider->img]);
     }
