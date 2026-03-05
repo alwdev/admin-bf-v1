@@ -273,6 +273,18 @@
                         timer: 1200
                     });
                     $('#provider_imgupload').val('');
+                },
+                error: function(xhr) {
+                    let msg = 'อัปเดทรูปไม่สำเร็จ';
+                    try {
+                        const json = xhr.responseJSON || {};
+                        if (json.error) msg = json.error;
+                    } catch (e) {}
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: msg
+                    });
                 }
             });
         });

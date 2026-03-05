@@ -110,14 +110,18 @@ class SboProviderController extends Controller
 
     public function uploadImage(Request $request)
     {
-        $request->validate([
-            'id' => 'required|integer',
-            'imgupload' => 'required|image|max:4096',
-        ]);
-        $provider = SboProvider::findOrFail($request->id);
-        $path = $request->file('imgupload')->store('images/sbo/providers', 'public');
-        $provider->img = asset('storage/' . $path);
-        $provider->save();
-        return response()->json(['img' => $provider->img]);
+        try {
+            $request->validate([
+                'id' => 'required|integer',
+                'imgupload' => 'required|image|max:4096',
+            ]);
+            $provider = SboProvider::findOrFail($request->id);
+            $path = $request->file('imgupload')->store('images/sbo/providers', 'public');
+            $provider->img = asset('storage/' . $path);
+            $provider->save();
+            return response()->json(['img' => $provider->img], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

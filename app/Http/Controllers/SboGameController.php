@@ -125,14 +125,18 @@ class SboGameController extends Controller
 
     public function uploadImage(Request $request)
     {
-        $request->validate([
-            'id' => 'required|integer',
-            'imgupload' => 'required|image|max:4096',
-        ]);
-        $game = SboGameList::findOrFail($request->id);
-        $path = $request->file('imgupload')->store('images/sbo/games', 'public');
-        $game->img = asset('storage/' . $path);
-        $game->save();
-        return response()->json(['img' => $game->img]);
+        try {
+            $request->validate([
+                'id' => 'required|integer',
+                'imgupload' => 'required|image|max:4096',
+            ]);
+            $game = SboGameList::findOrFail($request->id);
+            $path = $request->file('imgupload')->store('images/sbo/games', 'public');
+            $game->img = asset('storage/' . $path);
+            $game->save();
+            return response()->json(['img' => $game->img], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }
