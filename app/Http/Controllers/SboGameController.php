@@ -99,6 +99,9 @@ class SboGameController extends Controller
             $data['active'] = $request->boolean('active');
         }
         $game->update($data);
+        if ($request->ajax()) {
+            return response()->json(['img' => $game->img], 200);
+        }
         return redirect()->route('sbo.games.index')->with('success', 'Updated');
     }
 

@@ -258,6 +258,7 @@
             $.ajax({
                 url: '{{ route('sbo.providers.upload') }}',
                 type: 'POST',
+                dataType: 'json',
                 data: formData,
                 processData: false,
                 contentType: false,
@@ -288,6 +289,7 @@
                     $.ajax({
                         url: '/sbo/providers/' + id,
                         type: 'POST',
+                        dataType: 'json',
                         data: fd,
                         processData: false,
                         contentType: false,

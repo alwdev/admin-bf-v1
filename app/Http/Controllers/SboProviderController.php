@@ -85,6 +85,9 @@ class SboProviderController extends Controller
             $data['active'] = $request->boolean('active');
         }
         $provider->update($data);
+        if ($request->ajax()) {
+            return response()->json(['img' => $provider->img], 200);
+        }
         return redirect()->route('sbo.providers.index')->with('success', 'Updated');
     }
 
