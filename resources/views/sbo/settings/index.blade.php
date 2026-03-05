@@ -21,9 +21,7 @@
                 <div class="card-body">
                     <h4 class="card-title">ตั้งค่าลิมิตการเดิมพัน SBO (Agent Preset Bet Settings)</h4>
                     <p class="card-title-desc">
-                        การตั้งค่านี้จะถูกนำไปใช้กับสมาชิกทุกคนในระบบ (โดยการวนลูปอัปเดตทีละคน)
-                        <br>
-                        <span class="text-danger">* การบันทึกอาจใช้เวลาสักครู่หากมีสมาชิกจำนวนมาก</span>
+                        การตั้งค่านี้จะถูกนำไปใช้กับ Agent เพื่อกำหนดค่าเริ่มต้นสำหรับสมาชิกใหม่
                     </p>
 
                     @if (session('success'))
@@ -91,7 +89,7 @@
                         <div class="form-group row">
                             <div class="col-sm-10 offset-sm-2">
                                 <button type="submit" class="btn btn-primary" id="btn-save">
-                                    <i class="bx bx-save"></i> บันทึกและอัปเดตสมาชิกทั้งหมด
+                                    <i class="bx bx-save"></i> บันทึกการตั้งค่า
                                 </button>
                             </div>
                         </div>
@@ -105,7 +103,7 @@
 @section('script')
     <script>
         document.getElementById('sbo-settings-form').addEventListener('submit', function(e) {
-            var confirmation = confirm('คุณแน่ใจหรือไม่ที่จะอัปเดตการตั้งค่านี้ให้กับสมาชิกทุกคน?');
+            var confirmation = confirm('คุณแน่ใจหรือไม่ที่จะอัปเดตการตั้งค่านี้?');
 
             if (!confirmation) {
                 e.preventDefault();
