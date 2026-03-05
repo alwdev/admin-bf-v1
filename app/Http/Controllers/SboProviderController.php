@@ -18,16 +18,20 @@ class SboProviderController extends Controller
             $perPage = 200;
         }
 
-        if ($request->filled('type') && $request->get('type') !== '') {
-            $q->where('type', $request->get('type'));
+        $q = SboProvider::query();
+        if ($request->filled('name')) {
             $q->where('name', 'like', '%' . $request->get('name') . '%');
         }
-        if ($request->filled('type')) {
-            $q->where('type', 'like', '%' . $request->get('type') . '%');
+        if ($request->filled('type') && $request->get('type') !== '') {
+            $q->where('type', $request->get('type'));
         }
-        $types = ['Games','EGAMES','LIVECASINO','SPORT'];
-        return view('sbo.providers.index', compact('providers','perPage','types'));
+        if ($request->filled('active') && $request->get('active') !== 'all') {
             $q->where('active', (int)$request->get('active'));
+        }
+        $providers = $q->orderBy('name')->paginate($perPage)->appends($request->query());
+        $types = ['Games', 'EGAMES', 'LIVECASINO', 'SPORT'];
+        return view('sbo.providers.index', compact('providers', 'perPage', 'types'));
+    }
 
     public function store(Request $request)
     {
