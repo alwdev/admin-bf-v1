@@ -107,14 +107,18 @@ class SboGameController extends Controller
         return redirect()->route('sbo.games.index')->with('success', 'Deleted');
     }
 
-    public function toggle(Request $request)
+    public function toggle(Request $request, $id = null, $checked = null)
     {
-        $request->validate([
-            'id' => 'required|integer',
-            'checked' => 'required|boolean',
-        ]);
-        $game = SboGameList::findOrFail($request->id);
-        $game->active = $request->checked ? 1 : 0;
+        if ($id === null) {
+            $request->validate([
+                'id' => 'required|integer',
+                'checked' => 'required|boolean',
+            ]);
+            $id = (int)$request->id;
+            $checked = (int)$request->checked;
+        }
+        $game = SboGameList::findOrFail($id);
+        $game->active = ((int)$checked) ? 1 : 0;
         $game->save();
         return response()->json(true);
     }

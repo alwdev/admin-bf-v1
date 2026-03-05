@@ -11,8 +11,12 @@ class SboProviderController extends Controller
     public function index(Request $request)
     {
         $perPage = (int)($request->get('per_page', 50));
-        if ($perPage < 10) { $perPage = 10; }
-        if ($perPage > 200) { $perPage = 200; }
+        if ($perPage < 10) {
+            $perPage = 10;
+        }
+        if ($perPage > 200) {
+            $perPage = 200;
+        }
 
         $q = SboProvider::query();
         if ($request->filled('name')) {
@@ -25,7 +29,7 @@ class SboProviderController extends Controller
             $q->where('active', (int)$request->get('active'));
         }
         $providers = $q->orderBy('name')->paginate($perPage)->appends($request->query());
-        return view('sbo.providers.index', compact('providers','perPage'));
+        return view('sbo.providers.index', compact('providers', 'perPage'));
     }
 
     public function store(Request $request)
@@ -84,14 +88,18 @@ class SboProviderController extends Controller
         return redirect()->route('sbo.providers.index')->with('success', 'Deleted');
     }
 
-    public function toggle(Request $request)
+    public function toggle(Request $request, $id = null, $checked = null)
     {
-        $request->validate([
-            'id' => 'required|integer',
-            'checked' => 'required|boolean',
-        ]);
-        $provider = SboProvider::findOrFail($request->id);
-        $provider->active = $request->checked ? 1 : 0;
+        if ($id === null) {
+            $request->validate([
+                'id' => 'required|integer',
+                'checked' => 'required|boolean',
+            ]);
+            $id = (int)$request->id;
+            $checked = (int)$request->checked;
+        }
+        $provider = SboProvider::findOrFail($id);
+        $provider->active = ((int)$checked) ? 1 : 0;
         $provider->save();
         return response()->json(true);
     }

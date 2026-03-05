@@ -30,7 +30,8 @@
                         </div>
                         <div class="form-group mr-2">
                             <select name="active" class="form-control">
-                                <option value="all" {{ request('active', 'all') == 'all' ? 'selected' : '' }}>ทุกสถานะ</option>
+                                <option value="all" {{ request('active', 'all') == 'all' ? 'selected' : '' }}>ทุกสถานะ
+                                </option>
                                 <option value="1" {{ request('active') === '1' ? 'selected' : '' }}>Enable</option>
                                 <option value="0" {{ request('active') === '0' ? 'selected' : '' }}>Disable</option>
                             </select>
@@ -216,7 +217,13 @@
             }).done(function() {
                 $('#providerActive' + id).next('label').text(checked ? 'Enable' : 'Disable');
             }).fail(function() {
-                $('#providerActive' + id).prop('checked', !checked);
+                $.get('/sbo/providers/toggle/' + id + '/' + (checked ? 1 : 0))
+                    .done(function() {
+                        $('#providerActive' + id).next('label').text(checked ? 'Enable' : 'Disable');
+                    })
+                    .fail(function() {
+                        $('#providerActive' + id).prop('checked', !checked);
+                    });
             });
         }
 

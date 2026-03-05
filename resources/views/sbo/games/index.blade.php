@@ -224,7 +224,13 @@
             }).done(function(){
                 $('#activeSwitch'+id).next('label').text(checked ? 'Enable' : 'Disable');
             }).fail(function(){
-                $('#activeSwitch'+id).prop('checked', !checked);
+                $.get('/sbo/games/toggle/'+id+'/'+(checked?1:0))
+                 .done(function(){
+                    $('#activeSwitch'+id).next('label').text(checked ? 'Enable' : 'Disable');
+                 })
+                 .fail(function(){
+                    $('#activeSwitch'+id).prop('checked', !checked);
+                 });
             });
         }
 
