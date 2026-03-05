@@ -212,12 +212,17 @@
 @endsection
 
 @section('scripts')
- 
-        src="https://unpkg.com/bootstrap-table@1.21.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js">
-    </script>
     <script>
         function toggleActive(id, checked) {
             $.post('{{ route('sbo.games.toggle') }}', {
+                id: id,
+                checked: checked ? 1 : 0,
+                _token: '{{ csrf_token() }}'
+            }).done(function(){
+                $('#activeSwitch'+id).next('label').text(checked ? 'Enable' : 'Disable');
+            }).fail(function(){
+                $('#activeSwitch'+id).prop('checked', !checked);
+            });
         }
 
         function chooseImage(id) {
@@ -235,6 +240,7 @@
                 success: function(res) {
                     const id = $('#upload_game_id').val();
                     $('#gameImage' + id).attr('src', res.img);
+                    $('#imgupload').val('');
                 }
             });
         });

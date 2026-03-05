@@ -65,6 +65,10 @@
                             class='bx bx-joystick'></i><span>SBO Games</span></a>
                 </li>
                 <li>
+                    <a href="{{ route('sbo.providers.index') }}" class="waves-effect"><i
+                            class='bx bx-layer'></i><span>SBO Providers</span></a>
+                </li>
+                <li>
                     <a href="{{ route('promotion.index') }}" class="waves-effect"><i
                             class='bx bx-purchase-tag-alt'></i><span>{{ __('main.promotion') }}</span></a>
                 </li>
