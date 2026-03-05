@@ -25,8 +25,13 @@
                                 placeholder="ชื่อ Provider">
                         </div>
                         <div class="form-group mr-2">
-                            <input type="text" name="type" value="{{ request('type') }}" class="form-control"
-                                placeholder="ประเภท">
+                            <select name="type" class="form-control">
+                                <option value="">{{ 'ทุกประเภท' }}</option>
+                                @foreach ($types as $t)
+                                    <option value="{{ $t }}" {{ request('type') === $t ? 'selected' : '' }}>
+                                        {{ $t }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-group mr-2">
                             <select name="active" class="form-control">
@@ -125,7 +130,11 @@
                         </div>
                         <div class="form-group">
                             <label>ประเภท</label>
-                            <input type="text" class="form-control" name="type">
+                            <select class="form-control" name="type">
+                                @foreach ($types as $t)
+                                    <option value="{{ $t }}">{{ $t }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Lobby Game ID</label>
@@ -169,7 +178,11 @@
                         </div>
                         <div class="form-group">
                             <label>ประเภท</label>
-                            <input type="text" class="form-control" name="type" id="edit_provider_type">
+                            <select class="form-control" name="type" id="edit_provider_type">
+                                @foreach ($types as $t)
+                                    <option value="{{ $t }}">{{ $t }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Lobby Game ID</label>
