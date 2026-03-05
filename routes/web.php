@@ -167,7 +167,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/sbo/games', [App\Http\Controllers\SboGameController::class, 'store'])->name('sbo.games.store');
     Route::post('/sbo/games/{id}', [App\Http\Controllers\SboGameController::class, 'update'])->name('sbo.games.update');
     Route::delete('/sbo/games/{id}', [App\Http\Controllers\SboGameController::class, 'destroy'])->name('sbo.games.destroy');
-    Route::post('/sbo/games/toggle', [App\Http\Controllers\SboGameController::class, 'toggle'])->name('sbo.games.toggle');
+    Route::match(['get', 'post'], '/sbo/games/toggle', [App\Http\Controllers\SboGameController::class, 'toggle'])->name('sbo.games.toggle');
     Route::post('/sbo/games/upload', [App\Http\Controllers\SboGameController::class, 'uploadImage'])->name('sbo.games.upload');
 
     // SBO Providers
@@ -175,7 +175,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/sbo/providers', [App\Http\Controllers\SboProviderController::class, 'store'])->name('sbo.providers.store');
     Route::post('/sbo/providers/{id}', [App\Http\Controllers\SboProviderController::class, 'update'])->name('sbo.providers.update');
     Route::delete('/sbo/providers/{id}', [App\Http\Controllers\SboProviderController::class, 'destroy'])->name('sbo.providers.destroy');
-    Route::post('/sbo/providers/toggle', [App\Http\Controllers\SboProviderController::class, 'toggle'])->name('sbo.providers.toggle');
+    Route::match(['get', 'post'], '/sbo/providers/toggle', [App\Http\Controllers\SboProviderController::class, 'toggle'])->name('sbo.providers.toggle');
     Route::post('/sbo/providers/upload', [App\Http\Controllers\SboProviderController::class, 'uploadImage'])->name('sbo.providers.upload');
 
     Route::get('/partner', [App\Http\Controllers\PartnerController::class, 'index'])->name('partner.index')->middleware('CheckPermissionUser:manageuser,edit');
