@@ -69,6 +69,10 @@
                             class='bx bx-layer'></i><span>SBO Providers</span></a>
                 </li>
                 <li>
+                    <a href="{{ route('sbo.settings.index') }}" class="waves-effect"><i class='bx bx-cog'></i><span>SBO
+                            Bet Settings</span></a>
+                </li>
+                <li>
                     <a href="{{ route('promotion.index') }}" class="waves-effect"><i
                             class='bx bx-purchase-tag-alt'></i><span>{{ __('main.promotion') }}</span></a>
                 </li>

@@ -180,6 +180,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/sbo/providers/toggle/{id}/{checked}', [App\Http\Controllers\SboProviderController::class, 'toggle'])->name('sbo.providers.toggle.get');
     Route::post('/sbo/providers/upload', [App\Http\Controllers\SboProviderController::class, 'uploadImage'])->name('sbo.providers.upload');
 
+    // SBO Settings
+    Route::get('/sbo/settings', [App\Http\Controllers\SboSettingController::class, 'index'])->name('sbo.settings.index');
+    Route::post('/sbo/settings', [App\Http\Controllers\SboSettingController::class, 'update'])->name('sbo.settings.update');
+
     Route::get('/partner', [App\Http\Controllers\PartnerController::class, 'index'])->name('partner.index')->middleware('CheckPermissionUser:manageuser,edit');
     Route::get('/partner/add', [App\Http\Controllers\PartnerController::class, 'add'])->name('partner.add')->middleware('CheckPermissionUser:manageuser,edit');
     Route::post('/partner/create', [App\Http\Controllers\PartnerController::class, 'create'])->name('partner.create')->middleware('CheckPermissionUser:manageuser,edit');
