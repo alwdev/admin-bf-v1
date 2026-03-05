@@ -252,7 +252,15 @@
                 contentType: false,
                 success: function(res) {
                     const id = $('#upload_game_id').val();
-                    $('#gameImage' + id).attr('src', res.img);
+                    const bust = (res.img || '') + '?t=' + Date.now();
+                    $('#gameImage' + id).attr('src', bust);
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'อัปเดทรูปเกมสำเร็จ',
+                        showConfirmButton: false,
+                        timer: 1200
+                    });
                     $('#imgupload').val('');
                 }
             });

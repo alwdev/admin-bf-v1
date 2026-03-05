@@ -263,7 +263,15 @@
                 contentType: false,
                 success: function(res) {
                     const id = $('#upload_provider_id').val();
-                    $('#providerImage' + id).attr('src', res.img);
+                    const bust = (res.img || '') + '?t=' + Date.now();
+                    $('#providerImage' + id).attr('src', bust);
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'อัปเดทรูป Provider สำเร็จ',
+                        showConfirmButton: false,
+                        timer: 1200
+                    });
                     $('#provider_imgupload').val('');
                 }
             });
