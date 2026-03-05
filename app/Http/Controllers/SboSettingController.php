@@ -27,7 +27,7 @@ class SboSettingController extends Controller
         $maxPerMatch = $request->max_per_match;
         $casinoTableLimit = $request->casino_table_limit;
 
-        $companyKey = env('SBO_SEAMLESS_COMPANY_KEY');
+        $companyKey = env('SBO_COMPANY_KEY');
         $serverId = env('SBO_SERVER_ID');
         $agentUsername = env('SBO_AGENT'); // Get Agent Username from ENV
         $baseUrl = env('SBO_BASE_URL');
