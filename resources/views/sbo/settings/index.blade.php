@@ -46,6 +46,13 @@
                         </div>
                     @endif
 
+                    <div class="d-flex align-items-center mb-3">
+                        <button type="button" class="btn btn-outline-secondary btn-sm mr-2" id="btn-check-balance">
+                            <i class="bx bx-refresh"></i> เช็คยอด Agent
+                        </button>
+                        <span id="agent-balance-text" class="text-muted">Balance: -</span>
+                    </div>
+
                     <form id="sbo-settings-form" action="{{ route('sbo.settings.update') }}" method="POST">
                         @csrf
                         <div class="form-group row">
@@ -102,6 +109,42 @@
 
 @section('script')
     <script>
+        function fetchAgentBalance() {
+            const btn = document.getElementById('btn-check-balance');
+            const label = document.getElementById('agent-balance-text');
+            btn.disabled = true;
+            const old = btn.innerHTML;
+            btn.innerHTML = '<i class="bx bx-loader bx-spin"></i> กำลังเช็ค...';
+
+            // Check if username is provided in URL query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const usernameParam = urlParams.get('username');
+            let url = '{{ route('sbo.settings.balance') }}';
+            if (usernameParam) {
+                url += '?username=' + encodeURIComponent(usernameParam);
+            }
+
+            fetch(url)
+                .then(r => r.json())
+                .then(j => {
+                    if (j.success) {
+                        label.textContent = `User: ${j.username} | Balance: ${j.balance} ${j.currency || ''} | Outstanding: ${j.outstanding}`;
+                    } else {
+                        label.textContent = `Balance: - (Error: ${j.message || 'unknown'})`;
+                    }
+                })
+                .catch(e => {
+                    label.textContent = 'Balance: - (เชื่อมต่อไม่สำเร็จ)';
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = old;
+                });
+        }
+        document.getElementById('btn-check-balance').addEventListener('click', fetchAgentBalance);
+        // auto load on page open
+        fetchAgentBalance();
+
         document.getElementById('sbo-settings-form').addEventListener('submit', function(e) {
             var confirmation = confirm('คุณแน่ใจหรือไม่ที่จะอัปเดตการตั้งค่านี้?');
 

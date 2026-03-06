@@ -13,6 +13,16 @@ class SboSettingController extends Controller
         return view('sbo.settings.index');
     }
 
+    private function pickFirst(array $arr, array $keys)
+    {
+        foreach ($keys as $k) {
+            if (array_key_exists($k, $arr)) {
+                return $arr[$k];
+            }
+        }
+        return null;
+    }
+
     public function update(Request $request)
     {
         $request->validate([
@@ -59,6 +69,52 @@ class SboSettingController extends Controller
         } catch (\Exception $e) {
             Log::error("SBO Update Agent Settings Exception: " . $e->getMessage());
             return redirect()->back()->withErrors(['api_error' => "เกิดข้อผิดพลาดในการเชื่อมต่อ: " . $e->getMessage()]);
+        }
+    }
+
+    public function balance(Request $request)
+    {
+        $username = $request->get('username', env('SBO_AGENT'));
+        $companyKey = env('SBO_COMPANY_KEY');
+        $serverId = env('SBO_SERVER_ID');
+        $baseUrl = env('SBO_BASE_URL');
+        $endpoint = rtrim($baseUrl, '/') . '/web-root/restricted/player/get-player-balance.aspx';
+
+        try {
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post($endpoint, [
+                'Username' => $username,
+                'CompanyKey' => $companyKey,
+                'ServerId' => $serverId,
+            ]);
+            $data = $response->json();
+            if (!is_array($data)) {
+                return response()->json(['success' => false, 'message' => 'Invalid response', 'raw' => $response->body()], 502);
+            }
+            $balance = (float) ($this->pickFirst($data, ['balance', 'Balance']) ?? 0);
+            $outstanding = (float) ($this->pickFirst($data, ['outstanding', 'Outstanding']) ?? 0);
+            $currency = (string) ($this->pickFirst($data, ['currency', 'Currency']) ?? '');
+            $server = (string) ($this->pickFirst($data, ['serverId', 'ServerId']) ?? '');
+            $respUser = (string) ($this->pickFirst($data, ['username', 'Username']) ?? $username);
+            $errorBlock = $data['error'] ?? $data['Error'] ?? null;
+            $errorId = is_array($errorBlock) ? ($errorBlock['id'] ?? $errorBlock['Id'] ?? null) : null;
+            $errorMsg = is_array($errorBlock) ? ($errorBlock['msg'] ?? $errorBlock['Msg'] ?? null) : null;
+            $success = ($errorId === 0);
+            return response()->json([
+                'success' => $success,
+                'username' => $respUser,
+                'currency' => $currency,
+                'balance' => $balance,
+                'outstanding' => $outstanding,
+                'serverId' => $server,
+                'error' => $errorBlock,
+                'message' => $errorMsg,
+                'raw' => $data,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('SBO Get Balance Exception: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 }
