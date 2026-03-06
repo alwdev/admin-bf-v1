@@ -115,20 +115,11 @@
             btn.disabled = true;
             const old = btn.innerHTML;
             btn.innerHTML = '<i class="bx bx-loader bx-spin"></i> กำลังเช็ค...';
-
-            // Check if username is provided in URL query parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            const usernameParam = urlParams.get('username');
-            let url = '{{ route('sbo.settings.balance') }}';
-            if (usernameParam) {
-                url += '?username=' + encodeURIComponent(usernameParam);
-            }
-
-            fetch(url)
+            fetch('{{ route('sbo.settings.balance') }}')
                 .then(r => r.json())
                 .then(j => {
                     if (j.success) {
-                        label.textContent = `User: ${j.username} | Balance: ${j.balance} ${j.currency || ''} | Outstanding: ${j.outstanding}`;
+                        label.textContent = `Balance: ${j.balance} ${j.currency || ''} | Outstanding: ${j.outstanding}`;
                     } else {
                         label.textContent = `Balance: - (Error: ${j.message || 'unknown'})`;
                     }

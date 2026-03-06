@@ -72,9 +72,8 @@ class SboSettingController extends Controller
         }
     }
 
-    public function balance(Request $request)
+    private function _fetchBalance($username)
     {
-        $username = $request->get('username', env('SBO_AGENT'));
         $companyKey = env('SBO_COMPANY_KEY');
         $serverId = env('SBO_SERVER_ID');
         $baseUrl = env('SBO_BASE_URL');
@@ -90,7 +89,7 @@ class SboSettingController extends Controller
             ]);
             $data = $response->json();
             if (!is_array($data)) {
-                return response()->json(['success' => false, 'message' => 'Invalid response', 'raw' => $response->body()], 502);
+                return ['success' => false, 'message' => 'Invalid response', 'raw' => $response->body(), '_status' => 502];
             }
             $balance = (float) ($this->pickFirst($data, ['balance', 'Balance']) ?? 0);
             $outstanding = (float) ($this->pickFirst($data, ['outstanding', 'Outstanding']) ?? 0);
@@ -101,7 +100,7 @@ class SboSettingController extends Controller
             $errorId = is_array($errorBlock) ? ($errorBlock['id'] ?? $errorBlock['Id'] ?? null) : null;
             $errorMsg = is_array($errorBlock) ? ($errorBlock['msg'] ?? $errorBlock['Msg'] ?? null) : null;
             $success = ($errorId === 0);
-            return response()->json([
+            return [
                 'success' => $success,
                 'username' => $respUser,
                 'currency' => $currency,
@@ -111,10 +110,26 @@ class SboSettingController extends Controller
                 'error' => $errorBlock,
                 'message' => $errorMsg,
                 'raw' => $data,
-            ]);
+            ];
         } catch (\Throwable $e) {
             Log::error('SBO Get Balance Exception: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return ['success' => false, 'message' => $e->getMessage(), '_status' => 500];
         }
+    }
+
+    public function balance(Request $request)
+    {
+        $username = $request->get('username', env('SBO_AGENT'));
+        $result = $this->_fetchBalance($username);
+        $status = $result['_status'] ?? 200;
+        unset($result['_status']);
+        return response()->json($result, $status);
+    }
+
+    public function testBalance(Request $request)
+    {
+        $username = $request->get('username', env('SBO_AGENT'));
+        $result = $this->_fetchBalance($username);
+        dd($result);
     }
 }
