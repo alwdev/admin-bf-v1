@@ -119,7 +119,13 @@ class SboSettingController extends Controller
 
     public function balance(Request $request)
     {
-        $username = $request->get('username', env('SBO_AGENT'));
+        $inputUsername = $request->get('username');
+        if ($inputUsername) {
+            $username = env('SBO_AGENT_USERNAME_PREFIX', 'tau_') . $inputUsername;
+        } else {
+            $username = env('SBO_AGENT');
+        }
+
         $result = $this->_fetchBalance($username);
         $status = $result['_status'] ?? 200;
         unset($result['_status']);
@@ -128,7 +134,13 @@ class SboSettingController extends Controller
 
     public function testBalance(Request $request)
     {
-        $username = $request->get('username', env('SBO_AGENT'));
+        $inputUsername = $request->get('username');
+        if ($inputUsername) {
+            $username = env('SBO_AGENT_USERNAME_PREFIX', 'tau_') . $inputUsername;
+        } else {
+            $username = env('SBO_AGENT');
+        }
+
         $result = $this->_fetchBalance($username);
         dd($result);
     }
