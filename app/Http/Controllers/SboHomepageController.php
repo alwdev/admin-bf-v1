@@ -30,19 +30,42 @@ class SboHomepageController extends Controller
         $query = SboGameList::where('active', 1);
 
         if ($type === 'EGAMES') {
-            $query->where('provider_type', 'EGAMES');
+            // ค้นหาแบบยืดหยุ่นสำหรับ Slot
+            $query->where(function($sub) {
+                $sub->where('provider_type', 'EGAMES')
+                    ->orWhere('provider_type', 'like', '%slot%')
+                    ->orWhere('provider_type', 'like', '%game%');
+            });
         } elseif ($type === 'LIVECASINO') {
-            $query->where('provider_type', 'LIVECASINO');
+            // ค้นหาแบบยืดหยุ่นสำหรับ Live Casino
+            $query->where(function($sub) {
+                $sub->where('provider_type', 'LIVECASINO')
+                    ->orWhere('provider_type', 'like', '%casino%')
+                    ->orWhere('provider_type', 'like', '%live%');
+            });
         }
 
         if ($q) {
             $query->where(function($sub) use ($q) {
                 $sub->where('game_name', 'like', "%$q%")
-                    ->orWhere('provider_name', 'like', "%$q%");
+                    ->orWhere('provider_name', 'like', "%$q%")
+                    ->orWhere('game_code', 'like', "%$q%");
             });
         }
 
         $games = $query->orderBy('provider_name')->orderBy('game_name')->limit(50)->get();
+
+        // หากไม่พบผลลัพธ์ด้วยการกรองประเภท ให้ลองค้นหาแบบไม่กรองประเภทเป็นทางเลือกสำรอง
+        if ($games->isEmpty() && $q && $type !== 'all') {
+            $games = SboGameList::where('active', 1)
+                ->where(function($sub) use ($q) {
+                    $sub->where('game_name', 'like', "%$q%")
+                        ->orWhere('provider_name', 'like', "%$q%")
+                        ->orWhere('game_code', 'like', "%$q%");
+                })
+                ->orderBy('provider_name')->orderBy('game_name')
+                ->limit(50)->get();
+        }
 
         return response()->json($games);
     }
