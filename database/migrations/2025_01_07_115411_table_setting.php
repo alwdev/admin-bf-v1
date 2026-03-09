@@ -11,11 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
         Schema::table('setting', function (Blueprint $table) {
-            $table->decimal('point',16,2)->default(0);
-            $table->decimal('turnover_point',16,2)->default(0);
-            $table->boolean('is_enable_point')->default(1);
+            if (!Schema::hasColumn('setting', 'point')) {
+                $table->decimal('point',16,2)->default(0);
+            }
+            if (!Schema::hasColumn('setting', 'turnover_point')) {
+                $table->decimal('turnover_point',16,2)->default(0);
+            }
+            if (!Schema::hasColumn('setting', 'is_enable_point')) {
+                $table->boolean('is_enable_point')->default(1);
+            }
         });
     }
 
@@ -24,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        // ไม่ลบคอลัมน์เพื่อความปลอดภัย
     }
 };

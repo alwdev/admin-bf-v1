@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::table('members', function (Blueprint $table) {
-            $table->string('remaining_spin')->default(0)->nullable();
-        });
+        if (Schema::hasTable('members')) {
+            Schema::table('members', function (Blueprint $table) {
+                if (!Schema::hasColumn('members', 'remaining_spin')) {
+                    $table->string('remaining_spin')->default(0)->nullable();
+                }
+            });
+        }
     }
 
     /**

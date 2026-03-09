@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::table('transfer', function (Blueprint $table) {
-            $table->boolean('turnover_on')->default(0);
-        });
+        if (!Schema::hasColumn('transfer', 'turnover_on')) {
+            Schema::table('transfer', function (Blueprint $table) {
+                $table->boolean('turnover_on')->default(0);
+            });
+        }
     }
 
     /**
@@ -22,6 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        if (Schema::hasColumn('transfer', 'turnover_on')) {
+            Schema::table('transfer', function (Blueprint $table) {
+                $table->dropColumn('turnover_on');
+            });
+        }
     }
 };

@@ -11,25 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('wrong_deposit', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('member_id');
-            $table->decimal('amount',16,2)->default(0);
-            $table->string('image')->nullable();
-            $table->string('note')->nullable();
-            $table->string('username')->nullable();
-            $table->string('bank_from_number')->nullable();
-            $table->string('bank_to_number')->nullable();
-            $table->string('bank_from_name')->nullable();
-            $table->string('bank_to_name')->nullable();
-            $table->string('bank_from_account_name')->nullable();
-            $table->string('bank_to_account_name')->nullable();
-            $table->string('date')->nullable();
-            $table->string('status_code')->nullable();
-            $table->string('status')->nullable();
-            $table->foreignId('user_id');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('wrong_deposit')) {
+            Schema::create('wrong_deposit', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('member_id');
+                $table->decimal('amount',16,2)->default(0);
+                $table->string('image')->nullable();
+                $table->string('note')->nullable();
+                $table->string('username')->nullable();
+                $table->string('bank_from_number')->nullable();
+                $table->string('bank_to_number')->nullable();
+                $table->string('bank_from_name')->nullable();
+                $table->string('bank_to_name')->nullable();
+                $table->string('bank_from_account_name')->nullable();
+                $table->string('bank_to_account_name')->nullable();
+                $table->string('date')->nullable();
+                $table->string('status_code')->nullable();
+                $table->string('status')->nullable();
+                $table->foreignId('user_id');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

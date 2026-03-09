@@ -11,11 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-Schema::table('promotion', function (Blueprint $table) {
-            // เพิ่มคอลัมน์ recurring_bonus_percentage เป็น decimal(5,2) สำหรับเปอร์เซ็นต์
-            // 5 หลักรวมทศนิยม 2 ตำแหน่ง (เช่น 100.00)
-            $table->decimal('recurring_bonus_percentage', 18, 2)->nullable()->after('recurring_promotion_days')->comment('โบนัสเปอร์เซ็นต์สำหรับโปรโมชั่นต่อเนื่อง');
-        });
+        if (Schema::hasTable('promotion')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                if (!Schema::hasColumn('promotion', 'recurring_bonus_percentage')) {
+                    // เพิ่มคอลัมน์ recurring_bonus_percentage เป็น decimal(5,2) สำหรับเปอร์เซ็นต์
+                    // 5 หลักรวมทศนิยม 2 ตำแหน่ง (เช่น 100.00)
+                    $table->decimal('recurring_bonus_percentage', 18, 2)->nullable()->after('recurring_promotion_days')->comment('โบนัสเปอร์เซ็นต์สำหรับโปรโมชั่นต่อเนื่อง');
+                }
+            });
+        }
     }
 
     /**
@@ -23,8 +27,12 @@ Schema::table('promotion', function (Blueprint $table) {
      */
     public function down(): void
     {
-        Schema::table('promotion', function (Blueprint $table) {
-            //
-        });
+        if (Schema::hasTable('promotion')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                if (Schema::hasColumn('promotion', 'recurring_bonus_percentage')) {
+                    $table->dropColumn('recurring_bonus_percentage');
+                }
+            });
+        }
     }
 };

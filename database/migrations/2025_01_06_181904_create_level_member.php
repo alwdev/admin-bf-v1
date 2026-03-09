@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('level_member', function (Blueprint $table) {
-            $table->id();
-            $table->string('level_name')->nullable();
-            $table->string('level_min_point')->nullable();
-            $table->string('level_max_point')->nullable();
-            $table->text('image')->nullable();
-            $table->integer('rank')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('level_member')) {
+            Schema::create('level_member', function (Blueprint $table) {
+                $table->id();
+                $table->string('level_name')->nullable();
+                $table->string('level_min_point')->nullable();
+                $table->string('level_max_point')->nullable();
+                $table->text('image')->nullable();
+                $table->integer('rank')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

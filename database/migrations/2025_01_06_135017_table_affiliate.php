@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::table('affiliate', function (Blueprint $table) {
-            $table->text('af_receive_percent_winlose_1')->change();
-        });
+        if (Schema::hasTable('affiliate')) {
+            Schema::table('affiliate', function (Blueprint $table) {
+                if (Schema::hasColumn('affiliate', 'af_receive_percent_winlose_1')) {
+                    $table->text('af_receive_percent_winlose_1')->change();
+                }
+            });
+        }
     }
 
     /**

@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::table('member_edit_balance', function (Blueprint $table) {
-            $table->decimal('amount',18,2)->default(0);
-        });
+        if (Schema::hasTable('member_edit_balance')) {
+            Schema::table('member_edit_balance', function (Blueprint $table) {
+                if (!Schema::hasColumn('member_edit_balance', 'amount')) {
+                    $table->decimal('amount',18,2)->default(0);
+                }
+            });
+        }
     }
 
     /**

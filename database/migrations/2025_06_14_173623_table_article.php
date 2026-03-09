@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('articles', function (Blueprint $table) {
-            $table->text('tags')->nullable();  // เก็บ Tags เป็น String
-        });
+        if (!Schema::hasColumn('articles', 'tags')) {
+            Schema::table('articles', function (Blueprint $table) {
+                $table->text('tags')->nullable();
+            });
+        }
     }
 
     /**
@@ -21,6 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-
+        if (Schema::hasColumn('articles', 'tags')) {
+            Schema::table('articles', function (Blueprint $table) {
+                $table->dropColumn('tags');
+            });
+        }
     }
 };

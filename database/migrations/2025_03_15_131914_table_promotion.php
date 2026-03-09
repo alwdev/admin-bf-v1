@@ -11,11 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::table('promotion', function (Blueprint $table) {
-            $table->text('description')->nullable();
-            $table->string('image')->nullable();
-        });
+        if (!Schema::hasColumn('promotion', 'description')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                $table->text('description')->nullable();
+            });
+        }
+        if (!Schema::hasColumn('promotion', 'image')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                $table->string('image')->nullable();
+            });
+        }
     }
 
     /**
@@ -23,6 +28,15 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        if (Schema::hasColumn('promotion', 'image')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                $table->dropColumn('image');
+            });
+        }
+        if (Schema::hasColumn('promotion', 'description')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                $table->dropColumn('description');
+            });
+        }
     }
 };

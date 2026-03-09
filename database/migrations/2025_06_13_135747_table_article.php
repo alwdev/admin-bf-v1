@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::table('articles', function (Blueprint $table) {
-    $table->longText('content')->change();  // เปลี่ยนประเภทคอลัมน์ content ให้เป็น LONGTEXT
-});
+        if (Schema::hasColumn('articles', 'content')) {
+            Schema::table('articles', function (Blueprint $table) {
+                $table->longText('content')->change();
+            });
+        }
     }
 
     /**
@@ -22,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        // ไม่สามารถย้อนกลับชนิดข้อมูลเดิมได้อย่างปลอดภัยหากไม่ทราบชนิดเดิม
     }
 };

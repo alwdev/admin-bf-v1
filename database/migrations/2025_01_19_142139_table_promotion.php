@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::table('promotion', function (Blueprint $table) {
-            $table->boolean('is_newuser')->default(false);
-        });
+        if (!Schema::hasColumn('promotion', 'is_newuser')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                $table->boolean('is_newuser')->default(false);
+            });
+        }
     }
 
     /**
@@ -22,6 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        if (Schema::hasColumn('promotion', 'is_newuser')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                $table->dropColumn('is_newuser');
+            });
+        }
     }
 };

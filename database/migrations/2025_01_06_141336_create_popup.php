@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('popup', function (Blueprint $table) {
-            $table->id();
-            $table->text('image')->nullable();
-            $table->text('note')->nullable();
-            $table->text('show_page')->nullable();
-            $table->boolean('active')->default(1);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('popup')) {
+            Schema::create('popup', function (Blueprint $table) {
+                $table->id();
+                $table->text('image')->nullable();
+                $table->text('note')->nullable();
+                $table->text('show_page')->nullable();
+                $table->boolean('active')->default(1);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

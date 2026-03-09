@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('promotion_useds', function (Blueprint $table) {
-            $table->id();
-            $table->integer('promotion_id');
-            $table->integer('member_id');
-            $table->string('promotion_name');
-            $table->integer('amount');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('promotion_useds')) {
+            Schema::create('promotion_useds', function (Blueprint $table) {
+                $table->id();
+                $table->integer('promotion_id');
+                $table->integer('member_id');
+                $table->string('promotion_name');
+                $table->integer('amount');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

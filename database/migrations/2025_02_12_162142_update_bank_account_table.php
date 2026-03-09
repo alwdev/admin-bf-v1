@@ -21,8 +21,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('bank_account', function (Blueprint $table) {
-            //
-        });
+        if (Schema::hasTable('bank_account')) {
+            Schema::table('bank_account', function (Blueprint $table) {
+                if (Schema::hasColumn('bank_account', 'prompay_no')) {
+                    $table->dropColumn('prompay_no');
+                }
+            });
+        }
     }
 };

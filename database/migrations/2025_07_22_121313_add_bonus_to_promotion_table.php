@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('promotion', function (Blueprint $table) {
-            //
-            $table->decimal('bonus_percentage', 18, 2)->nullable()->after('bonus');
-        });
+        if (Schema::hasTable('promotion')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                if (!Schema::hasColumn('promotion', 'bonus_percentage')) {
+                    $table->decimal('bonus_percentage', 18, 2)->nullable()->after('bonus');
+                }
+            });
+        }
     }
 
     /**
@@ -22,8 +25,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('promotion', function (Blueprint $table) {
-            //
-        });
+        if (Schema::hasTable('promotion')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                if (Schema::hasColumn('promotion', 'bonus_percentage')) {
+                    $table->dropColumn('bonus_percentage');
+                }
+            });
+        }
     }
 };

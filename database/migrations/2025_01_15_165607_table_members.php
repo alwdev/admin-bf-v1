@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::table('members', function (Blueprint $table) {
-            $table->string('ranking')->default('Bronze');
-        });
+        if (Schema::hasTable('members')) {
+            Schema::table('members', function (Blueprint $table) {
+                if (!Schema::hasColumn('members', 'ranking')) {
+                    $table->string('ranking')->default('Bronze');
+                }
+            });
+        }
     }
 
     /**

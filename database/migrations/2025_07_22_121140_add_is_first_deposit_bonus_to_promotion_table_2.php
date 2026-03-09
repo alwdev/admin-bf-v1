@@ -11,11 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('promotion', function (Blueprint $table) {
-            //
-            $table->boolean('is_first_deposit_bonus')->default(false)->after('is_newuser')->comment('ระบุว่าเป็นโปรโมชั่นสำหรับการฝากเงินครั้งแรกหรือไม่');
-             $table->decimal('recurring_promotion_bonus', 18, 2)->nullable()->after('recurring_promotion_days')->comment('โบนัสสำหรับโปรโมชั่นต่อเนื่อง (บาท)');
-        });
+        if (Schema::hasTable('promotion')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                if (!Schema::hasColumn('promotion', 'is_first_deposit_bonus')) {
+                    $table->boolean('is_first_deposit_bonus')->default(false)->after('is_newuser')->comment('ระบุว่าเป็นโปรโมชั่นสำหรับการฝากเงินครั้งแรกหรือไม่');
+                }
+                if (!Schema::hasColumn('promotion', 'recurring_promotion_bonus')) {
+                    $table->decimal('recurring_promotion_bonus', 18, 2)->nullable()->after('recurring_promotion_days')->comment('โบนัสสำหรับโปรโมชั่นต่อเนื่อง (บาท)');
+                }
+            });
+        }
     }
 
     /**
@@ -23,8 +28,15 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('promotion', function (Blueprint $table) {
-            //
-        });
+        if (Schema::hasTable('promotion')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                if (Schema::hasColumn('promotion', 'is_first_deposit_bonus')) {
+                    $table->dropColumn('is_first_deposit_bonus');
+                }
+                if (Schema::hasColumn('promotion', 'recurring_promotion_bonus')) {
+                    $table->dropColumn('recurring_promotion_bonus');
+                }
+            });
+        }
     }
 };

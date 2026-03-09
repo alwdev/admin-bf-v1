@@ -11,22 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('history', function (Blueprint $table) {
-            $table->id();
-            $table->index('id');
-            $table->string('request_id');
-            $table->string('roundId');
-            $table->string('username');
-            $table->string('game');
-            $table->string('provider');
-            $table->string('amount');
-            $table->string('winlose');
-            $table->string('type');
-            $table->timestamp('playtime');
-            $table->string('balanceBefore')->default(0);
-            $table->string('balanceAfter')->default(0);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('history')) {
+            Schema::create('history', function (Blueprint $table) {
+                $table->id();
+                $table->index('id');
+                $table->string('request_id');
+                $table->string('roundId');
+                $table->string('username');
+                $table->string('game');
+                $table->string('provider');
+                $table->string('amount');
+                $table->string('winlose');
+                $table->string('type');
+                $table->timestamp('playtime');
+                $table->string('balanceBefore')->default(0);
+                $table->string('balanceAfter')->default(0);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::table('promotion', function (Blueprint $table) {
-            $table->decimal('withdraw_limit',18,2)->default(0);
-        });
+        if (!Schema::hasColumn('promotion', 'withdraw_limit')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                $table->decimal('withdraw_limit',18,2)->default(0);
+            });
+        }
     }
 
     /**
@@ -22,6 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        if (Schema::hasColumn('promotion', 'withdraw_limit')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                $table->dropColumn('withdraw_limit');
+            });
+        }
     }
 };

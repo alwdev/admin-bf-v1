@@ -11,33 +11,33 @@ return new class extends Migration
      */
     public function up(): void
     {
-Schema::table('promotion', function (Blueprint $table) {
-            // is_use_percent (โปรโมชั่นนี้ใช้รูปการคำนวนเป็น %)
-            // แนะนำเป็น is_percentage_based หรือ calculation_type
-            // ถ้าเป็น boolean is_percentage_based ก็เหมาะสมครับ
-            $table->boolean('is_percentage_based')->default(false);
+        if (Schema::hasTable('promotion')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                if (!Schema::hasColumn('promotion', 'is_percentage_based')) {
+                    $table->boolean('is_percentage_based')->default(false);
+                }
 
-            // turnover_percent
-            // ถ้าเป็นเปอร์เซ็นต์ ควรใช้ decimal เพื่อความแม่นยำ
-            $table->decimal('turnover_percentage', 18, 2)->nullable()->after('turnover')->comment('เปอร์เซ็นต์ของยอดเทิร์นโอเวอร์');
+                if (!Schema::hasColumn('promotion', 'turnover_percentage')) {
+                    $table->decimal('turnover_percentage', 18, 2)->nullable()->after('turnover')->comment('เปอร์เซ็นต์ของยอดเทิร์นโอเวอร์');
+                }
 
-            // withdraw_limit_percent
-            // ถ้าเป็นเปอร์เซ็นต์ ควรใช้ decimal
-            $table->decimal('withdraw_limit_percentage', 18, 2)->nullable()->after('withdraw_limit')->comment('เปอร์เซ็นต์ของยอดถอนสูงสุด');
+                if (!Schema::hasColumn('promotion', 'withdraw_limit_percentage')) {
+                    $table->decimal('withdraw_limit_percentage', 18, 2)->nullable()->after('withdraw_limit')->comment('เปอร์เซ็นต์ของยอดถอนสูงสุด');
+                }
 
-            // is_continuously_promotion (เป็นโปรโมชั่นต่อเนื่อง มีคำที่ตรงกว่านี้มั้ยสามารถแก้ให้ได้เลยนะ)
-            // แนะนำเป็น is_recurring, is_evergreen, หรือ promotion_type (ถ้ามีหลายประเภท)
-            // ถ้าเป็น boolean ผมแนะนำ is_recurring หรือ is_evergreen ครับ
-            $table->boolean('is_recurring_promotion')->default(false)->after('withdraw_limit_percentage')->comment('ระบุว่าเป็นโปรโมชั่นที่เกิดซ้ำ/ต่อเนื่องหรือไม่');
+                if (!Schema::hasColumn('promotion', 'is_recurring_promotion')) {
+                    $table->boolean('is_recurring_promotion')->default(false)->after('withdraw_limit_percentage')->comment('ระบุว่าเป็นโปรโมชั่นที่เกิดซ้ำ/ต่อเนื่องหรือไม่');
+                }
 
-            // continuously_promotion_days
-            $table->integer('recurring_promotion_days')->nullable()->after('is_recurring_promotion')->comment('จำนวนวันของโปรโมชั่นที่เกิดซ้ำ (ถ้ามี)');
+                if (!Schema::hasColumn('promotion', 'recurring_promotion_days')) {
+                    $table->integer('recurring_promotion_days')->nullable()->after('is_recurring_promotion')->comment('จำนวนวันของโปรโมชั่นที่เกิดซ้ำ (ถ้ามี)');
+                }
 
-            // all_games (ใช้ในหน้าเกมไหนได้บ้าง อยากให้มีค่าเริ่มต้นเป็น ทั้งหมด และมีเกมค่าอื่นคือ สล็อต คาสิโนสด ยิงปลา เกมส์ไพ่ หวย กีฬา)
-            // แนะนำให้เก็บเป็น JSON หรือใช้ตาราง pivot ถ้ามีหลายเกมที่เลือกได้ (Many-to-Many)
-            // ในที่นี้จะใช้ JSON สำหรับตัวเลือกง่ายๆ
-            $table->longText('applicable_games')->nullable()->after('description')->comment('ระบุเกมที่สามารถใช้โปรโมชั่นนี้ได้ (เช่น ทั้งหมด, สล็อต, คาสิโนสด)');
-        });
+                if (!Schema::hasColumn('promotion', 'applicable_games')) {
+                    $table->longText('applicable_games')->nullable()->after('description')->comment('ระบุเกมที่สามารถใช้โปรโมชั่นนี้ได้ (เช่น ทั้งหมด, สล็อต, คาสิโนสด)');
+                }
+            });
+        }
     }
 
     /**
@@ -45,8 +45,27 @@ Schema::table('promotion', function (Blueprint $table) {
      */
     public function down(): void
     {
-        Schema::table('promotion', function (Blueprint $table) {
-            //
-        });
+        if (Schema::hasTable('promotion')) {
+            Schema::table('promotion', function (Blueprint $table) {
+                if (Schema::hasColumn('promotion', 'is_percentage_based')) {
+                    $table->dropColumn('is_percentage_based');
+                }
+                if (Schema::hasColumn('promotion', 'turnover_percentage')) {
+                    $table->dropColumn('turnover_percentage');
+                }
+                if (Schema::hasColumn('promotion', 'withdraw_limit_percentage')) {
+                    $table->dropColumn('withdraw_limit_percentage');
+                }
+                if (Schema::hasColumn('promotion', 'is_recurring_promotion')) {
+                    $table->dropColumn('is_recurring_promotion');
+                }
+                if (Schema::hasColumn('promotion', 'recurring_promotion_days')) {
+                    $table->dropColumn('recurring_promotion_days');
+                }
+                if (Schema::hasColumn('promotion', 'applicable_games')) {
+                    $table->dropColumn('applicable_games');
+                }
+            });
+        }
     }
 };

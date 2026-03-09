@@ -11,17 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bank_forward_balance', function (Blueprint $table) {
-            $table->id();
-            $table->string('bank_no');
-            $table->string('bank_name');
-            $table->string('bank_account');
-            $table->string('type');
-            $table->string('note')->nullable();
-            $table->decimal('amount',16,2)->default(0);
-            $table->string('created_by')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('bank_forward_balance')) {
+            Schema::create('bank_forward_balance', function (Blueprint $table) {
+                $table->id();
+                $table->string('bank_no');
+                $table->string('bank_name');
+                $table->string('bank_account');
+                $table->string('type');
+                $table->string('note')->nullable();
+                $table->decimal('amount',16,2)->default(0);
+                $table->string('created_by')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

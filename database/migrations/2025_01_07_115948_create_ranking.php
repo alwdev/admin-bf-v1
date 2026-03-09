@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ranking', function (Blueprint $table) {
-            $table->id();
-            $table->string('credit')->nullable();
-            $table->string('diamond')->nullable();
-            $table->string('exp')->nullable();
-            $table->text('image')->nullable();
-            $table->integer('rank')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('ranking')) {
+            Schema::create('ranking', function (Blueprint $table) {
+                $table->id();
+                $table->string('credit')->nullable();
+                $table->string('diamond')->nullable();
+                $table->string('exp')->nullable();
+                $table->text('image')->nullable();
+                $table->integer('rank')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

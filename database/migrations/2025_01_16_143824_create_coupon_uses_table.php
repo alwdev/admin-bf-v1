@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('coupon_uses', function (Blueprint $table) {
-            $table->id();
-            $table->integer('coupon_id');
-            $table->integer('member_id');
-            $table->string('code');
-            $table->integer('amount');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('coupon_uses')) {
+            Schema::create('coupon_uses', function (Blueprint $table) {
+                $table->id();
+                $table->integer('coupon_id');
+                $table->integer('member_id');
+                $table->string('code');
+                $table->integer('amount');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
