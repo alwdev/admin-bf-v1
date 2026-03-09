@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasColumn('bank_account', 'balance')) {
-            Schema::table('bank_account', function (Blueprint $table) {
-                $table->decimal('balance',18,2)->default(0);
-            });
+        if (Schema::hasTable('bank_account')) {
+            if (!Schema::hasColumn('bank_account', 'balance')) {
+                Schema::table('bank_account', function (Blueprint $table) {
+                    $table->decimal('balance',18,2)->default(0);
+                });
+            }
         }
     }
 

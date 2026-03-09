@@ -11,20 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('wheel_history', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('member_id');
-        //     $table->string('win_text')->nullable();
-        //     $table->string('turnover')->nullable();
-        //     $table->decimal('win',18,2)->default(0);
-        //     $table->timestamps();
-        // });
+        if (!Schema::hasTable('wheel_history')) {
+            Schema::create('wheel_history', function (Blueprint $table) {
+                $table->id();
+                $table->string('member_id');
+                $table->string('win_text')->nullable();
+                $table->string('turnover')->nullable();
+                $table->decimal('win',18,2)->default(0);
+                $table->timestamps();
+            });
+        }
 
-        // Schema::table('transfer', function (Blueprint $table) {
-        //     $table->decimal('turnover',18,2)->default(0);
-        //     $table->decimal('turnover_balance',18,2)->default(0);
-        // });
-
+        if (Schema::hasTable('transfer')) {
+            Schema::table('transfer', function (Blueprint $table) {
+                if (!Schema::hasColumn('transfer', 'turnover')) {
+                    $table->decimal('turnover',18,2)->default(0);
+                }
+                if (!Schema::hasColumn('transfer', 'turnover_balance')) {
+                    $table->decimal('turnover_balance',18,2)->default(0);
+                }
+            });
+        }
     }
 
     /**

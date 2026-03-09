@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasColumn('articles', 'category')) {
-            Schema::table('articles', function (Blueprint $table) {
-                $table->enum('category', ['บอล', 'หวย', 'ดูหนังออนไลน์', '18+', 'การพนัน', 'ข่าวในประเทศ'])->nullable();
-            });
+        if (Schema::hasTable('articles')) {
+            if (!Schema::hasColumn('articles', 'category')) {
+                Schema::table('articles', function (Blueprint $table) {
+                    $table->enum('category', ['บอล', 'หวย', 'ดูหนังออนไลน์', '18+', 'การพนัน', 'ข่าวในประเทศ'])->nullable();
+                });
+            }
         }
     }
 

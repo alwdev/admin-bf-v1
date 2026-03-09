@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (Schema::hasColumn('articles', 'content')) {
-            Schema::table('articles', function (Blueprint $table) {
-                $table->longText('content')->change();
-            });
+        if (Schema::hasTable('articles')) {
+            if (Schema::hasColumn('articles', 'content')) {
+                Schema::table('articles', function (Blueprint $table) {
+                    $table->longText('content')->change();
+                });
+            }
         }
     }
 

@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('promotion_ads', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('title');
-        //     $table->text('image');
-        //     $table->text('description')->nullable();
-        //     $table->boolean('enable')->default(1);
-        //     $table->boolean('active')->default(1);
-        //     $table->timestamps();
-        // });
+        if (!Schema::hasTable('promotion_ads')) {
+            Schema::create('promotion_ads', function (Blueprint $table) {
+                $table->id();
+                $table->string('title');
+                $table->text('image');
+                $table->text('description')->nullable();
+                $table->boolean('enable')->default(1);
+                $table->boolean('active')->default(1);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

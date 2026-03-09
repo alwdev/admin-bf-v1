@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasColumn('promotion', 'is_newuser')) {
-            Schema::table('promotion', function (Blueprint $table) {
-                $table->boolean('is_newuser')->default(false);
-            });
+        if (Schema::hasTable('promotion')) {
+            if (!Schema::hasColumn('promotion', 'is_newuser')) {
+                Schema::table('promotion', function (Blueprint $table) {
+                    $table->boolean('is_newuser')->default(false);
+                });
+            }
         }
     }
 

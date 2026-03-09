@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasColumn('member_edit_balance', 'type')) {
-            Schema::table('member_edit_balance', function (Blueprint $table) {
-                $table->string('type')->nullable();
-            });
+        if (Schema::hasTable('member_edit_balance')) {
+            if (!Schema::hasColumn('member_edit_balance', 'type')) {
+                Schema::table('member_edit_balance', function (Blueprint $table) {
+                    $table->string('type')->nullable();
+                });
+            }
         }
     }
 

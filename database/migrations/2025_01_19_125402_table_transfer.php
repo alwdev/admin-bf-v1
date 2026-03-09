@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasColumn('transfer', 'turnover_on')) {
-            Schema::table('transfer', function (Blueprint $table) {
-                $table->boolean('turnover_on')->default(0);
-            });
+        if (Schema::hasTable('transfer')) {
+            if (!Schema::hasColumn('transfer', 'turnover_on')) {
+                Schema::table('transfer', function (Blueprint $table) {
+                    $table->boolean('turnover_on')->default(0);
+                });
+            }
         }
     }
 
