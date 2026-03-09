@@ -16,7 +16,9 @@ return new class extends Migration
                 $table->unsignedBigInteger('game_list_id');
                 $table->timestamps();
 
-                $table->foreign('game_list_id')->references('id')->on('sbo_game_lists')->onDelete('cascade');
+                if (Schema::hasTable('sbo_game_lists')) {
+                    $table->foreign('game_list_id')->references('id')->on('sbo_game_lists')->onDelete('cascade');
+                }
                 $table->unique(['category', 'position']);
                 $table->unique(['category', 'game_list_id']);
             });
@@ -28,4 +30,3 @@ return new class extends Migration
         Schema::dropIfExists('sbo_homepage_items');
     }
 };
-
