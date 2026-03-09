@@ -11,18 +11,40 @@ class SboHomepageController extends Controller
 {
     public function index(Request $request)
     {
-        $hotSelected = SboHomepageItem::where('category', 'hot')->orderBy('position')->get();
-        $slotSelected = SboHomepageItem::where('category', 'slot')->orderBy('position')->get();
-        $liveSelected = SboHomepageItem::where('category', 'livecasino')->orderBy('position')->get();
+        $hotSelected = SboHomepageItem::where('category', 'hot')->orderBy('position')->with('game')->get();
+        $slotSelected = SboHomepageItem::where('category', 'slot')->orderBy('position')->with('game')->get();
+        $liveSelected = SboHomepageItem::where('category', 'livecasino')->orderBy('position')->with('game')->get();
 
-        $allActiveGames = SboGameList::where('active', 1)->orderBy('provider_name')->orderBy('game_name')->get();
-        $slotGames = SboGameList::where('active', 1)->where('provider_type', 'EGAMES')->orderBy('provider_name')->orderBy('game_name')->get();
-        $liveGames = SboGameList::where('active', 1)->where('provider_type', 'LIVECASINO')->orderBy('provider_name')->orderBy('game_name')->get();
-
+        // ดึงเฉพาะที่เลือกไว้ก่อนเพื่อความเร็วในการโหลดครั้งแรก
+        // ส่วนรายการเกมทั้งหมดจะใช้การค้นหาผ่าน Ajax แทนเพื่อลด Memory Usage
         return view('sbo.homepage.index', compact(
-            'hotSelected', 'slotSelected', 'liveSelected',
-            'allActiveGames', 'slotGames', 'liveGames'
+            'hotSelected', 'slotSelected', 'liveSelected'
         ));
+    }
+
+    public function searchGames(Request $request)
+    {
+        $q = $request->input('q');
+        $type = $request->input('type'); // EGAMES, LIVECASINO or all
+
+        $query = SboGameList::where('active', 1);
+
+        if ($type === 'EGAMES') {
+            $query->where('provider_type', 'EGAMES');
+        } elseif ($type === 'LIVECASINO') {
+            $query->where('provider_type', 'LIVECASINO');
+        }
+
+        if ($q) {
+            $query->where(function($sub) use ($q) {
+                $sub->where('game_name', 'like', "%$q%")
+                    ->orWhere('provider_name', 'like', "%$q%");
+            });
+        }
+
+        $games = $query->orderBy('provider_name')->orderBy('game_name')->limit(50)->get();
+
+        return response()->json($games);
     }
 
     public function update(Request $request)

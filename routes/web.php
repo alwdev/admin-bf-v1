@@ -188,6 +188,7 @@ Route::middleware('auth')->group(function () {
 
     // Front Page Settings
     Route::get('/sbo/homepage', [App\Http\Controllers\SboHomepageController::class, 'index'])->name('sbo.homepage.index');
+    Route::get('/sbo/homepage/search', [App\Http\Controllers\SboHomepageController::class, 'searchGames'])->name('sbo.homepage.search');
     Route::post('/sbo/homepage', [App\Http\Controllers\SboHomepageController::class, 'update'])->name('sbo.homepage.update');
 
     Route::get('/partner', [App\Http\Controllers\PartnerController::class, 'index'])->name('partner.index')->middleware('CheckPermissionUser:manageuser,edit');
