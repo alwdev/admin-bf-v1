@@ -17,6 +17,23 @@
     <div class="row">
         <div class="col-12 card">
             <div class="card-body">
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <div class="d-flex justify-content-between mb-3 align-items-end">
                     <h4 class="card-title mb-0">รายการ Provider</h4>
                     <form class="form-inline" method="GET" action="{{ route('sbo.providers.index') }}">

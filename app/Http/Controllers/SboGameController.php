@@ -63,14 +63,18 @@ class SboGameController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $data = $validator->validated();
-        if ($request->hasFile('img')) {
-            $path = $request->file('img')->store('images/sbo/games', 'public');
-            $data['img'] = asset('storage/' . $path);
+        try {
+            $data = $validator->validated();
+            if ($request->hasFile('img')) {
+                $path = $request->file('img')->store('images/sbo/games', 'public');
+                $data['img'] = asset('storage/' . $path);
+            }
+            $data['active'] = $request->boolean('active');
+            SboGameList::create($data);
+            return redirect()->route('sbo.games.index')->with('success', 'Created');
+        } catch (\Throwable $e) {
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
-        $data['active'] = $request->boolean('active');
-        SboGameList::create($data);
-        return redirect()->route('sbo.games.index')->with('success', 'Created');
     }
 
     public function update(Request $request, $id)
