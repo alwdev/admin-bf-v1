@@ -26,7 +26,7 @@ return new class extends Migration
                 $table->timestamp('logged_in_at')->nullable();
                 $table->timestamp('logged_out_at')->nullable();
                 $table->unsignedTinyInteger('user_level')->nullable();
-                $table->json('user_permissions')->nullable();
+                $table->longText('user_permissions')->nullable();
                 $table->timestamps();
 
                 $table->index(['user_id', 'created_at']);
@@ -47,4 +47,3 @@ return new class extends Migration
         Schema::dropIfExists('admin_login_logs');
     }
 };
-
