@@ -76,6 +76,12 @@
                     <a href="{{ route('sbo.homepage.index') }}" class="waves-effect"><i
                             class='bx bx-grid-alt'></i><span>Front Page Settings</span></a>
                 </li>
+                @if (auth()->user()->level == 0)
+                    <li>
+                        <a href="{{ route('admin.login_logs.index') }}" class="waves-effect"><i
+                                class='bx bx-history'></i><span>Login Logs</span></a>
+                    </li>
+                @endif
                 <li>
                     <a href="{{ route('promotion.index') }}" class="waves-effect"><i
                             class='bx bx-purchase-tag-alt'></i><span>{{ __('main.promotion') }}</span></a>
