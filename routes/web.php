@@ -194,12 +194,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/login-logs', [App\Http\Controllers\AdminLoginLogController::class, 'index'])
         ->name('admin.login_logs.index')
         ->middleware('CheckPermissionUser:manageuser,view')
-        ->middleware(function ($request, $next) {
-            if (auth()->user()?->level !== 0) {
-                abort(403);
-            }
-            return $next($request);
-        });
+        ->middleware('RequireUserLevelZero');
 
     Route::get('/partner', [App\Http\Controllers\PartnerController::class, 'index'])->name('partner.index')->middleware('CheckPermissionUser:manageuser,edit');
     Route::get('/partner/add', [App\Http\Controllers\PartnerController::class, 'add'])->name('partner.add')->middleware('CheckPermissionUser:manageuser,edit');
