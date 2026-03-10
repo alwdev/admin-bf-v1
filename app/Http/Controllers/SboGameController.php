@@ -55,7 +55,7 @@ class SboGameController extends Controller
             'game_name' => 'required|string|max:255',
             'game_code' => 'nullable|string|max:255',
             'gpid' => 'nullable|integer',
-            'active' => 'nullable|boolean',
+            'active' => 'nullable',
             'payload' => 'nullable|string',
             'img' => 'nullable|image|max:4096',
         ]);
@@ -65,13 +65,22 @@ class SboGameController extends Controller
 
         try {
             $data = $validator->validated();
+            if (!array_key_exists('gpid', $data)) {
+                $data['gpid'] = null;
+            }
+            if (!array_key_exists('game_id', $data)) {
+                $data['game_id'] = null;
+            }
+            if (!array_key_exists('game_code', $data)) {
+                $data['game_code'] = null;
+            }
             if ($request->hasFile('img')) {
                 $path = $request->file('img')->store('images/sbo/games', 'public');
                 $data['img'] = asset('storage/' . $path);
             }
             $data['active'] = $request->boolean('active');
-            SboGameList::create($data);
-            return redirect()->route('sbo.games.index')->with('success', 'Created');
+            $game = SboGameList::create($data);
+            return redirect()->route('sbo.games.index')->with('success', 'Created #' . $game->id);
         } catch (\Throwable $e) {
             return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
@@ -87,7 +96,7 @@ class SboGameController extends Controller
             'game_name' => 'sometimes|required|string|max:255',
             'game_code' => 'sometimes|string|max:255',
             'gpid' => 'sometimes|integer',
-            'active' => 'sometimes|boolean',
+            'active' => 'sometimes',
             'payload' => 'sometimes|string',
             'img' => 'sometimes|image|max:4096',
         ]);

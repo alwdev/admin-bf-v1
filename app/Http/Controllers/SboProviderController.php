@@ -46,6 +46,7 @@ class SboProviderController extends Controller
             'img' => 'nullable|image|max:4096',
             'supports_game_id_login' => 'nullable|boolean',
             'devices' => 'nullable|string',
+            'active' => 'nullable',
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
@@ -78,7 +79,7 @@ class SboProviderController extends Controller
             'img' => 'sometimes|image|max:4096',
             'supports_game_id_login' => 'sometimes|boolean',
             'devices' => 'sometimes|string',
-            'active' => 'sometimes|boolean',
+            'active' => 'sometimes',
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
