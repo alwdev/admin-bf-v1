@@ -52,6 +52,9 @@ class SboProviderController extends Controller
         }
         try {
             $data = $validator->validated();
+            if (!array_key_exists('gpid', $data)) {
+                $data['gpid'] = null;
+            }
             if ($request->hasFile('img')) {
                 $path = $request->file('img')->store('images/sbo/providers', 'public');
                 $data['img'] = asset('storage/' . $path);
@@ -81,6 +84,9 @@ class SboProviderController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
         $data = $validator->validated();
+        if (!array_key_exists('gpid', $data)) {
+            $data['gpid'] = null;
+        }
         if ($request->hasFile('img')) {
             $path = $request->file('img')->store('images/sbo/providers', 'public');
             $data['img'] = asset('storage/' . $path);
