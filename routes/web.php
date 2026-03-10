@@ -191,6 +191,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/sbo/homepage/search', [App\Http\Controllers\SboHomepageController::class, 'searchGames'])->name('sbo.homepage.search');
     Route::post('/sbo/homepage', [App\Http\Controllers\SboHomepageController::class, 'update'])->name('sbo.homepage.update');
 
+    Route::get('/admin/login-logs', [App\Http\Controllers\AdminLoginLogController::class, 'index'])
+        ->name('admin.login_logs.index')
+        ->middleware('CheckPermissionUser:manageuser,view')
+        ->middleware(function ($request, $next) {
+            if (auth()->user()?->level !== 0) {
+                abort(403);
+            }
+            return $next($request);
+        });
+
     Route::get('/partner', [App\Http\Controllers\PartnerController::class, 'index'])->name('partner.index')->middleware('CheckPermissionUser:manageuser,edit');
     Route::get('/partner/add', [App\Http\Controllers\PartnerController::class, 'add'])->name('partner.add')->middleware('CheckPermissionUser:manageuser,edit');
     Route::post('/partner/create', [App\Http\Controllers\PartnerController::class, 'create'])->name('partner.create')->middleware('CheckPermissionUser:manageuser,edit');

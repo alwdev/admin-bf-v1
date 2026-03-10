@@ -3,9 +3,15 @@
 namespace App\Providers;
 
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Failed;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use App\Listeners\LogAdminSuccessfulLogin;
+use App\Listeners\LogAdminFailedLogin;
+use App\Listeners\LogAdminLogout;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -17,6 +23,15 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        Login::class => [
+            LogAdminSuccessfulLogin::class,
+        ],
+        Failed::class => [
+            LogAdminFailedLogin::class,
+        ],
+        Logout::class => [
+            LogAdminLogout::class,
         ],
     ];
 
