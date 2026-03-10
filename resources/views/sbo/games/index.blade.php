@@ -133,11 +133,16 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label>Provider</label>
-                            <input type="text" class="form-control" name="provider_name" required>
+                            <select class="form-control" name="provider_name" id="create_provider_name" required>
+                                <option value="">เลือก Provider</option>
+                                @foreach($providers as $p)
+                                    <option value="{{ $p->name }}" data-type="{{ $p->type }}">{{ $p->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Type</label>
-                            <input type="text" class="form-control" name="provider_type">
+                            <input type="text" class="form-control" name="provider_type" id="create_provider_type">
                         </div>
                         <div class="form-group">
                             <label>Game Name</label>
@@ -332,5 +337,12 @@
             $('#editForm').attr('action', '/sbo/games/' + id);
             $('#editModal').modal('show');
         }
+
+        $('#create_provider_name').on('change', function() {
+            const type = $(this).find('option:selected').data('type');
+            if (type && !$('#create_provider_type').val()) {
+                $('#create_provider_type').val(type);
+            }
+        });
     </script>
 @endsection

@@ -57,7 +57,7 @@ class SboGameController extends Controller
             'gpid' => 'nullable|integer',
             'active' => 'nullable|boolean',
             'payload' => 'nullable|string',
-            'img' => 'nullable|image|max:2048',
+            'img' => 'nullable|image|max:4096',
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
@@ -89,7 +89,7 @@ class SboGameController extends Controller
             'gpid' => 'sometimes|integer',
             'active' => 'sometimes|boolean',
             'payload' => 'sometimes|string',
-            'img' => 'sometimes|image|max:2048',
+            'img' => 'sometimes|image|max:4096',
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();

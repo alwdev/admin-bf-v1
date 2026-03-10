@@ -43,7 +43,7 @@ class SboProviderController extends Controller
             'name' => 'required|string|max:255',
             'type' => 'nullable|string|max:255',
             'lobby_game_id' => 'nullable|integer',
-            'img' => 'nullable|image|max:2048',
+            'img' => 'nullable|image|max:4096',
             'supports_game_id_login' => 'nullable|boolean',
             'devices' => 'nullable|string',
         ]);
@@ -72,7 +72,7 @@ class SboProviderController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'type' => 'sometimes|string|max:255',
             'lobby_game_id' => 'sometimes|integer',
-            'img' => 'sometimes|image|max:2048',
+            'img' => 'sometimes|image|max:4096',
             'supports_game_id_login' => 'sometimes|boolean',
             'devices' => 'sometimes|string',
             'active' => 'sometimes|boolean',
