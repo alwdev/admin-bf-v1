@@ -47,6 +47,7 @@
                                     class="active">{{ __('main.report_transfer') }}</a></li>
                             <li class=""><a href="{{ route('report.edit_balance') }}"
                                     class="active">{{ __('main.report_edit_credit') }}</a></li>
+                            <li class=""><a href="{{ route('report.ufa_transactions') }}" class="active">UFABET Bet</a></li>
                             {{-- <li class=""><a href="{{ '/pghard_report/0/0' }}" class="active">PG HARD eport</a></li> --}}
                         </ul>
                     </li>

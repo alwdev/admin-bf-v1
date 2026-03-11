@@ -219,6 +219,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/smsLog', function () {
         return view('SMS.list');
     })->name('smsLog.index');
+
+    Route::get('/report/ufa-transactions', [App\Http\Controllers\UfaTransactionReportController::class, 'index'])
+        ->name('report.ufa_transactions')
+        ->middleware('CheckPermissionUser:report,view');
 });
 
 require __DIR__ . '/auth.php';
