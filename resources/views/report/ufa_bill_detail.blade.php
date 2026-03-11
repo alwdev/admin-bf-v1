@@ -34,7 +34,10 @@
 
                 <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#tab-api" role="tab">Bill API</a>
+                        <a class="nav-link active" data-toggle="tab" href="#tab-rendered" role="tab">Bill Detail</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#tab-api" role="tab">API Raw</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#tab-request" role="tab">Stored Request Data</a>
@@ -42,7 +45,19 @@
                 </ul>
 
                 <div class="tab-content p-3 border border-top-0">
-                    <div class="tab-pane active" id="tab-api" role="tabpanel">
+                    <div class="tab-pane active" id="tab-rendered" role="tabpanel">
+                        @if ($apiResponseHtml)
+                            <div class="border rounded p-2 bg-white">
+                                {!! $apiResponseHtml !!}
+                            </div>
+                        @elseif ($apiError)
+                            <div class="alert alert-warning mb-0">{{ $apiError }}</div>
+                        @else
+                            <div class="text-muted">ไม่มีข้อมูลจาก API</div>
+                        @endif
+                    </div>
+
+                    <div class="tab-pane" id="tab-api" role="tabpanel">
                         <div class="mb-2">
                             <strong>Endpoint:</strong> {{ $apiUrl }}/bill
                         </div>
@@ -67,4 +82,3 @@
         </div>
     </div>
 @endsection
-
