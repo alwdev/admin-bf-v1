@@ -223,6 +223,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/report/ufa-transactions', [App\Http\Controllers\UfaTransactionReportController::class, 'index'])
         ->name('report.ufa_transactions')
         ->middleware('CheckPermissionUser:report,view');
+
+    Route::get('/report/ufa-transactions/{betId}', [App\Http\Controllers\UfaBillController::class, 'show'])
+        ->name('report.ufa_bill_detail')
+        ->middleware('CheckPermissionUser:report,view');
 });
 
 require __DIR__ . '/auth.php';

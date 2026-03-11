@@ -20,16 +20,19 @@
             <div class="card-body">
                 <form class="form-inline mb-3" method="GET" action="{{ route('report.ufa_transactions') }}">
                     <div class="form-group mr-2 mb-2">
-                        <input type="text" name="username" value="{{ request('username') }}" class="form-control" placeholder="Username">
+                        <input type="text" name="username" value="{{ request('username') }}" class="form-control"
+                            placeholder="Username">
                     </div>
                     <div class="form-group mr-2 mb-2">
-                        <input type="text" name="bet_id" value="{{ request('bet_id') }}" class="form-control" placeholder="Bet ID">
+                        <input type="text" name="bet_id" value="{{ request('bet_id') }}" class="form-control"
+                            placeholder="Bet ID">
                     </div>
                     <div class="form-group mr-2 mb-2">
                         <select name="type" class="form-control">
                             <option value="">ทุกประเภท</option>
                             @foreach ($typeOptions as $opt)
-                                <option value="{{ $opt }}" {{ request('type') === $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                                <option value="{{ $opt }}" {{ request('type') === $opt ? 'selected' : '' }}>
+                                    {{ $opt }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -37,7 +40,8 @@
                         <select name="bet_type" class="form-control">
                             <option value="">ทุก bet_type</option>
                             @foreach ($betTypeOptions as $opt)
-                                <option value="{{ $opt }}" {{ request('bet_type') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                                <option value="{{ $opt }}" {{ request('bet_type') == $opt ? 'selected' : '' }}>
+                                    {{ $opt }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -45,7 +49,8 @@
                         <select name="status" class="form-control">
                             <option value="">ทุกสถานะ</option>
                             @foreach ($statusOptions as $opt)
-                                <option value="{{ $opt }}" {{ request('status') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                                <option value="{{ $opt }}" {{ request('status') == $opt ? 'selected' : '' }}>
+                                    {{ $opt }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -58,7 +63,9 @@
                     <div class="form-group mr-2 mb-2">
                         <select name="per_page" class="form-control">
                             @foreach ([50, 100, 150, 200] as $pp)
-                                <option value="{{ $pp }}" {{ (int) request('per_page', $perPage ?? 50) === $pp ? 'selected' : '' }}>{{ $pp }}/หน้า</option>
+                                <option value="{{ $pp }}"
+                                    {{ (int) request('per_page', $perPage ?? 50) === $pp ? 'selected' : '' }}>
+                                    {{ $pp }}/หน้า</option>
                             @endforeach
                         </select>
                     </div>
@@ -89,7 +96,9 @@
                                 <tr>
                                     <td>{{ $tx->id }}</td>
                                     <td>{{ $tx->username }}</td>
-                                    <td>{{ $tx->bet_id }}</td>
+                                    <td><a
+                                            href="{{ route('report.ufa_bill_detail', $tx->bet_id) }}">{{ $tx->bet_id }}</a>
+                                    </td>
                                     <td>{{ $tx->bet_type }}</td>
                                     <td>{{ $tx->amount }}</td>
                                     <td>{{ $tx->bonus }}</td>
@@ -99,7 +108,8 @@
                                     <td>{{ $tx->type }}</td>
                                     <td>{{ $tx->created_at }}</td>
                                     <td class="text-center">
-                                        <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#reqModal{{ $tx->id }}">Req</button>
+                                        <button type="button" class="btn btn-sm btn-info" data-toggle="modal"
+                                            data-target="#reqModal{{ $tx->id }}">Req</button>
                                     </td>
                                 </tr>
 
@@ -108,7 +118,8 @@
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title">Request Data #{{ $tx->id }}</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
@@ -134,4 +145,3 @@
         </div>
     </div>
 @endsection
-
