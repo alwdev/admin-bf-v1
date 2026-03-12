@@ -589,15 +589,26 @@
             });
         }
 
-    @if (session('success'))
-        Swal.fire({
-            position: 'top-end',
-            type: 'success',
-            title: 'Your work has been saved',
-            showConfirmButton: false,
-            timer: 1500
-        })
+        const flashSuccess = @json(session('success'));
+        if (flashSuccess) {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: flashSuccess,
+                showConfirmButton: false,
+                timer: 2000
+            });
+        }
 
-    @endif
+        const flashError = @json(session('error'));
+        if (flashError) {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: flashError,
+                showConfirmButton: false,
+                timer: 3500
+            });
+        }
     </script>
 @endsection

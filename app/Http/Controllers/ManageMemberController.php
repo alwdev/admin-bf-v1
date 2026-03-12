@@ -528,10 +528,26 @@ class ManageMemberController extends Controller
                 $log->log = 'SBO ' . ($apiAction ?? '') . ' resp ' . $apiRespBody;
                 $log->save();
             }
-            return redirect()->route('managemember.index')->with('error', 'failed');
+            $flashMessage = 'ทำรายการไม่สำเร็จ';
+            if ($e instanceof \RuntimeException && $e->getMessage() === 'member not found') {
+                $flashMessage = 'ไม่พบสมาชิก';
+            } elseif (isset($apiRespBody) && is_string($apiRespBody)) {
+                $decoded = json_decode($apiRespBody, true);
+                if (is_array($decoded) && isset($decoded['error']) && is_array($decoded['error'])) {
+                    $errId = $decoded['error']['id'] ?? null;
+                    $errMsg = $decoded['error']['msg'] ?? null;
+                    if ($errId !== null || $errMsg) {
+                        $actionText = ($apiAction === 'withdraw') ? 'ถอน' : 'เติม';
+                        $messageText = $errMsg ? (' ' . $errMsg) : '';
+                        $idText = ($errId !== null) ? (' (' . $errId . ')') : '';
+                        $flashMessage = 'SBO ' . $actionText . ' ไม่สำเร็จ:' . $messageText . $idText;
+                    }
+                }
+            }
+            return redirect()->route('managemember.index')->with('error', $flashMessage);
         }
 
-        return redirect()->route('managemember.index')->with('success', 'success');
+        return redirect()->route('managemember.index')->with('success', 'ทำรายการสำเร็จ');
     }
 
     function memberupdateBankAccount(Request $request)
