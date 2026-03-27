@@ -6,7 +6,7 @@
 
 @section('content')
     @php
-        $ambGamesListQuery = request()->only('product_id', 'category_id', 's', 'per_page');
+        $ambGamesListQuery = request()->only('product_id', 'category_id', 's', 'per_page', 'active');
     @endphp
 
     <div class="amb-list-page">
@@ -36,30 +36,54 @@
     <div class="card">
         <div class="card-body">
             <div class="amb-list-toolbar">
-                <form class="form-inline" method="GET" action="{{ route('amb.games.index') }}">
-                    <select name="product_id" class="form-control mr-2">
-                        <option value="">— Provider ทั้งหมด —</option>
-                        @foreach ($products as $p)
-                            <option value="{{ $p->id }}" @selected((string) request('product_id') === (string) $p->id)>
-                                {{ $p->product_code }} — {{ $p->product_name }}</option>
-                        @endforeach
-                    </select>
-                    <select name="category_id" class="form-control mr-2">
-                        <option value="">— หมวดทั้งหมด —</option>
-                        @foreach ($categories as $c)
-                            <option value="{{ $c->id }}" @selected((string) request('category_id') === (string) $c->id)>
-                                {{ $c->code }} — {{ $c->name }}</option>
-                        @endforeach
-                    </select>
-                    <input type="text" name="s" value="{{ request('s') }}" class="form-control mr-2"
-                        placeholder="ค้นหา game code / ชื่อ">
-                    <select name="per_page" class="form-control mr-2">
-                        @foreach ([25, 50, 100, 200] as $n)
-                            <option value="{{ $n }}" @selected((int) $perPage === $n)>{{ $n }} / หน้า</option>
-                        @endforeach
-                    </select>
-                    <button type="submit" class="btn btn-primary">กรอง</button>
-                    <a href="{{ route('amb.games.index') }}" class="btn btn-light">ล้าง</a>
+                <form class="amb-filter-panel" method="GET" action="{{ route('amb.games.index') }}">
+                    <div class="amb-filter-grid">
+                        <div>
+                            <label class="amb-filter-label" for="f-game-product">Provider</label>
+                            <select name="product_id" id="f-game-product" class="form-control">
+                                <option value="">ทุก provider</option>
+                                @foreach ($products as $p)
+                                    <option value="{{ $p->id }}" @selected((string) request('product_id') === (string) $p->id)>
+                                        {{ $p->product_code }} — {{ $p->product_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="amb-filter-label" for="f-game-category">หมวดหมู่ (เกม)</label>
+                            <select name="category_id" id="f-game-category" class="form-control">
+                                <option value="">ทุกหมวด</option>
+                                @foreach ($categories as $c)
+                                    <option value="{{ $c->id }}" @selected((string) request('category_id') === (string) $c->id)>
+                                        {{ $c->code }} — {{ $c->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="amb-filter-label" for="f-game-active">สถานะ</label>
+                            <select name="active" id="f-game-active" class="form-control">
+                                <option value="" @selected(request('active') === null || request('active') === '')>ทั้งหมด</option>
+                                <option value="1" @selected((string) request('active') === '1')>เปิดใช้เท่านั้น</option>
+                                <option value="0" @selected((string) request('active') === '0')>ปิดใช้เท่านั้น</option>
+                            </select>
+                        </div>
+                        <div class="amb-filter-field--search">
+                            <label class="amb-filter-label" for="f-game-s">คำค้น</label>
+                            <input type="search" name="s" id="f-game-s" value="{{ request('s') }}" class="form-control"
+                                placeholder="game code / ชื่อ / provider code…" autocomplete="off">
+                        </div>
+                        <div>
+                            <label class="amb-filter-label" for="f-game-per">แสดงต่อหน้า</label>
+                            <select name="per_page" id="f-game-per" class="form-control">
+                                @foreach ([25, 50, 100, 200] as $n)
+                                    <option value="{{ $n }}" @selected((int) $perPage === $n)>{{ $n }} รายการ</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="amb-filter-actions">
+                        <button type="submit" class="btn btn-primary">ค้นหา</button>
+                        <a href="{{ route('amb.games.index') }}" class="btn btn-outline-secondary">ล้างตัวกรอง</a>
+                    </div>
                 </form>
                 <button type="button" class="btn btn-gold waves-effect ml-auto" data-toggle="modal"
                     data-target="#createModal">เพิ่มเกม</button>
@@ -125,7 +149,7 @@
                                     @php
                                         $gq = http_build_query(
                                             array_filter(
-                                                request()->only(['product_id', 'category_id', 's', 'per_page']),
+                                                request()->only(['product_id', 'category_id', 's', 'per_page', 'active']),
                                                 fn ($v) => $v !== null && $v !== '',
                                             ),
                                         );

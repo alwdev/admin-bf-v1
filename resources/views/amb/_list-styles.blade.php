@@ -12,28 +12,67 @@
     .amb-list-toolbar {
         display: flex;
         flex-wrap: wrap;
-        align-items: flex-end;
-        gap: 0.5rem 0.75rem;
+        align-items: flex-start;
+        gap: 0.75rem 1rem;
         margin-bottom: 1.25rem;
     }
 
-    .amb-list-toolbar .form-inline {
+    .amb-list-toolbar .amb-filter-panel {
+        flex: 1 1 320px;
+        min-width: 0;
+    }
+
+    .amb-filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 0.65rem 1rem;
+        align-items: end;
+    }
+
+    .amb-filter-field--search {
+        grid-column: span 2;
+        min-width: 200px;
+    }
+
+    @media (max-width: 767px) {
+        .amb-filter-field--search {
+            grid-column: span 1;
+        }
+    }
+
+    .amb-filter-label {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #6c757d;
+        margin-bottom: 0.28rem;
+        line-height: 1.2;
+    }
+
+    .amb-filter-actions {
         display: flex;
         flex-wrap: wrap;
-        align-items: flex-end;
-        gap: 0.5rem 0.5rem;
-        margin-bottom: 0;
+        gap: 0.45rem;
+        align-items: center;
+        padding-top: 1.15rem;
     }
 
-    .amb-list-toolbar .form-inline .form-control {
-        min-width: 140px;
+    .amb-filter-actions .btn {
+        min-height: calc(1.5em + 0.75rem + 2px);
     }
 
-    .amb-list-toolbar .btn-gold,
-    .amb-list-toolbar .btn-primary,
-    .amb-list-toolbar .btn-light {
+    .amb-list-toolbar .amb-filter-panel .form-control {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .amb-list-toolbar .btn-gold {
         height: calc(1.5em + 0.75rem + 2px);
         line-height: 1.5;
+        align-self: flex-start;
+        margin-top: 1.15rem;
     }
 
     .amb-list-page .table-responsive {

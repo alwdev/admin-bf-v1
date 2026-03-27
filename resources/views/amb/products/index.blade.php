@@ -35,16 +35,37 @@
     <div class="card">
         <div class="card-body">
             <div class="amb-list-toolbar">
-                <form class="form-inline" method="GET" action="{{ route('amb.products.index') }}">
-                    <input type="text" name="s" value="{{ request('s') }}" class="form-control mr-2"
-                        placeholder="ค้นหา product_code / ชื่อ">
-                    <select name="per_page" class="form-control mr-2">
-                        @foreach ([25, 50, 100, 200] as $n)
-                            <option value="{{ $n }}" @selected((int) $perPage === $n)>{{ $n }} / หน้า</option>
-                        @endforeach
-                    </select>
-                    <button type="submit" class="btn btn-primary">ค้นหา</button>
-                    <a href="{{ route('amb.products.index') }}" class="btn btn-light">ล้าง</a>
+                <form class="amb-filter-panel" method="GET" action="{{ route('amb.products.index') }}">
+                    <div class="amb-filter-grid">
+                        <div>
+                            <label class="amb-filter-label" for="f-prod-category">หมวดหมู่</label>
+                            <select name="category_id" id="f-prod-category" class="form-control">
+                                <option value="">ทุกหมวด</option>
+                                <option value="unassigned" @selected(request('category_id') === 'unassigned')>ยังไม่กำหนดหมวด</option>
+                                @foreach ($categories as $c)
+                                    <option value="{{ $c->id }}" @selected((string) request('category_id') === (string) $c->id)>
+                                        {{ $c->code }} — {{ $c->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="amb-filter-field--search">
+                            <label class="amb-filter-label" for="f-prod-s">คำค้น</label>
+                            <input type="search" name="s" id="f-prod-s" value="{{ request('s') }}" class="form-control"
+                                placeholder="product code / ชื่อ provider…" autocomplete="off">
+                        </div>
+                        <div>
+                            <label class="amb-filter-label" for="f-prod-per">แสดงต่อหน้า</label>
+                            <select name="per_page" id="f-prod-per" class="form-control">
+                                @foreach ([25, 50, 100, 200] as $n)
+                                    <option value="{{ $n }}" @selected((int) $perPage === $n)>{{ $n }} รายการ</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="amb-filter-actions">
+                        <button type="submit" class="btn btn-primary">ค้นหา</button>
+                        <a href="{{ route('amb.products.index') }}" class="btn btn-outline-secondary">ล้างตัวกรอง</a>
+                    </div>
                 </form>
                 <button type="button" class="btn btn-gold waves-effect ml-auto" data-toggle="modal"
                     data-target="#createModal">เพิ่ม Provider</button>

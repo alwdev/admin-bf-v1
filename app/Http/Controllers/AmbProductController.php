@@ -16,6 +16,16 @@ class AmbProductController extends Controller
         $perPage = $perPage > 0 ? min($perPage, 200) : 50;
 
         $q = AmbProduct::query()->with('category')->orderBy('order_no')->orderBy('id');
+
+        if ($request->filled('category_id')) {
+            $cid = $request->input('category_id');
+            if ($cid === 'unassigned') {
+                $q->whereNull('amb_category_id');
+            } elseif ((int) $cid > 0) {
+                $q->where('amb_category_id', (int) $cid);
+            }
+        }
+
         if ($request->filled('s')) {
             $s = $request->string('s')->trim();
             $q->where(function ($qq) use ($s) {

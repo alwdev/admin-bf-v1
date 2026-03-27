@@ -27,6 +27,9 @@ class AmbGameController extends Controller
         if ($request->filled('category_id')) {
             $q->where('amb_category_id', (int) $request->category_id);
         }
+        if ($request->filled('active') && $request->active !== '') {
+            $q->where('active', $request->boolean('active'));
+        }
         if ($request->filled('s')) {
             $s = $request->string('s')->trim();
             $q->where(function ($qq) use ($s) {
@@ -51,7 +54,7 @@ class AmbGameController extends Controller
             ]);
         }
 
-        return redirect()->route('amb.games.index', $request->only(['product_id', 'category_id', 's', 'per_page']))->with('success', 'สร้างเกมแล้ว');
+        return redirect()->route('amb.games.index', $request->only(['product_id', 'category_id', 's', 'per_page', 'active']))->with('success', 'สร้างเกมแล้ว');
     }
 
     public function update(Request $request, int $id)
@@ -65,7 +68,7 @@ class AmbGameController extends Controller
             ]);
         }
 
-        return redirect()->route('amb.games.index', $request->only(['product_id', 'category_id', 's', 'per_page']))->with('success', 'อัปเดตเกมแล้ว');
+        return redirect()->route('amb.games.index', $request->only(['product_id', 'category_id', 's', 'per_page', 'active']))->with('success', 'อัปเดตเกมแล้ว');
     }
 
     public function destroy(Request $request, int $id)
@@ -73,7 +76,7 @@ class AmbGameController extends Controller
         AmbGame::findOrFail($id)->delete();
 
         return redirect()
-            ->route('amb.games.index', $request->only(['product_id', 'category_id', 's', 'per_page']))
+            ->route('amb.games.index', $request->only(['product_id', 'category_id', 's', 'per_page', 'active']))
             ->with('success', 'ลบเกมแล้ว');
     }
 
