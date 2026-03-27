@@ -284,15 +284,6 @@ class ManageMemberController extends Controller
 
                 error_log('Bonus = ' . $bonus); // ตัวแปร $bonus นี้จะถูกใช้ใน Telegram
 
-                $sboResp = app(\App\Http\Controllers\SboApiController::class)->deposit($member->username, (float) $amount_betflix);
-                if (!(is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0)) {
-                    if ($bank) {
-                        $bank->balance = (float) $bank->balance - (float) $transfer->amount;
-                        $bank->save();
-                    }
-                    return redirect()->back()->with('error', 'SBO deposit error');
-                }
-
                 $wheel_setting = WheelSpin::first();
                 if ($wheel_setting && $wheel_setting->ticket_condition > 0) {
                     if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
@@ -348,15 +339,6 @@ class ManageMemberController extends Controller
                     $bank->save();
                 }
 
-                $sboResp = app(\App\Http\Controllers\SboApiController::class)->withdraw($member->username, (float) $transfer->amount, false);
-                if (!(is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0)) {
-                    if ($bank) {
-                        $bank->balance = (float) $bank->balance + (float) $transfer->amount;
-                        $bank->save();
-                    }
-                    return redirect()->back()->with('error', 'SBO withdraw error');
-                }
-
                 $member->save();
                 $transfer->new_balance = $member->wallet_balance;
                 $transfer->status = 2;
@@ -383,11 +365,8 @@ class ManageMemberController extends Controller
             $transfer->save();
 
             if ($request->type == 'withdraw') {
-                $sboResp = app(\App\Http\Controllers\SboApiController::class)->deposit($member->username, (float) $transfer->amount);
-                if (is_array($sboResp) && isset($sboResp['error']) && isset($sboResp['error']['id']) && (int)$sboResp['error']['id'] === 0) {
-                    $new_balance = (float) $member->wallet_balance + $transfer->amount;
-                    $member->update(['wallet_balance' => strval($new_balance)]);
-                }
+                $new_balance = (float) $member->wallet_balance + (float) $transfer->amount;
+                $member->update(['wallet_balance' => strval($new_balance)]);
             }
         }
         return redirect()->back()->with('status', '200');
@@ -436,10 +415,7 @@ class ManageMemberController extends Controller
     {
 
         try {
-            $apiRespBody = null;
-            $apiAction = null;
-            $usernameFinal = null;
-            DB::transaction(function () use ($request, &$apiRespBody, &$apiAction, &$usernameFinal) {
+            DB::transaction(function () use ($request) {
                 $member = Members::where('id', $request->member_id)->lockForUpdate()->first();
                 if (!$member) {
                     throw new \RuntimeException('member not found');
@@ -468,81 +444,12 @@ class ManageMemberController extends Controller
                 $d->balance = $currentBalance;
                 $d->edit_balance = $new_balance;
                 $d->save();
-
-                $usernameFinal = $member->username;
-                $api = app(\App\Http\Controllers\SboApiController::class);
-
-                if ($request->type == 'เติมมือ') {
-                    $resp = $api->deposit($member->username, (float) $request->balance);
-                    $apiAction = 'deposit';
-                    $apiRespBody = $resp['__raw'] ?? null;
-                    $usernameFinal = $resp['__username'] ?? $usernameFinal;
-                    $log = new Logs;
-                    $log->username = $usernameFinal;
-                    $log->log = 'SBO deposit sync txnId=' . ($resp['txnId'] ?? '') . ' refno=' . ($resp['refno'] ?? '') . ' balance=' . ($resp['balance'] ?? '') . ' outstanding=' . ($resp['outstanding'] ?? '');
-                    $log->save();
-                    if (!(is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0)) {
-                        throw new \RuntimeException('SBO deposit error');
-                    }
-                } elseif ($request->type == 'แก้เครดิต') {
-                    $delta = (float) $new_balance - (float) $currentBalance;
-                    if ($delta > 0) {
-                        $resp = $api->deposit($member->username, $delta);
-                        $apiAction = 'deposit';
-                        $apiRespBody = $resp['__raw'] ?? null;
-                        $usernameFinal = $resp['__username'] ?? $usernameFinal;
-                        $log = new Logs;
-                        $log->username = $usernameFinal;
-                        $log->log = 'SBO deposit sync (แก้เครดิต) txnId=' . ($resp['txnId'] ?? '') . ' refno=' . ($resp['refno'] ?? '') . ' balance=' . ($resp['balance'] ?? '') . ' outstanding=' . ($resp['outstanding'] ?? '') . ' amount=' . $delta;
-                        $log->save();
-                        if (!(is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0)) {
-                            throw new \RuntimeException('SBO deposit error');
-                        }
-                    } elseif ($delta < 0) {
-                        $resp = $api->withdraw($member->username, abs($delta), false);
-                        $apiAction = 'withdraw';
-                        $apiRespBody = $resp['__raw'] ?? null;
-                        $usernameFinal = $resp['__username'] ?? $usernameFinal;
-                        $log = new Logs;
-                        $log->username = $usernameFinal;
-                        $log->log = 'SBO withdraw sync (แก้เครดิต) txnId=' . ($resp['txnId'] ?? '') . ' refno=' . ($resp['refno'] ?? '') . ' balance=' . ($resp['balance'] ?? '') . ' outstanding=' . ($resp['outstanding'] ?? '') . ' amount=' . abs($delta);
-                        $log->save();
-                        if (!(is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0)) {
-                            throw new \RuntimeException('SBO withdraw error');
-                        }
-                    }
-                }
             });
-            if ($apiRespBody) {
-                $log = new Logs;
-                $log->username = $usernameFinal ?? '';
-                $log->log = 'SBO ' . ($apiAction ?? '') . ' resp ' . $apiRespBody;
-                $log->save();
-            }
         } catch (\Throwable $e) {
             Log::error('memberEditBalance rollback ' . $e->getMessage());
-            if (isset($apiRespBody) && $apiRespBody) {
-                Log::error('SBO API resp ' . $apiRespBody);
-                $log = new Logs;
-                $log->username = $usernameFinal ?? '';
-                $log->log = 'SBO ' . ($apiAction ?? '') . ' resp ' . $apiRespBody;
-                $log->save();
-            }
             $flashMessage = 'ทำรายการไม่สำเร็จ';
             if ($e instanceof \RuntimeException && $e->getMessage() === 'member not found') {
                 $flashMessage = 'ไม่พบสมาชิก';
-            } elseif (isset($apiRespBody) && is_string($apiRespBody)) {
-                $decoded = json_decode($apiRespBody, true);
-                if (is_array($decoded) && isset($decoded['error']) && is_array($decoded['error'])) {
-                    $errId = $decoded['error']['id'] ?? null;
-                    $errMsg = $decoded['error']['msg'] ?? null;
-                    if ($errId !== null || $errMsg) {
-                        $actionText = ($apiAction === 'withdraw') ? 'ถอน' : 'เติม';
-                        $messageText = $errMsg ? (' ' . $errMsg) : '';
-                        $idText = ($errId !== null) ? (' (' . $errId . ')') : '';
-                        $flashMessage = 'SBO ' . $actionText . ' ไม่สำเร็จ:' . $messageText . $idText;
-                    }
-                }
             }
             return redirect()->route('managemember.index')->with('error', $flashMessage);
         }

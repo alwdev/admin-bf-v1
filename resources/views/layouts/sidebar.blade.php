@@ -62,20 +62,20 @@
                             class='bx bxs-bank'></i><span>{{ __('main.book_bank') }}</span></a>
                 </li>
                 <li>
-                    <a href="{{ route('sbo.games.index') }}" class="waves-effect"><i
-                            class='bx bx-joystick'></i><span>SBO Games</span></a>
+                    <a href="{{ route('amb.categories.index') }}" class="waves-effect"><i
+                            class='bx bx-category'></i><span>AMB หมวดหมู่</span></a>
                 </li>
                 <li>
-                    <a href="{{ route('sbo.providers.index') }}" class="waves-effect"><i
-                            class='bx bx-layer'></i><span>SBO Providers</span></a>
+                    <a href="{{ route('amb.products.index') }}" class="waves-effect"><i
+                            class='bx bx-layer'></i><span>AMB Providers</span></a>
                 </li>
                 <li>
-                    <a href="{{ route('sbo.settings.index') }}" class="waves-effect"><i class='bx bx-cog'></i><span>SBO
-                            Bet Settings</span></a>
+                    <a href="{{ route('amb.games.index') }}" class="waves-effect"><i
+                            class='bx bx-joystick'></i><span>AMB Games</span></a>
                 </li>
                 <li>
-                    <a href="{{ route('sbo.homepage.index') }}" class="waves-effect"><i
-                            class='bx bx-grid-alt'></i><span>Front Page Settings</span></a>
+                    <a href="{{ route('amb.homepage.index') }}" class="waves-effect"><i
+                            class='bx bx-grid-alt'></i><span>AMB หน้าแรก</span></a>
                 </li>
                 @if (auth()->user()->level == 0)
                     <li>

@@ -27,13 +27,9 @@ class LottoController extends Controller
             $member->wallet_balance = $amount;
             $member->save();
 
-            $resp = app(\App\Http\Controllers\SboApiController::class)->withdraw($member->username, (float)$request->balance, false);
-            if (is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0) {
-                // Log the deposit transaction
-                $log = new \App\Models\Logs;
-                $log->log = "Lotto Balance updated for {$member->username} with amount {$request->balance}";
-                $log->save();
-            }
+            $log = new \App\Models\Logs;
+            $log->log = "Lotto Balance updated for {$member->username} with amount {$request->balance}";
+            $log->save();
 
             return response()->json(['status' => 'success', 'message' => 'Balance updated successfully.'], 200);
         } else {
@@ -47,17 +43,12 @@ class LottoController extends Controller
         $member = Members::where('username', $request->username)->first();
         $amount = $member->wallet_balance - $request->balance;
         if ($member) {
-
-            $resp = app(\App\Http\Controllers\SboApiController::class)
-                ->withdraw($member->username, (float)$request->balance, false);
-            if (is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0) {
-                $member->wallet_balance = $amount;
-                $member->save();
-                // Log the bet transaction
-                $log = new \App\Models\Logs;
-                $log->log = "Lotto Bet placed by {$member->username} for amount {$request->balance}";
-                $log->save();
-            }
+            $member->wallet_balance = $amount;
+            $member->save();
+            // Log the bet transaction
+            $log = new \App\Models\Logs;
+            $log->log = "Lotto Bet placed by {$member->username} for amount {$request->balance}";
+            $log->save();
 
             return response()->json(['status' => 'success', 'message' => 'Balance updated successfully.'], 200);
         } else {
@@ -70,17 +61,12 @@ class LottoController extends Controller
         $member = Members::where('username', $request->username)->first();
         $amount = $member->wallet_balance - $request->balance;
         if ($member) {
-
-            $resp = app(\App\Http\Controllers\SboApiController::class)
-                ->deposit($member->username, (float)$request->balance);
-            if (is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0) {
-                $member->wallet_balance = $amount;
-                $member->save();
-                // Log the bet transaction
-                $log = new \App\Models\Logs;
-                $log->log = "Lotto Win  by {$member->username} for amount {$request->balance}";
-                $log->save();
-            }
+            $member->wallet_balance = $amount;
+            $member->save();
+            // Log the bet transaction
+            $log = new \App\Models\Logs;
+            $log->log = "Lotto Win  by {$member->username} for amount {$request->balance}";
+            $log->save();
 
             return response()->json(['status' => 'success', 'message' => 'Balance updated successfully.'], 200);
         } else {
@@ -93,17 +79,12 @@ class LottoController extends Controller
         $member = Members::where('username', $request->username)->first();
         $amount = $member->wallet_balance + $request->balance;
         if ($member) {
-
-            $resp = app(\App\Http\Controllers\SboApiController::class)
-                ->deposit($member->username, (float)$request->balance);
-            if (is_array($resp) && isset($resp['error']) && isset($resp['error']['id']) && (int)$resp['error']['id'] === 0) {
-                $member->wallet_balance = $amount;
-                $member->save();
-                // Log the bet transaction
-                $log = new \App\Models\Logs;
-                $log->log = "Lotto Refun  by {$member->username} for amount {$request->balance}";
-                $log->save();
-            }
+            $member->wallet_balance = $amount;
+            $member->save();
+            // Log the bet transaction
+            $log = new \App\Models\Logs;
+            $log->log = "Lotto Refun  by {$member->username} for amount {$request->balance}";
+            $log->save();
 
             return response()->json(['status' => 'success', 'message' => 'Balance updated successfully.'], 200);
         } else {

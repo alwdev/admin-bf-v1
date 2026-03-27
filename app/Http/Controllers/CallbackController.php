@@ -21,9 +21,4 @@ class CallbackController extends Controller
         Log::info('tf callback'.$request->getContent());
         return response()->json(['code'=>200,'msg'=>'tf success']);
     }
-
-    public function sbo(Request $request){
-        Log::info('sbo callback'.$request->getContent());
-        return response()->json(['code'=>200,'msg'=>'sbo success']);
-    }
 }

@@ -162,34 +162,31 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/GetAllGame', [App\Http\Controllers\ProviderController::class, 'GetAllGame']);
 
-    // SBO Games
-    Route::get('/sbo/games', [App\Http\Controllers\SboGameController::class, 'index'])->name('sbo.games.index');
-    Route::post('/sbo/games', [App\Http\Controllers\SboGameController::class, 'store'])->name('sbo.games.store');
-    Route::post('/sbo/games/{id}', [App\Http\Controllers\SboGameController::class, 'update'])->name('sbo.games.update');
-    Route::delete('/sbo/games/{id}', [App\Http\Controllers\SboGameController::class, 'destroy'])->name('sbo.games.destroy');
-    Route::match(['get', 'post'], '/sbo/games/toggle', [App\Http\Controllers\SboGameController::class, 'toggle'])->name('sbo.games.toggle');
-    Route::get('/sbo/games/toggle/{id}/{checked}', [App\Http\Controllers\SboGameController::class, 'toggle'])->name('sbo.games.toggle.get');
-    Route::post('/sbo/games/upload', [App\Http\Controllers\SboGameController::class, 'uploadImage'])->name('sbo.games.upload');
+    // AMB (providers / categories / games) — literal routes before /{id}
+    Route::get('/amb/categories', [App\Http\Controllers\AmbCategoryController::class, 'index'])->name('amb.categories.index');
+    Route::post('/amb/categories', [App\Http\Controllers\AmbCategoryController::class, 'store'])->name('amb.categories.store');
+    Route::post('/amb/categories/toggle', [App\Http\Controllers\AmbCategoryController::class, 'toggle'])->name('amb.categories.toggle');
+    Route::post('/amb/categories/{id}', [App\Http\Controllers\AmbCategoryController::class, 'update'])->name('amb.categories.update');
+    Route::delete('/amb/categories/{id}', [App\Http\Controllers\AmbCategoryController::class, 'destroy'])->name('amb.categories.destroy');
 
-    // SBO Providers
-    Route::get('/sbo/providers', [App\Http\Controllers\SboProviderController::class, 'index'])->name('sbo.providers.index');
-    Route::post('/sbo/providers', [App\Http\Controllers\SboProviderController::class, 'store'])->name('sbo.providers.store');
-    Route::post('/sbo/providers/{id}', [App\Http\Controllers\SboProviderController::class, 'update'])->name('sbo.providers.update');
-    Route::delete('/sbo/providers/{id}', [App\Http\Controllers\SboProviderController::class, 'destroy'])->name('sbo.providers.destroy');
-    Route::match(['get', 'post'], '/sbo/providers/toggle', [App\Http\Controllers\SboProviderController::class, 'toggle'])->name('sbo.providers.toggle');
-    Route::get('/sbo/providers/toggle/{id}/{checked}', [App\Http\Controllers\SboProviderController::class, 'toggle'])->name('sbo.providers.toggle.get');
-    Route::post('/sbo/providers/upload', [App\Http\Controllers\SboProviderController::class, 'uploadImage'])->name('sbo.providers.upload');
+    Route::get('/amb/products', [App\Http\Controllers\AmbProductController::class, 'index'])->name('amb.products.index');
+    Route::post('/amb/products', [App\Http\Controllers\AmbProductController::class, 'store'])->name('amb.products.store');
+    Route::post('/amb/products/toggle', [App\Http\Controllers\AmbProductController::class, 'toggle'])->name('amb.products.toggle');
+    Route::post('/amb/products/upload', [App\Http\Controllers\AmbProductController::class, 'uploadImage'])->name('amb.products.upload');
+    Route::post('/amb/products/{id}', [App\Http\Controllers\AmbProductController::class, 'update'])->name('amb.products.update');
+    Route::delete('/amb/products/{id}', [App\Http\Controllers\AmbProductController::class, 'destroy'])->name('amb.products.destroy');
 
-    // SBO Settings
-    Route::get('/sbo/settings', [App\Http\Controllers\SboSettingController::class, 'index'])->name('sbo.settings.index');
-    Route::post('/sbo/settings', [App\Http\Controllers\SboSettingController::class, 'update'])->name('sbo.settings.update');
-    Route::get('/sbo/settings/balance', [App\Http\Controllers\SboSettingController::class, 'balance'])->name('sbo.settings.balance');
-    Route::get('/sbo/test-balance', [App\Http\Controllers\SboSettingController::class, 'testBalance']);
+    Route::get('/amb/games', [App\Http\Controllers\AmbGameController::class, 'index'])->name('amb.games.index');
+    Route::post('/amb/games', [App\Http\Controllers\AmbGameController::class, 'store'])->name('amb.games.store');
+    Route::post('/amb/games/toggle', [App\Http\Controllers\AmbGameController::class, 'toggle'])->name('amb.games.toggle');
+    Route::post('/amb/games/upload', [App\Http\Controllers\AmbGameController::class, 'uploadImage'])->name('amb.games.upload');
+    Route::post('/amb/games/{id}', [App\Http\Controllers\AmbGameController::class, 'update'])->name('amb.games.update');
+    Route::delete('/amb/games/{id}', [App\Http\Controllers\AmbGameController::class, 'destroy'])->name('amb.games.destroy');
 
-    // Front Page Settings
-    Route::get('/sbo/homepage', [App\Http\Controllers\SboHomepageController::class, 'index'])->name('sbo.homepage.index');
-    Route::get('/sbo/homepage/search', [App\Http\Controllers\SboHomepageController::class, 'searchGames'])->name('sbo.homepage.search');
-    Route::post('/sbo/homepage', [App\Http\Controllers\SboHomepageController::class, 'update'])->name('sbo.homepage.update');
+    Route::get('/amb/homepage-items', [App\Http\Controllers\AmbHomepageItemController::class, 'index'])->name('amb.homepage.index');
+    Route::post('/amb/homepage-items', [App\Http\Controllers\AmbHomepageItemController::class, 'store'])->name('amb.homepage.store');
+    Route::post('/amb/homepage-items/{id}', [App\Http\Controllers\AmbHomepageItemController::class, 'update'])->name('amb.homepage.update');
+    Route::delete('/amb/homepage-items/{id}', [App\Http\Controllers\AmbHomepageItemController::class, 'destroy'])->name('amb.homepage.destroy');
 
     Route::get('/admin/login-logs', [App\Http\Controllers\AdminLoginLogController::class, 'index'])
         ->name('admin.login_logs.index')

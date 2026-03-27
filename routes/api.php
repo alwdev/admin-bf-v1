@@ -34,7 +34,6 @@ Route::get('/getTranfer/{id}', [App\Http\Controllers\TransactionController::clas
 Route::post('/jili', [App\Http\Controllers\CallbackController::class, 'jili']);
 Route::post('/jdb', [App\Http\Controllers\CallbackController::class, 'jdb']);
 Route::post('/tf', [App\Http\Controllers\CallbackController::class, 'tf']);
-Route::post('/sbo', [App\Http\Controllers\CallbackController::class, 'sbo']);
 
 Route::post('/transfer_to_Bank', [App\Http\Controllers\TMN_Controller::class, 'transfer_to_Bank']);
 Route::post('/transfer_to_Mobile', [App\Http\Controllers\TMN_Controller::class, 'transfer_to_Mobile']);
