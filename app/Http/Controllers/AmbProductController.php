@@ -122,10 +122,18 @@ class AmbProductController extends Controller
     {
         $request->validate([
             'id' => 'required|integer|exists:amb_products,id',
-            'imgupload' => 'required|mimes:png,jpg,jpeg|max:2048',
+            'imgupload' => ['required', 'file', 'mimes:jpeg,jpg,png,gif,webp', 'max:5120'],
         ]);
         $product = AmbProduct::findOrFail((int) $request->id);
-        $path = AmbImageUpload::saveProductImage($request->file('imgupload'), $product->id);
+        try {
+            $path = AmbImageUpload::saveProductImage($request->file('imgupload'), $product->id);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'message' => 'บันทึกไฟล์ไม่สำเร็จ — ตรวจสอบสิทธิ์เขียนโฟลเดอร์ public/images/amb/products',
+            ], 500);
+        }
         $product->img = $path;
         $product->save();
 

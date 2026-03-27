@@ -347,28 +347,67 @@
         });
 
         var uploadGameId = null;
-        $('.img-thumb-game').on('click', function() {
-            uploadGameId = $(this).data('id');
+        $('.img-thumb-game').on('click', function(e) {
+            e.preventDefault();
+            uploadGameId = $(this).attr('data-id') || $(this).data('id');
             $('#gameImgUpload').trigger('click');
         });
 
         $('#gameImgUpload').on('change', function() {
-            if (!uploadGameId || !this.files.length) return;
+            var input = this;
+            if (!uploadGameId || !input.files || !input.files.length) {
+                $(input).val('');
+                uploadGameId = null;
+                return;
+            }
+            var file = input.files[0];
+            if (file.size > 5 * 1024 * 1024) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({ icon: 'error', title: 'ไฟล์ใหญ่เกินไป', text: 'ใช้รูปไม่เกิน 5MB' });
+                } else {
+                    alert('ไฟล์ต้องไม่เกิน 5MB');
+                }
+                $(input).val('');
+                uploadGameId = null;
+                return;
+            }
             var fd = new FormData();
-            fd.append('id', uploadGameId);
-            fd.append('imgupload', this.files[0]);
+            fd.append('_token', $('meta[name="csrf-token"]').attr('content'));
+            fd.append('id', String(uploadGameId));
+            fd.append('imgupload', file);
             $.ajax({
                 url: "{{ route('amb.games.upload') }}",
                 type: 'POST',
                 data: fd,
                 processData: false,
                 contentType: false,
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                 success: function() {
                     location.reload();
+                },
+                error: function(xhr) {
+                    var msg = 'อัปโหลดไม่สำเร็จ';
+                    if (xhr.responseJSON) {
+                        if (xhr.responseJSON.message) msg = xhr.responseJSON.message;
+                        if (xhr.responseJSON.errors) {
+                            msg = Object.values(xhr.responseJSON.errors).flat().join('\n') || msg;
+                        }
+                    } else if (xhr.status === 419) {
+                        msg = 'หมดเวลาเซสชัน — รีเฟรชหน้าแล้วลองใหม่';
+                    } else if (xhr.status === 413) {
+                        msg = 'ไฟล์ใหญ่เกินกำหนดของเซิร์ฟเวอร์';
+                    }
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({ icon: 'error', title: 'อัปโหลดรูป', text: msg });
+                    } else {
+                        alert(msg);
+                    }
+                },
+                complete: function() {
+                    $(input).val('');
+                    uploadGameId = null;
                 }
             });
-            $(this).val('');
-            uploadGameId = null;
         });
 
         $('.amb-game-toggle').on('change', function() {

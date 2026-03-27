@@ -255,28 +255,67 @@
         });
 
         var uploadProdId = null;
-        $('.img-thumb-prod').on('click', function() {
-            uploadProdId = $(this).data('id');
+        $('.img-thumb-prod').on('click', function(e) {
+            e.preventDefault();
+            uploadProdId = $(this).attr('data-id') || $(this).data('id');
             $('#prodImgUpload').trigger('click');
         });
 
         $('#prodImgUpload').on('change', function() {
-            if (!uploadProdId || !this.files.length) return;
+            var input = this;
+            if (!uploadProdId || !input.files || !input.files.length) {
+                $(input).val('');
+                uploadProdId = null;
+                return;
+            }
+            var file = input.files[0];
+            if (file.size > 5 * 1024 * 1024) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({ icon: 'error', title: 'ไฟล์ใหญ่เกินไป', text: 'ใช้รูปไม่เกิน 5MB' });
+                } else {
+                    alert('ไฟล์ต้องไม่เกิน 5MB');
+                }
+                $(input).val('');
+                uploadProdId = null;
+                return;
+            }
             var fd = new FormData();
-            fd.append('id', uploadProdId);
-            fd.append('imgupload', this.files[0]);
+            fd.append('_token', $('meta[name="csrf-token"]').attr('content'));
+            fd.append('id', String(uploadProdId));
+            fd.append('imgupload', file);
             $.ajax({
                 url: "{{ route('amb.products.upload') }}",
                 type: 'POST',
                 data: fd,
                 processData: false,
                 contentType: false,
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                 success: function() {
                     location.reload();
+                },
+                error: function(xhr) {
+                    var msg = 'อัปโหลดไม่สำเร็จ';
+                    if (xhr.responseJSON) {
+                        if (xhr.responseJSON.message) msg = xhr.responseJSON.message;
+                        if (xhr.responseJSON.errors) {
+                            msg = Object.values(xhr.responseJSON.errors).flat().join('\n') || msg;
+                        }
+                    } else if (xhr.status === 419) {
+                        msg = 'หมดเวลาเซสชัน — รีเฟรชหน้าแล้วลองใหม่';
+                    } else if (xhr.status === 413) {
+                        msg = 'ไฟล์ใหญ่เกินกำหนดของเซิร์ฟเวอร์';
+                    }
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({ icon: 'error', title: 'อัปโหลดรูป', text: msg });
+                    } else {
+                        alert(msg);
+                    }
+                },
+                complete: function() {
+                    $(input).val('');
+                    uploadProdId = null;
                 }
             });
-            $(this).val('');
-            uploadProdId = null;
         });
 
         $('.amb-prod-toggle').on('change', function() {

@@ -94,10 +94,18 @@ class AmbGameController extends Controller
     {
         $request->validate([
             'id' => 'required|integer|exists:amb_games,id',
-            'imgupload' => 'required|mimes:png,jpg,jpeg|max:2048',
+            'imgupload' => ['required', 'file', 'mimes:jpeg,jpg,png,gif,webp', 'max:5120'],
         ]);
         $game = AmbGame::findOrFail((int) $request->id);
-        $path = AmbImageUpload::saveGameImage($request->file('imgupload'), $game->id);
+        try {
+            $path = AmbImageUpload::saveGameImage($request->file('imgupload'), $game->id);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'message' => 'บันทึกไฟล์ไม่สำเร็จ — ตรวจสอบสิทธิ์เขียนโฟลเดอร์ public/images/amb/games',
+            ], 500);
+        }
         $game->img = $path;
         $game->save();
 
