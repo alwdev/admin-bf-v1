@@ -38,14 +38,14 @@
             </div>
         @endif
 
-        <ul class="nav nav-tabs mb-3">
-            @foreach ($sections as $key => $label)
-                <li class="nav-item">
-                    <a class="nav-link @if ($category === $key) active font-weight-bold @endif"
-                        href="{{ route('amb.homepage.index', ['category' => $key]) }}">{{ $label }}</a>
-                </li>
-            @endforeach
-        </ul>
+        <div class="mb-3" style="max-width: 320px">
+            <label class="amb-filter-label" for="hp-section-category">Section หน้าแรก</label>
+            <select id="hp-section-category" class="form-control" title="เลือก section">
+                @foreach ($sections as $key => $label)
+                    <option value="{{ $key }}" @selected($category === $key)>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
 
         <div class="card">
             <div class="card-body">
@@ -178,6 +178,10 @@
 
 @section('scripts')
     <script>
+        $('#hp-section-category').on('change', function() {
+            var c = $(this).val();
+            window.location.href = '{{ route('amb.homepage.index') }}' + (c ? ('?category=' + encodeURIComponent(c)) : '');
+        });
         $('.btn-add-hp').on('click', function() {
             var pos = $(this).data('position');
             $('#addPosition').val(String(pos));
