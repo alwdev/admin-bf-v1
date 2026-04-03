@@ -40,7 +40,9 @@
                     </div>
                 @endif
                 <h4 class="card-title"></h4>
-                <p class="card-subtitle mb-4">
+                <p class="card-subtitle mb-3 text-muted">
+                    สมาชิกแจ้งเฉพาะ<strong>ยอดฝาก / ถอน</strong> — ไม่มีการแนบสลิป
+                    แอดมินตรวจสอบยอดและบัญชี (ถ้ามี) แล้วกด<strong>อนุมัติ</strong>หรือ<strong>ปฏิเสธ</strong>
                 </p>
 
                 <table id="basic-datatable" class="table nowrap table-striped" data-filter-control="true"
@@ -55,7 +57,6 @@
                             <th data-sortable="true">{{ __('managemember.from') }}</th>
                             <th data-sortable="true">{{ __('managemember.to') }}</th>
                             <th data-sortable="true">{{ __('main.promotion') }}</th>
-                            <th data-sortable="true">{{ __('managemember.evidence') }}</th>
                             <th data-sortable="true">{{ __('dashboard.status') }}</th>
                             @if (json_decode(auth()->user()->permissions)->transfer > 2)
                                 <th data-sortable="true"></th>
@@ -77,8 +78,28 @@
                                 </td>
                                 <td>{{ (float) $item->amount }}</td>
                                 <td>{{ date('d/m/Y H:i:s', $item->transfer_date) }}</td>
+                                @php
+                                    $depFromEmpty =
+                                        $item->type === 'deposit' &&
+                                        trim((string) ($item->deposit_from_bank_no ?? '')) === '' &&
+                                        trim((string) ($item->deposit_from_bank_name ?? '')) === '' &&
+                                        trim((string) ($item->deposit_from_bank_type ?? '')) === '';
+                                    $depToEmpty =
+                                        $item->type === 'deposit' &&
+                                        trim((string) ($item->deposit_to_bank_no ?? '')) === '' &&
+                                        trim((string) ($item->deposit_to_bank_name ?? '')) === '' &&
+                                        trim((string) ($item->deposit_to_bank_type ?? '')) === '';
+                                    $withdrawBankEmpty =
+                                        $item->type === 'withdraw' &&
+                                        trim((string) ($item->bank_number ?? '')) === '' &&
+                                        trim((string) ($item->account_name ?? '')) === '' &&
+                                        trim((string) ($item->bank_name ?? '')) === '';
+                                @endphp
                                 <td>
                                     @if ($item->type == 'deposit')
+                                        @if ($depFromEmpty)
+                                            <span class="text-muted">—</span>
+                                        @else
                                         @switch($item->deposit_from_bank_type)
                                             @case('ธนาคารกรุงเทพ')
                                                 <img src="{{ asset('images/bank/bbl.png') }}" width="25" class="bank-logo">
@@ -163,12 +184,16 @@
                                         @endswitch
                                         {{ $item->deposit_from_bank_no }} <br>
                                         {{ $item->deposit_from_bank_name }}
+                                        @endif
                                     @else
                                         {{ $item->order_id }}
                                     @endif
                                 </td>
                                 <td>
                                     @if ($item->type == 'deposit')
+                                        @if ($depToEmpty)
+                                            <span class="text-muted">—</span>
+                                        @else
                                         @switch($item->deposit_to_bank_type)
                                             @case('ธนาคารกรุงเทพ')
                                                 <img src="{{ asset('images/bank/bbl.png') }}" width="25" class="bank-logo">
@@ -271,7 +296,11 @@
                                         @endswitch
                                         {{ $item->deposit_to_bank_no }} <br>
                                         {{ $item->deposit_to_bank_name }}
+                                        @endif
                                     @elseif($item->type == 'withdraw')
+                                        @if ($withdrawBankEmpty)
+                                            <span class="text-muted">—</span>
+                                        @else
                                         @switch($item->bank_name)
                                             @case('ธนาคารกรุงเทพ')
                                                 <img src="{{ asset('images/bank/bbl.png') }}" width="25" class="bank-logo">
@@ -352,6 +381,7 @@
                                         @endswitch
                                         {{ $item->bank_number }} <br>
                                         {{ $item->account_name }}
+                                        @endif
                                     @else
                                         -
                                     @endif
@@ -394,13 +424,6 @@
                                         cashback
                                     @endif
                                 </td>
-                                <td>
-                                    @if ($item->type == 'deposit' && $item->deposit_type != 'askmepay-qrcode')
-                                        <button type="button" class="btn btn-primary btn-sm"
-                                            onclick="showEvidence('{{ env('APP_URL_IMAGE_EVIDENCE') . $item->deposit_slip }}')">{{ __('managemember.evidence') }}</button>
-                                    @endif
-                                </td>
-
                                 <td>
                                     @php
                                         $status = '';
@@ -569,18 +592,10 @@
             })
         @endif
 
-        function showEvidence($img) {
-            Swal.fire({
-                imageUrl: $img,
-                imageHeight: 600,
-                imageAlt: "A tall image"
-            });
-        }
-
         function approveDeposit(form) {
             Swal.fire({
-                title: '{{ __('main.Do you want to change your status?') }}',
-                text: "**{{ __('main.Warningthe admin must transfer') }}**",
+                title: 'ยืนยันการดำเนินการ',
+                text: 'รายการนี้ไม่มีสลิปจากสมาชิก — ตรวจสอบยอดและข้อมูลบัญชีก่อนอนุมัติ',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
