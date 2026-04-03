@@ -2,9 +2,76 @@
 @section('styles')
     <style>
         .badge {
-
             padding: 10px;
             font-weight: 400;
+        }
+
+        .txn-list-page .txn-flow-hint {
+            font-size: 0.9rem;
+            line-height: 1.45;
+            padding: 0.65rem 0.85rem;
+            border-radius: 6px;
+            background: rgba(227, 169, 65, 0.12);
+            border: 1px solid rgba(227, 169, 65, 0.35);
+            color: #5d4a2e;
+        }
+
+        .txn-list-page th small {
+            font-weight: 400;
+            white-space: nowrap;
+        }
+
+        /* SweetAlert2 ยืนยันรายการฝากถอน — ปุ่มให้สอดคล้องธีม */
+        .swal-txn-popup {
+            border-radius: 12px !important;
+            padding: 1.5rem 1.25rem 1.25rem !important;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18) !important;
+        }
+
+        .swal-txn-actions {
+            display: flex !important;
+            flex-direction: row-reverse;
+            justify-content: center;
+            gap: 0.75rem !important;
+            width: 100%;
+            margin-top: 0.5rem !important;
+        }
+
+        .swal-txn-actions .swal-btn-confirm,
+        .swal-txn-actions .swal-btn-cancel {
+            margin: 0 !important;
+            flex: 0 0 auto;
+            min-width: 120px;
+            padding: 0.55rem 1.35rem !important;
+            font-size: 0.95rem !important;
+            font-weight: 600 !important;
+            border-radius: 8px !important;
+            line-height: 1.4 !important;
+            transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .swal-txn-actions .swal-btn-confirm {
+            background: #E3A941 !important;
+            border: 1px solid #E3A941 !important;
+            color: #fff !important;
+            box-shadow: 0 2px 8px rgba(227, 169, 65, 0.35);
+        }
+
+        .swal-txn-actions .swal-btn-confirm:hover {
+            background: #cf9a38 !important;
+            border-color: #cf9a38 !important;
+        }
+
+        .swal-txn-actions .swal-btn-cancel {
+            background: #fff !important;
+            border: 1px solid #ced4da !important;
+            color: #495057 !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+
+        .swal-txn-actions .swal-btn-cancel:hover {
+            background: #f8f9fa !important;
+            border-color: #adb5bd !important;
         }
     </style>
 @endsection
@@ -27,7 +94,7 @@
     </div>
     <!-- end page title -->
 
-    <div class="row">
+    <div class="row txn-list-page">
         <div class="col-12 card">
             <div class="card-body">
                 @if (session('status'))
@@ -40,10 +107,10 @@
                     </div>
                 @endif
                 <h4 class="card-title"></h4>
-                <p class="card-subtitle mb-3 text-muted">
-                    สมาชิกแจ้งเฉพาะ<strong>ยอดฝาก / ถอน</strong> — ไม่มีการแนบสลิป
-                    แอดมินตรวจสอบยอดและบัญชี (ถ้ามี) แล้วกด<strong>อนุมัติ</strong>หรือ<strong>ปฏิเสธ</strong>
-                </p>
+                <div class="txn-flow-hint mb-3">
+                    <strong>โฟลว์ใหม่:</strong> สมาชิกแจ้งเฉพาะ<strong>ยอดฝากหรือถอน</strong> — <strong>ไม่มีสลิปโอน</strong><br>
+                    แอดมินตรวจ<strong>ยอดเงิน</strong> (และบัญชีในคอลัมต้นทาง/ปลายทาง ถ้าระบบส่งมา) แล้วกด <strong>อนุมัติ</strong> หรือ <strong>ปฏิเสธ</strong>
+                </div>
 
                 <table id="basic-datatable" class="table nowrap table-striped" data-filter-control="true"
                     data-toggle="table" data-search="true" data-show-export="false" data-click-to-select="false"
@@ -54,8 +121,10 @@
                             <th data-field="type" data-sortable="true">{{ __('dashboard.type') }}</th>
                             <th data-field="amount" data-sortable="true">{{ __('managemember.amount') }}</th>
                             <th data-sortable="true">{{ __('dashboard.Date_of_transaction') }}</th>
-                            <th data-sortable="true">{{ __('managemember.from') }}</th>
-                            <th data-sortable="true">{{ __('managemember.to') }}</th>
+                            <th data-sortable="true">{{ __('managemember.from') }}
+                                <small class="text-muted d-block">(ถ้ามี)</small></th>
+                            <th data-sortable="true">{{ __('managemember.to') }}
+                                <small class="text-muted d-block">(ถ้ามี)</small></th>
                             <th data-sortable="true">{{ __('main.promotion') }}</th>
                             <th data-sortable="true">{{ __('dashboard.status') }}</th>
                             @if (json_decode(auth()->user()->permissions)->transfer > 2)
@@ -76,19 +145,18 @@
                                             class="badge badge-pill badge-warning text-bg-warning">{{ __('dashboard.withdraw') }}</span>
                                     @endif
                                 </td>
-                                <td>{{ (float) $item->amount }}</td>
+                                <td class="text-nowrap font-weight-bold">{{ number_format((float) $item->amount, 2) }}</td>
                                 <td>{{ date('d/m/Y H:i:s', $item->transfer_date) }}</td>
                                 @php
+                                    /* โฟลว์ใหม่: ส่งแค่ยอดได้ — ไม่ต้องมี type ธนาคาร; ถ้าไม่มีเลขบัญชี+ชื่อ ให้ถือว่าว่าง (ไม่โชว์กล่องส้ม) */
                                     $depFromEmpty =
                                         $item->type === 'deposit' &&
                                         trim((string) ($item->deposit_from_bank_no ?? '')) === '' &&
-                                        trim((string) ($item->deposit_from_bank_name ?? '')) === '' &&
-                                        trim((string) ($item->deposit_from_bank_type ?? '')) === '';
+                                        trim((string) ($item->deposit_from_bank_name ?? '')) === '';
                                     $depToEmpty =
                                         $item->type === 'deposit' &&
                                         trim((string) ($item->deposit_to_bank_no ?? '')) === '' &&
-                                        trim((string) ($item->deposit_to_bank_name ?? '')) === '' &&
-                                        trim((string) ($item->deposit_to_bank_type ?? '')) === '';
+                                        trim((string) ($item->deposit_to_bank_name ?? '')) === '';
                                     $withdrawBankEmpty =
                                         $item->type === 'withdraw' &&
                                         trim((string) ($item->bank_number ?? '')) === '' &&
@@ -596,15 +664,20 @@
             Swal.fire({
                 title: 'ยืนยันการดำเนินการ',
                 text: 'รายการนี้ไม่มีสลิปจากสมาชิก — ตรวจสอบยอดและข้อมูลบัญชีก่อนอนุมัติ',
-                type: 'warning',
+                icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'No, Cancel!',
-                confirmButtonClass: 'btn btn-success mt-2',
-                cancelButtonClass: 'btn btn-danger ml-2 mt-2',
-                buttonsStyling: false
+                focusCancel: true,
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก',
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'swal-txn-popup',
+                    confirmButton: 'swal-btn-confirm',
+                    cancelButton: 'swal-btn-cancel',
+                    actions: 'swal-txn-actions'
+                }
             }).then(function(result) {
-                if (result.value) {
+                if (result.isConfirmed || result.value) {
                     $(form).submit();
                 }
             });
@@ -613,16 +686,21 @@
         function confirm_turonver_on(form) {
             Swal.fire({
                 title: '{{ __('main.Do you want to change your status?') }}',
-                text: "",
-                type: 'warning',
+                text: '',
+                icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'No, Cancel!',
-                confirmButtonClass: 'btn btn-success mt-2',
-                cancelButtonClass: 'btn btn-danger ml-2 mt-2',
-                buttonsStyling: false
+                focusCancel: true,
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก',
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'swal-txn-popup',
+                    confirmButton: 'swal-btn-confirm',
+                    cancelButton: 'swal-btn-cancel',
+                    actions: 'swal-txn-actions'
+                }
             }).then(function(result) {
-                if (result.value) {
+                if (result.isConfirmed || result.value) {
                     $(form).submit();
                 }
             });

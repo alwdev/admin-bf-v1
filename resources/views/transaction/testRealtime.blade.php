@@ -1,5 +1,50 @@
 @extends('layouts.guest')
 @section('styles')
+    <style>
+        .swal-txn-popup {
+            border-radius: 12px !important;
+            padding: 1.5rem 1.25rem 1.25rem !important;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18) !important;
+        }
+        .swal-txn-actions {
+            display: flex !important;
+            flex-direction: row-reverse;
+            justify-content: center;
+            gap: 0.75rem !important;
+            width: 100%;
+            margin-top: 0.5rem !important;
+        }
+        .swal-txn-actions .swal-btn-confirm,
+        .swal-txn-actions .swal-btn-cancel {
+            margin: 0 !important;
+            flex: 0 0 auto;
+            min-width: 120px;
+            padding: 0.55rem 1.35rem !important;
+            font-size: 0.95rem !important;
+            font-weight: 600 !important;
+            border-radius: 8px !important;
+            line-height: 1.4 !important;
+        }
+        .swal-txn-actions .swal-btn-confirm {
+            background: #E3A941 !important;
+            border: 1px solid #E3A941 !important;
+            color: #fff !important;
+            box-shadow: 0 2px 8px rgba(227, 169, 65, 0.35);
+        }
+        .swal-txn-actions .swal-btn-confirm:hover {
+            background: #cf9a38 !important;
+            border-color: #cf9a38 !important;
+        }
+        .swal-txn-actions .swal-btn-cancel {
+            background: #fff !important;
+            border: 1px solid #ced4da !important;
+            color: #495057 !important;
+        }
+        .swal-txn-actions .swal-btn-cancel:hover {
+            background: #f8f9fa !important;
+            border-color: #adb5bd !important;
+        }
+    </style>
 @endsection
 @section('content')
    <!-- start page title -->
@@ -24,7 +69,8 @@
     <div class="col-12 card">
         <div class="card-body">
             <h4 class="card-title"></h4>
-            <p class="card-subtitle mb-4">
+            <p class="card-subtitle mb-3 p-2 rounded" style="background:rgba(227,169,65,.12);border:1px solid rgba(227,169,65,.35);color:#5d4a2e;font-size:.9rem;">
+                <strong>โฟลว์ใหม่:</strong> สมาชิกแจ้งเฉพาะยอด — <strong>ไม่มีสลิป</strong> แอดมินตรวจยอดแล้วกดอนุมัติ/ปฏิเสธ
             </p>
 
             <table id="basic-datatable" class="table nowrap"
@@ -41,10 +87,9 @@
                         <th data-field="type" data-filter-control="select" data-sortable="true">type</th>
                         <th data-field="amount" data-sortable="true">จำนวนเงิน</th>
                         <th data-sortable="true">วันที่ทำรายการ</th>
-                        <th data-sortable="true">จาก</th>
-                        <th data-sortable="true">ถึง</th>
+                        <th data-sortable="true">จาก <small class="text-muted">(ถ้ามี)</small></th>
+                        <th data-sortable="true">ถึง <small class="text-muted">(ถ้ามี)</small></th>
                         <th data-sortable="true">โปรโมชั่น</th>
-                        <th data-sortable="true">หลักฐาน</th>
                         <th data-sortable="true">สถานะ</th>
                         @if( json_decode(auth()->user()->permissions)->transfer > 2  )
                         <th data-sortable="true"></th>
@@ -58,8 +103,26 @@
                             <td>{{ $item->type }}</td>
                             <td>{{ (float) $item->amount }}</td>
                             <td>{{ date('d/m/Y H:i:s',$item->transfer_date) }}</td>
+                            @php
+                                $depFromEmptyRt =
+                                    $item->type === 'deposit' &&
+                                    trim((string) ($item->deposit_from_bank_no ?? '')) === '' &&
+                                    trim((string) ($item->deposit_from_bank_name ?? '')) === '';
+                                $depToEmptyRt =
+                                    $item->type === 'deposit' &&
+                                    trim((string) ($item->deposit_to_bank_no ?? '')) === '' &&
+                                    trim((string) ($item->deposit_to_bank_name ?? '')) === '';
+                                $withdrawBankEmptyRt =
+                                    $item->type === 'withdraw' &&
+                                    trim((string) ($item->bank_number ?? '')) === '' &&
+                                    trim((string) ($item->account_name ?? '')) === '' &&
+                                    trim((string) ($item->bank_name ?? '')) === '';
+                            @endphp
                             <td>
                                 @if($item->type == 'deposit')
+                                @if ($depFromEmptyRt)
+                                    <span class="text-muted">—</span>
+                                @else
                                 @switch($item->deposit_from_bank_type)
                                     @case("ธนาคารกรุงเทพ")
                                             <img src="{{ asset('images/bank/bbl.png') }}" width="25" class="bank-logo">
@@ -120,12 +183,16 @@
                                     @endswitch
                                 {{ $item->deposit_from_bank_no }} <br>
                                 {{ $item->deposit_from_bank_name }}
+                                @endif
                                 @else
                                 {{ $item->order_id }}
                                 @endif
                             </td>
                             <td>
                                 @if($item->type == 'deposit')
+                                @if ($depToEmptyRt)
+                                    <span class="text-muted">—</span>
+                                @else
                                 @switch($item->deposit_to_bank_type)
                                     @case("ธนาคารกรุงเทพ")
                                             <img src="{{ asset('images/bank/bbl.png') }}" width="25" class="bank-logo">
@@ -186,7 +253,11 @@
                                     @endswitch
                                 {{ $item->deposit_to_bank_no }} <br>
                                 {{ $item->deposit_to_bank_name }}
+                                @endif
                                 @elseif($item->type == 'withdraw')
+                                @if ($withdrawBankEmptyRt)
+                                    <span class="text-muted">—</span>
+                                @else
                                 @switch($item->bank_name)
                                 @case("ธนาคารกรุงเทพ")
                                         <img src="{{ asset('images/bank/bbl.png') }}" width="25" class="bank-logo">
@@ -235,6 +306,7 @@
                                 @endswitch
                             {{ $item->bank_number }} <br>
                             {{ $item->account_name }}
+                                @endif
                             @else
                             -
                                 @endif
@@ -261,12 +333,6 @@
                                     cashback
                                 @endif
                             </td>
-                            <td>
-                                @if($item->type == 'deposit' && $item->deposit_type != 'askmepay-qrcode')
-                                <button type="button" class="btn btn-primary btn-sm" onclick="showEvidence('{{ env('APP_URL_IMAGE_EVIDENCE').$item->deposit_slip }}')">หลักฐาน</button>
-                                @endif
-                            </td>
-
                             <td>
                                @if ($item->status == 1)
                                     <h5><span class="badge badge-pill badge-warning text-bg-warning">{{ $item->status_code }}</span></h5>
@@ -358,30 +424,27 @@
 
     @endif
 
-        function showEvidence($img){
+        function approveDeposit(form) {
             Swal.fire({
-                imageUrl: $img,
-                imageHeight: 600,
-                imageAlt: "A tall image"
+                title: 'ยืนยันการดำเนินการ',
+                text: 'รายการนี้ไม่มีสลิปจากสมาชิก — ตรวจสอบยอดและข้อมูลบัญชีก่อนอนุมัติ',
+                icon: 'warning',
+                showCancelButton: true,
+                focusCancel: true,
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก',
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'swal-txn-popup',
+                    confirmButton: 'swal-btn-confirm',
+                    cancelButton: 'swal-btn-cancel',
+                    actions: 'swal-txn-actions'
+                }
+            }).then(function(result) {
+                if (result.isConfirmed || result.value) {
+                    $(form).submit();
+                }
             });
-        }
-
-        function approveDeposit(form){
-            Swal.fire({
-                    title: 'แจ้งเตือน',
-                    text: "ต้องการอัพเดตสถานะหรือไม่?",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'ใช่',
-                    cancelButtonText: 'ไม่, ยกเลิก!',
-                    confirmButtonClass: 'btn btn-success mt-2',
-                    cancelButtonClass: 'btn btn-danger ml-2 mt-2',
-                    buttonsStyling: false
-                }).then(function (result) {
-                    if (result.value) {
-                       $(form).submit();
-                    }
-                });
         }
     </script>
 @endsection
