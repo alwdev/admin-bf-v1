@@ -15,6 +15,9 @@ use App\Models\Members;
 use App\Http\Controllers\ChatPageController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\AlertController;
+use App\Http\Controllers\TopGameController;
+use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\CkeditorController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -212,6 +215,23 @@ Route::middleware('auth')->group(function () {
     Route::post('/conversations/{conversation}/messages', [MessageController::class, 'store'])->name('chat.messages.store');
     Route::post('/chat/conversations/{conversation}/close', [App\Http\Controllers\ChatPageController::class, 'closeConversation'])->name('chat.conversations.close');
     Route::get('/conversations_count', [App\Http\Controllers\ChatPageController::class, 'conversations_count'])->name('chat.conversations.count');
+
+
+
+    // ...
+
+    Route::get('homepage', [HomePageController::class, 'edit'])->name('homepage.edit');
+    Route::put('homepage', [HomePageController::class, 'update'])->name('homepage.update');
+
+
+    Route::post('ckeditor/image_upload', [CkeditorController::class, 'upload'])
+        ->name('ckeditor.image_upload');
+    // Resource routes (top_games.index, .store, .update, .destroy, ฯลฯ)
+    Route::resource('top-games', TopGameController::class)
+        ->names('top_games'); // กำหนดชื่อ route prefix เป็น 'top_games'
+
+    // Route สำหรับเปลี่ยนสถานะ (Status Toggle)
+    Route::post('top-games/status/{id}', [TopGameController::class, 'changeStatus'])->name('top_games.changeStatus');
 });
 
 require __DIR__ . '/auth.php';

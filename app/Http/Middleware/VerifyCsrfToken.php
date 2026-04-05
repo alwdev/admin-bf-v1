@@ -13,5 +13,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         '/receive-commission', // ใส่ path ของ route
+        'ckeditor/image_upload'
     ];
 }
