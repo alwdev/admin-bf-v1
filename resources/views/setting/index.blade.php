@@ -38,8 +38,9 @@
                             </div>
                         @endif
                         <label class="form-label" for="logo">อัปโหลด Logo ใหม่</label>
-                        <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
+                        <input type="file" class="form-control" id="logo" name="logo" accept="image/*" onchange="validateLogoSize(this)">
                         <small class="text-muted">รองรับ JPG, PNG, GIF, WEBP, SVG (สูงสุด 2MB)</small>
+                        <div id="logo-error" class="text-danger mt-1" style="display:none;"></div>
                     </div>
                     @if($setting->logo)
                         <div class="custom-control custom-checkbox mb-2">
@@ -180,6 +181,14 @@
 @section('scripts')
     <script>
          function formsubmit(form) {
+            if (form === '#form-logo') {
+                var fileInput = document.getElementById('logo');
+                if (fileInput.files.length > 0 && fileInput.files[0].size > 2 * 1024 * 1024) {
+                    document.getElementById('logo-error').style.display = 'block';
+                    document.getElementById('logo-error').textContent = 'ไฟล์ใหญ่เกินไป กรุณาเลือกไฟล์ขนาดไม่เกิน 2MB';
+                    return;
+                }
+            }
             Swal.fire({
             title: '{{__('setting.Do you want to save the data?')}}',
             // text: "You won't be able to revert this!",
@@ -206,5 +215,16 @@
             })
 
             @endif
+
+        function validateLogoSize(input) {
+            var errorEl = document.getElementById('logo-error');
+            if (input.files.length > 0 && input.files[0].size > 2 * 1024 * 1024) {
+                errorEl.style.display = 'block';
+                errorEl.textContent = 'ไฟล์ใหญ่เกินไป กรุณาเลือกไฟล์ขนาดไม่เกิน 2MB';
+                input.value = '';
+            } else {
+                errorEl.style.display = 'none';
+            }
+        }
     </script>
 @endsection
