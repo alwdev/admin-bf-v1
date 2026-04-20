@@ -26,6 +26,36 @@
 
 <div class="row">
     <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Logo เว็บไซต์</h4>
+                <form id="form-logo" action="{{ route('setting.logo_update') }}" method="post" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-3">
+                        @if($setting->logo)
+                            <div class="mb-2">
+                                <img src="{{ asset('images/' . $setting->logo) }}" height="60" style="max-width:200px;height:auto;" />
+                            </div>
+                        @endif
+                        <label class="form-label" for="logo">อัปโหลด Logo ใหม่</label>
+                        <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
+                        <small class="text-muted">รองรับ JPG, PNG, GIF, WEBP, SVG (สูงสุด 2MB)</small>
+                    </div>
+                    @if($setting->logo)
+                        <div class="custom-control custom-checkbox mb-2">
+                            <input type="checkbox" class="custom-control-input" id="remove_logo" name="remove_logo" value="1">
+                            <label class="custom-control-label" for="remove_logo">ลบ Logo ออก</label>
+                        </div>
+                    @endif
+                    <button type="button" onclick="formsubmit('#form-logo')" class="btn btn-primary waves-effect waves-light">{{__('main.save')}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-6">
          <div class="card">
             <div class="card-body">
                 <h4 class="card-title">{{__('setting.website_setting')}}</h4>

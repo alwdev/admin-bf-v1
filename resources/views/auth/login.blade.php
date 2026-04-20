@@ -43,7 +43,8 @@
                                         <div class="card-body">
                                             <div class="text-center mb-4 mt-3">
                                                 <a href="/">
-                                                    <span><img src="{{ env('APP_LOGO') }}" alt="" height="150"></span>
+                                                    @php $__loginLogo = \App\Models\Setting::value('logo') ?: env('APP_LOGO', 'logo_512.png'); @endphp
+                                                    <span><img src="{{ asset('images/' . $__loginLogo) }}" alt="" style="max-width:100%;max-height:150px;width:auto;height:auto;" onerror="this.src='{{ asset('images/logo_512.png') }}'" /></span>
                                                 </a>
                                             </div>
                                             <form action="{{ route('login') }}" method="post" class="p-2">

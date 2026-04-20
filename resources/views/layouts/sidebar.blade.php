@@ -4,7 +4,8 @@
 
         <div class="navbar-brand-box">
             <a href="/" class="logo">
-                <img src="{{ env('APP_LOGO') }}" width="200" style="height: auto;" />
+                @php $__siteLogo = \App\Models\Setting::value('logo') ?: env('APP_LOGO', 'logo_512.png'); @endphp
+                <img src="{{ asset('images/' . $__siteLogo) }}" width="200" style="height: auto;" onerror="this.src='{{ asset('images/logo_512.png') }}'" />
             </a>
         </div>
 

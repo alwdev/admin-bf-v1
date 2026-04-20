@@ -301,6 +301,27 @@ class SettingController extends Controller
         return redirect()->route('setting.affiliate')->with('status', 'success');
     }
 
+    public function logo_update(Request $request)
+    {
+        $request->validate([
+            'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp,svg', 'max:2048'],
+        ]);
+
+        $setting = Setting::first();
+
+        if ($request->hasFile('logo')) {
+            $fileName = 'logo_' . time() . '.' . $request->logo->extension();
+            $request->logo->move(public_path('images'), $fileName);
+            $setting->logo = $fileName;
+        } elseif ($request->has('remove_logo')) {
+            $setting->logo = null;
+        }
+
+        $setting->save();
+
+        return redirect()->route('setting.index')->with('status', 'success');
+    }
+
     public function deposit_continuously_update(Request $request)
     {
         $setting = Setting::first();
