@@ -89,7 +89,7 @@
                             <tr>
                                 <td>
                                     @if ($item->img_url)
-                                        <img src="{{ $item->img_url }}" alt="" class="img-thumb-prod"
+                                        <img src="{{ $item->img_url }}?v={{ $item->updated_at?->timestamp ?? time() }}" alt="" class="img-thumb-prod"
                                             data-id="{{ $item->id }}"
                                             style="max-height:48px;max-width:72px;cursor:pointer;object-fit:cover;"
                                             onerror="this.classList.add('d-none');document.getElementById('amb-prod-fb-{{ $item->id }}').classList.remove('d-none');">
