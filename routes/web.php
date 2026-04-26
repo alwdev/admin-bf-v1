@@ -11,6 +11,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\HashtagController;
 use App\Http\Controllers\AlertController;
+use App\Http\Controllers\LogViewerController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -217,6 +218,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/smsLog', function () {
         return view('SMS.list');
     })->name('smsLog.index');
+
+    //Log Viewer
+    Route::get('/logs', [LogViewerController::class, 'index'])->name('logs.viewer');
+    Route::post('/logs/clear', [LogViewerController::class, 'clear'])->name('logs.clear');
 
     Route::get('/report/ufa-transactions', [App\Http\Controllers\UfaTransactionReportController::class, 'index'])
         ->name('report.ufa_transactions')
