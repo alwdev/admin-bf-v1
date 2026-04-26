@@ -137,6 +137,7 @@ class TransactionController extends Controller
     {
         // Debug: log all request data
         error_log("lineNotify_tranfer request data: " . json_encode($request->all()));
+        Log::info("lineNotify_tranfer request data: " . json_encode($request->all()));
 
         // Validate request
         if (!$request->has('amount') || !$request->has('acc_no')) {
@@ -174,23 +175,23 @@ class TransactionController extends Controller
                 } else {
                     error_log("lineNotify_tranfer acc_no not match");
                     $member = Members::find($recheck_transfer->member_id);
-                    TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                        ->line('LINE-BOT ' . env('APP_NAME'))
-                        ->line('เลขบัญชีผู้โอนเงินไม่ตรงกับเลขบัญชีที่แจ้งไว้')
-                        ->line('User : ' . $member->username)
-                        ->line("amount = " . $amount)
-                        ->line("acc_no = " . $acc_no)
-                        ->line("transfer acc_no = " . $lastFourCharacters)
-                        ->send();
+                    // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                    //     ->line('LINE-BOT ' . env('APP_NAME'))
+                    //     ->line('เลขบัญชีผู้โอนเงินไม่ตรงกับเลขบัญชีที่แจ้งไว้')
+                    //     ->line('User : ' . $member->username)
+                    //     ->line("amount = " . $amount)
+                    //     ->line("acc_no = " . $acc_no)
+                    //     ->line("transfer acc_no = " . $lastFourCharacters)
+                    //     ->send();
                     return response()->json(['status' => 'error', 'message' => 'Account number mismatch'], 404);
                 }
             } else {
-                TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                    ->line('LINE-BOT ' . env('APP_NAME'))
-                    ->line('ไม่พบรายการโอนเงินในระบบ')
-                    ->line("amount = " . $amount)
-                    ->line("acc_no = " . $acc_no)
-                    ->send();
+                // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                //     ->line('LINE-BOT ' . env('APP_NAME'))
+                //     ->line('ไม่พบรายการโอนเงินในระบบ')
+                //     ->line("amount = " . $amount)
+                //     ->line("acc_no = " . $acc_no)
+                //     ->send();
                 return response()->json(['status' => 'error', 'message' => 'Transfer not found'], 404);
             }
         }
@@ -198,19 +199,19 @@ class TransactionController extends Controller
 
     public function lineNotify_deposit($id)
     {
-        error_log("lineNotify_deposit id = " . $id);
+        Log::info("lineNotify_deposit id = " . $id);
         $transfer = Transfer::where('id', $id)->first();
 
         if (!$transfer) {
-            error_log("lineNotify_deposit: Transfer not found for ID: " . $id);
+            Log::error("lineNotify_deposit: Transfer not found for ID: " . $id);
             return 404; // หรือ return response ที่เหมาะสม
         }
 
-        error_log("lineNotify_deposit transfer found id = " . $transfer->id);
+        Log::info("lineNotify_deposit transfer found id = " . $transfer->id);
         $member = Members::find($transfer->member_id);
 
         if (!$member) {
-            error_log("lineNotify_deposit: Member not found for transfer ID: " . $transfer->id);
+            Log::error("lineNotify_deposit: Member not found for transfer ID: " . $transfer->id);
             return 404; // หรือ return response ที่เหมาะสม
         }
 
@@ -489,14 +490,15 @@ class TransactionController extends Controller
         }
         $bonus = $bonus_to_apply;
         try {
-            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                ->line('BOT-LINE ' . env('APP_NAME'))
-                ->line('Transaction completed, credit transferred ' . $member->username)
-                ->line('Amount :' . $transfer->amount)
-                ->line('Bonus :' . $bonus)
-                ->line('Promotion : ' . $applied_promotion_name)
-                ->line('Message : ' . $message)
-                ->send();
+            // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+            //     ->line('BOT-LINE ' . env('APP_NAME'))
+            //     ->line('Transaction completed, credit transferred ' . $member->username)
+            //     ->line('Amount :' . $transfer->amount)
+            //     ->line('Bonus :' . $bonus)
+            //     ->line('Promotion : ' . $applied_promotion_name)
+            //     ->line('Message : ' . $message)
+            //     ->send();
+            
         } catch (\Exception $e) {
             error_log("Error sending Telegram message (success path): " . $e->getMessage());
         }
