@@ -61,7 +61,7 @@ function getFirstSCBMessage() {
         };
     }
 
-    console.warn("❌ ไม่พบข้อความ 'รายการเงินเข้า'");
+    console.warn("❌ not found 'transfer'");
     return null;
 }
 
@@ -77,7 +77,7 @@ function initObserver() {
                         const data = getFirstSCBMessage();
                         if (!data) return;
 
-                        console.log("✅ ข้อมูลที่จะส่ง:", data);
+                        console.log("✅ transfer data:", data);
 
                         const body = {
                             amount: data.amount,
@@ -95,8 +95,8 @@ function initObserver() {
                             },
                             body: JSON.stringify(body),
                         })
-                            .then(() => console.log("🚀 ส่งข้อมูลเรียบร้อย"))
-                            .catch((err) => console.error("❌ เกิดข้อผิดพลาด:", err));
+                            .then(() => console.log("🚀 transfer data success"))
+                            .catch((err) => console.error("❌ transfer data error:", err));
 
                     }, 300); // debounce
                 }
@@ -109,10 +109,10 @@ function waitForMessageListThenObserve() {
     const tryFind = () => {
         const msgList = document.querySelector(".message_list");
         if (msgList) {
-            console.log("✅ พบ .message_list แล้ว เริ่ม observer");
+            console.log("✅ start observer");
             observer.observe(msgList, { childList: true, subtree: true });
         } else {
-            console.log("⏳ รอ .message_list...");
+            console.log("⏳ waiting for .message_list...");
             setTimeout(tryFind, 500);
         }
     };
@@ -122,7 +122,7 @@ function waitForMessageListThenObserve() {
 function stopObserve() {
     if (observer) {
         observer.disconnect();
-        console.log("⏹️ หยุดเฝ้าดูเรียบร้อย");
+        console.log("⏹️ stop observer");
     }
 }
 
@@ -140,8 +140,8 @@ function testServer() {
         },
         body: JSON.stringify(body),
     })
-        .then(() => console.log("🚀testServer ส่งข้อมูลเรียบร้อย"))
-        .catch((err) => console.error("❌ เกิดข้อผิดพลาด:", err));
+        .then(() => console.log("🚀testServer success"))
+        .catch((err) => console.error("❌ testServer error:", err));
 }
 
 // ✅ เริ่มทำงานเมื่อ DOM โหลดเสร็จ

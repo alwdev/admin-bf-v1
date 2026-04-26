@@ -134,11 +134,23 @@ class TransactionController extends Controller
 
     public function lineNotify_tranfer(Request $request)
     {
-        error_log("lineNotify_tranfer amount = " . $request->amount);
-        error_log("lineNotify_tranfer acc_no = " . $request->acc_no);
+        // Debug: log all request data
+        error_log("lineNotify_tranfer request data: " . json_encode($request->all()));
 
-        $transfer = Transfer::where('amount', $request->amount)
-            ->where('deposit_from_bank_no', 'like', '%' . $request->acc_no)
+        // Validate request
+        if (!$request->has('amount') || !$request->has('acc_no')) {
+            error_log("lineNotify_tranfer: Missing required fields");
+            return response()->json(['status' => 'error', 'message' => 'Missing required fields: amount, acc_no'], 400);
+        }
+
+        $amount = $request->input('amount');
+        $acc_no = $request->input('acc_no');
+
+        error_log("lineNotify_tranfer amount = " . $amount);
+        error_log("lineNotify_tranfer acc_no = " . $acc_no);
+
+        $transfer = Transfer::where('amount', $amount)
+            ->where('deposit_from_bank_no', 'like', '%' . $acc_no)
             ->where('type', 'deposit')
             ->where('status', 1)->first();
 
@@ -148,13 +160,13 @@ class TransactionController extends Controller
             return response()->json(['status' => 'success', 'message' => 'Deposit processed successfully'], 200);
         } else {
             error_log("lineNotify_tranfer transfer not found");
-            $recheck_transfer = Transfer::where('amount', $request->amount)
+            $recheck_transfer = Transfer::where('amount', $amount)
                 ->where('type', 'deposit')
                 ->where('status', 1)->first();
             if ($recheck_transfer) {
                 $lastFourCharacters = substr($recheck_transfer->deposit_from_bank_no, -4);
                 error_log("recheck_transfer lastFourCharacters deposit_from_bank_no = " . $lastFourCharacters);
-                if ($lastFourCharacters == $request->acc_no) {
+                if ($lastFourCharacters == $acc_no) {
                     $do_transfer = $this->lineNotify_deposit($recheck_transfer->id);
                     error_log("lineNotify_tranfer do_transfer = " . $do_transfer);
                     return response()->json(['status' => 'success', 'message' => 'Deposit processed successfully'], 200);
@@ -165,8 +177,8 @@ class TransactionController extends Controller
                         ->line('LINE-BOT ' . env('APP_NAME'))
                         ->line('เลขบัญชีผู้โอนเงินไม่ตรงกับเลขบัญชีที่แจ้งไว้')
                         ->line('User : ' . $member->username)
-                        ->line("amount = " . $request->amount)
-                        ->line("acc_no = " . $request->acc_no)
+                        ->line("amount = " . $amount)
+                        ->line("acc_no = " . $acc_no)
                         ->line("transfer acc_no = " . $lastFourCharacters)
                         ->send();
                     return response()->json(['status' => 'error', 'message' => 'Account number mismatch'], 404);
@@ -175,8 +187,8 @@ class TransactionController extends Controller
                 TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                     ->line('LINE-BOT ' . env('APP_NAME'))
                     ->line('ไม่พบรายการโอนเงินในระบบ')
-                    ->line("amount = " . $request->amount)
-                    ->line("acc_no = " . $request->acc_no)
+                    ->line("amount = " . $amount)
+                    ->line("acc_no = " . $acc_no)
                     ->send();
                 return response()->json(['status' => 'error', 'message' => 'Transfer not found'], 404);
             }
