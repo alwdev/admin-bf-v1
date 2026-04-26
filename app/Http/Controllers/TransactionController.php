@@ -183,7 +183,7 @@ class TransactionController extends Controller
                     //     ->line("acc_no = " . $acc_no)
                     //     ->line("transfer acc_no = " . $lastFourCharacters)
                     //     ->send();
-                    return response()->json(['status' => 'error', 'message' => 'Account number mismatch'], 404);
+                    return response()->json(['status' => 'error', 'message' => 'Account number mismatch'], 200);
                 }
             } else {
                 // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
@@ -192,7 +192,7 @@ class TransactionController extends Controller
                 //     ->line("amount = " . $amount)
                 //     ->line("acc_no = " . $acc_no)
                 //     ->send();
-                return response()->json(['status' => 'error', 'message' => 'Transfer not found'], 404);
+                return response()->json(['status' => 'error', 'message' => 'Transfer not found'], 200);
             }
         }
     }
