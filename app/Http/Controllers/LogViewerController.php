@@ -14,7 +14,12 @@ class LogViewerController extends Controller
         $search = $request->get('search', '');
 
         if (!File::exists($logPath)) {
-            return view('logs.viewer', ['logs' => 'Log file not found', 'lines' => $lines, 'search' => $search]);
+            // Create empty log file if it doesn't exist
+            File::put($logPath, '');
+        }
+
+        if (!File::exists($logPath)) {
+            return view('logs.viewer', ['logs' => 'Unable to create log file. Please check storage/logs/ directory permissions.', 'lines' => $lines, 'search' => $search]);
         }
 
         // Read last N lines
