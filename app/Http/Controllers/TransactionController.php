@@ -114,20 +114,21 @@ class TransactionController extends Controller
                     $trans->save();
                     return response()->json(["OTP" => $otp, "refNo" => $refNo], 200);
                 } else {
-                    TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                        ->line('BOT ' . env('APP_NAME'))
-                        ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
-                        ->line("refNo =" . $refNo)
-                        ->line("otp =" . $otp)
-                        ->send();
+                    // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+                    //     ->line('BOT ' . env('APP_NAME'))
+                    //     ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
+                    //     ->line("refNo =" . $refNo)
+                    //     ->line("otp =" . $otp)
+                    //     ->send();
+                    return response()->json(['message' => 'ไม่พบข้อมูลการโอนเงิน'], 404);
                 }
             }
         } catch (\Exception $e) {
             Log::error("Error : " . $e->getMessage());
-            TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                ->line('BOT ' . env('APP_NAME'))
-                ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
-                ->send();
+            // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
+            //     ->line('BOT ' . env('APP_NAME'))
+            //     ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
+            //     ->send();
             return response()->json(['message' => 'พบข้อผิดพลาดในการตรวจสอบ SMS'], 400);
         }
     }
