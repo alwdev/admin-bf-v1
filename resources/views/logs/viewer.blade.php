@@ -102,6 +102,11 @@
         <h1>📋 Laravel Log Viewer</h1>
         
         <form method="GET" action="{{ route('logs.viewer') }}">
+            <select name="file" onchange="this.form.submit()">
+                @foreach($logFiles as $file)
+                    <option value="{{ $file }}" {{ $logFile == $file ? 'selected' : '' }}>{{ $file }}</option>
+                @endforeach
+            </select>
             <input type="text" name="search" placeholder="Search..." value="{{ $search }}">
             <select name="lines">
                 <option value="100" {{ $lines == 100 ? 'selected' : '' }}>100 lines</option>
@@ -112,7 +117,7 @@
             <button type="submit">🔍 View</button>
         </form>
         
-        <form method="POST" action="{{ route('logs.clear') }}" onsubmit="return confirm('Are you sure you want to clear the log file?');">
+        <form method="POST" action="{{ route('logs.clear') }}?file={{ $logFile }}" onsubmit="return confirm('Are you sure you want to clear {{ $logFile }}?');">
             @csrf
             <button type="submit" class="clear-btn">🗑️ Clear</button>
         </form>

@@ -9,17 +9,38 @@ class LogViewerController extends Controller
 {
     public function index(Request $request)
     {
-        $logPath = storage_path('logs/laravel.log');
+        $logsDir = storage_path('logs');
         $lines = $request->get('lines', 500);
         $search = $request->get('search', '');
+        $logFile = $request->get('file', 'laravel.log');
 
-        if (!File::exists($logPath)) {
-            // Create empty log file if it doesn't exist
-            File::put($logPath, '');
+        // Get all log files
+        $logFiles = [];
+        if (File::isDirectory($logsDir)) {
+            $allFiles = File::files($logsDir);
+            foreach ($allFiles as $file) {
+                if (strpos($file->getFilename(), '.log') !== false) {
+                    $logFiles[] = $file->getFilename();
+                }
+            }
+            rsort($logFiles); // Newest first
         }
 
+        // Default to first file if specified not found
+        if (!in_array($logFile, $logFiles) && count($logFiles) > 0) {
+            $logFile = $logFiles[0];
+        }
+
+        $logPath = $logsDir . '/' . $logFile;
+
         if (!File::exists($logPath)) {
-            return view('logs.viewer', ['logs' => 'Unable to create log file. Please check storage/logs/ directory permissions.', 'lines' => $lines, 'search' => $search]);
+            return view('logs.viewer', [
+                'logs' => 'Log file not found: ' . $logFile,
+                'lines' => $lines,
+                'search' => $search,
+                'logFile' => $logFile,
+                'logFiles' => $logFiles
+            ]);
         }
 
         // Read last N lines
@@ -39,18 +60,21 @@ class LogViewerController extends Controller
         return view('logs.viewer', [
             'logs' => $logContent,
             'lines' => $lines,
-            'search' => $search
+            'search' => $search,
+            'logFile' => $logFile,
+            'logFiles' => $logFiles
         ]);
     }
 
-    public function clear()
+    public function clear(Request $request)
     {
-        $logPath = storage_path('logs/laravel.log');
+        $logFile = $request->get('file', 'laravel.log');
+        $logPath = storage_path('logs/' . $logFile);
 
         if (File::exists($logPath)) {
             File::put($logPath, '');
         }
 
-        return redirect()->route('logs.viewer')->with('success', 'Log file cleared successfully');
+        return redirect()->route('logs.viewer', ['file' => $logFile])->with('success', 'Log file cleared successfully');
     }
 }
