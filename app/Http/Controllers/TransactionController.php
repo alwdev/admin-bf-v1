@@ -114,21 +114,11 @@ class TransactionController extends Controller
                     $trans->save();
                     return response()->json(["OTP" => $otp, "refNo" => $refNo], 200);
                 } else {
-                    // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-                    //     ->line('BOT ' . env('APP_NAME'))
-                    //     ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
-                    //     ->line("refNo =" . $refNo)
-                    //     ->line("otp =" . $otp)
-                    //     ->send();
                     return response()->json(['message' => 'ไม่พบข้อมูลการโอนเงิน'], 404);
                 }
             }
         } catch (\Exception $e) {
             Log::error("Error : " . $e->getMessage());
-            // TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
-            //     ->line('BOT ' . env('APP_NAME'))
-            //     ->line('พบข้อผิดพลาดในการตรวจสอบ SMS')
-            //     ->send();
             return response()->json(['message' => 'พบข้อผิดพลาดในการตรวจสอบ SMS'], 400);
         }
     }
@@ -619,7 +609,8 @@ class TransactionController extends Controller
 
 
                 $wheel_setting = WheelSpin::first();
-                if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
+                if ($wheel_setting && (float) $wheel_setting->ticket_condition > 0
+                    && (float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
                     $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
                     $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
                 }
@@ -760,7 +751,8 @@ class TransactionController extends Controller
 
 
                 $wheel_setting = WheelSpin::first();
-                if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
+                if ($wheel_setting && (float) $wheel_setting->ticket_condition > 0
+                    && (float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
                     $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
                     $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
                 }
@@ -820,7 +812,7 @@ class TransactionController extends Controller
 
     public function smsRequest2(Request $request)
     {
-        $text =   $_POST["text"];
+        $text = $request->input('text', $_POST['text'] ?? '');
         $log = new Logs;
         $log->sms = "smsRequest2 : " . $text;
         $log->save();
@@ -917,7 +909,8 @@ class TransactionController extends Controller
 
 
                 $wheel_setting = WheelSpin::first();
-                if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
+                if ($wheel_setting && (float) $wheel_setting->ticket_condition > 0
+                    && (float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
                     $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
                     $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
                 }
@@ -1055,7 +1048,8 @@ class TransactionController extends Controller
 
 
                 $wheel_setting = WheelSpin::first();
-                if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
+                if ($wheel_setting && (float) $wheel_setting->ticket_condition > 0
+                    && (float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
                     $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
                     $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
                 }
@@ -1117,6 +1111,7 @@ class TransactionController extends Controller
             Log::info('otp ' . $transfer->otp);
             return response()->json([$transfer->otp], 200);
         }
+        return response()->json(['message' => 'Transfer not found'], 404);
     }
 
     public function getTranfer($id)
@@ -1125,22 +1120,20 @@ class TransactionController extends Controller
         if ($transfer) {
             return response()->json([$transfer], 200);
         }
+        return response()->json(['message' => 'Transfer not found'], 404);
     }
 
     public function upDaterefNo(Request $request)
     {
         $transfer = Transfer::find($request->id);
+        if (!$transfer) {
+            return response()->json(['message' => 'Transfer not found'], 404);
+        }
         $transfer->refNo = $request->refNo;
         $transfer->save();
         return response()->json(['message' => 'Ref No updated successfully'], 200);
     }
 
-    // public function updateOTP(Request $request){
-    //     $transfer = Transfer::where('refNo',$request->refNo);
-    //     $transfer->otp = $request->otp;
-    //     $transfer->save();
-    //     return response()->json(['message' => 'OTP updated successfully'], 200);
-    // }
 
     public function approvewithdraw(Request $request)
     {
@@ -1420,7 +1413,8 @@ class TransactionController extends Controller
 
 
             $wheel_setting = WheelSpin::first();
-            if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
+            if ($wheel_setting && (float) $wheel_setting->ticket_condition > 0
+                && (float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
                 $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
                 $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
             }
@@ -1468,19 +1462,22 @@ class TransactionController extends Controller
     public function checkdeposit($id)
     {
         $transfer = Transfer::find($id);
-        if ($transfer->status == 1) {
-            return response()->json(['error']);
-        } else if ($transfer->status == 2) {
-            return response()->json(['success']);
-        } else {
+        if (!$transfer) {
             return response()->json(['error']);
         }
+        if ($transfer->status == 2) {
+            return response()->json(['success']);
+        }
+        return response()->json(['error']);
     }
     public function checkdepositTMN($id)
     {
         // error_log('checkdepositTMN');
 
         $transfer = Transfer::find($id);
+        if (!$transfer) {
+            return response()->json(['error']);
+        }
         if ($transfer->status == 1) {
             Log::info($transfer->amount);
             Log::info($transfer->deposit_from_bank_no);
@@ -1586,7 +1583,8 @@ class TransactionController extends Controller
         }
 
         $wheel_setting = WheelSpin::first();
-        if ((float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
+        if ($wheel_setting && (float) $wheel_setting->ticket_condition > 0
+            && (float) $transfer->amount >= (float) $wheel_setting->ticket_condition) {
             $total_spin = floor((float) $transfer->amount / (float) $wheel_setting->ticket_condition);
             $member->remaining_spin = (float) $member->remaining_spin + (float) $total_spin;
         }
