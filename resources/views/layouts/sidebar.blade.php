@@ -42,8 +42,6 @@
                         <a href="#" class="waves-effect"><i
                                 class="bx bxs-report"></i><span>{{ __('main.report') }}</span></a>
                         <ul class="" aria-expanded="false">
-                            <li class=""><a href="https://bo.psg777.com/bo/simpleReport"
-                                    class="active">{{ __('main.report') }}</a></li>
                             <li class=""><a href="/member_transfer/0"
                                     class="active">{{ __('main.report_transfer') }}</a></li>
                             <li class=""><a href="{{ route('report.edit_balance') }}"
