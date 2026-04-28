@@ -322,16 +322,19 @@ class ManageMemberController extends Controller
 
                 $bonus = $bonus_to_apply; // อัปเดตตัวแปร $bonus สำหรับ Telegram log
 
-                // แก้ไข Telegram message ให้ใช้ $applied_promotion_name และ $message จาก logic ด้านบน
-                TelegramMessage::create()
-                    ->to(env('TELEGRAM_G_ID'))
-                    ->line(env('APP_NAME'))
-                    ->line('Admin has approved the credit. ' . $member->username)
-                    ->line('Amount :' . floor($transfer->amount))
-                    ->line('Bonus :' .  $bonus) // ใช้ floor() กับ bonus ด้วยเพื่อความสอดคล้อง
-                    ->line('Promotion : ' . $applied_promotion_name) // แสดงชื่อโปรโมชั่นที่ถูกใช้
-                    ->line('Message : ' . $message) // แสดง message จาก logic
-                    ->send();
+                try {
+                    TelegramMessage::create()
+                        ->to(env('TELEGRAM_G_ID'))
+                        ->line(env('APP_NAME'))
+                        ->line('Admin has approved the credit. ' . $member->username)
+                        ->line('Amount :' . floor($transfer->amount))
+                        ->line('Bonus :' . $bonus)
+                        ->line('Promotion : ' . $applied_promotion_name)
+                        ->line('Message : ' . $message)
+                        ->send();
+                } catch (\Exception $e) {
+                    Log::error('Telegram notify error (deposit approve): ' . $e->getMessage());
+                }
             } elseif ($request->type == 'withdraw') {
                 $bank = Bank::where('account_no', $transfer->deposit_to_bank_no)->first();
                 if ($bank) {
@@ -346,13 +349,17 @@ class ManageMemberController extends Controller
                 $transfer->old_balance = $old_balance;
                 $transfer->save();
 
-                TelegramMessage::create()
-                    ->to(env('TELEGRAM_G_ID'))
-                    ->line(env('APP_NAME'))
-                    ->line('Admin Make a transaction, approve a withdrawal ' . $member->username)
-                    ->line('Mount :' . floor($transfer->amount))
-                    ->line('Warning: Admin must make the transfer by themselves via the bank app.')
-                    ->send();
+                try {
+                    TelegramMessage::create()
+                        ->to(env('TELEGRAM_G_ID'))
+                        ->line(env('APP_NAME'))
+                        ->line('Admin Make a transaction, approve a withdrawal ' . $member->username)
+                        ->line('Mount :' . floor($transfer->amount))
+                        ->line('Warning: Admin must make the transfer by themselves via the bank app.')
+                        ->send();
+                } catch (\Exception $e) {
+                    Log::error('Telegram notify error (withdraw approve): ' . $e->getMessage());
+                }
             }
         } elseif ($request->status == 'pending') {
             $transfer->status = 1;
@@ -497,7 +504,7 @@ class ManageMemberController extends Controller
                 ->where('type', 'deposit')
                 ->whereDate('created_at', Carbon::now()->subDays(7))->get();
 
-            if ($last_deposit) {
+            if ($last_deposit->isNotEmpty()) {
                 Log::info("Cashback !! member  = " . $member->username . " มียอดฝากก่อนหน้ารับโปร");
                 continue;
             }
@@ -506,7 +513,7 @@ class ManageMemberController extends Controller
                 ->where('status', 2)
                 ->where('type', 'withdraw')
                 ->whereDate('created_at', Carbon::now()->subDays(7))->get();
-            if ($last_withdraw) {
+            if ($last_withdraw->isNotEmpty()) {
                 Log::info("Cashback !! member  = " . $member->username . " มียอดถอนก่อนหน้า");
                 continue;
             }
@@ -523,7 +530,7 @@ class ManageMemberController extends Controller
 
 
             if (abs($total_lose) > 0) {
-                $setting = Setting::get();
+                $setting = Setting::first();
                 if ($setting) {
                     $cash_back = (float) (abs($total_lose) * ($setting->cashback_percent / 100));
                 } else {
