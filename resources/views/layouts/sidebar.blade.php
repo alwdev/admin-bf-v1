@@ -62,8 +62,20 @@
                             class='bx bxs-bank'></i><span>{{ __('main.book_bank') }}</span></a>
                 </li>
                 <li>
-                    <a href="{{ route('provider.index') }}" class="waves-effect"><i
-                            class='bx bx-joystick'></i><span>{{ __('main.game_cate') }}</span></a>
+                    <a href="{{ route('amb.categories.index') }}" class="waves-effect"><i
+                            class='bx bx-category'></i><span>AMB หมวดหมู่</span></a>
+                </li>
+                <li>
+                    <a href="{{ route('amb.products.index') }}" class="waves-effect"><i
+                            class='bx bx-layer'></i><span>AMB Providers</span></a>
+                </li>
+                <li>
+                    <a href="{{ route('amb.games.index') }}" class="waves-effect"><i
+                            class='bx bx-joystick'></i><span>AMB Games</span></a>
+                </li>
+                <li>
+                    <a href="{{ route('amb.homepage.index') }}" class="waves-effect"><i
+                            class='bx bx-grid-alt'></i><span>AMB หน้าแรก</span></a>
                 </li>
                 <li>
                     <a href="{{ route('promotion.index') }}" class="waves-effect"><i

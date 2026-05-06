@@ -26,6 +26,9 @@
             background-color: #af8433;
             border-color: #af8433;
         }
+        .password-toggle-btn {
+            border-left: 0;
+        }
     </style>
 </head>
 
@@ -61,7 +64,14 @@
                                                 <div class="form-group">
                                                     <a href="pages-recoverpw.html" class="text-muted float-right">Forgot your password?</a>
                                                     <label for="password">Password</label>
-                                                    <input class="form-control" type="password" name="password" required="" id="password" placeholder="Enter your password">
+                                                    <div class="input-group">
+                                                        <input class="form-control" type="password" name="password" required="" id="password" placeholder="Enter your password">
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-light password-toggle-btn" type="button" id="togglePassword" aria-label="Toggle password visibility">
+                                                                <i class="mdi mdi-eye-outline" id="togglePasswordIcon"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                                 <div class="form-group mb-4 pb-3">
@@ -107,6 +117,19 @@
 
     <!-- App js -->
     <script src="{{ asset('js/theme.js')}}"></script>
+    <script>
+        const passwordInput = document.getElementById('password');
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+
+        if (passwordInput && togglePasswordBtn && togglePasswordIcon) {
+            togglePasswordBtn.addEventListener('click', function () {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                togglePasswordIcon.className = isPassword ? 'mdi mdi-eye-off-outline' : 'mdi mdi-eye-outline';
+            });
+        }
+    </script>
 
 </body>
 

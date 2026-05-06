@@ -169,6 +169,32 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/GetAllGame', [App\Http\Controllers\ProviderController::class, 'GetAllGame']);
 
+    // AMB (providers / categories / games)
+    Route::get('/amb/categories', [App\Http\Controllers\AmbCategoryController::class, 'index'])->name('amb.categories.index');
+    Route::post('/amb/categories', [App\Http\Controllers\AmbCategoryController::class, 'store'])->name('amb.categories.store');
+    Route::post('/amb/categories/toggle', [App\Http\Controllers\AmbCategoryController::class, 'toggle'])->name('amb.categories.toggle');
+    Route::post('/amb/categories/{id}', [App\Http\Controllers\AmbCategoryController::class, 'update'])->name('amb.categories.update');
+    Route::delete('/amb/categories/{id}', [App\Http\Controllers\AmbCategoryController::class, 'destroy'])->name('amb.categories.destroy');
+
+    Route::get('/amb/products', [App\Http\Controllers\AmbProductController::class, 'index'])->name('amb.products.index');
+    Route::post('/amb/products', [App\Http\Controllers\AmbProductController::class, 'store'])->name('amb.products.store');
+    Route::post('/amb/products/toggle', [App\Http\Controllers\AmbProductController::class, 'toggle'])->name('amb.products.toggle');
+    Route::post('/amb/products/upload', [App\Http\Controllers\AmbProductController::class, 'uploadImage'])->name('amb.products.upload');
+    Route::post('/amb/products/{id}', [App\Http\Controllers\AmbProductController::class, 'update'])->name('amb.products.update');
+    Route::delete('/amb/products/{id}', [App\Http\Controllers\AmbProductController::class, 'destroy'])->name('amb.products.destroy');
+
+    Route::get('/amb/games', [App\Http\Controllers\AmbGameController::class, 'index'])->name('amb.games.index');
+    Route::post('/amb/games', [App\Http\Controllers\AmbGameController::class, 'store'])->name('amb.games.store');
+    Route::post('/amb/games/toggle', [App\Http\Controllers\AmbGameController::class, 'toggle'])->name('amb.games.toggle');
+    Route::post('/amb/games/upload', [App\Http\Controllers\AmbGameController::class, 'uploadImage'])->name('amb.games.upload');
+    Route::post('/amb/games/{id}', [App\Http\Controllers\AmbGameController::class, 'update'])->name('amb.games.update');
+    Route::delete('/amb/games/{id}', [App\Http\Controllers\AmbGameController::class, 'destroy'])->name('amb.games.destroy');
+
+    Route::get('/amb/homepage-items', [App\Http\Controllers\AmbHomepageItemController::class, 'index'])->name('amb.homepage.index');
+    Route::post('/amb/homepage-items', [App\Http\Controllers\AmbHomepageItemController::class, 'store'])->name('amb.homepage.store');
+    Route::post('/amb/homepage-items/{id}', [App\Http\Controllers\AmbHomepageItemController::class, 'update'])->name('amb.homepage.update');
+    Route::delete('/amb/homepage-items/{id}', [App\Http\Controllers\AmbHomepageItemController::class, 'destroy'])->name('amb.homepage.destroy');
+
     Route::get('/partner', [App\Http\Controllers\PartnerController::class, 'index'])->name('partner.index')->middleware('CheckPermissionUser:manageuser,edit');
     Route::get('/partner/add', [App\Http\Controllers\PartnerController::class, 'add'])->name('partner.add')->middleware('CheckPermissionUser:manageuser,edit');
     Route::post('/partner/create', [App\Http\Controllers\PartnerController::class, 'create'])->name('partner.create')->middleware('CheckPermissionUser:manageuser,edit');

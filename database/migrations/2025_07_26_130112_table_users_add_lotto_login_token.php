@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-         Schema::table('users', function (Blueprint $table) {
-            $table->text('lotto_login_token')->nullable();
-        });
+        if (! Schema::hasColumn('users', 'lotto_login_token')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->text('lotto_login_token')->nullable();
+            });
+        }
     }
 
     /**
@@ -22,6 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        if (Schema::hasColumn('users', 'lotto_login_token')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('lotto_login_token');
+            });
+        }
     }
 };
