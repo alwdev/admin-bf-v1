@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
-use Throwable;
 
 return new class extends Migration
 {
@@ -27,7 +26,7 @@ return new class extends Migration
                     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL,
                     FILE_APPEND
                 );
-            } catch (Throwable $e) {
+            } catch (\Throwable $e) {
                 // Never break migration because debug logging failed.
             }
         };
@@ -99,7 +98,7 @@ return new class extends Migration
 
                     $table->unique(['amb_product_id', 'game_code']);
                 });
-            } catch (Throwable $e) {
+            } catch (\Throwable $e) {
                 // #region agent log
                 $debugLog('H5', 'amb_games create failed', [
                     'error' => $e->getMessage(),
