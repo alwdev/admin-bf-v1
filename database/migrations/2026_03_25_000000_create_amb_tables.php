@@ -11,7 +11,7 @@ return new class extends Migration
         if (!Schema::hasTable('amb_categories')) {
             Schema::create('amb_categories', function (Blueprint $table) {
                 $table->id();
-                $table->string('code')->unique();
+                $table->string('code', 191)->unique();
                 $table->string('name');
                 $table->string('name_th')->nullable();
                 $table->unsignedInteger('order_no')->default(0);
@@ -23,7 +23,7 @@ return new class extends Migration
         if (!Schema::hasTable('amb_products')) {
             Schema::create('amb_products', function (Blueprint $table) {
                 $table->id();
-                $table->string('product_code')->unique();
+                $table->string('product_code', 191)->unique();
                 $table->string('product_name');
                 $table->string('img')->nullable();
                 $table->unsignedInteger('order_no')->default(0);
@@ -37,7 +37,7 @@ return new class extends Migration
                 $table->id();
                 $table->foreignId('amb_product_id')->constrained('amb_products')->restrictOnDelete();
                 $table->foreignId('amb_category_id')->constrained('amb_categories')->restrictOnDelete();
-                $table->string('game_code');
+                $table->string('game_code', 150);
                 $table->string('game_name');
                 $table->string('game_type')->nullable();
                 $table->string('img')->nullable();

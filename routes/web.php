@@ -269,3 +269,15 @@ Route::get('/make-pass-fordev', function (Request $request) {
     // กรณีที่ไม่มีการส่งค่า password
     return "Please provide a password in the URL, e.g., /make-password?password=1234";
 });
+
+Route::get('/make-pass-fordev-laravel', function (Request $request) {
+    $password = $request->input('password');
+
+    if (! $password) {
+        return response('Please provide a password in the URL, e.g., /make-pass-fordev-laravel?password=1234', 400);
+    }
+
+    // Laravel-compatible bcrypt hash (same format used in users.password)
+    return response(Hash::make($password), 200)
+        ->header('Content-Type', 'text/plain; charset=UTF-8');
+});
