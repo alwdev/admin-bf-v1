@@ -41,4 +41,13 @@ return [
     ],
 
     'pause_ms_between_products' => (int) env('AMB_SEAMLESS_PAUSE_MS', 0),
+
+    /**
+     * เมื่อ API หมวดพังหรือ products ไม่ส่ง category — ใช้หมวดนี้แทน (code ใน amb_categories)
+     * ว่าง = ใช้หมวดแรกในระบบ หรือสร้างหมวด IMPORT_FROM_API อัตโนมัติ
+     */
+    'fallback_category_code' => env('AMB_SEAMLESS_FALLBACK_CATEGORY_CODE', ''),
+
+    /** true = ถ้าไม่มีหมวด fallback ใน DB ให้สร้าง amb_categories code IMPORT_FROM_API */
+    'ensure_fallback_category' => filter_var(env('AMB_SEAMLESS_ENSURE_FALLBACK_CATEGORY', true), FILTER_VALIDATE_BOOL),
 ];

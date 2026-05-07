@@ -35,7 +35,13 @@ class AmbSeamlessSyncService
             $stats['warnings'][] = $w;
         }
 
-        $prodResult = $this->syncProducts($base . ($paths['products'] ?? '/seamless/products'), $timeout);
+        $fallbackCategoryId = $this->fallbackCategoryId();
+
+        $prodResult = $this->syncProducts(
+            $base . ($paths['products'] ?? '/seamless/products'),
+            $timeout,
+            $fallbackCategoryId
+        );
         $stats['products'] = $prodResult['count'];
         foreach ($prodResult['warnings'] as $w) {
             $stats['warnings'][] = $w;
@@ -77,7 +83,7 @@ class AmbSeamlessSyncService
         try {
             $response = $this->http()->timeout($timeout)->get($url);
             if ($response->status() === 404) {
-                $warnings[] = 'GET categories ได้ 404 — แก้ API /seamless/categories หรือสร้างหมวดในแอดมินเอง';
+                $warnings[] = 'GET categories ได้ 404 — ซิงค์หมวดจาก API ไม่ได้; provider ใหม่จะไปหมวด fallback (IMPORT_FROM_API หรือหมวดแรกในระบบ) จนกว่าจะแก้ API';
 
                 return ['count' => 0, 'warnings' => $warnings];
             }
@@ -117,7 +123,7 @@ class AmbSeamlessSyncService
     /**
      * @return array{count:int,warnings:array<int,string>}
      */
-    private function syncProducts(string $url, int $timeout): array
+    private function syncProducts(string $url, int $timeout, ?int $fallbackCategoryId): array
     {
         $warnings = [];
         try {
@@ -130,11 +136,11 @@ class AmbSeamlessSyncService
                     continue;
                 }
                 $pCode = $this->pickString($row, config('amb_seamless.keys.product_code'));
-                $pName = $this->pickString($row, config('amb_seamless.keys.product_name'));
-                if ($pCode === null || $pName === null) {
+                if ($pCode === null) {
                     continue;
                 }
                 $pCode = trim($pCode);
+                $pName = $this->pickString($row, config('amb_seamless.keys.product_name')) ?? $pCode;
                 $catCode = $this->pickString($row, config('amb_seamless.keys.product_category'));
                 $categoryId = null;
                 if ($catCode !== null) {
@@ -145,7 +151,10 @@ class AmbSeamlessSyncService
                     $categoryId = $existing?->amb_category_id;
                 }
                 if ($categoryId === null) {
-                    $warnings[] = "ข้าม provider {$pCode}: ไม่พบหมวดในระบบ — กำหนด category ใน API หรือผูกในแอดมินก่อน";
+                    $categoryId = $fallbackCategoryId;
+                }
+                if ($categoryId === null) {
+                    $warnings[] = "ข้าม provider {$pCode}: ไม่มีหมวด fallback — ตั้ง AMB_SEAMLESS_FALLBACK_CATEGORY_CODE หรือสร้างหมวดในแอดมิน";
 
                     continue;
                 }
@@ -170,6 +179,41 @@ class AmbSeamlessSyncService
         }
     }
 
+    /**
+     * หมวดสำหรับ provider ที่ API ไม่บอก category (เช่น /categories 404)
+     */
+    private function fallbackCategoryId(): ?int
+    {
+        $configured = trim((string) config('amb_seamless.fallback_category_code', ''));
+        if ($configured !== '') {
+            $id = AmbCategory::where('code', strtoupper($configured))->value('id');
+            if ($id !== null) {
+                return (int) $id;
+            }
+        }
+
+        $first = AmbCategory::query()->orderBy('order_no')->orderBy('id')->value('id');
+        if ($first !== null) {
+            return (int) $first;
+        }
+
+        if (! config('amb_seamless.ensure_fallback_category', true)) {
+            return null;
+        }
+
+        $cat = AmbCategory::firstOrCreate(
+            ['code' => 'IMPORT_FROM_API'],
+            [
+                'name' => 'นำเข้าจาก API (ยังไม่จัดหมวด)',
+                'name_th' => 'นำเข้าจาก API',
+                'order_no' => 9999,
+                'active' => true,
+            ]
+        );
+
+        return $cat->id;
+    }
+
     private function syncGamesForProduct(string $gamesBaseUrl, AmbProduct $product, int $timeout): int
     {
         $style = config('amb_seamless.games_style', 'query');
@@ -190,8 +234,8 @@ class AmbSeamlessSyncService
                 continue;
             }
             $gCode = $this->pickString($row, config('amb_seamless.keys.game_code'));
-            $gName = $this->pickString($row, config('amb_seamless.keys.game_name'));
-            if ($gCode === null || $gName === null) {
+            $gName = $this->pickString($row, config('amb_seamless.keys.game_name')) ?? $gCode;
+            if ($gCode === null) {
                 continue;
             }
             $gCode = trim($gCode);
@@ -242,7 +286,7 @@ class AmbSeamlessSyncService
         if (array_is_list($json)) {
             return $json;
         }
-        foreach (['data', 'items', 'results', 'games', 'products', 'categories'] as $k) {
+        foreach (['data', 'items', 'results', 'games', 'products', 'categories', 'providers', 'rows', 'list'] as $k) {
             if (isset($json[$k]) && is_array($json[$k])) {
                 return array_is_list($json[$k]) ? $json[$k] : array_values($json[$k]);
             }
