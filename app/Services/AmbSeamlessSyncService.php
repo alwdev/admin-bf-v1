@@ -214,16 +214,96 @@ class AmbSeamlessSyncService
         return $cat->id;
     }
 
-    private function syncGamesForProduct(string $gamesBaseUrl, AmbProduct $product, int $timeout): int
+    /**
+     * ทดสอบเรียก Seamless API แบบไม่ throw — ใช้หน้า AMB API Check
+     *
+     * @return array{
+     *   ok: bool,
+     *   url?: string,
+     *   http_status?: int,
+     *   api_status_code?: mixed,
+     *   list_item_count?: int,
+     *   body_preview?: string,
+     *   body_truncated?: bool,
+     *   response_json?: mixed,
+     *   response_json_omitted?: bool,
+     *   error?: string
+     * }
+     */
+    public function probe(string $target, ?string $productCode = null): array
+    {
+        $base = rtrim((string) config('amb_seamless.base_url'), '/');
+        if ($base === '') {
+            return ['ok' => false, 'error' => 'ยังไม่ได้ตั้ง AMB_SEAMLESS_BASE_URL ใน .env'];
+        }
+
+        if (! in_array($target, ['categories', 'products', 'games'], true)) {
+            return ['ok' => false, 'error' => 'target ไม่ถูกต้อง'];
+        }
+
+        if ($target === 'games' && trim((string) $productCode) === '') {
+            return ['ok' => false, 'error' => 'ต้องระบุ product_code สำหรับเกม'];
+        }
+
+        $paths = config('amb_seamless.paths');
+        $timeout = (int) config('amb_seamless.timeout', 120);
+
+        $url = match ($target) {
+            'categories' => $base . ($paths['categories'] ?? '/seamless/categories'),
+            'products' => $base . ($paths['products'] ?? '/seamless/products'),
+            'games' => $this->gamesUrlForProduct(
+                $base . ($paths['games'] ?? '/seamless/games'),
+                trim((string) $productCode)
+            ),
+        };
+
+        try {
+            $response = $this->http()->timeout($timeout)->get($url);
+            $body = $response->body();
+            $json = $response->json();
+            $list = $this->extractList($json);
+            $apiCode = is_array($json) ? ($json['statusCode'] ?? $json['code'] ?? null) : null;
+
+            $maxJsonBytes = 48000;
+            $encoded = json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            $includeJson = is_string($encoded) && strlen($encoded) <= $maxJsonBytes;
+
+            $previewLen = 16000;
+
+            return [
+                'ok' => true,
+                'url' => $url,
+                'http_status' => $response->status(),
+                'api_status_code' => $apiCode,
+                'list_item_count' => count($list),
+                'body_preview' => mb_substr($body, 0, $previewLen),
+                'body_truncated' => mb_strlen($body) > $previewLen,
+                'response_json' => $includeJson ? $json : null,
+                'response_json_omitted' => ! $includeJson,
+            ];
+        } catch (Throwable $e) {
+            return [
+                'ok' => false,
+                'url' => $url,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    private function gamesUrlForProduct(string $gamesBaseUrl, string $productCode): string
     {
         $style = config('amb_seamless.games_style', 'query');
         $param = config('amb_seamless.games_query_param', 'product');
-        $url = $gamesBaseUrl;
         if ($style === 'path') {
-            $url = rtrim($gamesBaseUrl, '/') . '/' . rawurlencode($product->product_code);
-        } else {
-            $url = $gamesBaseUrl . (str_contains($gamesBaseUrl, '?') ? '&' : '?') . $param . '=' . rawurlencode($product->product_code);
+            return rtrim($gamesBaseUrl, '/') . '/' . rawurlencode($productCode);
         }
+
+        return $gamesBaseUrl . (str_contains($gamesBaseUrl, '?') ? '&' : '?') . $param . '=' . rawurlencode($productCode);
+    }
+
+    private function syncGamesForProduct(string $gamesBaseUrl, AmbProduct $product, int $timeout): int
+    {
+        $url = $this->gamesUrlForProduct($gamesBaseUrl, $product->product_code);
 
         $response = $this->http()->timeout($timeout)->get($url);
         $response->throw();

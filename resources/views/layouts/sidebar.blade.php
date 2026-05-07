@@ -74,6 +74,10 @@
                             class='bx bx-joystick'></i><span>AMB Games</span></a>
                 </li>
                 <li>
+                    <a href="{{ route('amb.api-check.index') }}" class="waves-effect"><i
+                            class='bx bx-plug'></i><span>AMB เช็ค API</span></a>
+                </li>
+                <li>
                     <a href="{{ route('amb.homepage.index') }}" class="waves-effect"><i
                             class='bx bx-grid-alt'></i><span>AMB หน้าแรก</span></a>
                 </li>
