@@ -184,6 +184,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/amb/products/{id}', [App\Http\Controllers\AmbProductController::class, 'destroy'])->name('amb.products.destroy');
 
     Route::get('/amb/games', [App\Http\Controllers\AmbGameController::class, 'index'])->name('amb.games.index');
+    Route::get('/amb/debug', [App\Http\Controllers\AmbDebugController::class, 'index'])->name('amb.debug.index');
     Route::get('/amb/api-check', [App\Http\Controllers\AmbApiCheckController::class, 'index'])->name('amb.api-check.index');
     Route::post('/amb/api-check/probe', [App\Http\Controllers\AmbApiCheckController::class, 'probe'])->name('amb.api-check.probe');
     Route::post('/amb/sync/seamless', [App\Http\Controllers\AmbSeamlessSyncController::class, 'dispatchSync'])->name('amb.sync.seamless');
