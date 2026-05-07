@@ -12,8 +12,17 @@
     <div class="amb-list-page">
     <div class="row">
         <div class="col-12">
-            <div class="page-title-box d-flex align-items-center justify-content-between">
+            <div class="page-title-box d-flex align-items-center justify-content-between flex-wrap">
                 <h4 class="mb-0 font-size-18">AMB Games</h4>
+                <div class="d-flex align-items-center mb-2 mb-md-0">
+                    <form method="POST" action="{{ route('amb.sync.seamless') }}" class="mb-0"
+                        onsubmit="return confirm('ซิงค์เกมจาก Seamless API ทุก provider — อาจใช้เวลานาน\nตั้งค่า queue worker / redis-database queue เพื่อไม่ให้ค้างหน้า\nดำเนินการต่อ?');">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-primary btn-sm">
+                            ซิงค์จาก API (ทุกเกม / ทุก provider)
+                        </button>
+                    </form>
+                </div>
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
                         <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -26,6 +35,9 @@
 
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if (session('warning'))
+        <div class="alert alert-warning">{{ session('warning') }}</div>
     @endif
     @if ($errors->any())
         <div class="alert alert-danger">
