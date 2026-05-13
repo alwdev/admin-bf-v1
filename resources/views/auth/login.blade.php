@@ -29,6 +29,9 @@
         .password-toggle-btn {
             border-left: 0;
         }
+        .bg-new-red{
+            background: linear-gradient(90deg, rgb(18 1 1) 0%, rgb(173 16 16) 50%, rgba(43, 5, 5, 1) 100%) !important;
+        }
     </style>
 </head>
 
@@ -49,7 +52,7 @@
                                     @endif
 
                                      <div class="card">
-                                        <div class="card-body">
+                                        <div class="card-body bg-new-red">
                                             <div class="text-center mb-4 mt-3">
                                                 <a href="/">
                                                     <span><img src="{{ env('APP_LOGO') }}" alt="" height="80"></span>
