@@ -49,8 +49,6 @@
 
                     <form class="p-2" action="{{ route('promotion.update',$promotion->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        {{-- Laravel ใช้ method spoofing สำหรับ PUT/PATCH requests --}}
-                        @method('PUT') {{-- *** สำคัญมาก! ต้องมี @method('PUT') สำหรับการอัปเดต *** --}}
 
                         <div class="form-group">
                             <label for="name">{{__('main.promotion')}}</label>

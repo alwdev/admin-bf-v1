@@ -144,7 +144,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/promotion/create', [App\Http\Controllers\PromotionController::class, 'create'])->name('promotion.create');
     Route::post('/promotion/store', [App\Http\Controllers\PromotionController::class, 'store'])->name('promotion.store');
     Route::get('/promotion/edit/{id}', [App\Http\Controllers\PromotionController::class, 'edit'])->name('promotion.edit');
-    Route::put('/promotion/update/{id}', [App\Http\Controllers\PromotionController::class, 'update'])->name('promotion.update');
+    Route::post('/promotion/update/{id}', [App\Http\Controllers\PromotionController::class, 'update'])->name('promotion.update');
     Route::post('/promotion/delete', [App\Http\Controllers\PromotionController::class, 'destroy'])->name('promotion.destroy');
 
     Route::get('/ads', [App\Http\Controllers\PromotionAdsController::class, 'index'])->name('promotion_ads.index');
