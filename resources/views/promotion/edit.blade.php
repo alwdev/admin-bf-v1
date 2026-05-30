@@ -1,10 +1,6 @@
 @extends('layouts.guest')
 
 @section('styles')
-<link href="{{ asset('plugins/datatables/dataTables.bootstrap4.css')}}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('plugins/datatables/responsive.bootstrap4.css')}}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('plugins/datatables/buttons.bootstrap4.css')}}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('plugins/datatables/select.bootstrap4.css')}}" rel="stylesheet" type="text/css" />
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endsection
 
@@ -211,21 +207,7 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/dataTables.bootstrap4.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/responsive.bootstrap4.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/dataTables.buttons.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/buttons.bootstrap4.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/buttons.html5.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/buttons.flash.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/buttons.print.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/dataTables.keyTable.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/dataTables.select.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/pdfmake.min.js')}}"></script>
-    <script src="{{ asset('plugins/datatables/vfs_fonts.js')}}"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-    <script src="{{ asset('pages/datatables-demo.js')}}"></script>
     <script>
         $(document).ready(function() {
             // Initialise Select2 สำหรับ applicable_games
