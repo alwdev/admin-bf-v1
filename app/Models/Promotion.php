@@ -14,10 +14,10 @@ class Promotion extends Model
 
     protected $fillable = [
         'name', 'turnover', 'enable', 'active', 'bonus', 'withdraw_percent',
-        'is_newuser', 'withdraw_limit', 'deposit', 'store_id', 'description', 'image',
+        'is_newuser', 'withdraw_limit', 'deposit', 'description', 'image',
         'is_percentage_based', 'bonus_percentage', 'turnover_percentage',
         'withdraw_limit_percentage', 'is_recurring_promotion', 'recurring_promotion_days',
-        'applicable_games', // ยังคงต้องอยู่ใน fillable
+        'applicable_games',
         'is_first_deposit_bonus', 'recurring_bonus_percentage',
         'recurring_turnover_percentage',
     ];
@@ -51,7 +51,6 @@ class Promotion extends Model
     ];
 
     protected $attributes = [
-        // 'applicable_games' => '[]', // ไม่ต้องกำหนด default ตรงนี้เมื่อจัดการด้วย Mutator ด้วยมือ
         'is_percentage_based' => false,
         'is_recurring_promotion' => false,
         'is_first_deposit_bonus' => false,
@@ -59,7 +58,6 @@ class Promotion extends Model
         'bonus' => 0.0,
         'withdraw_limit' => 0.0,
         'withdraw_percent' => 0,
-        'store_id' => 1,
         'recurring_promotion_days' => 0,
         'bonus_percentage' => 0.0,
         'turnover_percentage' => 0.0,

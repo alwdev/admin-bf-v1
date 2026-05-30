@@ -344,27 +344,11 @@ class PromotionController extends Controller
 
             $fileName = time() . '.' . $request->image->extension();
             $request->image->move(public_path('_image'), $fileName);
-            $pro->image = '/_image/' . $fileName;
-        }
-        // หากไม่มีการอัปโหลดรูปใหม่ และค่าเดิมถูกลบไปแล้ว แต่ต้องการให้มีค่า default
-        // อาจจะต้องพิจารณาเพิ่มเติมว่าต้องการเก็บรูปเดิมไว้ หรือต้องการให้เป็น default
-        // ในเคสนี้ ถ้าไม่มีการอัปโหลดใหม่และ $pro->image เป็นค่าเดิม ก็จะไม่มีการเปลี่ยนแปลง
-        // ถ้าต้องการบังคับให้มีรูปภาพเสมอ (แม้จะไม่มีการอัปโหลดใหม่) ก็ต้องเพิ่มเงื่อนไข
-        // เช่น else if (empty($pro->image)) { $pro->image = '/_image/default.png'; }
-
-        // 9. กำหนดค่าเริ่มต้นสำหรับคอลัมน์อื่นๆ ที่เป็น NOT NULL ใน DB และไม่มีในฟอร์ม (ถ้าจำเป็น)
-        // ตรวจสอบจาก DB schema ของคุณว่าคอลัมน์เหล่านี้มีค่า default หรือไม่
-        // และถ้าไม่มีในฟอร์มจริงๆ คุณต้องการให้มันเป็นอะไรเมื่อมีการ update
-        // ผมจะสมมติว่าถ้าไม่มีใน request ก็ใช้ค่าเดิมของ model หรือค่า default
-        if (is_null($pro->store_id)) {
-            $pro->store_id = 1; // Example default if not handled elsewhere
-        }
-        if (is_null($pro->withdraw_percent)) {
-            $pro->withdraw_percent = 0; // Example default if not handled elsewhere
+            $pro->image = env('APP_URL').'/_image/' . $fileName;
         }
 
         try {
-            // 10. บันทึกการเปลี่ยนแปลง
+            // 9. บันทึกการเปลี่ยนแปลง
             $pro->save();
             return redirect()->route('promotion.index')->with('status', '200');
         } catch (\Exception $e) {
