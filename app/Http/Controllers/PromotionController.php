@@ -369,7 +369,8 @@ class PromotionController extends Controller
             return redirect()->route('promotion.index')->with('status', '200');
         } catch (\Exception $e) {
             Log::error("Error updating promotion: " . $e->getMessage());
-            return redirect()->back()->withInput()->withErrors(['error' => 'Failed to update promotion. Please try again.']);
+            Log::error("Stack trace: " . $e->getTraceAsString());
+            return redirect()->back()->withInput()->withErrors(['error' => 'Failed to update promotion. Error: ' . $e->getMessage()]);
         }
     }
 
