@@ -78,12 +78,14 @@
         .btn-copy-withdraw {
             background: none;
             border: none;
-            padding: 6px;
+            padding: 10px;
             cursor: pointer;
             color: #adb5bd;
             transition: color 0.2s;
             margin-left: 8px;
             line-height: 1;
+            min-width: 40px;
+            min-height: 40px;
         }
 
         .btn-copy-withdraw:hover {
@@ -95,7 +97,7 @@
         }
 
         .btn-copy-withdraw i {
-            font-size: 18px;
+            font-size: 24px;
         }
     </style>
 @endsection
