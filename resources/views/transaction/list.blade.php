@@ -73,6 +73,30 @@
             background: #f8f9fa !important;
             border-color: #adb5bd !important;
         }
+
+        /* Copy button for withdrawal rows */
+        .btn-copy-withdraw {
+            background: none;
+            border: none;
+            padding: 6px;
+            cursor: pointer;
+            color: #adb5bd;
+            transition: color 0.2s;
+            margin-left: 8px;
+            line-height: 1;
+        }
+
+        .btn-copy-withdraw:hover {
+            color: #E3A941;
+        }
+
+        .btn-copy-withdraw:focus {
+            outline: none;
+        }
+
+        .btn-copy-withdraw i {
+            font-size: 18px;
+        }
     </style>
 @endsection
 @section('content')
