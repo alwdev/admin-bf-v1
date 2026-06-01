@@ -485,5 +485,41 @@
                 }
             });
         }
+
+        function copyWithdrawInfo(button) {
+            const accountName = button.dataset.accountName;
+            const bankNumber = button.dataset.bankNumber;
+            const bankName = button.dataset.bankName;
+            const amount = button.dataset.amount;
+
+            const text = `ชื่อ: ${accountName}\nเลขบัญชี: ${bankNumber}\nธนาคาร: ${bankName}\nยอดเงิน: ${amount}`;
+
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    showCopyToast();
+                })
+                .catch(err => {
+                    console.error('Copy failed:', err);
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'ไม่สามารถคัดลอกได้',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                });
+        }
+
+        function showCopyToast() {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'คัดลอกแล้ว!',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
     </script>
 @endsection
