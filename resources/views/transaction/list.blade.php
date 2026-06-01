@@ -213,9 +213,22 @@
                                         @if ($withdrawBankEmpty)
                                             <span class="text-muted">—</span>
                                         @else
-                                        <x-bank-icon :bank-name="$item->bank_name" />
-                                        {{ $item->bank_number }} <br>
-                                        {{ $item->account_name }}
+                                        <div class="d-flex align-items-start">
+                                            <div class="flex-grow-1">
+                                                <x-bank-icon :bank-name="$item->bank_name" />
+                                                {{ $item->bank_number }} <br>
+                                                {{ $item->account_name }}
+                                            </div>
+                                            <button type="button"
+                                                    class="btn-copy-withdraw"
+                                                    onclick="copyWithdrawInfo(this)"
+                                                    data-account-name="{{ $item->account_name }}"
+                                                    data-bank-number="{{ $item->bank_number }}"
+                                                    data-bank-name="{{ $item->bank_name }}"
+                                                    data-amount="{{ number_format((float) $item->amount, 2) }}">
+                                                <i class="bx bx-copy"></i>
+                                            </button>
+                                        </div>
                                         @endif
                                     @else
                                         -
