@@ -170,7 +170,7 @@
                                     @endif
                                 </td>
                                 <td class="text-nowrap font-weight-bold">{{ number_format((float) $item->amount, 2) }}</td>
-                                <td>{{ date('d/m/Y H:i:s', $item->transfer_date) }}</td>
+                                <td>{{ date('d/m/Y H:i:s', strtotime($item->transfer_date)) }}</td>
                                 @php
                                     /* โฟลว์ใหม่: ส่งแค่ยอดได้ — ไม่ต้องมี type ธนาคาร; ถ้าไม่มีเลขบัญชี+ชื่อ ให้ถือว่าว่าง (ไม่โชว์กล่องส้ม) */
                                     $depFromEmpty =
