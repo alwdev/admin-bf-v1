@@ -63,49 +63,49 @@ Route::middleware('auth')->group(function () {
 
 
 
-    Route::get('/alert-system', [SettingController::class, 'alert_index'])->name('setting.alert');
-    Route::delete('/alert-system-del', [SettingController::class, 'alert_del'])->name('setting.alert_del');
-    Route::post('/alert-system-store', [SettingController::class, 'alert_store'])->name('setting.alert_store');
-    Route::put('/alert-system-update', [SettingController::class, 'alert_update'])->name('setting.alert_update');
+    Route::get('/alert-system', [SettingController::class, 'alert_index'])->name('setting.alert')->middleware('CheckPermissionUser:setting,view');
+    Route::delete('/alert-system-del', [SettingController::class, 'alert_del'])->name('setting.alert_del')->middleware('CheckPermissionUser:setting,delete');
+    Route::post('/alert-system-store', [SettingController::class, 'alert_store'])->name('setting.alert_store')->middleware('CheckPermissionUser:setting,edit');
+    Route::put('/alert-system-update', [SettingController::class, 'alert_update'])->name('setting.alert_update')->middleware('CheckPermissionUser:setting,edit');
 
-    Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
-    Route::get('/setting/deposit_continuously', [SettingController::class, 'deposit_continuously'])->name('setting.deposit_continuously');
-    Route::post('/setting/deposit_continuously/update', [SettingController::class, 'deposit_continuously_update'])->name('setting.deposit_continuously_update');
-    Route::get('/setting/point', [SettingController::class, 'point'])->name('setting.point');
-    Route::post('/setting/point/update', [SettingController::class, 'point_update'])->name('setting.point_update');
+    Route::get('/setting', [SettingController::class, 'index'])->name('setting.index')->middleware('CheckPermissionUser:setting,view');
+    Route::get('/setting/deposit_continuously', [SettingController::class, 'deposit_continuously'])->name('setting.deposit_continuously')->middleware('CheckPermissionUser:setting,view');
+    Route::post('/setting/deposit_continuously/update', [SettingController::class, 'deposit_continuously_update'])->name('setting.deposit_continuously_update')->middleware('CheckPermissionUser:setting,edit');
+    Route::get('/setting/point', [SettingController::class, 'point'])->name('setting.point')->middleware('CheckPermissionUser:setting,view');
+    Route::post('/setting/point/update', [SettingController::class, 'point_update'])->name('setting.point_update')->middleware('CheckPermissionUser:setting,edit');
 
-    Route::get('/setting/mission', [SettingController::class, 'mission'])->name('setting.mission');
-    Route::post('/setting/mission_deposit/update', [SettingController::class, 'mission_deposit_update'])->name('setting.mission_deposit_update');
-    Route::post('/setting/mission_play/update', [SettingController::class, 'mission_play_update'])->name('setting.mission_play_update');
-    Route::post('/setting/mission_win/update', [SettingController::class, 'mission_win_update'])->name('setting.mission_win_update');
+    Route::get('/setting/mission', [SettingController::class, 'mission'])->name('setting.mission')->middleware('CheckPermissionUser:setting,view');
+    Route::post('/setting/mission_deposit/update', [SettingController::class, 'mission_deposit_update'])->name('setting.mission_deposit_update')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/setting/mission_play/update', [SettingController::class, 'mission_play_update'])->name('setting.mission_play_update')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/setting/mission_win/update', [SettingController::class, 'mission_win_update'])->name('setting.mission_win_update')->middleware('CheckPermissionUser:setting,edit');
 
-    Route::get('/setting/popup', [SettingController::class, 'popup'])->name('setting.popup');
-    Route::post('/setting/popup/update', [SettingController::class, 'popup_update'])->name('setting.popup_update');
-    Route::post('/popup/delete', [SettingController::class, 'popup_delete'])->name('setting.popup_delete');
+    Route::get('/setting/popup', [SettingController::class, 'popup'])->name('setting.popup')->middleware('CheckPermissionUser:setting,view');
+    Route::post('/setting/popup/update', [SettingController::class, 'popup_update'])->name('setting.popup_update')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/popup/delete', [SettingController::class, 'popup_delete'])->name('setting.popup_delete')->middleware('CheckPermissionUser:setting,delete');
 
-    Route::get('/setting/coupon', [SettingController::class, 'coupon'])->name('setting.coupon');
-    Route::post('/setting/coupon_create', [SettingController::class, 'coupon_create'])->name('setting.coupon_create');
-    Route::post('/setting/coupon_update', [SettingController::class, 'coupon_update'])->name('setting.coupon_update');
-    Route::post('/setting/coupon_update_status', [SettingController::class, 'coupon_update_status'])->name('setting.coupon_update_status');
-    Route::post('/setting/popup_create', [SettingController::class, 'popup_create'])->name('setting.popup_create');
-    Route::get('/setting/level', [SettingController::class, 'level'])->name('setting.level');
-    Route::post('/setting/level_create', [SettingController::class, 'level_create'])->name('setting.level_create');
-    Route::post('/setting/level_update', [SettingController::class, 'level_update'])->name('setting.level_update');
-    Route::post('/setting/level_destroy', [SettingController::class, 'level_destroy'])->name('setting.level_destroy');
-    Route::get('/setting/ranking', [SettingController::class, 'ranking'])->name('setting.ranking');
-    Route::post('/setting/ranking_create', [SettingController::class, 'ranking_create'])->name('setting.ranking_create');
-    Route::post('/setting/ranking_update', [SettingController::class, 'ranking_update'])->name('setting.ranking_update');
-    Route::post('/setting/ranking_destroy', [SettingController::class, 'ranking_destroy'])->name('setting.ranking_destroy');
-    Route::post('/setting/deposit', [SettingController::class, 'deposit'])->name('setting.deposit');
-    Route::post('/setting/withdraw', [SettingController::class, 'withdraw'])->name('setting.withdraw');
-    Route::post('/setting/cashback', [SettingController::class, 'cashback'])->name('setting.cashback');
-    Route::get('/affiliate', [SettingController::class, 'affiliate'])->name('setting.affiliate');
-    Route::post('/affiliate_deposit/update', [SettingController::class, 'affiliate_deposit_update'])->name('setting.affiliate_deposit_update');
-    Route::post('/affiliate_winlose/update', [SettingController::class, 'affiliate_winlose_update'])->name('setting.affiliate_winlose_update');
-    Route::post('/maintenance', [SettingController::class, 'maintenance'])->name('setting.maintenance');
-    Route::post('/setting/logo_update', [SettingController::class, 'logo_update'])->name('setting.logo_update');
-    Route::get('/setting/wheel', [SettingController::class, 'wheel'])->name('setting.wheel');
-    Route::post('/setting/wheel_update', [SettingController::class, 'wheel_update'])->name('setting.wheel_update');
+    Route::get('/setting/coupon', [SettingController::class, 'coupon'])->name('setting.coupon')->middleware('CheckPermissionUser:setting,view');
+    Route::post('/setting/coupon_create', [SettingController::class, 'coupon_create'])->name('setting.coupon_create')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/setting/coupon_update', [SettingController::class, 'coupon_update'])->name('setting.coupon_update')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/setting/coupon_update_status', [SettingController::class, 'coupon_update_status'])->name('setting.coupon_update_status')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/setting/popup_create', [SettingController::class, 'popup_create'])->name('setting.popup_create')->middleware('CheckPermissionUser:setting,edit');
+    Route::get('/setting/level', [SettingController::class, 'level'])->name('setting.level')->middleware('CheckPermissionUser:setting,view');
+    Route::post('/setting/level_create', [SettingController::class, 'level_create'])->name('setting.level_create')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/setting/level_update', [SettingController::class, 'level_update'])->name('setting.level_update')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/setting/level_destroy', [SettingController::class, 'level_destroy'])->name('setting.level_destroy')->middleware('CheckPermissionUser:setting,delete');
+    Route::get('/setting/ranking', [SettingController::class, 'ranking'])->name('setting.ranking')->middleware('CheckPermissionUser:setting,view');
+    Route::post('/setting/ranking_create', [SettingController::class, 'ranking_create'])->name('setting.ranking_create')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/setting/ranking_update', [SettingController::class, 'ranking_update'])->name('setting.ranking_update')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/setting/ranking_destroy', [SettingController::class, 'ranking_destroy'])->name('setting.ranking_destroy')->middleware('CheckPermissionUser:setting,delete');
+    Route::post('/setting/deposit', [SettingController::class, 'deposit'])->name('setting.deposit')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/setting/withdraw', [SettingController::class, 'withdraw'])->name('setting.withdraw')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/setting/cashback', [SettingController::class, 'cashback'])->name('setting.cashback')->middleware('CheckPermissionUser:setting,edit');
+    Route::get('/affiliate', [SettingController::class, 'affiliate'])->name('setting.affiliate')->middleware('CheckPermissionUser:setting,view');
+    Route::post('/affiliate_deposit/update', [SettingController::class, 'affiliate_deposit_update'])->name('setting.affiliate_deposit_update')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/affiliate_winlose/update', [SettingController::class, 'affiliate_winlose_update'])->name('setting.affiliate_winlose_update')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/maintenance', [SettingController::class, 'maintenance'])->name('setting.maintenance')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/setting/logo_update', [SettingController::class, 'logo_update'])->name('setting.logo_update')->middleware('CheckPermissionUser:setting,edit');
+    Route::get('/setting/wheel', [SettingController::class, 'wheel'])->name('setting.wheel')->middleware('CheckPermissionUser:setting,view');
+    Route::post('/setting/wheel_update', [SettingController::class, 'wheel_update'])->name('setting.wheel_update')->middleware('CheckPermissionUser:setting,edit');
 
     //Report
     Route::get('/wrongdeposit', [ReportController::class, 'wrongdeposit'])->name('report.wrongdeposit')->middleware('CheckPermissionUser:report,view');
@@ -131,28 +131,28 @@ Route::middleware('auth')->group(function () {
 
 
     //bank account
-    Route::get('/bankaccount', [App\Http\Controllers\BankAccountController::class, 'index'])->name('bankaccount.index');
-    Route::get('/bankaccount/create', [App\Http\Controllers\BankAccountController::class, 'create'])->name('bankaccount.create');
-    Route::post('/bankaccount/insert', [App\Http\Controllers\BankAccountController::class, 'store'])->name('bankaccount.store');
-    Route::get('/bankaccount/edit/{id}', [App\Http\Controllers\BankAccountController::class, 'show'])->name('bankaccount.show');
-    Route::post('/bankaccount/update/{id}', [App\Http\Controllers\BankAccountController::class, 'update'])->name('bankaccount.update');
-    Route::post('/bankaccount/delete', [App\Http\Controllers\BankAccountController::class, 'destroy'])->name('bankaccount.destroy');
-    Route::post('/bankaccount/bank_forward_balance_create', [App\Http\Controllers\BankAccountController::class, 'bank_forward_balance_create'])->name('bank.bank_forward_balance_create');
+    Route::get('/bankaccount', [App\Http\Controllers\BankAccountController::class, 'index'])->name('bankaccount.index')->middleware('CheckPermissionUser:setting,view');
+    Route::get('/bankaccount/create', [App\Http\Controllers\BankAccountController::class, 'create'])->name('bankaccount.create')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/bankaccount/insert', [App\Http\Controllers\BankAccountController::class, 'store'])->name('bankaccount.store')->middleware('CheckPermissionUser:setting,edit');
+    Route::get('/bankaccount/edit/{id}', [App\Http\Controllers\BankAccountController::class, 'show'])->name('bankaccount.show')->middleware('CheckPermissionUser:setting,view');
+    Route::post('/bankaccount/update/{id}', [App\Http\Controllers\BankAccountController::class, 'update'])->name('bankaccount.update')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/bankaccount/delete', [App\Http\Controllers\BankAccountController::class, 'destroy'])->name('bankaccount.destroy')->middleware('CheckPermissionUser:setting,delete');
+    Route::post('/bankaccount/bank_forward_balance_create', [App\Http\Controllers\BankAccountController::class, 'bank_forward_balance_create'])->name('bank.bank_forward_balance_create')->middleware('CheckPermissionUser:setting,edit');
 
     //promotion
-    Route::get('/promotion', [App\Http\Controllers\PromotionController::class, 'index'])->name('promotion.index');
-    Route::get('/promotion/create', [App\Http\Controllers\PromotionController::class, 'create'])->name('promotion.create');
-    Route::post('/promotion/store', [App\Http\Controllers\PromotionController::class, 'store'])->name('promotion.store');
-    Route::get('/promotion/edit/{id}', [App\Http\Controllers\PromotionController::class, 'edit'])->name('promotion.edit');
-    Route::post('/promotion/update/{id}', [App\Http\Controllers\PromotionController::class, 'update'])->name('promotion.update');
-    Route::post('/promotion/delete', [App\Http\Controllers\PromotionController::class, 'destroy'])->name('promotion.destroy');
+    Route::get('/promotion', [App\Http\Controllers\PromotionController::class, 'index'])->name('promotion.index')->middleware('CheckPermissionUser:setting,view');
+    Route::get('/promotion/create', [App\Http\Controllers\PromotionController::class, 'create'])->name('promotion.create')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/promotion/store', [App\Http\Controllers\PromotionController::class, 'store'])->name('promotion.store')->middleware('CheckPermissionUser:setting,edit');
+    Route::get('/promotion/edit/{id}', [App\Http\Controllers\PromotionController::class, 'edit'])->name('promotion.edit')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/promotion/update/{id}', [App\Http\Controllers\PromotionController::class, 'update'])->name('promotion.update')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/promotion/delete', [App\Http\Controllers\PromotionController::class, 'destroy'])->name('promotion.destroy')->middleware('CheckPermissionUser:setting,delete');
 
-    Route::get('/ads', [App\Http\Controllers\PromotionAdsController::class, 'index'])->name('promotion_ads.index');
-    Route::get('/ads/create', [App\Http\Controllers\PromotionAdsController::class, 'create'])->name('promotion_ads.create');
-    Route::post('/ads/store', [App\Http\Controllers\PromotionAdsController::class, 'store'])->name('promotion_ads.store');
-    Route::get('/ads/edit/{id}', [App\Http\Controllers\PromotionAdsController::class, 'edit'])->name('promotion_ads.edit');
-    Route::post('/ads/update/{id}', [App\Http\Controllers\PromotionAdsController::class, 'update'])->name('promotion_ads.update');
-    Route::post('/ads/delete', [App\Http\Controllers\PromotionAdsController::class, 'destroy'])->name('promotion_ads.destroy');
+    Route::get('/ads', [App\Http\Controllers\PromotionAdsController::class, 'index'])->name('promotion_ads.index')->middleware('CheckPermissionUser:setting,view');
+    Route::get('/ads/create', [App\Http\Controllers\PromotionAdsController::class, 'create'])->name('promotion_ads.create')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/ads/store', [App\Http\Controllers\PromotionAdsController::class, 'store'])->name('promotion_ads.store')->middleware('CheckPermissionUser:setting,edit');
+    Route::get('/ads/edit/{id}', [App\Http\Controllers\PromotionAdsController::class, 'edit'])->name('promotion_ads.edit')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/ads/update/{id}', [App\Http\Controllers\PromotionAdsController::class, 'update'])->name('promotion_ads.update')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/ads/delete', [App\Http\Controllers\PromotionAdsController::class, 'destroy'])->name('promotion_ads.destroy')->middleware('CheckPermissionUser:setting,delete');
 
     Route::get('/provider', [App\Http\Controllers\ProviderController::class, 'index'])->name('provider.index');
     Route::get('/updateprovider', [App\Http\Controllers\ProviderController::class, 'updateprovider'])->name('provider.updateprovider');
@@ -165,30 +165,30 @@ Route::middleware('auth')->group(function () {
     Route::get('/GetAllGame', [App\Http\Controllers\ProviderController::class, 'GetAllGame']);
 
     // AMB (providers / categories / games) — literal routes before /{id}
-    Route::get('/amb/categories', [App\Http\Controllers\AmbCategoryController::class, 'index'])->name('amb.categories.index');
-    Route::post('/amb/categories', [App\Http\Controllers\AmbCategoryController::class, 'store'])->name('amb.categories.store');
-    Route::post('/amb/categories/toggle', [App\Http\Controllers\AmbCategoryController::class, 'toggle'])->name('amb.categories.toggle');
-    Route::post('/amb/categories/{id}', [App\Http\Controllers\AmbCategoryController::class, 'update'])->name('amb.categories.update');
-    Route::delete('/amb/categories/{id}', [App\Http\Controllers\AmbCategoryController::class, 'destroy'])->name('amb.categories.destroy');
+    Route::get('/amb/categories', [App\Http\Controllers\AmbCategoryController::class, 'index'])->name('amb.categories.index')->middleware('CheckPermissionUser:setting,view');
+    Route::post('/amb/categories', [App\Http\Controllers\AmbCategoryController::class, 'store'])->name('amb.categories.store')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/amb/categories/toggle', [App\Http\Controllers\AmbCategoryController::class, 'toggle'])->name('amb.categories.toggle')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/amb/categories/{id}', [App\Http\Controllers\AmbCategoryController::class, 'update'])->name('amb.categories.update')->middleware('CheckPermissionUser:setting,edit');
+    Route::delete('/amb/categories/{id}', [App\Http\Controllers\AmbCategoryController::class, 'destroy'])->name('amb.categories.destroy')->middleware('CheckPermissionUser:setting,delete');
 
-    Route::get('/amb/products', [App\Http\Controllers\AmbProductController::class, 'index'])->name('amb.products.index');
-    Route::post('/amb/products', [App\Http\Controllers\AmbProductController::class, 'store'])->name('amb.products.store');
-    Route::post('/amb/products/toggle', [App\Http\Controllers\AmbProductController::class, 'toggle'])->name('amb.products.toggle');
-    Route::post('/amb/products/upload', [App\Http\Controllers\AmbProductController::class, 'uploadImage'])->name('amb.products.upload');
-    Route::post('/amb/products/{id}', [App\Http\Controllers\AmbProductController::class, 'update'])->name('amb.products.update');
-    Route::delete('/amb/products/{id}', [App\Http\Controllers\AmbProductController::class, 'destroy'])->name('amb.products.destroy');
+    Route::get('/amb/products', [App\Http\Controllers\AmbProductController::class, 'index'])->name('amb.products.index')->middleware('CheckPermissionUser:setting,view');
+    Route::post('/amb/products', [App\Http\Controllers\AmbProductController::class, 'store'])->name('amb.products.store')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/amb/products/toggle', [App\Http\Controllers\AmbProductController::class, 'toggle'])->name('amb.products.toggle')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/amb/products/upload', [App\Http\Controllers\AmbProductController::class, 'uploadImage'])->name('amb.products.upload')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/amb/products/{id}', [App\Http\Controllers\AmbProductController::class, 'update'])->name('amb.products.update')->middleware('CheckPermissionUser:setting,edit');
+    Route::delete('/amb/products/{id}', [App\Http\Controllers\AmbProductController::class, 'destroy'])->name('amb.products.destroy')->middleware('CheckPermissionUser:setting,delete');
 
-    Route::get('/amb/games', [App\Http\Controllers\AmbGameController::class, 'index'])->name('amb.games.index');
-    Route::post('/amb/games', [App\Http\Controllers\AmbGameController::class, 'store'])->name('amb.games.store');
-    Route::post('/amb/games/toggle', [App\Http\Controllers\AmbGameController::class, 'toggle'])->name('amb.games.toggle');
-    Route::post('/amb/games/upload', [App\Http\Controllers\AmbGameController::class, 'uploadImage'])->name('amb.games.upload');
-    Route::post('/amb/games/{id}', [App\Http\Controllers\AmbGameController::class, 'update'])->name('amb.games.update');
-    Route::delete('/amb/games/{id}', [App\Http\Controllers\AmbGameController::class, 'destroy'])->name('amb.games.destroy');
+    Route::get('/amb/games', [App\Http\Controllers\AmbGameController::class, 'index'])->name('amb.games.index')->middleware('CheckPermissionUser:setting,view');
+    Route::post('/amb/games', [App\Http\Controllers\AmbGameController::class, 'store'])->name('amb.games.store')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/amb/games/toggle', [App\Http\Controllers\AmbGameController::class, 'toggle'])->name('amb.games.toggle')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/amb/games/upload', [App\Http\Controllers\AmbGameController::class, 'uploadImage'])->name('amb.games.upload')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/amb/games/{id}', [App\Http\Controllers\AmbGameController::class, 'update'])->name('amb.games.update')->middleware('CheckPermissionUser:setting,edit');
+    Route::delete('/amb/games/{id}', [App\Http\Controllers\AmbGameController::class, 'destroy'])->name('amb.games.destroy')->middleware('CheckPermissionUser:setting,delete');
 
-    Route::get('/amb/homepage-items', [App\Http\Controllers\AmbHomepageItemController::class, 'index'])->name('amb.homepage.index');
-    Route::post('/amb/homepage-items', [App\Http\Controllers\AmbHomepageItemController::class, 'store'])->name('amb.homepage.store');
-    Route::post('/amb/homepage-items/{id}', [App\Http\Controllers\AmbHomepageItemController::class, 'update'])->name('amb.homepage.update');
-    Route::delete('/amb/homepage-items/{id}', [App\Http\Controllers\AmbHomepageItemController::class, 'destroy'])->name('amb.homepage.destroy');
+    Route::get('/amb/homepage-items', [App\Http\Controllers\AmbHomepageItemController::class, 'index'])->name('amb.homepage.index')->middleware('CheckPermissionUser:setting,view');
+    Route::post('/amb/homepage-items', [App\Http\Controllers\AmbHomepageItemController::class, 'store'])->name('amb.homepage.store')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/amb/homepage-items/{id}', [App\Http\Controllers\AmbHomepageItemController::class, 'update'])->name('amb.homepage.update')->middleware('CheckPermissionUser:setting,edit');
+    Route::delete('/amb/homepage-items/{id}', [App\Http\Controllers\AmbHomepageItemController::class, 'destroy'])->name('amb.homepage.destroy')->middleware('CheckPermissionUser:setting,delete');
 
     Route::get('/admin/login-logs', [App\Http\Controllers\AdminLoginLogController::class, 'index'])
         ->name('admin.login_logs.index')
@@ -203,13 +203,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/partner/report/{id}', [App\Http\Controllers\PartnerController::class, 'report'])->name('partner.report')->middleware('CheckPermissionUser:manageuser,edit');
     Route::get('/partner/member-winloss', [App\Http\Controllers\PartnerController::class, 'getMemberWinlossData'])->name('partner.member.winloss.data');
 
-    Route::get('/article', [App\Http\Controllers\ArticleController::class, 'index'])->name('article.index');
-    Route::get('/articleCreate', [App\Http\Controllers\ArticleController::class, 'create'])->name('article.create');
-    Route::post('/article/store', [App\Http\Controllers\ArticleController::class, 'store'])->name('article.store');
-    Route::get('/articleEdit/{id}', [App\Http\Controllers\ArticleController::class, 'edit'])->name('article.edit');
-    Route::post('/article/update/{id}', [App\Http\Controllers\ArticleController::class, 'update'])->name('article.update');
-    Route::delete('/article/{id}', [App\Http\Controllers\ArticleController::class, 'destroy'])->name('article.destroy');
-    Route::post('upload-image', [App\Http\Controllers\ArticleController::class, 'upload']);
+    Route::get('/article', [App\Http\Controllers\ArticleController::class, 'index'])->name('article.index')->middleware('CheckPermissionUser:setting,view');
+    Route::get('/articleCreate', [App\Http\Controllers\ArticleController::class, 'create'])->name('article.create')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/article/store', [App\Http\Controllers\ArticleController::class, 'store'])->name('article.store')->middleware('CheckPermissionUser:setting,edit');
+    Route::get('/articleEdit/{id}', [App\Http\Controllers\ArticleController::class, 'edit'])->name('article.edit')->middleware('CheckPermissionUser:setting,edit');
+    Route::post('/article/update/{id}', [App\Http\Controllers\ArticleController::class, 'update'])->name('article.update')->middleware('CheckPermissionUser:setting,edit');
+    Route::delete('/article/{id}', [App\Http\Controllers\ArticleController::class, 'destroy'])->name('article.destroy')->middleware('CheckPermissionUser:setting,delete');
+    Route::post('upload-image', [App\Http\Controllers\ArticleController::class, 'upload'])->middleware('CheckPermissionUser:setting,edit');
 
     // Route::get('/download', function () {
     //     $file="{{ asset('document.pdf')}}";
