@@ -185,16 +185,16 @@
                                     <th scope="row">5</th>
                                     <td>{{__('main.setting')}}</td>
                                     <td>
-                                        <input type="radio" name="setting" value="1" @if($user->permissions->setting == 1) @checked(true) @endif>
+                                        <input type="radio" name="setting" value="1" @if(isset($user->permissions->setting) && $user->permissions->setting == 1) @checked(true) @endif>
                                     </td>
                                     <td>
-                                        <input type="radio" name="setting" value="2" @if($user->permissions->setting == 2) @checked(true) @endif>
+                                        <input type="radio" name="setting" value="2" @if(isset($user->permissions->setting) && $user->permissions->setting == 2) @checked(true) @endif>
                                     </td>
                                     <td>
-                                        <input type="radio" name="setting" value="3" @if($user->permissions->setting == 3) @checked(true) @endif>
+                                        <input type="radio" name="setting" value="3" @if(isset($user->permissions->setting) && $user->permissions->setting == 3) @checked(true) @endif>
                                     </td>
                                     <td>
-                                        <input type="radio" name="setting" value="4" @if($user->permissions->setting == 4) @checked(true) @endif>
+                                        <input type="radio" name="setting" value="4" @if(isset($user->permissions->setting) && $user->permissions->setting == 4) @checked(true) @endif>
                                     </td>
                                 </tr>
                             </tbody>
