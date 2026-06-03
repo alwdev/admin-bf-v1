@@ -160,7 +160,12 @@
                                 @endif
                             </td>
                             <td>
+                                @php
+                                    $userPermissions = json_decode(Auth::user()->permissions);
+                                @endphp
+                                @if($userPermissions->member >= 2)
                                 <button href="่javascript:void(0);" data-toggle="modal" data-target="#exampleModal{{ $key }}" type="button" class="btn btn-secondary  btn-sm waves-effect waves-light">{{__('managemember.BankAccount')}}</button>
+                                @endif
                                 <!-- Modal -->
                                 <div class="modal fade" id="exampleModal{{ $key }}" tabindex="-1" aria-labelledby="exampleModal{{ $key }}Label" aria-hidden="true">
                                     <div class="modal-dialog">
