@@ -112,6 +112,7 @@ class ManageUserController extends Controller
         $permissions["manageuser"] = $request->manageuser;
         $permissions["transfer"] = $request->transfer;
         $permissions["report"] = $request->report;
+        $permissions["setting"] = $request->setting;
         $user->permissions =  json_encode($permissions);
         $user->save();
         return redirect()->route('manageuser.show',$request->userid)->with('status','200');

@@ -34,6 +34,7 @@ class CheckPermissionUser
             "manageuser"=>"permitmanageuser",
             "transfer"=>"permittransfer",
             "report"=>"permitreport",
+            "setting"=>"permitsetting",
         ];
         $action_list = [
             "hide" => "1",
