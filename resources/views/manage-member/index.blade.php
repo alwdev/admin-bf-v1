@@ -242,7 +242,12 @@
                                     </div>
                                   </div>
 
+                                @php
+                                    $userPermissions = json_decode(Auth::user()->permissions);
+                                @endphp
+                                @if($userPermissions->member >= 3)
                                 <button type="button" class="btn btn-primary btn-sm waves-effect waves-light"  data-toggle="modal" data-target="#updateBankAccount{{ $key }}"><i class="bx bx-edit-alt"></i></button>
+                                @endif
                                 <div class="modal fade" id="updateBankAccount{{ $key }}" tabindex="-1" aria-labelledby="updateBankAccount{{ $key }}Label" aria-hidden="true">
                                     <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
                                       <div class="modal-content">
