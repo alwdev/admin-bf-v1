@@ -64,6 +64,9 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $userPermissions = json_decode(auth()->user()->permissions);
+                        @endphp
                         @foreach ($memberlist as $key => $member)
                         @if ($member->enable == 0)
                             <tr style="color: rgb(211, 88, 5);">
@@ -160,9 +163,6 @@
                                 @endif
                             </td>
                             <td>
-                                @php
-                                    $userPermissions = json_decode(Auth::user()->permissions);
-                                @endphp
                                 @if($userPermissions->member >= 2)
                                 <button href="่javascript:void(0);" data-toggle="modal" data-target="#exampleModal{{ $key }}" type="button" class="btn btn-secondary  btn-sm waves-effect waves-light">{{__('managemember.BankAccount')}}</button>
                                 @endif
@@ -247,9 +247,6 @@
                                     </div>
                                   </div>
 
-                                @php
-                                    $userPermissions = json_decode(Auth::user()->permissions);
-                                @endphp
                                 @if($userPermissions->member >= 3)
                                 <button type="button" class="btn btn-primary btn-sm waves-effect waves-light"  data-toggle="modal" data-target="#updateBankAccount{{ $key }}"><i class="bx bx-edit-alt"></i></button>
                                 @endif
