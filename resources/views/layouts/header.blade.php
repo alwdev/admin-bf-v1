@@ -27,6 +27,10 @@
             <div class="dropdown d-inline-block">
 
             </div>
+            <button type="button" class="btn header-item waves-effect theme-toggle-btn" id="theme-toggle-btn"
+                aria-label="Toggle color mode" title="Toggle color mode">
+                <i class="bx bx-moon" id="theme-toggle-icon"></i>
+            </button>
             <span style="color: rgb(20, 179, 5);" id="tran_count">--</span>
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"

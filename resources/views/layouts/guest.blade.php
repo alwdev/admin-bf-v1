@@ -46,9 +46,175 @@
                     background-color: white !important;
                 };
         </style>
+        <style>
+            :root {
+                --app-bg: #f5f6f8;
+                --app-surface: #ffffff;
+                --app-surface-muted: #f8f9fa;
+                --app-border: #dee2e6;
+                --app-text: #383c40;
+                --app-muted: #6c757d;
+            }
+
+            body.dark-mode {
+                --app-bg: #171b22;
+                --app-surface: #222833;
+                --app-surface-muted: #2b3340;
+                --app-border: #3a4352;
+                --app-text: #e7eaf0;
+                --app-muted: #aeb7c4;
+            }
+
+            body {
+                background-color: var(--app-bg);
+                color: var(--app-text);
+            }
+
+            .page-content,
+            .main-content,
+            .footer {
+                background-color: var(--app-bg);
+                color: var(--app-text);
+            }
+
+            .navbar-header,
+            .vertical-menu,
+            .card,
+            .dropdown-menu,
+            .modal-content {
+                background-color: var(--app-surface);
+                color: var(--app-text);
+            }
+
+            .footer,
+            .card,
+            .table,
+            .modal-content,
+            .dropdown-menu {
+                border-color: var(--app-border);
+            }
+
+            .header-item,
+            .header-item:hover,
+            .card-title,
+            .page-title-box,
+            .breadcrumb-item.active,
+            .dropdown-item,
+            #sidebar-menu ul li a,
+            #sidebar-menu .menu-title {
+                color: var(--app-text);
+            }
+
+            .text-muted,
+            .card-subtitle,
+            .breadcrumb-item a {
+                color: var(--app-muted) !important;
+            }
+
+            .dropdown-item:hover,
+            .dropdown-item:focus {
+                background-color: var(--app-surface-muted);
+                color: var(--app-text);
+            }
+
+            .table,
+            .bootstrap-table,
+            .fixed-table-container,
+            .fixed-table-body,
+            .fixed-table-pagination {
+                background-color: var(--app-surface) !important;
+                color: var(--app-text) !important;
+            }
+
+            .table td,
+            .table th,
+            #basic-datatable td,
+            #basic-datatable th,
+            #table td,
+            #table th {
+                border-color: var(--app-border) !important;
+                color: var(--app-text) !important;
+            }
+
+            .table thead,
+            .table thead th,
+            .table-light,
+            .table-light > th,
+            .table-light > td,
+            #basic-datatable thead th,
+            #basic-datatable .table-light .th-inner,
+            #table thead th,
+            .bootstrap-table .fixed-table-header,
+            .bootstrap-table .fixed-table-container .table thead th,
+            .bootstrap-table .fixed-table-container .table thead th .th-inner {
+                background-color: var(--app-surface-muted) !important;
+                border-color: var(--app-border) !important;
+                color: var(--app-text) !important;
+            }
+
+            .table tbody tr,
+            .table tbody td {
+                background-color: var(--app-surface) !important;
+                color: var(--app-text) !important;
+            }
+
+            .table-striped tbody tr:nth-of-type(odd),
+            .table-hover tbody tr:hover,
+            .bootstrap-table .fixed-table-container .table tbody tr:hover td {
+                background-color: var(--app-surface-muted) !important;
+                color: var(--app-text) !important;
+            }
+
+            .bootstrap-table .fixed-table-toolbar .search input,
+            .bootstrap-table .filter-control input,
+            .bootstrap-table .filter-control select,
+            .fixed-table-pagination .pagination-detail,
+            .fixed-table-pagination .page-list,
+            .fixed-table-pagination .page-link {
+                background-color: var(--app-surface) !important;
+                border-color: var(--app-border) !important;
+                color: var(--app-text) !important;
+            }
+
+            .fixed-table-pagination .page-item.active .page-link {
+                background-color: #E3A941 !important;
+                border-color: #E3A941 !important;
+                color: #fff !important;
+            }
+
+            body:not(.dark-mode) .menu-setting.mm-active,
+            body:not(.dark-mode) .li-setting,
+            body:not(.dark-mode) .menu-sub-setting {
+                background-color: white !important;
+            }
+
+            body.dark-mode .menu-setting.mm-active,
+            body.dark-mode .li-setting,
+            body.dark-mode .menu-sub-setting {
+                background-color: var(--app-surface-muted) !important;
+            }
+
+            .theme-toggle-btn {
+                min-width: 48px;
+                font-size: 22px;
+            }
+        </style>
+        <script>
+            (function() {
+                const savedTheme = localStorage.getItem('admin-theme') || 'dark';
+                document.documentElement.dataset.theme = savedTheme;
+            })();
+        </script>
         @yield('styles')
     </head>
     <body class="dark-mode">
+        <script>
+            (function() {
+                const savedTheme = localStorage.getItem('admin-theme') || 'dark';
+                document.body.classList.toggle('dark-mode', savedTheme === 'dark');
+                document.body.classList.toggle('light-mode', savedTheme === 'light');
+            })();
+        </script>
             <!-- Begin page -->
         <div id="layout-wrapper">
 
@@ -172,6 +338,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // เรียกใช้ฟังก์ชันทุก 1 ชั่วโมง (3600000 ms)
 setInterval(checkSystemAlerts, 3600000);
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleButton = document.getElementById('theme-toggle-btn');
+    const toggleIcon = document.getElementById('theme-toggle-icon');
+
+    function setTheme(theme) {
+        const isDark = theme === 'dark';
+
+        document.documentElement.dataset.theme = theme;
+        document.body.classList.toggle('dark-mode', isDark);
+        document.body.classList.toggle('light-mode', !isDark);
+        localStorage.setItem('admin-theme', theme);
+
+        if (toggleIcon) {
+            toggleIcon.classList.toggle('bx-moon', !isDark);
+            toggleIcon.classList.toggle('bx-sun', isDark);
+        }
+    }
+
+    setTheme(localStorage.getItem('admin-theme') || 'dark');
+
+    if (toggleButton) {
+        toggleButton.addEventListener('click', function() {
+            setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+        });
+    }
+});
 </script>
 
         @yield('scripts')

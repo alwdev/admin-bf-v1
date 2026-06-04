@@ -21,6 +21,31 @@
             white-space: nowrap;
         }
 
+        .txn-list-page .bootstrap-table .fixed-table-header,
+        .txn-list-page .bootstrap-table .fixed-table-container .table thead th,
+        .txn-list-page .bootstrap-table .fixed-table-container .table thead th .th-inner,
+        .txn-list-page #basic-datatable thead.table-light th,
+        .txn-list-page #basic-datatable thead.table-light th .th-inner {
+            background-color: var(--app-surface-muted) !important;
+            border-color: var(--app-border) !important;
+            color: var(--app-text) !important;
+        }
+
+        .txn-list-page .bootstrap-table .fixed-table-container .table thead th,
+        .txn-list-page #basic-datatable thead.table-light th {
+            border-bottom: 1px solid var(--app-border) !important;
+        }
+
+        .txn-list-page .bootstrap-table .fixed-table-container .table thead th .sortable,
+        .txn-list-page .bootstrap-table .fixed-table-container .table thead th .th-inner {
+            color: var(--app-text) !important;
+        }
+
+        .txn-list-page .bootstrap-table .fixed-table-container .table thead th small,
+        .txn-list-page #basic-datatable thead.table-light th small {
+            color: var(--app-muted) !important;
+        }
+
         /* SweetAlert2 ยืนยันรายการฝากถอน — ปุ่มให้สอดคล้องธีม */
         .swal-txn-popup {
             border-radius: 12px !important;
