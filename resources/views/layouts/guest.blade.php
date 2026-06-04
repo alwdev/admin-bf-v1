@@ -53,16 +53,20 @@
                 --app-surface-muted: #f8f9fa;
                 --app-border: #dee2e6;
                 --app-text: #383c40;
+                --app-heading: #1f2328;
                 --app-muted: #6c757d;
+                --app-input-bg: #ffffff;
             }
 
             body.dark-mode {
-                --app-bg: #171b22;
-                --app-surface: #222833;
-                --app-surface-muted: #2b3340;
-                --app-border: #3a4352;
-                --app-text: #e7eaf0;
-                --app-muted: #aeb7c4;
+                --app-bg: #10141b;
+                --app-surface: #1e2530;
+                --app-surface-muted: #2b3544;
+                --app-border: #485568;
+                --app-text: #edf2f7;
+                --app-heading: #ffffff;
+                --app-muted: #c4cedb;
+                --app-input-bg: #18202b;
             }
 
             body {
@@ -80,6 +84,7 @@
             .navbar-header,
             .vertical-menu,
             .card,
+            .card-body,
             .dropdown-menu,
             .modal-content {
                 background-color: var(--app-surface);
@@ -96,19 +101,45 @@
 
             .header-item,
             .header-item:hover,
+            .card h1,
+            .card h2,
+            .card h3,
+            .card h4,
+            .card h5,
+            .card h6,
             .card-title,
+            .page-title-box h1,
+            .page-title-box h2,
+            .page-title-box h3,
+            .page-title-box h4,
+            .page-title-box h5,
+            .page-title-box h6,
             .page-title-box,
             .breadcrumb-item.active,
             .dropdown-item,
             #sidebar-menu ul li a,
             #sidebar-menu .menu-title {
-                color: var(--app-text);
+                color: var(--app-heading);
             }
 
             .text-muted,
             .card-subtitle,
             .breadcrumb-item a {
                 color: var(--app-muted) !important;
+            }
+
+            body.dark-mode .card-animate {
+                box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+            }
+
+            body.dark-mode .card .text-muted {
+                color: var(--app-muted) !important;
+            }
+
+            body.dark-mode .card h3,
+            body.dark-mode .card [data-plugin="counterup"],
+            body.dark-mode .table tbody td {
+                color: var(--app-heading) !important;
             }
 
             .dropdown-item:hover,
@@ -168,12 +199,80 @@
             .bootstrap-table .fixed-table-toolbar .search input,
             .bootstrap-table .filter-control input,
             .bootstrap-table .filter-control select,
+            .form-control,
+            .form-select,
+            .custom-select,
             .fixed-table-pagination .pagination-detail,
             .fixed-table-pagination .page-list,
             .fixed-table-pagination .page-link {
+                background-color: var(--app-input-bg) !important;
+                border-color: var(--app-border) !important;
+                color: var(--app-text) !important;
+            }
+
+            .form-control:focus,
+            .form-select:focus,
+            .custom-select:focus {
+                background-color: var(--app-input-bg) !important;
+                border-color: #E3A941 !important;
+                color: var(--app-heading) !important;
+                box-shadow: 0 0 0 0.15rem rgba(227, 169, 65, 0.25) !important;
+            }
+
+            .form-control::placeholder {
+                color: var(--app-muted) !important;
+            }
+
+            body.dark-mode .daterangepicker,
+            body.dark-mode .daterangepicker .calendar-table {
                 background-color: var(--app-surface) !important;
                 border-color: var(--app-border) !important;
                 color: var(--app-text) !important;
+            }
+
+            body.dark-mode .daterangepicker:before {
+                border-bottom-color: var(--app-border) !important;
+            }
+
+            body.dark-mode .daterangepicker:after {
+                border-bottom-color: var(--app-surface) !important;
+            }
+
+            body.dark-mode .daterangepicker .ranges li {
+                color: var(--app-text) !important;
+                background-color: transparent !important;
+            }
+
+            body.dark-mode .daterangepicker .ranges li:hover {
+                color: var(--app-heading) !important;
+                background-color: var(--app-surface-muted) !important;
+            }
+
+            body.dark-mode .daterangepicker .ranges li.active {
+                color: #111827 !important;
+                background-color: #E3A941 !important;
+                font-weight: 600;
+            }
+
+            body.dark-mode .daterangepicker td.available:hover,
+            body.dark-mode .daterangepicker th.available:hover,
+            body.dark-mode .daterangepicker td.in-range {
+                background-color: var(--app-surface-muted) !important;
+                color: var(--app-heading) !important;
+            }
+
+            body.dark-mode .daterangepicker td.off,
+            body.dark-mode .daterangepicker td.off.in-range,
+            body.dark-mode .daterangepicker td.off.start-date,
+            body.dark-mode .daterangepicker td.off.end-date {
+                background-color: var(--app-surface) !important;
+                color: #8f9bad !important;
+            }
+
+            body.dark-mode .daterangepicker td.active,
+            body.dark-mode .daterangepicker td.active:hover {
+                background-color: #E3A941 !important;
+                color: #111827 !important;
             }
 
             .fixed-table-pagination .page-item.active .page-link {

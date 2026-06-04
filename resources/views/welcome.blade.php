@@ -1,6 +1,13 @@
 @extends('layouts.guest')
 @section('styles')
 <link href="{{asset('daterangepicker/daterangepicker.css')}}" rel="stylesheet">
+<style>
+    .dashboard-stat-icon {
+        color: #E3A941;
+        font-size: 28px;
+        line-height: 1;
+    }
+</style>
 @endsection
 @section('content')
   <!-- start page title -->
@@ -33,8 +40,7 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        {{-- <i class="bx bx-bitcoin m-0 h3 text-primary"></i> --}}
-                        <img src="{{ asset('images/dashboard_icon/savings.png') }}" alt="" width="32">
+                        <i class="bx bx-wallet dashboard-stat-icon"></i>
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.deposit_amount')}}</h6>
@@ -49,8 +55,7 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        {{-- <i class="bx bx-money-withdraw m-0 h3 text-primary"></i> --}}
-                        <img src="{{ asset('images/dashboard_icon/cash-withdrawal.png') }}" alt="" width="32">
+                        <i class="bx bx-money-withdraw dashboard-stat-icon"></i>
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.withdraw_amount')}}</h6>
@@ -65,8 +70,7 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        {{-- <i class="bx bx-dollar-circle m-0 h3 text-primary"></i> --}}
-                        <img src="{{ asset('images/dashboard_icon/earnings.png') }}" alt="" width="32">
+                        <i class="bx bx-trending-up dashboard-stat-icon"></i>
                     </span>
                 </div>
                 @php
@@ -85,8 +89,7 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        {{-- <i class="bx bx-analyse m-0 h3 text-primary"></i> --}}
-                        <img src="{{ asset('images/dashboard_icon/followers.png') }}" alt="" width="32">
+                        <i class="bx bx-user-plus dashboard-stat-icon"></i>
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.new_member')}}</h6>
@@ -101,8 +104,7 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        {{-- <i class="bx bx-user m-0 h3 text-primary"></i> --}}
-                        <img src="{{ asset('images/dashboard_icon/team.png') }}" alt="" width="32">
+                        <i class="bx bx-group dashboard-stat-icon"></i>
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.all_member')}}</h6>
@@ -117,8 +119,7 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        {{-- <i class="bx bx-user m-0 h3 text-primary"></i> --}}
-                        <img src="{{ asset('images/dashboard_icon/www.png') }}" alt="" width="32">
+                        <i class="bx bx-globe dashboard-stat-icon"></i>
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.Online_today')}}</h6>
@@ -132,8 +133,7 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        {{-- <i class="bx bx-dollar-circle m-0 h3 text-primary"></i> --}}
-                        <img src="{{ asset('images/dashboard_icon/bonus.png') }}" alt="" width="32">
+                        <i class="bx bx-gift dashboard-stat-icon"></i>
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">Bonus</h6>
@@ -147,8 +147,7 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        {{-- <i class="bx bx-dollar-circle m-0 h3 text-primary"></i> --}}
-                        <img src="{{ asset('images/dashboard_icon/mobile-banking.png') }}" alt="" width="32">
+                        <i class="bx bx-credit-card dashboard-stat-icon"></i>
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.Add_normal')}}</h6>
@@ -162,8 +161,7 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        {{-- <i class="bx bx-dollar-circle m-0 h3 text-primary"></i> --}}
-                        <img src="{{ asset('images/dashboard_icon/refund.png') }}" alt="" width="32">
+                        <i class="bx bx-revision dashboard-stat-icon"></i>
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.Customer_Refund')}}</h6>
@@ -171,13 +169,12 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6">
+    {{-- <div class="col-xl-3 col-md-6">
         <div class="card card-animate">
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        {{-- <i class="bx bx-dollar-circle m-0 h3 text-primary"></i> --}}
-                        <img src="{{ asset('images/dashboard_icon/bank.png') }}" alt="" width="32">
+                        <i class="bx bx-bank dashboard-stat-icon"></i>
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.Balance')}}  <span class="badge rounded-pill text-bg-primary" style="font-weight: 300;background: green;color: white;">{{__('dashboard.Bankquantity')}} {{ $banks->count() }} {{__('dashboard.BankAccount')}}</span></h6>
@@ -195,8 +192,7 @@
             <div class="card-body">
                 <div class="avatar-sm float-right">
                     <span class="avatar-title bg-soft-primary rounded-circle">
-                        {{-- <i class="bx bx-dollar-circle m-0 h3 text-primary"></i> --}}
-                        <img src="{{ asset('images/dashboard_icon/bank.png') }}" alt="" width="32">
+                        <i class="bx bx-bank dashboard-stat-icon"></i>
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase mt-0">{{__('dashboard.Balance')}}  <span class="badge rounded-pill text-bg-primary" style="font-weight: 300;background: green;color: white;">{{ $a_bank->bank_name }} {{ $a_bank->account_no }}</span></h6>
@@ -204,7 +200,7 @@
             </div>
         </div>
     </div>
-    @endforeach
+    @endforeach --}}
 
 
 
