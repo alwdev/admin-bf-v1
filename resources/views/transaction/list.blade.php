@@ -160,7 +160,7 @@
                     </thead>
                     <tbody>
                         @foreach ($transfer as $key_ => $item)
-                            <tr>
+                            <tr data-transfer-id="{{ $item->id }}">
                                 <td>{{ $item->username }}</td>
                                 <td>
                                     @if ($item->type == 'deposit')
@@ -522,6 +522,64 @@
                 showConfirmButton: false,
                 timer: 1500
             });
+        }
+        const transactionTable = document.querySelector('#basic-datatable');
+        const transactionTableBody = transactionTable ? transactionTable.querySelector('tbody') : null;
+        const transactionRefreshUrl = '{{ route('managemember.transaction') }}';
+        let latestTransferId = transactionTableBody && transactionTableBody.querySelector('tr[data-transfer-id]')
+            ? transactionTableBody.querySelector('tr[data-transfer-id]').dataset.transferId
+            : null;
+        let isRefreshingTransactions = false;
+
+        function hasActiveTransactionDialog() {
+            return document.querySelector('.swal2-container') !== null;
+        }
+
+        function refreshTransactionTable() {
+            if (!transactionTableBody || isRefreshingTransactions || hasActiveTransactionDialog()) {
+                return;
+            }
+
+            isRefreshingTransactions = true;
+
+            fetch(transactionRefreshUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                cache: 'no-store'
+            })
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('Unable to refresh transactions');
+                    }
+
+                    return response.text();
+                })
+                .then(function(html) {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const freshTableBody = doc.querySelector('#basic-datatable tbody');
+                    const freshFirstRow = freshTableBody ? freshTableBody.querySelector('tr[data-transfer-id]') : null;
+
+                    if (!freshTableBody || !freshFirstRow) {
+                        return;
+                    }
+
+                    if (latestTransferId !== freshFirstRow.dataset.transferId) {
+                        transactionTableBody.innerHTML = freshTableBody.innerHTML;
+                        latestTransferId = freshFirstRow.dataset.transferId;
+                    }
+                })
+                .catch(function(error) {
+                    console.error(error);
+                })
+                .finally(function() {
+                    isRefreshingTransactions = false;
+                });
+        }
+
+        if (transactionTableBody) {
+            setInterval(refreshTransactionTable, 5000);
         }
     </script>
 @endsection
