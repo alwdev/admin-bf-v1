@@ -159,7 +159,8 @@
       ]).then( function (result) {
 
         if (result.value) {
-            if (result.value != ""){
+            const password = result.value[0];
+            if (password != ""){
 
                 $.ajax({
 				type: 'post',
@@ -167,7 +168,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
 				url: '{{ route('manageuser.checkPassword') }}',
-				data: { password:result.value,userId:userid },
+				data: { password:password,userId:userid },
 				success: function (data) {
 					if(data!=false){
                         Swal.fire(
@@ -209,7 +210,8 @@
             }
         ]).then( function (result) {
             if (result.value) {
-                if (result.value != ""){
+                const currentPassword = result.value[0];
+                if (currentPassword != ""){
 
                     $.ajax({
                         type: 'post',
@@ -217,7 +219,7 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         url: '{{ route('manageuser.checkPassword') }}',
-                        data: { password:result.value,userId:userid },
+                        data: { password:currentPassword,userId:userid },
                         success: function (data) {
                             if(data!=false){
                                 Swal.mixin({
@@ -232,13 +234,16 @@
                                     text: '{{__('managemember.password')}}'
                                     }
                                 ]).then( function (result2) {
+                                    if (!result2.value || result2.value[0] == "") {
+                                        return;
+                                    }
                                     $.ajax({
                                         type: 'post',
                                         headers: {
                                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                         },
                                         url: '{{ route('manageuser.changePassword') }}',
-                                        data: { password:result.value,userId:userid },
+                                        data: { password:result2.value[0],userId:userid },
                                         success: function (data) {
                                             if(data!=false){
                                                 Swal.fire(
@@ -291,14 +296,15 @@
       ]).then( function (result) {
 
         if (result.value) {
-            if (result.value != ""){
+            const password = result.value[0];
+            if (password != ""){
                 $.ajax({
 				type: 'post',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
 				url: '{{ route('manageuser.checkPassword') }}',
-				data: { password:result.value,userId:userid },
+				data: { password:password,userId:userid },
 				success: function (data) {
 					if(data!=false){
                         $('#del'+userid).submit();

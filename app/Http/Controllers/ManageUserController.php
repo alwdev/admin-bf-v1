@@ -68,17 +68,27 @@ class ManageUserController extends Controller
     }
 
     function checkPassword(Request $request){
-        if (Hash::check($request->password[0], Auth::user()->password)) {
-            $u = User::find($request->userId[0]);
+        $request->validate([
+            'password' => ['required', 'string'],
+            'userId' => ['required', 'integer'],
+        ]);
+
+        if (Hash::check($request->password, Auth::user()->password)) {
+            $u = User::find($request->userId);
             return $u;
         } else {
             return false;
         }
     }
     function changePassword(Request $request){
-        $u = User::find($request->userId[0]);
-        $u->password = $request->password[0];
-        $u->truepass = $request->password[0];
+        $request->validate([
+            'password' => ['required', 'string'],
+            'userId' => ['required', 'integer'],
+        ]);
+
+        $u = User::find($request->userId);
+        $u->password = $request->password;
+        $u->truepass = $request->password;
         $u->save();
         return $u;
     }
