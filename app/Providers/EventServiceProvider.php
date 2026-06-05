@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Event;
 use App\Listeners\LogAdminSuccessfulLogin;
 use App\Listeners\LogAdminFailedLogin;
 use App\Listeners\LogAdminLogout;
+use App\Models\Transfer;
+use App\Observers\TransferObserver;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -40,7 +42,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Transfer::observe(TransferObserver::class);
     }
 
     /**
