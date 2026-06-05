@@ -150,8 +150,8 @@
                             class='bx bx-copy'></i><span>{{ __('Lotto manual') }}</span></a>
                 </li>
                 <li>
-                    <a href="{{ route('smsLog.index') }}" class="waves-effect"><i class='bx bx-copy'></i><span>SMS
-                            Logs</span></a>
+                    <a href="{{ route('log-viewer.index') }}" class="waves-effect"><i class='bx bx-log'></i><span>Log
+                            Viewer</span></a>
                 </li>
             </ul>
         </div>
