@@ -35,7 +35,7 @@ class PromotionAdsController extends Controller
             $ads->enable = 0;
         }
         $ads->save();
-        return redirect()->route('promotion_ads.index')->with('status','200');
+        return redirect()->route('setting.banner')->with('status','200');
     }
     public function edit($id){
         $ads = PromotionAds::find($id);
@@ -60,13 +60,13 @@ class PromotionAdsController extends Controller
             $ads->enable = 0;
         }
         $ads->save();
-        return redirect()->route('promotion_ads.index')->with('status','200');
+        return redirect()->route('setting.banner')->with('status','200');
     }
     public function destroy(Request $request)
     {
         $ads = PromotionAds::find($request->id);
         $ads->active = 0;
         $ads->save();
-        return redirect()->route('promotion_ads.index')->with('status','200');
+        return redirect()->route('setting.banner')->with('status','200');
     }
 }

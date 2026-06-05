@@ -73,6 +73,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/setting/deposit_continuously/update', [SettingController::class, 'deposit_continuously_update'])->name('setting.deposit_continuously_update')->middleware('CheckPermissionUser:setting,edit');
     Route::get('/setting/point', [SettingController::class, 'point'])->name('setting.point')->middleware('CheckPermissionUser:setting,view');
     Route::post('/setting/point/update', [SettingController::class, 'point_update'])->name('setting.point_update')->middleware('CheckPermissionUser:setting,edit');
+    Route::get('/setting/banner', [SettingController::class, 'banner'])->name('setting.banner')->middleware('CheckPermissionUser:setting,view');
 
     Route::get('/setting/mission', [SettingController::class, 'mission'])->name('setting.mission')->middleware('CheckPermissionUser:setting,view');
     Route::post('/setting/mission_deposit/update', [SettingController::class, 'mission_deposit_update'])->name('setting.mission_deposit_update')->middleware('CheckPermissionUser:setting,edit');

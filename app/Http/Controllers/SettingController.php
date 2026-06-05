@@ -12,6 +12,7 @@ use App\Models\Members;
 use App\Models\Coupon;
 use App\Models\WheelSpin;
 use App\Models\SystemAlert;
+use App\Models\PromotionAds;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -74,6 +75,12 @@ class SettingController extends Controller
     {
         $setting = Setting::first();
         return view('setting.point', compact('setting'));
+    }
+
+    public function banner()
+    {
+        $list = PromotionAds::where('active', 1)->orderByDesc('updated_at')->get();
+        return view('setting.banner', compact('list'));
     }
 
     public function coupon_create(Request $request)

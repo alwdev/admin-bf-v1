@@ -115,6 +115,8 @@
                                     class="active">{{ __('main.recommend_setting') }}</a></li>
                             <li class="menu-sub-setting"><a href="{{ route('setting.popup') }}"
                                     class="active">{{ __('main.popup_setting') }}</a></li>
+                            <li class="menu-sub-setting"><a href="{{ route('setting.banner') }}"
+                                    class="active">Banner Setting</a></li>
                             <li class="menu-sub-setting"><a href="{{ route('setting.level') }}"
                                     class="active">{{ __('main.member_level_setting') }}</a></li>
                             <li class="menu-sub-setting"><a href="{{ route('setting.wheel') }}"
