@@ -353,9 +353,10 @@ class ManageMemberController extends Controller
                     TelegramMessage::create()
                         ->to(env('TELEGRAM_G_ID'))
                         ->line(env('APP_NAME'))
-                        ->line('Admin Make a transaction, approve a withdrawal ' . $member->username)
-                        ->line('Mount :' . floor($transfer->amount))
-                        ->line('Warning: Admin must make the transfer by themselves via the bank app.')
+                        ->line('Admin '. auth()->user()->username .' ทำการยืนยันการถอนเงิน ')
+                        ->line('Member : ' . $member->username)
+                        ->line('จำนวนเงิน :' . floor($transfer->amount))
+                        // ->line('Warning: Admin must make the transfer by themselves via the bank app.')
                         ->send();
                 } catch (\Exception $e) {
                     Log::error('Telegram notify error (withdraw approve): ' . $e->getMessage());
