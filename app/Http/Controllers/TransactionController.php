@@ -490,13 +490,13 @@ class TransactionController extends Controller
         try {
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT-LINE ' . env('APP_NAME'))
-                ->line('Transaction completed, credit transferred ' . $member->username)
-                ->line('Amount :' . $transfer->amount)
+                ->line('การฝากเงินสำเร็จ Member: ' . $member->username)
+                ->line('จำนวน :' . $transfer->amount)
                 ->line('Bonus :' . $bonus)
                 ->line('Promotion : ' . $applied_promotion_name)
                 ->line('Message : ' . $message)
                 ->send();
-            
+
         } catch (\Exception $e) {
             error_log("Error sending Telegram message (success path): " . $e->getMessage());
         }
@@ -1894,8 +1894,8 @@ class TransactionController extends Controller
         try {
             TelegramMessage::create()->to(env('TELEGRAM_G_ID'))
                 ->line('BOT ' . env('APP_NAME'))
-                ->line('Transaction completed, credit transferred ' . $member->username)
-                ->line('Amount :' . $cryptoAmount)
+                ->line('การฝากเงินสำเร็จ Member: ' . $member->username)
+                ->line('จำนวน :' . $transfer->amount)
                 ->line('Bonus :' . $bonus)
                 ->line('Promotion : ' . $applied_promotion_name)
                 ->line('Message : ' . $message)
